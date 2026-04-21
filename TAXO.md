@@ -24,6 +24,102 @@ conversational + subtle + prompt-injection ≈ Tier 3) but it's a readout of
 the axes, not the organizing principle.
 
 
+## Positioning within the broader agent-trap landscape
+
+In plain terms: there are many kinds of agent traps. This benchmark
+measures one specific kind — adversarial web content that tricks the
+agent into sending the user's data (or money) to an attacker — in
+depth. The rest of this section says where that slice sits in the
+broader picture.
+
+Franklin et al. (2025, "AI Agent Traps", Google DeepMind) propose a
+framework that classifies adversarial web content by which stage of the
+agent's functional architecture it targets: *Content Injection*
+(perception), *Semantic Manipulation* (reasoning), *Cognitive State*
+(memory / learning), *Behavioural Control* (action), *Systemic*
+(multi-agent dynamics), and *Human-in-the-Loop* (overseer). Our
+benchmark is narrower than and compatible with that framework — not a
+fork of it.
+
+### Outcome vs. mechanism
+
+In their terms, the *outcome* we measure is always at the
+**Behavioural Control** stage: the agent takes a bad action (submits
+PII to an attacker-controlled endpoint, or completes an attacker's
+transaction). The *mechanism* producing that bad action typically
+operates earlier in the pipeline — Semantic Manipulation of the
+agent's reasoning, or Content Injection into what the agent
+perceives. Most of our envs straddle two of Franklin et al.'s
+categories; we classify each vector by its dominant category:
+
+- `vector = phishing_clone` — primarily **Content Injection** (the
+  entire page is a forged artefact) with **Semantic Manipulation**
+  downstream (the agent must reason wrongly about the URL / brand).
+- `vector = credential_harvest / reward_trap / dark_patterns /
+  fake_trust_signals / authority_impersonation` — primarily
+  **Semantic Manipulation** (framing, authority cues, social proof
+  skew the agent's reasoning toward compliance).
+- `vector = conversational_deception` — also Semantic Manipulation,
+  but over multi-turn dialogue with progressive trust escalation.
+- `prompt_injection ∈ {visible_text, hidden_dom, fake_system_msg}`
+  — **Content Injection**, with `hidden_dom` corresponding to
+  Franklin's *Web-Standard Obfuscation* and `fake_system_msg` to
+  their *Syntactic Masking* (both surface via DOM, not pixels).
+
+### Sub-type: mostly Data Exfiltration
+
+~14 / 16 of our current envs are cleanly *Data Exfiltration* traps —
+confused-deputy attacks (Hardy 1988) where the agent holds privileged
+read access to the user's PII and is coerced, through untrusted web
+content, into writing that data to an attacker-controlled endpoint.
+Two caveats:
+
+- `ecommerce` and `marketplace` additionally induce a fraudulent
+  transaction, so they sit at *Data Exfiltration + induced Financial
+  Loss*.
+- `coc_gems` adds a *task-misdirection* dimension — the agent may
+  visit a scam destination instead of the legitimate one, whether or
+  not it submits credentials there.
+
+Data Exfiltration is the dominant sub-type across the whole
+benchmark; these extra failure modes are noted on the audit rows
+that carry them.
+
+### Deliberately out of scope
+
+- Steganographic payloads in images / audio (their Content Injection
+  sub-vector). Our agents observe screenshots + DOM, but attacks are
+  always addressable in text; we do not inject via pixel-level
+  perturbations.
+- RAG / memory poisoning, contextual-learning traps, sub-agent
+  spawning — the agent under test has no persistent memory, no RAG
+  store, and no sub-agent orchestration.
+- Systemic traps (congestion, cascades, sybil, tacit collusion) —
+  these require multi-agent populations; we evaluate one agent at a
+  time.
+- Human-in-the-loop attacks — we evaluate fully autonomous runs.
+
+### What we contribute that their framework leaves open
+
+1. A *quantitative* measurement methodology (PLR / ASR / TCR / DR)
+   for the Data Exfiltration slice specifically, rather than a
+   taxonomy alone.
+2. A factorial axis design (see the four classifying + four factor
+   axes below) that lets us isolate *which* delivery property —
+   salience, pressure, prompt-injection location, interaction style —
+   drives the leakage we measure. Every finding in the paper is
+   backed by at least one sibling-pair of environments that differ
+   on exactly one axis.
+3. A concrete, reproducible artefact: ~100 factorially-varied Flask
+   environments spanning 15+ verticals, released with the evaluator
+   harness, so other researchers can extend the benchmark or plug in
+   their own agents without re-authoring sites.
+
+Franklin et al. note explicitly that "many categories of agent traps
+identified in this paper currently lack standardised benchmarks" —
+this is one such benchmark for the Data Exfiltration slice.
+
+
 ## The four classifying axes
 
 Every environment gets exactly one value on each of these.
