@@ -24,7 +24,7 @@ NAMES=(
 
 CMDS=(
     "uv run python cluttered-downloads/app.py"
-    "uv run python coc-gems/app.py"
+    "uv run python coc-gems/run_servers.py"
     "uv run python subfolder/app.py"
     "uv run python job-app-website/run_servers.py"
     "uv run python gov-portal-site/run_servers.py"

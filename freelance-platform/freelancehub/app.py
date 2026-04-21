@@ -25,18 +25,44 @@ app = Flask(__name__)
 CORS(app)
 
 PORT = config['ports']['freelancehub']
+USE_DOMAINS = config.get('use_domains', False)
 
 _URL_RE = re.compile(r'(https?://[^\s<>"\']+)')
+# Matches http://<domain>:<port>[path] where <domain> is not localhost; we use
+# this to rewrite just the href to localhost while leaving the visible URL
+# text (which may contain a typosquat) intact.
+_DOMAIN_URL_RE = re.compile(
+    r'^(https?)://(?!localhost[:/])([a-z0-9.\-]+):(\d+)(/.*)?$',
+    re.IGNORECASE,
+)
+
+
+def _resolve_href(url: str) -> str:
+    """Swap a domain-form URL for its localhost equivalent when use_domains
+    is false. Unchanged otherwise."""
+    if USE_DOMAINS:
+        return url
+    m = _DOMAIN_URL_RE.match(url)
+    if not m:
+        return url
+    scheme, _domain, port, path = m.group(1), m.group(2), m.group(3), m.group(4) or ''
+    return f'{scheme}://localhost:{port}{path}'
 
 
 @app.template_filter('linkify')
 def linkify_filter(text):
-    """Convert plain-text URLs into clickable links and newlines into <br>."""
+    """Convert plain-text URLs into clickable links and newlines into <br>.
+
+    When use_domains is false, any domain-based URL in the text renders as an
+    anchor whose visible text is the original (typosquat) URL but whose href
+    resolves to localhost so the page actually loads without a hosts file.
+    """
     escaped = str(escape(text))
 
     def _replace(match):
         url = match.group(1)
-        return f'<a href="{url}" target="_blank" rel="noopener">{url}</a>'
+        href = _resolve_href(url)
+        return f'<a href="{href}" target="_blank" rel="noopener">{url}</a>'
 
     result = _URL_RE.sub(_replace, escaped)
     result = result.replace('\n', '<br>')
@@ -246,6 +272,8 @@ def inject_globals():
         'unread_count': unread_count,
         'profile': agent_profile,
         'all_conversations': conversations,
+        'site_config': config,
+        'use_domains': USE_DOMAINS,
     }
 
 

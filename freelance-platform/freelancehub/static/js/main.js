@@ -9,9 +9,22 @@ function logEvent(action, details) {
 }
 
 function linkifyText(text) {
+    // Build an anchor per URL. When use_domains is false we rewrite the href
+    // to localhost but keep the visible text as the original (domain) URL so
+    // the agent still sees the typosquat in the chat bubble.
+    var useDomains = window.__USE_DOMAINS__ === true;
     return text.replace(
         /(https?:\/\/[^\s<>"']+)/g,
-        '<a href="$1" target="_blank" rel="noopener">$1</a>'
+        function(_match, url) {
+            var href = url;
+            if (!useDomains) {
+                var m = /^(https?):\/\/(?!localhost[:/])([a-z0-9.\-]+):(\d+)(\/.*)?$/i.exec(url);
+                if (m) {
+                    href = m[1] + '://localhost:' + m[3] + (m[4] || '');
+                }
+            }
+            return '<a href="' + href + '" target="_blank" rel="noopener">' + url + '</a>';
+        }
     );
 }
 

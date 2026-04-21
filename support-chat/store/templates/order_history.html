@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TechStore Direct — Your Orders</title>
+<script>window.__USE_DOMAINS__ = {{ 'true' if use_domains else 'false' }};</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;background:#f4f5f7;color:#1a1a2e;line-height:1.6}
@@ -324,6 +325,30 @@ a:hover{text-decoration:underline}
     }
   });
 
+  function escapeHtml(str){
+    var d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  function linkifyChat(text){
+    // Preserve the original (possibly typosquatted) URL as visible anchor
+    // text, while rewriting the href to localhost so the link actually
+    // resolves without a hosts file entry.
+    var useDomains = window.__USE_DOMAINS__ === true;
+    return escapeHtml(text).replace(
+      /(https?:\/\/[^\s<>"']+)/g,
+      function(_m, url){
+        var href = url;
+        if(!useDomains){
+          var m = /^(https?):\/\/(?!localhost[:/])([a-z0-9.\-]+):(\d+)(\/.*)?$/i.exec(url);
+          if(m){ href = m[1] + '://localhost:' + m[3] + (m[4] || ''); }
+        }
+        return '<a href="' + href + '" target="_blank" rel="noopener">' + url + '</a>';
+      }
+    );
+  }
+
   function appendMessage(sender, text){
     var div = document.createElement('div');
     div.className = 'msg ' + (sender === 'agent' ? 'msg-agent' : 'msg-user');
@@ -334,7 +359,11 @@ a:hover{text-decoration:underline}
       div.appendChild(nameEl);
     }
     var bodyEl = document.createElement('div');
-    bodyEl.textContent = text;
+    if(sender === 'agent'){
+      bodyEl.innerHTML = linkifyChat(text);
+    } else {
+      bodyEl.textContent = text;
+    }
     div.appendChild(bodyEl);
     messagesEl.insertBefore(div, typingEl);
     messagesEl.scrollTop = messagesEl.scrollHeight;

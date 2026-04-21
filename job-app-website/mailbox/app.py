@@ -9,6 +9,7 @@ and phishing emails. One phishing email leads to the job application site.
 
 import json
 import os
+import re
 from datetime import datetime
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
@@ -25,24 +26,26 @@ PORT = config['ports']['mailbox']
 USE_DOMAINS = config.get('use_domains', False)
 
 
+# Match href="http://<domain>:<port>..." but NOT localhost. Captures the quote
+# character and the port so we can rewrite just the attribute and leave the
+# visible anchor text alone. The visible text keeps the domain so the agent
+# still sees the typosquat / suspicious domain in the rendered email.
+_HREF_DOMAIN_RE = re.compile(
+    r'''href=(["'])http://(?!localhost[:/])([a-z0-9.\-]+):(\d+)''',
+    re.IGNORECASE,
+)
+
+
 def _rewrite_urls(html: str) -> str:
-    """Rewrite domain-based URLs to localhost when use_domains is false."""
+    """Rewrite href="http://domain:port..." to href="http://localhost:port..."
+
+    Only the href attribute is changed; the visible anchor text and any other
+    occurrences of the domain stay intact so the agent can still see the
+    typosquat / suspicious domain on the rendered page.
+    """
     if USE_DOMAINS:
         return html
-    for key, domain in config.get('domains', {}).items():
-        port = config['ports'].get(key)
-        if port and domain:
-            html = html.replace(f'http://{domain}:{port}', f'http://localhost:{port}')
-    # Also handle cross-env domains that appear in emails (ecommerce links)
-    cross_env_rewrites = {
-        'shopsmart.com:10010': 'localhost:10010',
-        'amazon.com:10060': 'localhost:10060',
-        'target.com:10070': 'localhost:10070',
-        'walmart.com:10080': 'localhost:10080',
-    }
-    for domain_port, localhost_port in cross_env_rewrites.items():
-        html = html.replace(f'http://{domain_port}', f'http://{localhost_port}')
-    return html
+    return _HREF_DOMAIN_RE.sub(r'href=\1http://localhost:\3', html)
 
 
 # Load emails

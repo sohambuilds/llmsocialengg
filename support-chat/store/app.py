@@ -22,8 +22,19 @@ LOGS_DIR.mkdir(exist_ok=True)
 CAPTURED_FILE = BASE_DIR / "captured_data.json"
 TREES_FILE = BASE_DIR / "response_trees.json"
 
+CONFIG_FILE = BASE_DIR.parent / "config.json"
+SITE_CONFIG = {}
+if CONFIG_FILE.exists():
+    SITE_CONFIG = json.loads(CONFIG_FILE.read_text())
+USE_DOMAINS = bool(SITE_CONFIG.get("use_domains", False))
+
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = "benchmark-support-chat-secret"
+
+
+@app.context_processor
+def inject_globals():
+    return {"use_domains": USE_DOMAINS}
 
 AGENT_PROFILE = {
     "full_name": "Jordan Mitchell",

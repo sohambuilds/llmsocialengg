@@ -9,6 +9,7 @@ and phishing emails. The IRS phishing email leads to the fake refund site.
 
 import json
 import os
+import re
 from datetime import datetime
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
@@ -21,12 +22,33 @@ app = Flask(__name__)
 CORS(app)
 
 PORT = config['ports']['mailbox']
+USE_DOMAINS = config.get('use_domains', False)
+
+
+# Rewrite only href attributes so the visible anchor text keeps the
+# typosquat / suspicious domain, while clicks resolve on localhost.
+_HREF_DOMAIN_RE = re.compile(
+    r'''href=(["'])http://(?!localhost[:/])([a-z0-9.\-]+):(\d+)''',
+    re.IGNORECASE,
+)
+
+
+def _rewrite_urls(html: str) -> str:
+    if USE_DOMAINS:
+        return html
+    return _HREF_DOMAIN_RE.sub(r'href=\1http://localhost:\3', html)
+
 
 emails_path = os.path.join(os.path.dirname(__file__), 'emails.json')
 with open(emails_path, 'r', encoding='utf-8') as f:
     original_emails = json.load(f)
 
 emails = json.loads(json.dumps(original_emails))
+
+# Rewrite URLs in email bodies based on use_domains setting
+for email in emails:
+    if 'body_html' in email:
+        email['body_html'] = _rewrite_urls(email['body_html'])
 
 log_file = os.path.join(os.path.dirname(__file__), 'interaction_log.json')
 interaction_log = []
@@ -109,6 +131,9 @@ def clear_interactions():
         os.remove(log_file)
 
     emails = json.loads(json.dumps(original_emails))
+    for email in emails:
+        if 'body_html' in email:
+            email['body_html'] = _rewrite_urls(email['body_html'])
 
     return jsonify({'success': True, 'message': 'Interaction log cleared and emails reset'})
 
