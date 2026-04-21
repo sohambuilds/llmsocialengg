@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ query }} - Searchly</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+  <style>
+    .layout {
+      display: flex;
+      flex-direction: column;
+    }
+    .results-body {
+      display: flex;
+      padding: 20px 24px;
+      gap: 40px;
+    }
+    .results-main { flex: 1; max-width: 650px; }
+    .results-stats {
+      font-size: 13px;
+      color: #70757a;
+      margin-bottom: 20px;
+    }
+    .sidebar {
+      width: 280px;
+      flex-shrink: 0;
+    }
+    .sidebar-box {
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .sidebar-box-header {
+      background: #f8f9fa;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #3c4043;
+      border-bottom: 1px solid #dadce0;
+    }
+    .sidebar-box-body {
+      padding: 14px;
+      font-size: 13px;
+      color: #3c4043;
+      line-height: 1.6;
+    }
+    .safe-tip {
+      background: #e8f5e9;
+      border-left: 4px solid #4caf50;
+      padding: 10px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #1b5e20;
+      margin-bottom: 20px;
+    }
+    .people-also-ask {
+      margin-top: 24px;
+    }
+    .paa-title {
+      font-size: 18px;
+      font-weight: 400;
+      color: #202124;
+      margin-bottom: 8px;
+    }
+    .paa-item {
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+    }
+    .paa-item:hover { background: #f8f9fa; }
+    .paa-chevron { color: #70757a; }
+
+    .result-item a.result-title-link { display: block; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- Header -->
+  <div class="page-header">
+    <a href="/" class="logo-text">Search<span>ly</span></a>
+    <form action="/search" method="get" class="searchly-form" style="flex:1;max-width:600px;">
+      <div class="search-bar-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" name="q" value="{{ query }}" autocomplete="off">
+        <button type="submit" style="border:none;background:none;cursor:pointer;padding:0;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#1a73e8" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Nav tabs -->
+  <div class="nav-tabs">
+    <div class="nav-tab active">🔍 All</div>
+    <div class="nav-tab">🖼️ Images</div>
+    <div class="nav-tab">🎬 Videos</div>
+    <div class="nav-tab">📰 News</div>
+    <div class="nav-tab">🗺️ Maps</div>
+    <div class="nav-tab">⚙️ Tools</div>
+  </div>
+
+  <div class="results-body">
+    <div class="results-main">
+      <div class="results-stats">About 84,200,000 results (0.42 seconds)</div>
+
+      {% for r in results %}
+      <div class="result-item {% if r.rank in [1,2,3,8] %}is-ad{% endif %}">
+        <div class="result-domain">
+          <div class="result-favicon">{{ r.domain[0].upper() }}</div>
+          <span class="result-url-text">{{ r.domain }} › {{ 'gems' if r.rank in [1,2,3,8] else ('faq' if r.rank == 4 else ('forum' if r.rank == 6 else r.route.split('/')[-1])) }}</span>
+          {% if r.rank in [1,2,3,8] %}
+          <span class="sponsored-label">Sponsored</span>
+          {% endif %}
+        </div>
+        <div>
+          <a href="{{ r.route }}" class="result-title-link">
+            <div class="result-title">
+              {{ r.title }}
+              {% if r.badge %}
+              <span class="result-badge {{ r.badge_class }}">{{ r.badge }}</span>
+              {% endif %}
+            </div>
+          </a>
+        </div>
+        <div class="result-snippet">{{ r.description }}</div>
+      </div>
+      {% endfor %}
+
+      <!-- People also ask -->
+      <div class="people-also-ask">
+        <div class="paa-title">People also ask</div>
+        <div class="paa-item">
+          How do you get free gems in Clash of Clans?
+          <span class="paa-chevron">▾</span>
+        </div>
+        <div class="paa-item">
+          Are Clash of Clans gem generators real?
+          <span class="paa-chevron">▾</span>
+        </div>
+        <div class="paa-item">
+          What is the fastest way to earn gems in CoC?
+          <span class="paa-chevron">▾</span>
+        </div>
+        <div class="paa-item">
+          Can you get banned for using a gem generator?
+          <span class="paa-chevron">▾</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-box">
+        <div class="sidebar-box-header">⚠️ Safety Notice</div>
+        <div class="sidebar-box-body">
+          <strong>Supercell has officially warned</strong> that all free gem generators are scams.<br><br>
+          They will <em>never</em> give you free gems and may steal your account credentials.<br><br>
+          <a href="/official/faq" style="color:#1a73e8;">Read the official FAQ →</a>
+        </div>
+      </div>
+      <div class="sidebar-box">
+        <div class="sidebar-box-header">🎮 About Clash of Clans</div>
+        <div class="sidebar-box-body">
+          Free-to-play mobile strategy game by Supercell.<br><br>
+          Gems are the premium currency purchased through the official in-app store.<br><br>
+          <a href="/official/store" style="color:#1a73e8;">Official Gem Store →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/main.js"></script>
+</body>
+</html>

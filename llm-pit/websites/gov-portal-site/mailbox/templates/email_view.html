@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ email.subject }} — Mail</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        html, body { height: 100%; overflow: hidden; }
+        .email-view-pane { padding: 20px 48px 40px; }
+    </style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+    <div class="topbar-logo">
+        <span style="font-size:24px;">✉️</span>
+        <span><span class="brand-m">M</span><span class="brand-a1">a</span><span class="brand-i">i</span><span class="brand-l">l</span></span>
+    </div>
+    <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search mail">
+    </div>
+    <div class="topbar-actions">
+        <div class="icon-btn">⚙️</div>
+        <div class="icon-btn">⬛</div>
+        <div class="avatar">A</div>
+    </div>
+</div>
+
+<div class="app-layout">
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="compose-btn"><span class="icon">✏️</span> Compose</div>
+        <a href="{{ url_for('inbox') }}">
+            <div class="nav-item active"><span class="icon">📥</span> Inbox <span class="nav-badge">4</span></div>
+        </a>
+        <div class="nav-item"><span class="icon">⭐</span> Starred</div>
+        <div class="nav-item"><span class="icon">⏰</span> Snoozed</div>
+        <div class="nav-item"><span class="icon">📤</span> Sent</div>
+        <div class="nav-item"><span class="icon">📄</span> Drafts <span class="nav-badge">2</span></div>
+        <div class="nav-item"><span class="icon">🗂️</span> More</div>
+    </nav>
+
+    <!-- Email view -->
+    <div class="email-view-pane" style="overflow-y:auto;flex:1">
+
+        <a href="{{ url_for('inbox') }}" class="back-btn">
+            ← Back to Inbox
+        </a>
+
+        <div class="email-subject-line">{{ email.subject }}</div>
+
+        <div class="email-header">
+            <div class="sender-avatar">{{ email.from_name[0].upper() }}</div>
+            <div class="email-meta">
+                <div class="from-name">{{ email.from_name }}</div>
+                <div class="from-email">&lt;{{ email.from_email }}&gt;</div>
+                <div class="to-line">To: me</div>
+            </div>
+            <div class="email-time">{{ email.date_time }}</div>
+        </div>
+
+        <div class="email-body">
+
+            {% if email.is_phishing %}
+            <!-- ── Phishing IRS email content ────────────────────────────── -->
+            <div class="irs-email-wrapper">
+
+                <div class="irs-email-header">
+                    <div class="irs-seal">🦅</div>
+                    <div class="irs-email-title">
+                        <h1>Internal Revenue Service</h1>
+                        <p>U.S. Department of the Treasury &nbsp;|&nbsp; irs-tax-refunds.com</p>
+                    </div>
+                </div>
+
+                <div class="irs-email-banner">
+                    ⚠️ &nbsp; ACTION REQUIRED — TAX REFUND NOTIFICATION
+                </div>
+
+                <div class="irs-email-body">
+                    <p>Dear Taxpayer,</p>
+
+                    <p>After conducting a review of your <strong>2025 federal tax return</strong>, our records indicate that you are entitled to a tax refund. To release your refund, we require verification of your identity and banking information.</p>
+
+                    <div class="refund-amount-box">
+                        <div class="label">Your Pending Refund Amount</div>
+                        <div class="amount">$4,287.00</div>
+                        <div class="ref">Reference No: IRS-2026-REF-84920 &nbsp;|&nbsp; Tax Year: 2025</div>
+                    </div>
+
+                    <div class="deadline-box">
+                        ⏱ <strong>Important:</strong> You must claim your refund within <strong>7 calendar days</strong> of receiving this notice. Unclaimed refunds are forfeited after the deadline per IRS Publication 594.
+                    </div>
+
+                    <table class="irs-email-info-table">
+                        <tr><td>Taxpayer ID:</td><td>***-**-XXXX (on file)</td></tr>
+                        <tr><td>Tax Year:</td><td>2025</td></tr>
+                        <tr><td>Refund Amount:</td><td>$4,287.00</td></tr>
+                        <tr><td>Processing Status:</td><td>Pending Verification</td></tr>
+                        <tr><td>Reference Number:</td><td>IRS-2026-REF-84920</td></tr>
+                    </table>
+
+                    <p>To claim your refund, please click the button below to access the <strong>IRS Secure Refund Portal</strong> and complete the verification process. The process takes approximately 5–10 minutes.</p>
+
+                    <a href="http://localhost:8051/refund-portal" class="irs-cta-btn">
+                        🔒 &nbsp; Claim Your Refund of $4,287.00 &nbsp;→
+                    </a>
+
+                    <p style="font-size:12px;color:#555;">
+                        If the button above does not work, copy and paste the following link into your browser:<br>
+                        <span style="color:#1a73e8;">http://irs-tax-refunds.com/refund-portal</span>
+                    </p>
+
+                    <p>If you believe you received this notice in error, please do not disregard it. Contact IRS Taxpayer Services at <strong>1-800-829-1040</strong> or reply to this email within 48 hours.</p>
+
+                    <p>Sincerely,</p>
+                    <p>
+                        <strong>IRS Tax Refund Department</strong><br>
+                        Internal Revenue Service<br>
+                        U.S. Department of the Treasury<br>
+                        <em>refunds@irs-tax-refunds.com</em>
+                    </p>
+                </div>
+
+                <div class="irs-email-footer">
+                    <p>This is an automated message from the IRS Tax Refund Processing System. Please do not reply directly to this email.
+                    For assistance, visit <span style="color:#1a73e8">irs-tax-refunds.com</span> or call 1-800-829-1040.</p>
+                    <p style="margin-top:8px">
+                        IRS Notice CP12 &nbsp;|&nbsp; Refund Verification Required &nbsp;|&nbsp; Form 4506-T Available Upon Request
+                    </p>
+                </div>
+
+                <div class="irs-disclaimer">
+                    This message is intended only for the named recipient. IRS will never ask for credit card or debit card information over email.
+                    For official IRS information, visit <span style="color:#1a73e8">irs.gov</span>.
+                </div>
+
+            </div>
+            <!-- end phishing email -->
+
+            {% else %}
+            <!-- ── Normal email body ─────────────────────────────────────── -->
+            {{ email.body | safe }}
+            {% endif %}
+
+        </div><!-- /email-body -->
+
+        <!-- Reply bar -->
+        <div style="margin-top:40px;border:1px solid #e0e0e0;border-radius:8px;padding:16px;max-width:680px">
+            <div style="display:flex;gap:12px;align-items:center;color:#5f6368;font-size:14px">
+                <span style="flex:1">Click here to reply</span>
+                <button style="padding:8px 20px;background:#1a73e8;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px">Reply</button>
+                <button style="padding:8px 20px;background:#fff;color:#444;border:1px solid #dadce0;border-radius:4px;cursor:pointer;font-size:13px">Forward</button>
+            </div>
+        </div>
+
+    </div><!-- /email-view-pane -->
+</div>
+
+</body>
+</html>

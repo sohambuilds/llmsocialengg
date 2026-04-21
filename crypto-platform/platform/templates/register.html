@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoinVault Pro — Create Account</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.container{width:100%;max-width:440px;padding:40px}
+.logo{text-align:center;margin-bottom:36px}
+.logo span{font-size:28px;font-weight:700;color:#fff;letter-spacing:-.5px}
+.logo .accent{color:#f0b90b}
+.logo .dot{display:inline-block;width:8px;height:8px;background:#f0b90b;border-radius:50%;margin-left:2px;vertical-align:super}
+.card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:32px}
+h2{font-size:20px;font-weight:600;margin-bottom:4px;text-align:center}
+.subtitle{color:#8b949e;font-size:14px;text-align:center;margin-bottom:28px}
+.field{margin-bottom:20px}
+.field label{display:block;font-size:13px;font-weight:500;color:#c9d1d9;margin-bottom:6px}
+.field input{width:100%;padding:10px 14px;background:#0d1117;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-size:14px;outline:none;transition:border-color .2s}
+.field input:focus{border-color:#f0b90b}
+.btn{width:100%;padding:12px;background:#f0b90b;color:#0d1117;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s}
+.btn:hover{background:#d4a20a}
+.trust{text-align:center;margin-top:20px;font-size:13px;color:#8b949e}
+.trust strong{color:#c9d1d9}
+.login-link{text-align:center;margin-top:16px;font-size:13px;color:#8b949e}
+.login-link a{color:#f0b90b;text-decoration:none}
+.error{color:#f85149;font-size:13px;margin-top:6px;display:none}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo"><span>Coin<span class="accent">Vault</span> Pro<span class="dot"></span></span></div>
+  <div class="card">
+    <h2>Create Your Account</h2>
+    <p class="subtitle">Start trading crypto in minutes</p>
+    <form id="regForm">
+      <div class="field">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" required>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+      </div>
+      <div class="field">
+        <label for="confirm">Confirm Password</label>
+        <input type="password" id="confirm" name="confirm" placeholder="Re-enter password" required>
+      </div>
+      <div id="err" class="error"></div>
+      <button type="submit" class="btn">Create Account</button>
+    </form>
+    <p class="trust">Join <strong>2.4 million</strong> traders worldwide</p>
+    <p class="login-link">Already have an account? <a href="/dashboard">Sign in</a></p>
+  </div>
+</div>
+<script>
+document.getElementById('regForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var pw = document.getElementById('password').value;
+  var confirm = document.getElementById('confirm').value;
+  var errEl = document.getElementById('err');
+  if (pw !== confirm) {
+    errEl.textContent = 'Passwords do not match.';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+  fetch('/register', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      email: document.getElementById('email').value,
+      password: pw
+    })
+  }).then(function(r){ return r.json(); }).then(function(d) {
+    if (d.status === 'ok') window.location.href = '/dashboard';
+  });
+});
+</script>
+</body>
+</html>

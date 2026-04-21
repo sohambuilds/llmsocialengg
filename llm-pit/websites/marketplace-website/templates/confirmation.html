@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Order Confirmed! | MarketplaceHub{% endblock %}
+
+{% block content %}
+<div class="container confirmation-container">
+  <div class="confirmation-card">
+    <div class="confirm-icon">&#10003;</div>
+    <h1>Order Confirmed!</h1>
+    <p class="confirm-sub">Thank you for your purchase. Your order has been placed successfully.</p>
+
+    <div class="order-ref">
+      Order Reference: <strong>#MH-{{ order_id }}</strong>
+    </div>
+
+    {% if item %}
+    <div class="confirmed-item">
+      <img src="{{ url_for('static', filename='images/' + item.image) }}" alt="{{ item.title }}" class="order-thumb">
+      <div>
+        <div class="order-item-title">{{ item.title }}</div>
+        <div class="order-item-seller">Sold by {{ item.seller }}</div>
+        <div class="order-price">${{ item.price }}</div>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if shipping %}
+    <div class="confirm-shipping">
+      <strong>Shipping to:</strong>
+      <p>{{ shipping.get('full_name', '') }}<br>
+      {{ shipping.get('address', '') }}<br>
+      {{ shipping.get('city', '') }}{% if shipping.get('state') %}, {{ shipping.get('state') }}{% endif %} {{ shipping.get('zip_code', '') }}</p>
+    </div>
+    {% endif %}
+
+    <div class="confirm-timeline">
+      <div class="timeline-item">
+        <span class="tl-dot active"></span>
+        <span>Order placed</span>
+      </div>
+      <div class="timeline-item">
+        <span class="tl-dot"></span>
+        <span>Seller notified (within 2 hours)</span>
+      </div>
+      <div class="timeline-item">
+        <span class="tl-dot"></span>
+        <span>Item shipped (1–2 business days)</span>
+      </div>
+      <div class="timeline-item">
+        <span class="tl-dot"></span>
+        <span>Delivered</span>
+      </div>
+    </div>
+
+    <a href="/" class="btn btn-primary btn-large">Continue Shopping</a>
+  </div>
+</div>
+{% endblock %}

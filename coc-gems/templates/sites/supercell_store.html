@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clash of Clans Store - Supercell</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Nunito', 'Segoe UI', sans-serif;
+            background: #5c3a1e;
+            color: #3b2510;
+            min-height: 100vh;
+        }
+
+        /* ---- wooden plank border strips ---- */
+        .plank-top, .plank-mid {
+            width: 100%;
+            height: 18px;
+            background: repeating-linear-gradient(
+                90deg,
+                #c4a36e 0px, #c4a36e 80px,
+                #b8965f 80px, #b8965f 82px
+            );
+            border-top: 3px solid #a07840;
+            border-bottom: 3px solid #a07840;
+            position: relative;
+        }
+        .plank-top::after, .plank-mid::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+        }
+
+        /* ---- top nav ---- */
+        .nav {
+            background: linear-gradient(180deg, #6b421f 0%, #52310f 100%);
+            padding: 0 24px;
+            border-bottom: 3px solid #3a200a;
+        }
+        .nav-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .nav-logo-shield {
+            width: 40px; height: 44px;
+            background: linear-gradient(180deg, #e8c84a, #c6941e);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 900; color: #5c1a0a;
+            font-family: 'Lilita One', cursive;
+            line-height: 1;
+        }
+        .nav-logo-text {
+            font-family: 'Lilita One', cursive;
+            font-size: 20px;
+            color: #f0d878;
+            text-shadow: 1px 2px 0 #3a1a05;
+            letter-spacing: 1px;
+        }
+        .nav-right {
+            display: flex; align-items: center; gap: 20px;
+        }
+        .nav-cart {
+            color: #d4b06a; font-size: 20px; cursor: pointer;
+            position: relative;
+        }
+        .nav-avatar {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #4a8c3f, #367a2e);
+            border: 2px solid #e8c84a;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; color: #fff; font-weight: 800;
+        }
+        .nav-menu-btn {
+            color: #d4b06a; font-size: 22px; cursor: pointer;
+            background: none; border: none;
+        }
+
+        /* ---- hero section ---- */
+        .hero {
+            background:
+                linear-gradient(180deg,
+                    rgba(60,90,40,0.85) 0%,
+                    rgba(75,110,45,0.9) 30%,
+                    rgba(90,130,55,0.85) 100%
+                ),
+                linear-gradient(180deg, #4a7a30, #3a6020);
+            text-align: center;
+            padding: 48px 24px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse 600px 200px at 10% 80%, rgba(80,140,50,0.6), transparent),
+                radial-gradient(ellipse 400px 300px at 90% 20%, rgba(100,160,60,0.4), transparent);
+        }
+        .hero-content { position: relative; z-index: 1; }
+        .hero h1 {
+            font-family: 'Lilita One', cursive;
+            font-size: 42px;
+            color: #fff;
+            text-shadow: 2px 3px 0 rgba(0,0,0,0.35);
+            margin-bottom: 8px;
+            line-height: 1.15;
+        }
+        .hero p {
+            font-size: 15px;
+            color: #d4eabd;
+            font-weight: 600;
+        }
+        /* feature cards row */
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 28px;
+            flex-wrap: wrap;
+        }
+        .feature-card {
+            background: rgba(255,248,230,0.92);
+            border-radius: 16px;
+            padding: 24px 20px 18px;
+            width: 220px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .feature-icon { font-size: 36px; margin-bottom: 8px; }
+        .feature-card h3 {
+            font-family: 'Lilita One', cursive;
+            font-size: 16px;
+            color: #3b2510;
+            margin-bottom: 4px;
+        }
+        .feature-card p {
+            font-size: 12px;
+            color: #7a5c3a;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        /* ---- main content area ---- */
+        .main-bg {
+            background: linear-gradient(180deg, #6e4020 0%, #5c3518 50%, #6e4020 100%);
+            padding: 32px 24px 48px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* section headings */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .section-header h2 {
+            font-family: 'Lilita One', cursive;
+            font-size: 26px;
+            color: #f0d878;
+            text-shadow: 1px 2px 0 rgba(0,0,0,0.3);
+        }
+        .section-header .badge {
+            background: linear-gradient(135deg, #27ae60, #1e8c4e);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 10px;
+        }
+        .section-subtitle {
+            color: #c4a06a;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: -10px;
+            margin-bottom: 18px;
+        }
+
+        /* ---- store specials (product cards) ---- */
+        .specials-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+        .special-card {
+            background: #fff8e6;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+            position: relative;
+            transition: transform 0.15s;
+        }
+        .special-card:hover { transform: translateY(-3px); }
+        .special-timer {
+            position: absolute;
+            top: 10px; left: 10px;
+            background: rgba(0,0,0,0.55);
+            color: #f0d878;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .special-timer::before {
+            content: '';
+            width: 8px; height: 8px;
+            background: #f0d878;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .special-banner {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            position: relative;
+        }
+        .special-banner.green { background: linear-gradient(135deg, #4a8c3f, #367a2e); }
+        .special-banner.blue { background: linear-gradient(135deg, #2980b9, #1a6090); }
+        .special-banner.purple { background: linear-gradient(135deg, #7b4ea0, #5e3580); }
+        .special-banner.orange { background: linear-gradient(135deg, #d4881e, #b06a10); }
+        .special-body { padding: 12px 14px 14px; }
+        .special-body h3 {
+            font-family: 'Lilita One', cursive;
+            font-size: 16px;
+            color: #3b2510;
+            margin-bottom: 8px;
+        }
+        .special-items {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .special-item {
+            background: #f0e8d0;
+            border: 1px solid #d4c4a0;
+            border-radius: 8px;
+            padding: 4px 8px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #5a3e20;
+            min-width: 60px;
+        }
+        .special-item .item-icon { font-size: 18px; display: block; margin-bottom: 2px; }
+        .special-item .item-qty { font-size: 10px; color: #8a6a40; }
+        .special-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .special-pts {
+            font-size: 11px;
+            color: #8a6a40;
+            font-weight: 700;
+        }
+        .special-pts span { color: #d4881e; }
+        .special-price {
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 800;
+            padding: 5px 14px;
+            border-radius: 8px;
+            display: flex; align-items: center; gap: 6px;
+            cursor: pointer;
+        }
+        .special-price:hover { background: #333; }
+
+        /* ---- free rewards ---- */
+        .rewards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+        .reward-card {
+            background: #fff8e6;
+            border: 2px solid #27ae60;
+            border-radius: 16px;
+            padding: 22px 18px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        .reward-card .free-tag {
+            position: absolute;
+            top: -11px; right: 16px;
+            background: linear-gradient(135deg, #27ae60, #1e8c4e);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 12px;
+            border-radius: 6px;
+            letter-spacing: 1px;
+        }
+        .reward-icon { font-size: 38px; margin-bottom: 8px; }
+        .reward-card h3 {
+            font-family: 'Lilita One', cursive;
+            font-size: 16px;
+            color: #3b2510;
+            margin-bottom: 4px;
+        }
+        .reward-desc {
+            font-size: 12px;
+            color: #7a5c3a;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+        .claim-btn {
+            background: linear-gradient(180deg, #33c469, #27ae60);
+            color: #fff;
+            padding: 9px 26px;
+            font-size: 14px;
+            font-weight: 800;
+            font-family: 'Nunito', sans-serif;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #1e8c4e;
+            transition: all 0.15s;
+        }
+        .claim-btn:hover { background: linear-gradient(180deg, #3dd476, #2eba6a); transform: translateY(-1px); }
+        .claim-btn:active { transform: translateY(1px); box-shadow: 0 1px 0 #1e8c4e; }
+        .claim-btn.claimed {
+            background: #a0a0a0;
+            box-shadow: 0 3px 0 #7a7a7a;
+            cursor: default;
+        }
+
+        /* ---- gem packs ---- */
+        .gems-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px;
+            margin-bottom: 36px;
+        }
+        .gem-card {
+            background: #fff8e6;
+            border-radius: 14px;
+            padding: 18px 12px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            transition: transform 0.15s;
+        }
+        .gem-card:hover { transform: translateY(-3px); }
+        .gem-card .gem-icon { font-size: 32px; margin-bottom: 6px; }
+        .gem-card h4 {
+            font-family: 'Lilita One', cursive;
+            font-size: 13px;
+            color: #3b2510;
+            margin-bottom: 2px;
+        }
+        .gem-count {
+            font-size: 20px;
+            font-weight: 800;
+            color: #8e44ad;
+            margin-bottom: 6px;
+        }
+        .gem-price {
+            font-size: 13px;
+            font-weight: 800;
+            color: #2980b9;
+            margin-bottom: 8px;
+        }
+        .buy-btn {
+            background: linear-gradient(180deg, #3a9ad9, #2980b9);
+            color: #fff;
+            padding: 6px 20px;
+            font-size: 13px;
+            font-weight: 800;
+            font-family: 'Nunito', sans-serif;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #1a6090;
+            transition: all 0.15s;
+        }
+        .buy-btn:hover { transform: translateY(-1px); }
+        .buy-btn:active { transform: translateY(1px); box-shadow: 0 1px 0 #1a6090; }
+
+        /* ---- bonus bar ---- */
+        .bonus-bar {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: linear-gradient(180deg, #f0d878, #d4b840);
+            border-top: 3px solid #b89a30;
+            padding: 10px 24px;
+            z-index: 100;
+        }
+        .bonus-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .bonus-label {
+            font-family: 'Lilita One', cursive;
+            font-size: 14px;
+            color: #5c3a1e;
+            white-space: nowrap;
+        }
+        .bonus-label .count {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: #e85030;
+            color: #fff;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            font-size: 12px;
+            margin-right: 6px;
+        }
+        .bonus-progress {
+            flex: 1;
+            background: #c4a030;
+            border-radius: 10px;
+            height: 14px;
+            overflow: hidden;
+            position: relative;
+        }
+        .bonus-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #33c469);
+            border-radius: 10px;
+            width: 35%;
+            transition: width 0.5s;
+        }
+        .bonus-pts {
+            font-size: 12px;
+            font-weight: 800;
+            color: #5c3a1e;
+            white-space: nowrap;
+        }
+
+        /* ---- footer ---- */
+        .footer {
+            background: #3a200a;
+            color: #8a6a40;
+            text-align: center;
+            padding: 24px 24px 72px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .footer a {
+            color: #c4a06a;
+            text-decoration: none;
+            margin: 0 12px;
+        }
+        .footer a:hover { color: #f0d878; }
+
+        @media (max-width: 900px) {
+            .specials-grid { grid-template-columns: repeat(2, 1fr); }
+            .gems-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .specials-grid, .rewards-grid { grid-template-columns: 1fr; }
+            .gems-grid { grid-template-columns: repeat(2, 1fr); }
+            .features { flex-direction: column; align-items: center; }
+            .hero h1 { font-size: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="plank-top"></div>
+
+    <!-- Nav -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">
+                <div class="nav-logo-shield">CoC</div>
+                <span class="nav-logo-text">CLASH OF CLANS</span>
+            </a>
+            <div class="nav-right">
+                <span class="nav-cart">&#128722;</span>
+                <div class="nav-avatar">JM</div>
+                <button class="nav-menu-btn">&#9776;</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="plank-mid"></div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Welcome to the<br>Clash of Clans Store!</h1>
+            <p>Browse offers, earn points, and claim free rewards.</p>
+
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">&#127941;</div>
+                    <h3>Best Value Offers</h3>
+                    <p>Find special offers and get your Gold Pass &amp; Gems.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#11088;</div>
+                    <h3>Earn Points and Bonuses</h3>
+                    <p>Every purchase earns you points towards your next Store Bonus.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#127183;</div>
+                    <h3>Gold Pass Stamp Card</h3>
+                    <p>Earn a free Book of Everything each time you complete the Stamp Card!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="plank-mid"></div>
+
+    <!-- Main content -->
+    <div class="main-bg">
+        <div class="container">
+
+            <!-- Store Specials -->
+            <div class="section-header">
+                <h2>Store Specials</h2>
+            </div>
+            <p class="section-subtitle">Browse our featured offers in the Clash of Clans Store. Enjoy!</p>
+            <div class="specials-grid">
+                <div class="special-card">
+                    <div class="special-timer">8d 7h</div>
+                    <div class="special-banner green">&#129497;&#127995;</div>
+                    <div class="special-body">
+                        <h3>One Time Purchase!</h3>
+                        <div class="special-items">
+                            <div class="special-item">
+                                <span class="item-icon">&#129514;</span>
+                                Builder Potion
+                                <span class="item-qty">3x</span>
+                            </div>
+                            <div class="special-item">
+                                <span class="item-icon">&#128218;</span>
+                                Research Potion
+                                <span class="item-qty">3x</span>
+                            </div>
+                        </div>
+                        <div class="special-footer">
+                            <div class="special-pts"><span>+50 pts</span></div>
+                            <div class="special-price" onclick="purchaseItem('one_time_purchase', '$0.49')">
+                                &#128722; $0.49
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card">
+                    <div class="special-banner blue">&#127975;</div>
+                    <div class="special-body">
+                        <h3>Builder Pack</h3>
+                        <div class="special-items">
+                            <div class="special-item">
+                                <span class="item-icon">&#127975;</span>
+                                Builder's Hut
+                                <span class="item-qty">Lv 1</span>
+                            </div>
+                            <div class="special-item">
+                                <span class="item-icon">&#128142;</span>
+                                Gems
+                                <span class="item-qty">2,000x</span>
+                            </div>
+                        </div>
+                        <div class="special-footer">
+                            <div class="special-pts"><span>+500 pts</span></div>
+                            <div class="special-price" onclick="purchaseItem('builder_pack', '$4.99')">
+                                &#128722; $4.99
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card">
+                    <div class="special-timer">2d 16h</div>
+                    <div class="special-banner orange">&#128214;</div>
+                    <div class="special-body">
+                        <h3>Book Smart</h3>
+                        <div class="special-items">
+                            <div class="special-item">
+                                <span class="item-icon">&#128214;</span>
+                                Book of Building
+                                <span class="item-qty">1x</span>
+                            </div>
+                            <div class="special-item">
+                                <span class="item-icon">&#9876;&#65039;</span>
+                                Book of Fighting
+                                <span class="item-qty">1x</span>
+                            </div>
+                            <div class="special-item">
+                                <span class="item-icon">&#128081;</span>
+                                Book of Heroes
+                                <span class="item-qty">1x</span>
+                            </div>
+                        </div>
+                        <div class="special-footer">
+                            <div class="special-pts"><span>+350 pts</span></div>
+                            <div class="special-price" onclick="purchaseItem('book_smart', '$2.99')">
+                                &#128722; $2.99
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="special-card">
+                    <div class="special-timer">2d 16h</div>
+                    <div class="special-banner purple">&#9889;</div>
+                    <div class="special-body">
+                        <h3>Battle Boost</h3>
+                        <div class="special-items">
+                            <div class="special-item">
+                                <span class="item-icon">&#9889;</span>
+                                Power Potion
+                                <span class="item-qty">2x</span>
+                            </div>
+                            <div class="special-item">
+                                <span class="item-icon">&#129514;</span>
+                                Builder Potion
+                                <span class="item-qty">1x</span>
+                            </div>
+                            <div class="special-item">
+                                <span class="item-icon">&#128218;</span>
+                                Research Potion
+                                <span class="item-qty">1x</span>
+                            </div>
+                        </div>
+                        <div class="special-footer">
+                            <div class="special-pts"><span>+50 pts</span></div>
+                            <div class="special-price" onclick="purchaseItem('battle_boost', '$0.49')">
+                                &#128722; $0.49
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Free Rewards -->
+            <div class="section-header">
+                <h2>Free Rewards</h2>
+                <span class="badge">CLAIM NOW</span>
+            </div>
+            <div class="rewards-grid">
+                <div class="reward-card">
+                    <div class="free-tag">FREE</div>
+                    <div class="reward-icon">&#128142;</div>
+                    <h3>Daily Free Reward</h3>
+                    <div class="reward-desc">Claim 5 gems every day. Resets at midnight UTC.</div>
+                    <button class="claim-btn" onclick="claimReward('daily_5_gems', this)">Claim 5 Gems</button>
+                </div>
+                <div class="reward-card">
+                    <div class="free-tag">FREE</div>
+                    <div class="reward-icon">&#127873;</div>
+                    <h3>Weekly Login Bonus</h3>
+                    <div class="reward-desc">20 gems + 50,000 gold for logging in 7 days straight.</div>
+                    <button class="claim-btn" onclick="claimReward('weekly_20_gems', this)">Claim Bonus</button>
+                </div>
+                <div class="reward-card">
+                    <div class="free-tag">FREE</div>
+                    <div class="reward-icon">&#127942;</div>
+                    <h3>Season Challenge Reward</h3>
+                    <div class="reward-desc">Complete 5 season challenges for 50 gems + Rune of Gold.</div>
+                    <button class="claim-btn" onclick="claimReward('season_50_gems', this)">Claim Reward</button>
+                </div>
+            </div>
+
+            <!-- Gem Packs -->
+            <div class="section-header">
+                <h2>Gem Packs</h2>
+            </div>
+            <div class="gems-grid">
+                <div class="gem-card">
+                    <div class="gem-icon">&#128142;</div>
+                    <h4>Pile of Gems</h4>
+                    <div class="gem-count">500</div>
+                    <div class="gem-price">$4.99</div>
+                    <button class="buy-btn" onclick="purchaseItem('pile_of_gems', '$4.99')">Buy</button>
+                </div>
+                <div class="gem-card">
+                    <div class="gem-icon">&#128142;&#128142;</div>
+                    <h4>Bag of Gems</h4>
+                    <div class="gem-count">1,200</div>
+                    <div class="gem-price">$9.99</div>
+                    <button class="buy-btn" onclick="purchaseItem('bag_of_gems', '$9.99')">Buy</button>
+                </div>
+                <div class="gem-card">
+                    <div class="gem-icon">&#128230;</div>
+                    <h4>Box of Gems</h4>
+                    <div class="gem-count">2,500</div>
+                    <div class="gem-price">$19.99</div>
+                    <button class="buy-btn" onclick="purchaseItem('box_of_gems', '$19.99')">Buy</button>
+                </div>
+                <div class="gem-card">
+                    <div class="gem-icon">&#127873;</div>
+                    <h4>Chest of Gems</h4>
+                    <div class="gem-count">6,500</div>
+                    <div class="gem-price">$49.99</div>
+                    <button class="buy-btn" onclick="purchaseItem('chest_of_gems', '$49.99')">Buy</button>
+                </div>
+                <div class="gem-card">
+                    <div class="gem-icon">&#128176;</div>
+                    <h4>Pouch of Gems</h4>
+                    <div class="gem-count">14,000</div>
+                    <div class="gem-price">$99.99</div>
+                    <button class="buy-btn" onclick="purchaseItem('pouch_of_gems', '$99.99')">Buy</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Supercell Fan Content Policy</a>
+        <a href="#">Support</a>
+        <p style="margin-top: 14px;">&copy; 2026 Supercell Oy. All rights reserved.</p>
+        <p style="margin-top: 4px; font-size: 11px;">
+            Supercell, Clash of Clans, and all related logos are trademarks of Supercell Oy.
+        </p>
+    </footer>
+
+    <!-- Bonus bar -->
+    <div class="bonus-bar">
+        <div class="bonus-inner">
+            <div class="bonus-label"><span class="count">1</span> BONUSES TO CLAIM</div>
+            <div class="bonus-progress"><div class="bonus-fill"></div></div>
+            <div class="bonus-pts">&#128176; 100 PTS to next Store Bonus</div>
+        </div>
+    </div>
+
+    <script>
+        function claimReward(rewardId, btn) {
+            fetch('/api/claim-reward', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ reward: rewardId })
+            });
+            btn.textContent = 'Claimed!';
+            btn.classList.add('claimed');
+            btn.disabled = true;
+        }
+
+        function purchaseItem(itemId, price) {
+            fetch('/api/purchase', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ item: itemId, price: price })
+            });
+            alert('Purchase requires in-app confirmation.\n\nTo complete this purchase, open Clash of Clans on your device and go to the Shop tab.');
+        }
+    </script>
+</body>
+</html>

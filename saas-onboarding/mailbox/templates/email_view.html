@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ email.subject }} - Gmail</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Google Sans', Roboto, Arial, sans-serif; background: #f6f8fc; color: #202124; }
+
+  .header {
+    background: #fff; height: 64px; display: flex; align-items: center;
+    padding: 0 16px; border-bottom: 1px solid #e0e0e0; position: fixed;
+    top: 0; left: 0; right: 0; z-index: 100;
+  }
+  .header-menu { font-size: 24px; cursor: pointer; padding: 8px; color: #5f6368; margin-right: 4px; }
+  .header-logo-text { font-size: 22px; font-weight: 400; letter-spacing: -0.5px; margin-right: 32px; }
+  .header-logo-text span:nth-child(1) { color: #4285f4; }
+  .header-logo-text span:nth-child(2) { color: #ea4335; }
+  .header-logo-text span:nth-child(3) { color: #fbbc05; }
+  .header-logo-text span:nth-child(4) { color: #4285f4; }
+  .header-logo-text span:nth-child(5) { color: #34a853; }
+  .search-bar {
+    flex: 1; max-width: 720px; background: #eaf1fb; border-radius: 28px;
+    height: 48px; display: flex; align-items: center; padding: 0 16px;
+  }
+  .search-bar input {
+    background: transparent; border: none; outline: none; font-size: 16px;
+    color: #202124; flex: 1; font-family: inherit;
+  }
+  .search-bar input::placeholder { color: #5f6368; }
+  .header-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%; background: #1a73e8;
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 500; cursor: pointer;
+  }
+
+  .layout { display: flex; margin-top: 64px; min-height: calc(100vh - 64px); }
+
+  .sidebar {
+    width: 256px; background: #f6f8fc; padding: 8px 12px; flex-shrink: 0;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 16px; padding: 0 24px;
+    height: 32px; border-radius: 16px; cursor: pointer; font-size: 14px;
+    color: #444746; margin-bottom: 2px; text-decoration: none;
+  }
+  .nav-item:hover { background: #e2e6ea; }
+  .nav-item.active { background: #d3e3fd; color: #001d35; font-weight: 600; }
+  .nav-icon { font-size: 18px; width: 24px; text-align: center; }
+
+  .main {
+    flex: 1; background: #fff; border-radius: 16px 0 0 0; padding: 0;
+  }
+
+  .email-toolbar {
+    display: flex; align-items: center; padding: 8px 16px; height: 48px;
+    border-bottom: 1px solid #e0e0e0; gap: 4px;
+  }
+  .tb-btn {
+    background: none; border: none; color: #5f6368; cursor: pointer;
+    font-size: 18px; padding: 8px; border-radius: 50%;
+    text-decoration: none; display: flex; align-items: center;
+  }
+  .tb-btn:hover { background: #f1f3f4; }
+
+  .email-view { padding: 24px 60px; max-width: 900px; }
+
+  .email-subject-line {
+    font-size: 22px; font-weight: 400; color: #202124; margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .sender-row {
+    display: flex; align-items: flex-start; gap: 12px; margin-bottom: 24px;
+  }
+  .sender-avatar {
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 500; color: #fff;
+  }
+  .sender-info { flex: 1; }
+  .sender-name { font-size: 14px; font-weight: 600; color: #202124; }
+  .sender-email { font-size: 12px; color: #5f6368; }
+  .sender-to { font-size: 12px; color: #5f6368; margin-top: 2px; }
+  .sender-date { font-size: 12px; color: #5f6368; flex-shrink: 0; }
+
+  .email-actions {
+    display: flex; gap: 4px; flex-shrink: 0;
+  }
+  .action-btn {
+    background: none; border: none; color: #5f6368; font-size: 18px;
+    padding: 8px; border-radius: 50%; cursor: pointer;
+  }
+  .action-btn:hover { background: #f1f3f4; }
+
+  .email-body {
+    font-size: 14px; line-height: 1.7; color: #222; white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  .email-body a { color: #1a73e8; text-decoration: none; }
+  .email-body a:hover { text-decoration: underline; }
+
+  .reply-area {
+    margin-top: 32px; border: 1px solid #dadce0; border-radius: 12px;
+    padding: 16px 20px; display: flex; align-items: center; gap: 8px;
+    color: #5f6368; cursor: text; font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-menu">&#9776;</div>
+  <div class="header-logo-text">
+    <span>G</span><span>m</span><span>a</span><span>i</span><span>l</span>
+  </div>
+  <div class="search-bar">
+    <input type="text" placeholder="Search mail">
+  </div>
+  <div class="header-right">
+    <div class="avatar">J</div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <a class="nav-item active" href="/">
+      <span class="nav-icon">&#128233;</span> Inbox
+    </a>
+    <a class="nav-item" href="#">
+      <span class="nav-icon">&#11088;</span> Starred
+    </a>
+    <a class="nav-item" href="#">
+      <span class="nav-icon">&#10148;</span> Sent
+    </a>
+    <a class="nav-item" href="#">
+      <span class="nav-icon">&#128196;</span> Drafts
+    </a>
+  </div>
+
+  <div class="main">
+    <div class="email-toolbar">
+      <a href="/" class="tb-btn" title="Back to Inbox">&#8592;</a>
+      <button class="tb-btn" title="Archive">&#128451;</button>
+      <button class="tb-btn" title="Report spam">&#9888;</button>
+      <button class="tb-btn" title="Delete">&#128465;</button>
+      <button class="tb-btn" title="Mark unread">&#9993;</button>
+    </div>
+
+    <div class="email-view">
+      <h1 class="email-subject-line">{{ email.subject }}</h1>
+
+      <div class="sender-row">
+        {% set colors = {'GitHub': '#24292e', 'Alex Chen': '#e17055', 'LinkedIn': '#0077b5', 'Uber': '#000', 'Google Calendar': '#4285f4'} %}
+        <div class="sender-avatar" style="background: {{ colors.get(email.from_name, '#1a73e8') }};">
+          {{ email.from_name[0] }}
+        </div>
+        <div class="sender-info">
+          <div class="sender-name">{{ email.from_name }} <span style="font-weight:400;color:#5f6368;">&lt;{{ email.from }}&gt;</span></div>
+          <div class="sender-to">to me</div>
+        </div>
+        <span class="sender-date">{{ email.date }}, 2026</span>
+        <div class="email-actions">
+          <button class="action-btn" title="Reply">&#8617;</button>
+          <button class="action-btn" title="Forward">&#8618;</button>
+          <button class="action-btn" title="More">&#8942;</button>
+        </div>
+      </div>
+
+      <div class="email-body">{{ email.body | replace('\n', '<br>') | replace('http://localhost:6021', '<a href="http://localhost:6021">http://localhost:6021</a>') | safe }}</div>
+
+      <div class="reply-area">
+        &#8617; Click here to <strong style="margin-left:4px;">Reply</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FreelanceHub{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-mark">FH</div>
+                <span class="logo-text">FreelanceHub</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/" class="nav-item {{ 'active' if request.path == '/' }}">
+                    <span class="material-icons-outlined">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/inbox" class="nav-item {{ 'active' if '/inbox' in request.path }}">
+                    <span class="material-icons-outlined">chat</span>
+                    <span>Messages</span>
+                    {% if unread_count > 0 %}
+                    <span class="nav-badge">{{ unread_count }}</span>
+                    {% endif %}
+                </a>
+                <a href="/projects" class="nav-item {{ 'active' if request.path == '/projects' }}">
+                    <span class="material-icons-outlined">work_outline</span>
+                    <span>Projects</span>
+                </a>
+                <a href="/profile" class="nav-item {{ 'active' if request.path == '/profile' }}">
+                    <span class="material-icons-outlined">person_outline</span>
+                    <span>Profile</span>
+                </a>
+                <a href="/settings/payments" class="nav-item {{ 'active' if request.path == '/settings/payments' }}">
+                    <span class="material-icons-outlined">account_balance_wallet</span>
+                    <span>Payments</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-profile">
+                    <div class="avatar avatar-sm" style="background: #0D9488;">
+                        {{ profile.name.split()[0][0] }}{{ profile.name.split()[1][0] }}
+                    </div>
+                    <div class="sidebar-profile-info">
+                        <div class="sidebar-profile-name">{{ profile.name }}</div>
+                        <div class="sidebar-profile-role">{{ profile.title }}</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
+                <div class="topbar-right">
+                    <span class="topbar-greeting">Welcome back, {{ profile.name.split()[0] }}</span>
+                </div>
+            </header>
+            <div class="page-content">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

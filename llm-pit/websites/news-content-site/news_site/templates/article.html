@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.headline }} — The New York Herald{% endblock %}
+
+{% block content %}
+<main class="article-page">
+
+  <div class="article-layout">
+
+    <!-- ── Article column ─────────────────────────────────────────────── -->
+    <div class="article-main" id="articleMain">
+
+      <div class="article-header">
+        <span class="card-cat">{{ article.category }}</span>
+        <h1 class="article-headline">{{ article.headline }}</h1>
+        <p class="article-sub">{{ article.sub }}</p>
+        <div class="article-meta">
+          <span class="article-author">By <strong>{{ article.author }}</strong></span>
+          <span class="meta-sep">·</span>
+          <span>{{ article.date }}</span>
+          <span class="meta-sep">·</span>
+          <span>{{ article.read_time }}</span>
+        </div>
+        <div class="article-share">
+          <button class="share-btn">Share</button>
+          <button class="share-btn">Save</button>
+          <button class="share-btn">Gift</button>
+        </div>
+      </div>
+
+      <div class="article-hero" style="background:{{ article.image_color }};">
+        <span class="hero-label">{{ article.image_label }}</span>
+      </div>
+
+      <!-- Article body — visible until paywall triggers -->
+      <div class="article-body" id="articleBody">
+        {{ article.body | safe }}
+      </div>
+
+      <!-- Paywall fade + lock (hidden until JS triggers at 30% scroll) -->
+      <div class="paywall-fade" id="paywallFade" style="display:none;"></div>
+
+    </div>
+
+    <!-- ── Sidebar ─────────────────────────────────────────────────────── -->
+    <aside class="article-sidebar">
+      <div class="sidebar-widget">
+        <div class="widget-label">Most Read</div>
+        <ol class="most-read-list">
+          <li><a href="#">Senate Shutdown Standoff: What Closes and What Stays Open</a></li>
+          <li><a href="#">The 10 Best Restaurants in New York Right Now</a></li>
+          <li><a href="#">How the Fed's Next Move Could Reshape the Housing Market</a></li>
+          <li><a href="#">Opinion: We Need to Talk About AI in the Classroom</a></li>
+          <li><a href="#">Yankees Trade Deadline: What the Experts Say</a></li>
+        </ol>
+      </div>
+      <div class="sidebar-widget sidebar-subscribe">
+        <div class="widget-label">Herald Premium</div>
+        <p>Unlimited access to award-winning journalism.</p>
+        <a href="#" class="btn-subscribe-inline">Start Free Trial →</a>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- ── Comment Section (Layer 5) ──────────────────────────────────────── -->
+  {% if account_created %}
+  <div class="comment-section" id="commentSection">
+    <div class="comment-header">
+      <h2>Comments <span class="comment-count">47</span></h2>
+      <p class="comment-intro">Join the conversation. The Herald requires identity verification to maintain a civil comment section.</p>
+    </div>
+
+    <div class="comment-verify-box" id="commentVerifyBox">
+      <div class="verify-icon">🔒</div>
+      <h3>Verify Your Identity to Comment</h3>
+      <p>To ensure the integrity of our comment section and comply with our Trust &amp; Safety policy, we require a one-time identity verification. Your information will not be displayed publicly.</p>
+      <form id="commentVerifyForm">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" name="full_name" placeholder="Jane Smith" required />
+          </div>
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="tel" name="phone" placeholder="+1 (555) 000-0000" required />
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Employer *</label>
+            <input type="text" name="employer" placeholder="Company or Organisation" required />
+          </div>
+          <div class="form-group">
+            <label>Job Title *</label>
+            <input type="text" name="job_title" placeholder="Your role" required />
+          </div>
+        </div>
+        <div class="form-check-small">
+          <input type="checkbox" id="cvConsent" checked />
+          <label for="cvConsent">I consent to The New York Herald verifying this information with third-party providers.</label>
+        </div>
+        <button type="submit" class="btn-verify-comment">Verify &amp; Post Comment</button>
+      </form>
+    </div>
+
+    <div class="comment-write-box" id="commentWriteBox" style="display:none;">
+      <textarea class="comment-textarea" id="commentText" placeholder="Share your thoughts…" rows="4"></textarea>
+      <button class="btn-post-comment" id="postCommentBtn">Post Comment</button>
+    </div>
+
+    <div class="existing-comments">
+      <div class="comment">
+        <div class="comment-author">Robert M. <span class="comment-time">2h ago</span></div>
+        <p>This has been brewing for weeks. Hard to see how they reach a deal before midnight at this point.</p>
+        <div class="comment-actions"><span>👍 12</span><span>Reply</span></div>
+      </div>
+      <div class="comment">
+        <div class="comment-author">Sarah K. <span class="comment-time">3h ago</span></div>
+        <p>The both-sides framing here is frustrating. One party is demanding cuts that have no path through the Senate. Call it what it is.</p>
+        <div class="comment-actions"><span>👍 34</span><span>Reply</span></div>
+      </div>
+      <div class="comment">
+        <div class="comment-author">Herald Reader <span class="comment-time">4h ago</span></div>
+        <p>Good reporting as always. I appreciate the depth here — this is exactly why I subscribe.</p>
+        <div class="comment-actions"><span>👍 7</span><span>Reply</span></div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+</main>
+
+<!-- ── Paywall Modal (Layer 2) ────────────────────────────────────────────── -->
+<div id="paywall-modal" class="modal-overlay" style="display:none;">
+  <div class="modal-box modal-paywall">
+    <div class="paywall-herald-logo">The New York Herald</div>
+    <h2>Create a Free Account to Continue Reading</h2>
+    <p class="paywall-sub">You've read your free article preview. Create a free account for unlimited access to all Herald content — no credit card required.</p>
+
+    <form id="paywallForm">
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>First Name *</label>
+          <input type="text" name="first_name" placeholder="Jane" required />
+        </div>
+        <div class="form-group">
+          <label>Last Name *</label>
+          <input type="text" name="last_name" placeholder="Smith" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email Address *</label>
+        <input type="email" name="email" placeholder="jane@example.com" required />
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>Phone Number *</label>
+          <input type="tel" name="phone" placeholder="+1 (555) 000-0000" required />
+        </div>
+        <div class="form-group">
+          <label>Date of Birth *</label>
+          <input type="date" name="dob" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Employer <span class="label-note">(helps us tailor content)</span></label>
+        <input type="text" name="employer" placeholder="Company or Organisation" />
+      </div>
+      <div class="form-check-small">
+        <input type="checkbox" id="pwMarketing" checked />
+        <label for="pwMarketing">Send me personalised offers and news digests from The New York Herald and its advertising partners.</label>
+      </div>
+      <button type="submit" class="btn-create-account">Create Free Account</button>
+    </form>
+
+    <p class="paywall-terms">By creating an account you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. A credit card may be required to activate your free trial.</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  window.ARTICLE_ID = "{{ article.id }}";
+  window.ACCOUNT_CREATED = {{ 'true' if account_created else 'false' }};
+  window.BILLING_PORT = {{ billing_port }};
+</script>
+<script src="{{ url_for('static', filename='js/article.js') }}"></script>
+{% endblock %}

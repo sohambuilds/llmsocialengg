@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}The New York Herald — Breaking News, U.S. & World{% endblock %}
+
+{% block content %}
+<main class="homepage">
+
+  <!-- ── Breaking news ticker ────────────────────────────────────────────── -->
+  <div class="ticker-wrap">
+    <div class="ticker-label">LIVE</div>
+    <div class="ticker-track">
+      <span>Senate budget talks continue past midnight with shutdown looming &nbsp;•&nbsp; NYC mayor announces emergency housing summit &nbsp;•&nbsp; Markets close higher ahead of Fed decision &nbsp;•&nbsp; Yankees open spring training with roster moves &nbsp;•&nbsp; Storm system threatens northeast coast this weekend</span>
+    </div>
+  </div>
+
+  <div class="homepage-grid">
+
+    <!-- ── Lead story ───────────────────────────────────────────────────── -->
+    <article class="card card-lead">
+      <a href="/article/{{ articles[0].id }}" class="card-img-link">
+        <div class="card-img-placeholder" style="background:{{ articles[0].image_color }};">
+          <span class="card-img-label">{{ articles[0].image_label }}</span>
+        </div>
+      </a>
+      <div class="card-body">
+        <span class="card-cat">{{ articles[0].category }}</span>
+        <h1 class="card-headline card-headline-lead">
+          <a href="/article/{{ articles[0].id }}">{{ articles[0].headline }}</a>
+        </h1>
+        <p class="card-sub">{{ articles[0].sub }}</p>
+        <div class="card-meta">
+          <span>By {{ articles[0].author }}</span>
+          <span class="meta-sep">·</span>
+          <span>{{ articles[0].date }}</span>
+          <span class="meta-sep">·</span>
+          <span>{{ articles[0].read_time }}</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── Right column stories ─────────────────────────────────────────── -->
+    <div class="side-stack">
+      {% for art in articles[1:4] %}
+      <article class="card card-side">
+        <a href="/article/{{ art.id }}" class="card-img-link card-img-link-sm">
+          <div class="card-img-placeholder card-img-sm" style="background:{{ art.image_color }};">
+            <span class="card-img-label-sm">{{ art.image_label }}</span>
+          </div>
+        </a>
+        <div class="card-body-side">
+          <span class="card-cat">{{ art.category }}</span>
+          <h2 class="card-headline card-headline-side">
+            <a href="/article/{{ art.id }}">{{ art.headline }}</a>
+          </h2>
+          <p class="card-sub card-sub-sm">{{ art.sub }}</p>
+          <div class="card-meta">
+            <span>{{ art.date }}</span>
+            <span class="meta-sep">·</span>
+            <span>{{ art.read_time }}</span>
+          </div>
+        </div>
+      </article>
+      {% if not loop.last %}<hr class="card-divider">{% endif %}
+      {% endfor %}
+    </div>
+
+  </div>
+
+  <!-- ── Section divider ─────────────────────────────────────────────────── -->
+  <div class="section-label">More Stories</div>
+
+  <!-- ── Secondary grid ──────────────────────────────────────────────────── -->
+  <div class="secondary-grid">
+    {% for art in articles[4:] %}
+    <article class="card card-secondary">
+      <div class="card-img-placeholder card-img-secondary" style="background:{{ art.image_color }};">
+        <span class="card-img-label-sm">{{ art.image_label }}</span>
+      </div>
+      <div class="card-body">
+        <span class="card-cat">{{ art.category }}</span>
+        <h3 class="card-headline card-headline-secondary">
+          <a href="/article/{{ art.id }}">{{ art.headline }}</a>
+        </h3>
+        <p class="card-sub card-sub-sm">{{ art.sub }}</p>
+        <div class="card-meta">
+          <span>By {{ art.author }}</span>
+          <span class="meta-sep">·</span>
+          <span>{{ art.date }}</span>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+
+  <!-- ── Ad strip ────────────────────────────────────────────────────────── -->
+  <div class="ad-strip">
+    <span class="ad-label">Advertisement</span>
+    <div class="ad-placeholder">
+      <span>Subscribe to The New York Herald — Unlimited digital access from $1.99/week</span>
+      <a href="#" class="ad-cta">See Offer</a>
+    </div>
+  </div>
+
+</main>
+{% endblock %}

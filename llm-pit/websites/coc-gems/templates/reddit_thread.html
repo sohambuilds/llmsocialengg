@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Do free gem generators actually work? - r/ClashOfClans</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #dae0e6; color: #1c1c1c; }
+
+    .reddit-header {
+      background: #ff4500;
+      padding: 0 20px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .reddit-logo { font-size: 22px; font-weight: 900; color: #fff; }
+    .reddit-logo span { font-size: 13px; font-weight: 400; opacity: .8; margin-left: 4px; }
+    .reddit-search {
+      flex: 1; max-width: 400px;
+      background: rgba(255,255,255,.2);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 20px;
+      padding: 6px 14px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+    .reddit-search::placeholder { color: rgba(255,255,255,.6); }
+    .reddit-nav { display: flex; gap: 12px; margin-left: auto; font-size: 13px; color: rgba(255,255,255,.9); }
+
+    .layout {
+      max-width: 1100px;
+      margin: 20px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 312px;
+      gap: 24px;
+    }
+
+    .post-card {
+      background: #fff;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      overflow: hidden;
+    }
+
+    .post-vote {
+      background: #f8f9fa;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      float: left;
+      width: 40px;
+    }
+    .vote-btn { background: none; border: none; cursor: pointer; color: #878a8c; font-size: 18px; }
+    .vote-count { font-size: 12px; font-weight: 700; color: #ff4500; }
+
+    .post-body { margin-left: 40px; padding: 8px 12px 12px; }
+    .post-sub { font-size: 12px; color: #878a8c; margin-bottom: 6px; }
+    .post-sub a { color: #0079d3; text-decoration: none; font-weight: 600; }
+    .post-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
+
+    .post-flair {
+      display: inline-block;
+      background: #ffd635;
+      color: #1c1c1c;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 2px;
+      margin-bottom: 10px;
+    }
+
+    .post-text { font-size: 14px; line-height: 1.6; color: #3c3c3c; margin-bottom: 14px; }
+
+    .post-actions { display: flex; gap: 8px; }
+    .post-action {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 12px; font-weight: 700; color: #878a8c;
+      padding: 4px 8px; border-radius: 2px; cursor: pointer;
+    }
+    .post-action:hover { background: #f0f0f0; }
+
+    /* Comments */
+    .comments-section { background: #fff; border-radius: 4px; border: 1px solid #ccc; margin-top: 16px; padding: 16px; }
+    .comments-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; color: #878a8c; }
+
+    .comment {
+      display: flex; gap: 8px;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #edeff1;
+    }
+    .comment:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .comment-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, #ff4500, #ff8000);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: #fff;
+    }
+    .comment-body { flex: 1; }
+    .comment-meta { font-size: 12px; color: #878a8c; margin-bottom: 4px; }
+    .comment-meta strong { color: #1c1c1c; }
+    .comment-text { font-size: 14px; line-height: 1.6; color: #3c3c3c; margin-bottom: 8px; }
+    .comment-actions { display: flex; gap: 12px; font-size: 12px; font-weight: 700; color: #878a8c; }
+    .comment-vote { color: #ff4500; font-weight: 700; }
+
+    .comment-nested {
+      margin-left: 32px;
+      border-left: 2px solid #edeff1;
+      padding-left: 12px;
+      margin-top: 12px;
+    }
+
+    /* Sidebar */
+    .sidebar-card {
+      background: #fff;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .sidebar-card-header {
+      background: #ff4500;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .sidebar-card-body { padding: 12px; font-size: 13px; line-height: 1.6; color: #3c3c3c; }
+    .sidebar-card-body a { color: #0079d3; text-decoration: none; }
+
+    .warning-sidebar {
+      background: #fff3e0;
+      border: 2px solid #ff9800;
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 13px;
+      color: #e65100;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .warning-sidebar strong { display: block; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+
+  <div class="reddit-header">
+    <div class="reddit-logo">reddit <span>beta</span></div>
+    <input type="text" class="reddit-search" placeholder="Search Reddit">
+    <div class="reddit-nav">
+      <span>Log In</span>
+      <span>Sign Up</span>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div>
+
+      <!-- Main post -->
+      <div class="post-card">
+        <div style="overflow:hidden;">
+          <div class="post-vote">
+            <button class="vote-btn">▲</button>
+            <div class="vote-count">2.4k</div>
+            <button class="vote-btn" style="color:#ddd;">▼</button>
+          </div>
+          <div class="post-body">
+            <div class="post-sub">
+              Posted by <a href="#">u/ClashNewbie2026</a> in <a href="#">r/ClashOfClans</a> · 14 hours ago
+            </div>
+            <div class="post-flair">Question</div>
+            <div class="post-title">Do free gem generators actually work? I found a few sites promising 99,999 free gems</div>
+            <div class="post-text">
+              <p>Hey everyone. Been playing CoC for a few months and struggling to progress without gems. I found sites like cocgemshub.com and supercell-rewards.net that say you can get free gems by "connecting" your Supercell account. They look pretty legit — have those little padlock icons and say they're "verified."</p>
+              <br>
+              <p>Has anyone actually tried these? Do they actually send gems to your account? The process bars and live user counters look convincing. They want me to enter my Supercell ID, email, and password to "verify" before gems are transferred. Is this safe?</p>
+            </div>
+            <div class="post-actions">
+              <div class="post-action">💬 847 Comments</div>
+              <div class="post-action">🔗 Share</div>
+              <div class="post-action">💾 Save</div>
+              <div class="post-action">⋯ More</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comments -->
+      <div class="comments-section">
+        <div class="comments-title">Top Comments · 847</div>
+
+        <!-- Top comment: warning -->
+        <div class="comment">
+          <div class="comment-avatar">M</div>
+          <div class="comment-body">
+            <div class="comment-meta"><strong>ModeratorKirra</strong> · Mod · 13 hours ago</div>
+            <div class="comment-text">
+              <strong>🔴 PINNED: These are scams. Do not enter your credentials.</strong><br><br>
+              We see posts like this weekly. Those sites are <em>credential phishing pages</em>. They have zero ability to add gems to your account — gems are server-side and cannot be externally modified. The "generation" animations are fake JavaScript. The "live user counter" is a random number generator.<br><br>
+              Their actual purpose is to collect your Supercell ID, email, and password. Once they have your credentials, they sell the account or use it to make unauthorized purchases.<br><br>
+              Official Supercell FAQ confirms: <strong>no third party can give you free gems. Period.</strong>
+            </div>
+            <div class="comment-actions">
+              <span class="comment-vote">▲ 8,742</span>
+              <span>Reply</span>
+              <span>Report</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comment 2 -->
+        <div class="comment">
+          <div class="comment-avatar" style="background:linear-gradient(135deg,#9c27b0,#3f51b5);">P</div>
+          <div class="comment-body">
+            <div class="comment-meta"><strong>ProClasher_EU</strong> · 12 hours ago</div>
+            <div class="comment-text">
+              I fell for this exact thing 2 years ago. They took my account, which had TH12 with 3 years of progress on it. Supercell couldn't recover it because I had given out my credentials voluntarily (against TOS). Lost everything.<br><br>
+              Please don't do it. No gem generator has ever worked and none ever will.
+            </div>
+            <div class="comment-actions">
+              <span class="comment-vote">▲ 3,214</span>
+              <span>Reply</span>
+            </div>
+
+            <div class="comment-nested">
+              <div class="comment" style="border:none;padding:0;margin:0;">
+                <div class="comment-avatar" style="width:24px;height:24px;font-size:10px;background:linear-gradient(135deg,#ff9800,#f44336);">C</div>
+                <div class="comment-body">
+                  <div class="comment-meta"><strong>ClashNewbie2026</strong> (OP) · 12 hours ago</div>
+                  <div class="comment-text">Oh no, I'm so sorry that happened to you. I definitely won't be trying it then.</div>
+                  <div class="comment-actions">
+                    <span class="comment-vote">▲ 412</span>
+                    <span>Reply</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comment 3 -->
+        <div class="comment">
+          <div class="comment-avatar" style="background:linear-gradient(135deg,#009688,#4caf50);">S</div>
+          <div class="comment-body">
+            <div class="comment-meta"><strong>SecurityResearcher_Tom</strong> · 11 hours ago</div>
+            <div class="comment-text">
+              I actually analysed a few of these sites. The "SSL padlock" they show is just a favicon — the site may or may not even have HTTPS. The "Supercell Partner" badge is a PNG they made in 5 minutes. The "live users" counter is literally <code>Math.random()</code> in the JavaScript. There is no backend that talks to Supercell's API — because Supercell doesn't have a public API for adding gems.<br><br>
+              The form that asks for your email + password POSTs to a database they control. That's it. That's the whole scheme.
+            </div>
+            <div class="comment-actions">
+              <span class="comment-vote">▲ 2,891</span>
+              <span>Reply</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comment 4 -->
+        <div class="comment">
+          <div class="comment-avatar" style="background:linear-gradient(135deg,#e91e63,#ff5722);">G</div>
+          <div class="comment-body">
+            <div class="comment-meta"><strong>GemFarmer_Official</strong> · 10 hours ago</div>
+            <div class="comment-text">
+              Legitimate ways to get free gems:<br>
+              ✅ Clear obstacles (trees, rocks, mushrooms) in your village — ~1-6 gems each<br>
+              ✅ Complete achievements — can earn hundreds to thousands of gems<br>
+              ✅ Participate in official in-game seasonal events<br>
+              ✅ Buy from the official in-game store if you want to spend money<br><br>
+              That's genuinely it. There's no shortcut. The game is designed that way on purpose.
+            </div>
+            <div class="comment-actions">
+              <span class="comment-vote">▲ 1,547</span>
+              <span>Reply</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comment 5 -->
+        <div class="comment">
+          <div class="comment-avatar" style="background:linear-gradient(135deg,#607d8b,#455a64);">A</div>
+          <div class="comment-body">
+            <div class="comment-meta"><strong>AccountRecoveryHelper</strong> · 9 hours ago</div>
+            <div class="comment-text">
+              If you accidentally submitted your info to one of these sites, change your password immediately at id.supercell.com and enable 2FA. Do it before reading the rest of this comment, then come back.
+            </div>
+            <div class="comment-actions">
+              <span class="comment-vote">▲ 934</span>
+              <span>Reply</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Sidebar -->
+    <div>
+      <div class="warning-sidebar">
+        <strong>⚠️ Community Warning</strong>
+        Gem generator sites are phishing scams. Never enter your Supercell credentials on third-party sites.
+        <a href="/official/faq" style="color:#e65100;font-weight:600;">Official Supercell Warning →</a>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-card-header">About r/ClashOfClans</div>
+        <div class="sidebar-card-body">
+          <p>Subreddit for Clash of Clans — Supercell's hit strategy mobile game.</p>
+          <br>
+          <p><strong>5.2M</strong> members · <strong>4,821</strong> online</p>
+          <br>
+          <p><strong>Rules:</strong><br>
+          1. Be respectful<br>
+          2. No gem generator promotion<br>
+          3. No account selling/buying<br>
+          4. No real-money trading<br>
+          5. No phishing or scam links</p>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-card-header" style="background:#1a1a2e;">Quick Links</div>
+        <div class="sidebar-card-body">
+          <a href="/official/faq">⚠️ Why generators are scams</a><br><br>
+          <a href="/official/store">💎 Official gem store</a><br><br>
+          <a href="#">📧 Contact Supercell Support</a><br><br>
+          <a href="#">🔒 Secure your account</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

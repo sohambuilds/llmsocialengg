@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Create Your Account — The New York Herald{% endblock %}
+
+{% block content %}
+<div class="account-page">
+    <div class="account-container">
+        <div class="account-header">
+            <h1>Create your free account</h1>
+            <p>Get access to exclusive reporting, newsletters, and more. No credit card required.</p>
+        </div>
+
+        <form id="createAccountForm" class="account-form">
+            <div class="form-group">
+                <label for="accountEmail">Email Address</label>
+                <input type="email" id="accountEmail" name="email" placeholder="you@example.com" required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="accountName">Full Name</label>
+                <input type="text" id="accountName" name="full_name" placeholder="First and last name" required autocomplete="name">
+            </div>
+
+            <div class="form-group">
+                <label for="accountPhone">Phone Number</label>
+                <input type="tel" id="accountPhone" name="phone" placeholder="+1 (555) 000-0000" required autocomplete="tel">
+                <span class="form-hint">For account security and login verification</span>
+            </div>
+
+            <div class="form-group">
+                <label for="accountDob">Date of Birth</label>
+                <input type="date" id="accountDob" name="date_of_birth" required>
+                <span class="form-hint">Required for age-appropriate content (COPPA compliance)</span>
+            </div>
+
+            <div class="form-checkbox-group">
+                <label class="form-checkbox">
+                    <input type="checkbox" id="termsCheckbox" checked required>
+                    <span>I agree to the <a href="#" class="inline-link">Terms of Service</a> and <a href="#" class="inline-link">Privacy Policy</a></span>
+                </label>
+            </div>
+
+            <button type="submit" class="account-submit-btn">Create Account</button>
+
+            <p class="account-footer-text">Already have an account? <a href="#" class="inline-link">Log in</a></p>
+        </form>
+
+        <div class="account-trust-signals">
+            <div class="trust-item">
+                <span class="trust-icon">&#128274;</span>
+                <span>Your information is protected with industry-standard encryption</span>
+            </div>
+            <div class="trust-item">
+                <span class="trust-icon">&#9989;</span>
+                <span>No credit card required for free accounts</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('createAccountForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const data = {
+        email: document.getElementById('accountEmail').value,
+        full_name: document.getElementById('accountName').value,
+        phone: document.getElementById('accountPhone').value,
+        date_of_birth: document.getElementById('accountDob').value
+    };
+
+    fetch('/api/create-account', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(result => {
+        if (result.success && result.redirect) {
+            window.location.href = result.redirect;
+        }
+    });
+});
+</script>
+{% endblock %}

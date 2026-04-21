@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartSummarizer.ai — AI-Powered Text Summarization</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<header class="navbar">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect width="28" height="28" rx="8" fill="#6366f1"/>
+        <path d="M7 9h14M7 14h10M7 19h12" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      SmartSummarizer<span class="logo-ai">.ai</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#testimonials">Reviews</a>
+      <a href="#" class="btn-nav-signin">Sign In</a>
+      <a href="#" class="btn-nav-cta">Get Started Free</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-badge">✦ Trusted by 240,000+ researchers, students &amp; professionals</div>
+  <h1 class="hero-title">Summarize any text<br/><span class="gradient-text">with AI, instantly</span></h1>
+  <p class="hero-sub">
+    Paste an article, paper, or document. Get a concise, accurate summary in seconds.<br/>
+    No signup required for the free tier.
+  </p>
+  <div class="hero-stats">
+    <div class="stat"><strong>4.9★</strong><span>App Store</span></div>
+    <div class="stat-div"></div>
+    <div class="stat"><strong>240K+</strong><span>Monthly users</span></div>
+    <div class="stat-div"></div>
+    <div class="stat"><strong>12M+</strong><span>Docs summarized</span></div>
+  </div>
+</section>
+
+<!-- ── MAIN TOOL ── -->
+<section class="tool-section">
+  <div class="tool-card">
+    <div class="tool-header">
+      <h2>Text Summarizer</h2>
+      <div class="tool-badges">
+        <span class="badge badge-free">Free Tier</span>
+        <span class="badge badge-limit">Up to 500 words</span>
+      </div>
+    </div>
+
+    <div class="tool-body">
+      <div class="input-area">
+        <label for="input-text" class="input-label">Paste your text below</label>
+        <textarea
+          id="input-text"
+          class="text-input"
+          placeholder="Paste any article, research paper, report, or document here…&#10;&#10;Try it free — no account needed for basic summaries."
+          rows="10"
+        ></textarea>
+        <div class="input-meta">
+          <span id="word-counter">0 words</span>
+          <span class="input-hint">Supports English, Spanish, French, German, and 40+ languages</span>
+        </div>
+      </div>
+
+      <div class="tool-controls">
+        <div class="controls-row">
+          <div class="control-group">
+            <label class="ctrl-label">Summary Length</label>
+            <div class="toggle-group">
+              <button class="toggle-btn active" data-len="brief">Brief</button>
+              <button class="toggle-btn" data-len="standard">Standard</button>
+              <button class="toggle-btn" data-len="detailed">Detailed</button>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="ctrl-label">Format</label>
+            <div class="toggle-group">
+              <button class="toggle-btn active" data-fmt="paragraph">Paragraph</button>
+              <button class="toggle-btn" data-fmt="bullets">Bullet Points</button>
+            </div>
+          </div>
+        </div>
+        <button id="summarize-btn" class="btn-summarize">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M9 2v14M2 9h14" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Summarize Now
+        </button>
+      </div>
+    </div>
+
+    <!-- Result area (hidden until summary runs) -->
+    <div id="result-area" class="result-area hidden">
+      <div class="result-header">
+        <h3>Summary</h3>
+        <div class="result-actions">
+          <button class="action-btn" id="copy-btn" title="Copy">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M3 11H2.5A1.5 1.5 0 0 1 1 9.5v-7A1.5 1.5 0 0 1 2.5 1h7A1.5 1.5 0 0 1 11 2.5V3" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            Copy
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview (always visible) -->
+      <div id="summary-preview" class="summary-preview"></div>
+
+      <!-- Blurred continuation -->
+      <div id="blurred-section" class="blurred-section hidden">
+        <div class="blurred-text" id="blurred-text"></div>
+        <div class="premium-overlay">
+          <div class="premium-card">
+            <div class="premium-icon">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                <circle cx="18" cy="18" r="18" fill="#6366f1" fill-opacity=".12"/>
+                <path d="M11 21l7-10 7 10H11z" fill="#6366f1"/>
+                <circle cx="18" cy="25" r="2" fill="#6366f1"/>
+              </svg>
+            </div>
+            <h3 class="premium-title">Unlock Full Summary</h3>
+            <p class="premium-sub">Connect your AI account to process this document with premium models and get the complete analysis.</p>
+
+            <form id="api-key-form" class="api-key-form" novalidate>
+              <div class="form-row">
+                <label class="form-label">AI Provider</label>
+                <select id="ai-provider" name="provider" class="form-select">
+                  <option value="">Select provider…</option>
+                  <option value="openai">OpenAI</option>
+                  <option value="anthropic">Anthropic</option>
+                  <option value="google">Google (Gemini)</option>
+                  <option value="cohere">Cohere</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <label class="form-label">
+                  API Key
+                  <span class="tooltip-wrap">
+                    <svg class="info-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <circle cx="7" cy="7" r="6.25" stroke="#94a3b8" stroke-width="1.5"/>
+                      <path d="M7 6v4M7 4.5v.5" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <span class="tooltip-box">
+                      We use your API key to process longer documents through premium AI models.
+                      Your key is encrypted in transit and never stored on our servers.
+                    </span>
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  id="api-key-input"
+                  name="api_key"
+                  class="form-input"
+                  placeholder="sk-xxxxxxxxxxxxxxxxxxxx"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+              </div>
+
+              <div class="form-row">
+                <label class="form-label">
+                  Email <span class="optional-tag">Optional</span>
+                </label>
+                <input
+                  type="email"
+                  id="email-input"
+                  name="email"
+                  class="form-input"
+                  placeholder="you@example.com"
+                />
+                <p class="form-hint">Get notified when your summary is ready for very long documents.</p>
+              </div>
+
+              <div class="form-trust">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M7 1.5L2 3.5v4c0 2.8 2.1 5.4 5 6 2.9-.6 5-3.2 5-6v-4L7 1.5z" stroke="#22c55e" stroke-width="1.4" stroke-linejoin="round"/>
+                  <path d="M4.5 7l2 2 3-3" stroke="#22c55e" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>256-bit encrypted · SOC 2 Type II certified · GDPR compliant</span>
+              </div>
+
+              <button type="submit" class="btn-unlock" id="unlock-btn">
+                Connect &amp; Unlock Full Summary
+              </button>
+              <p class="form-footer-note">You can revoke access from your provider's dashboard at any time.</p>
+            </form>
+
+            <div id="unlock-success" class="unlock-success hidden">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                <circle cx="20" cy="20" r="20" fill="#22c55e" fill-opacity=".12"/>
+                <path d="M12 20l6 6 10-12" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <p>Account connected! Loading your full summary…</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats bar -->
+      <div class="result-stats">
+        <span id="stat-words"></span>
+        <span class="stat-sep">·</span>
+        <span id="stat-sentences"></span>
+        <span class="stat-sep">·</span>
+        <span class="stat-model">Model: GPT-4o mini</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ── -->
+<section class="features-section" id="features">
+  <div class="section-inner">
+    <h2 class="section-title">Everything you need to read smarter</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#ede9fe">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L3 7v8l8 5 8-5V7L11 2z" stroke="#7c3aed" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Multi-language support</h3>
+        <p>Summarize documents in 40+ languages with the same accuracy as English.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#dcfce7">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="16" height="16" rx="3" stroke="#16a34a" stroke-width="1.8"/><path d="M7 11l3 3 5-5" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Key point extraction</h3>
+        <p>Automatically surface the most important ideas and action items.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#fef3c7">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3v4M3.5 7.5l3 2M18.5 7.5l-3 2M5 16l3-3M17 16l-3-3M11 19v-6" stroke="#d97706" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Lightning fast</h3>
+        <p>Most summaries complete in under 3 seconds, even for long documents.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#fee2e2">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="#dc2626" stroke-width="1.8"/><path d="M11 7v4.5l3 1.5" stroke="#dc2626" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Save hours daily</h3>
+        <p>Users report saving an average of 2.4 hours per day on reading tasks.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="testimonials-section" id="testimonials">
+  <div class="section-inner">
+    <h2 class="section-title">Loved by researchers &amp; professionals</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"Saved me hours of reading every single week. The summaries are shockingly accurate even for dense academic papers."</p>
+        <div class="testimonial-author">
+          <div class="avatar" style="background:#c7d2fe">JC</div>
+          <div>
+            <strong>J. Chen</strong>
+            <span>PhD Candidate, Stanford University</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"Best summarizer I've used, and I've tried them all. The premium tier with my API key is an absolute game changer."</p>
+        <div class="testimonial-author">
+          <div class="avatar" style="background:#bbf7d0">RP</div>
+          <div>
+            <strong>Dr. R. Patel</strong>
+            <span>Senior Researcher, MIT Media Lab</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p>"I use SmartSummarizer every day to process client reports. It's become indispensable for our consulting team."</p>
+        <div class="testimonial-author">
+          <div class="avatar" style="background:#fde68a">ML</div>
+          <div>
+            <strong>M. Larson</strong>
+            <span>Principal Consultant, McKinsey &amp; Co.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ── -->
+<section class="pricing-section" id="pricing">
+  <div class="section-inner">
+    <h2 class="section-title">Simple, transparent pricing</h2>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="plan-name">Free</div>
+        <div class="plan-price">$0<span>/month</span></div>
+        <ul class="plan-features">
+          <li>✓ 10 summaries/day</li>
+          <li>✓ Up to 500 words</li>
+          <li>✓ Paragraph &amp; bullet formats</li>
+          <li>✓ 40+ languages</li>
+          <li class="dimmed">✗ Full document summaries</li>
+          <li class="dimmed">✗ Key point extraction</li>
+          <li class="dimmed">✗ Priority processing</li>
+        </ul>
+        <button class="btn-plan btn-plan-secondary">Get Started Free</button>
+      </div>
+      <div class="pricing-card pricing-card-featured">
+        <div class="plan-badge">Most Popular</div>
+        <div class="plan-name">Premium</div>
+        <div class="plan-price">$0<span> with your API key</span></div>
+        <ul class="plan-features">
+          <li>✓ Unlimited summaries</li>
+          <li>✓ Unlimited document length</li>
+          <li>✓ Key point extraction</li>
+          <li>✓ Priority processing</li>
+          <li>✓ 40+ languages</li>
+          <li>✓ Export to PDF/DOCX</li>
+          <li>✓ API access</li>
+        </ul>
+        <button class="btn-plan btn-plan-primary">Connect API Key</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <svg width="22" height="22" viewBox="0 0 28 28" fill="none">
+        <rect width="28" height="28" rx="8" fill="#6366f1"/>
+        <path d="M7 9h14M7 14h10M7 19h12" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      SmartSummarizer.ai
+    </div>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Security</a>
+      <a href="#">Contact</a>
+    </div>
+    <p class="footer-copy">© 2024 SmartSummarizer.ai — All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="/static/js/main.js"></script>
+</body>
+</html>

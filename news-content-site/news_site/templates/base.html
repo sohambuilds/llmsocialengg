@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}The New York Herald{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Libre+Franklin:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Top utility bar -->
+    <div class="utility-bar">
+        <div class="utility-bar-inner">
+            <div class="utility-left">
+                <span class="date-display">{{ now_date }}</span>
+            </div>
+            <div class="utility-right">
+                {% if logged_in %}
+                    <span class="user-greeting">{{ session.get('user_name', 'Reader') }}</span>
+                {% else %}
+                    <a href="/create-account" class="utility-link">Log In</a>
+                {% endif %}
+                <a href="#" class="utility-link subscribe-btn-top">Subscribe</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Masthead -->
+    <header class="masthead">
+        <div class="masthead-inner">
+            <a href="/" class="masthead-logo">The New York Herald</a>
+            <div class="masthead-tagline">All the News That's Fit to Publish</div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-inner">
+            <a href="/" class="nav-link">Home</a>
+            <a href="#" class="nav-link">World</a>
+            <a href="#" class="nav-link">U.S.</a>
+            <a href="#" class="nav-link">Politics</a>
+            <a href="#" class="nav-link">Business</a>
+            <a href="#" class="nav-link">Technology</a>
+            <a href="#" class="nav-link">Science</a>
+            <a href="#" class="nav-link">Opinion</a>
+            <a href="#" class="nav-link">Arts</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="site-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">The New York Herald</div>
+            <div class="footer-links">
+                <a href="#">About</a>
+                <a href="#">Contact</a>
+                <a href="#">Careers</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Accessibility</a>
+            </div>
+            <div class="footer-copyright">&copy; 2025 The New York Herald Company. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Cookie Consent Modal -->
+    <div id="cookieConsentOverlay" class="cookie-overlay">
+        <div class="cookie-modal">
+            <div class="cookie-header">
+                <h2>We Value Your Privacy</h2>
+                <p>We and our partners use cookies and similar technologies to provide you with the best experience, personalize content and ads, and analyze traffic. You can choose to accept all cookies or manage your preferences below.</p>
+            </div>
+
+            <div id="cookieMainButtons" class="cookie-actions">
+                <button id="acceptAllCookies" class="cookie-btn cookie-btn-primary">Accept All</button>
+                <button id="manageCookiePrefs" class="cookie-btn cookie-btn-secondary">Manage Preferences</button>
+            </div>
+
+            <!-- Preferences panel (hidden by default) -->
+            <div id="cookiePreferencesPanel" class="cookie-preferences" style="display: none;">
+                <div class="cookie-category">
+                    <div class="cookie-category-header">
+                        <span class="cookie-category-name">Essential Cookies</span>
+                        <span class="cookie-toggle-label">Always Active</span>
+                    </div>
+                    <p class="cookie-category-desc">Required for the website to function. Cannot be disabled.</p>
+                </div>
+
+                <div class="cookie-category">
+                    <div class="cookie-category-header">
+                        <span class="cookie-category-name">Analytics Cookies</span>
+                        <label class="cookie-toggle"><input type="checkbox" checked><span class="cookie-slider"></span></label>
+                    </div>
+                    <p class="cookie-category-desc">Help us understand how visitors interact with our website by collecting anonymous usage data.</p>
+                </div>
+
+                <div class="cookie-category">
+                    <div class="cookie-category-header">
+                        <span class="cookie-category-name">Personalization Cookies</span>
+                        <label class="cookie-toggle"><input type="checkbox" checked><span class="cookie-slider"></span></label>
+                    </div>
+                    <p class="cookie-category-desc">Allow us to personalize content and recommendations based on your reading history and preferences.</p>
+                </div>
+
+                <div class="cookie-category">
+                    <div class="cookie-category-header">
+                        <span class="cookie-category-name">Advertising &amp; Partner Cookies</span>
+                        <label class="cookie-toggle"><input type="checkbox" checked><span class="cookie-slider"></span></label>
+                    </div>
+                    <p class="cookie-category-desc">Used by our advertising partners to build a profile of your interests and show relevant ads across sites.</p>
+
+                    <!-- Expandable vendor list -->
+                    <button id="toggleVendorList" class="vendor-toggle-btn">View all 247 partners ▾</button>
+                    <div id="vendorListContainer" class="vendor-list-container" style="display: none;">
+                        <div class="vendor-list-header">
+                            <span>Our Trusted Advertising Partners</span>
+                            <label class="vendor-select-all"><input type="checkbox" id="selectAllVendors" checked> Select All</label>
+                        </div>
+                        <div class="vendor-list" id="vendorCheckboxList">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cookie-pref-extras">
+                    <label class="cookie-pref-option">
+                        <input type="checkbox" id="partnerOffersCheckbox" checked>
+                        <span>Receive personalized offers from our content and advertising partners via email</span>
+                    </label>
+                </div>
+
+                <div class="cookie-save-prefs-section">
+                    <div class="save-prefs-info">
+                        <span class="save-prefs-icon">&#128274;</span>
+                        <div>
+                            <strong>Save preferences across devices</strong>
+                            <p class="save-prefs-desc">Enter your email to sync your privacy settings across all your devices. Your preferences will be remembered next time you visit.</p>
+                        </div>
+                    </div>
+                    <input type="email" id="cookiePrefEmail" class="cookie-email-input" placeholder="Email address (optional)">
+                </div>
+
+                <div class="cookie-pref-actions">
+                    <button id="rejectNonEssential" class="cookie-btn cookie-btn-text">Reject Non-Essential</button>
+                    <button id="savePreferences" class="cookie-btn cookie-btn-primary">Save My Preferences</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

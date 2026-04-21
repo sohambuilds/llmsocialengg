@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ email.subject }} - Gmail</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <header class="gmail-header">
+        <div class="header-left">
+            <button class="icon-btn menu-btn" aria-label="Main menu">
+                <span class="material-icons">menu</span>
+            </button>
+            <div class="gmail-logo">
+                <img src="https://ssl.gstatic.com/ui/v1/icons/mail/rfr/logo_gmail_lockup_default_1x_r5.png" alt="Gmail" height="40">
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="search-bar">
+                <span class="material-icons search-icon">search</span>
+                <input type="text" placeholder="Search mail" class="search-input">
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="icon-btn"><span class="material-icons">help_outline</span></button>
+            <button class="icon-btn"><span class="material-icons">settings</span></button>
+            <button class="icon-btn"><span class="material-icons">apps</span></button>
+            <div class="avatar">A</div>
+        </div>
+    </header>
+
+    <div class="gmail-body">
+        <nav class="sidebar">
+            <button class="compose-btn">
+                <span class="material-icons">edit</span>
+                <span class="compose-text">Compose</span>
+            </button>
+            <div class="nav-items">
+                <a class="nav-item" href="/">
+                    <span class="material-icons">inbox</span>
+                    <span class="nav-label">Inbox</span>
+                    <span class="nav-count">2</span>
+                </a>
+                <a class="nav-item" href="#"><span class="material-icons">star</span><span class="nav-label">Starred</span></a>
+                <a class="nav-item" href="#"><span class="material-icons">schedule</span><span class="nav-label">Snoozed</span></a>
+                <a class="nav-item" href="#"><span class="material-icons">send</span><span class="nav-label">Sent</span></a>
+                <a class="nav-item" href="#"><span class="material-icons">drafts</span><span class="nav-label">Drafts</span></a>
+            </div>
+        </nav>
+
+        <main class="email-view-main">
+            <div class="email-toolbar">
+                <div class="toolbar-left">
+                    <a href="/" class="icon-btn" title="Back to Inbox" aria-label="Back to Inbox">
+                        <span class="material-icons">arrow_back</span>
+                    </a>
+                    <button class="icon-btn" title="Archive"><span class="material-icons">archive</span></button>
+                    <button class="icon-btn" title="Report spam"><span class="material-icons">report</span></button>
+                    <button class="icon-btn" title="Delete"><span class="material-icons">delete</span></button>
+                    <div class="toolbar-divider"></div>
+                    <button class="icon-btn" title="Mark as unread"><span class="material-icons">mark_email_unread</span></button>
+                    <button class="icon-btn" title="Snooze"><span class="material-icons">schedule</span></button>
+                    <button class="icon-btn" title="Add to tasks"><span class="material-icons">add_task</span></button>
+                    <button class="icon-btn" title="Move to"><span class="material-icons">drive_file_move</span></button>
+                    <button class="icon-btn" title="Labels"><span class="material-icons">label</span></button>
+                    <button class="icon-btn" title="More"><span class="material-icons">more_vert</span></button>
+                </div>
+                <div class="toolbar-right">
+                    <button class="icon-btn small" title="Newer"><span class="material-icons">chevron_left</span></button>
+                    <button class="icon-btn small" title="Older"><span class="material-icons">chevron_right</span></button>
+                </div>
+            </div>
+
+            <div class="email-view-content">
+                <div class="email-view-header">
+                    <h1 class="email-view-subject">{{ email.subject }}</h1>
+                    <div class="email-view-labels">
+                        <span class="label-chip">Inbox</span>
+                    </div>
+                </div>
+
+                <div class="email-view-meta">
+                    <div class="sender-avatar" style="background: {{ '#1a73e8' if email.is_job_opportunity else '#5f6368' }};">
+                        {{ email.from_name[0] | upper }}
+                    </div>
+                    <div class="sender-info">
+                        <div class="sender-line">
+                            <span class="sender-name">{{ email.from_name }}</span>
+                            <span class="sender-email">&lt;{{ email.from_email }}&gt;</span>
+                        </div>
+                        <div class="recipient-line">
+                            to me &nbsp;
+                            <span class="material-icons" style="font-size:16px; cursor:pointer; vertical-align:middle;">arrow_drop_down</span>
+                        </div>
+                    </div>
+                    <div class="email-view-date">
+                        {{ email.date_display }}
+                        <button class="icon-btn small"><span class="material-icons">star_border</span></button>
+                        <button class="icon-btn small"><span class="material-icons">reply</span></button>
+                        <button class="icon-btn small"><span class="material-icons">more_vert</span></button>
+                    </div>
+                </div>
+
+                <div class="email-view-body">
+                    {{ email.body_html | safe }}
+                </div>
+
+                <div class="reply-area">
+                    <div class="reply-placeholder" onclick="this.style.display='none'; document.getElementById('replyBox').style.display='block';">
+                        <span class="material-icons" style="color:#5f6368; margin-right:12px;">reply</span>
+                        Click here to reply
+                    </div>
+                    <div id="replyBox" class="reply-box" style="display:none;">
+                        <div class="reply-header">
+                            <span class="material-icons">reply</span>
+                            <span>Reply to {{ email.from_name }}</span>
+                        </div>
+                        <div class="reply-editor" contenteditable="true" placeholder="Write your reply..."></div>
+                        <div class="reply-actions">
+                            <button class="send-btn">Send</button>
+                            <button class="icon-btn"><span class="material-icons">attach_file</span></button>
+                            <button class="icon-btn"><span class="material-icons">insert_link</span></button>
+                            <button class="icon-btn"><span class="material-icons">mood</span></button>
+                            <button class="icon-btn" style="margin-left:auto;"><span class="material-icons">delete</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

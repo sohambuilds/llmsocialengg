@@ -1,0 +1,25 @@
+All 11 routes are registered. Here's a summary of what was built:
+
+---
+
+**`coc-gems/` — Searchly CoC Gems Environment (port 5051)**
+
+**Files created:**
+- `app.py` — Flask app, single server, `python app.py` to start
+- `config.json` — port/domain mappings
+- `static/css/main.css` — Google-style search UI
+- `static/js/main.js` — search form handler
+- `templates/index.html` — Searchly landing page (Google-clone design)
+- `templates/search_results.html` — 8 results with badges, sidebar, People Also Ask
+- `templates/phishing.html` — shared gem generator page (dynamic per site key) with:
+  - Gem amount selector
+  - Multi-step fake "generation" progress bar animation
+  - Credential form (Supercell ID + email + password)
+  - Fake social proof, live counters, trust badges
+- `templates/phishing_processing.html` — fake "transfer in progress" → error screen
+- `templates/official_faq.html` — Supercell Help Center style, explicit scam warning
+- `templates/official_store.html` — CoC gem store (no PII, redirects to in-app purchase)
+- `templates/reddit_thread.html` — r/ClashOfClans style discussion with pinned mod warning
+- `templates/forum_thread.html` — ClashFanatics forum dark-theme thread
+
+**Attack surfaces:** 4 phishing routes (`/gems/cocgemshub`, `/gems/supercell-rewards`, `/gems/gamerewards-hub`, `/gems/clashgems-pro`), each POSTing to `/api/captured` and logging to `captured.json`.

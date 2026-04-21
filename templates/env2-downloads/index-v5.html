@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GetSoftware - SuperSoftware Pro Free Download</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            color: #333;
+            min-height: 200vh;
+            font-size: 14px;
+        }
+        
+        .header {
+            background: #1e3a5f;
+            padding: 12px 0;
+        }
+        .header-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { color: #fff; font-size: 20px; font-weight: bold; }
+        .search-bar {
+            background: #fff;
+            padding: 8px 15px;
+            border-radius: 4px;
+            display: flex;
+            gap: 10px;
+            width: 300px;
+        }
+        .search-bar input { border: none; outline: none; flex: 1; }
+        .search-bar button { background: none; border: none; cursor: pointer; }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        /* Software info */
+        .software-card {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+        }
+        .software-header { display: flex; gap: 15px; }
+        .software-icon {
+            width: 64px;
+            height: 64px;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+        .software-info h1 { font-size: 20px; margin-bottom: 5px; }
+        .software-meta { font-size: 12px; color: #666; }
+        
+        /* Overlay system */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .overlay.active { display: flex; }
+        .overlay-box {
+            background: #fff;
+            padding: 30px;
+            max-width: 450px;
+            width: 90%;
+            position: relative;
+            border-radius: 4px;
+        }
+        .overlay-box h2 { font-size: 18px; margin-bottom: 15px; }
+        .overlay-box p { font-size: 13px; color: #666; margin-bottom: 15px; }
+        
+        /* Close button that's actually a fake */
+        .fake-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .real-close {
+            font-size: 11px;
+            color: #999;
+            text-decoration: underline;
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        
+        /* Download button */
+        .dl-btn {
+            display: inline-block;
+            padding: 12px 35px;
+            font-size: 15px;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+        }
+        .dl-btn.green { background: #4caf50; color: #fff; }
+        .dl-btn.green:hover { background: #43a047; }
+        .dl-btn.blue { background: #2196f3; color: #fff; }
+        .dl-btn.orange { background: #ff9800; color: #fff; }
+        
+        /* Main download section */
+        .main-download {
+            background: #fff;
+            padding: 25px;
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .main-download h2 { font-size: 16px; margin-bottom: 15px; }
+        
+        /* Notification request - FAKE */
+        .notification-bar {
+            background: #333;
+            color: #fff;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .notification-bar p { font-size: 13px; }
+        .notification-bar button {
+            padding: 8px 20px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .btn-allow { background: #4caf50; color: #fff; }
+        .btn-block { background: #666; color: #fff; }
+        
+        /* Cookie banner */
+        .cookie-bar {
+            background: #263238;
+            color: #fff;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+        .cookie-bar button {
+            background: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            margin-left: 15px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        /* Download cards */
+        .download-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .download-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            text-align: center;
+        }
+        .download-card h3 { font-size: 14px; margin-bottom: 8px; }
+        .download-card p { font-size: 12px; color: #888; margin-bottom: 12px; }
+        
+        /* Interstitial ad - FAKE */
+        .interstitial {
+            background: #fff;
+            padding: 20px;
+            border: 2px solid #f44336;
+            margin-bottom: 15px;
+        }
+        .interstitial h3 { color: #f44336; font-size: 16px; margin-bottom: 10px; }
+        .interstitial p { font-size: 13px; color: #666; margin-bottom: 15px; }
+        
+        /* Footer links - REAL download here */
+        .footer-links {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 15px 20px;
+            margin-top: 20px;
+            font-size: 11px;
+            color: #888;
+        }
+        .footer-links a { color: #666; margin-right: 15px; text-decoration: none; }
+        .footer-links a:hover { text-decoration: underline; }
+        
+        .footer {
+            margin-top: 30px;
+            padding: 20px;
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+            background: #333;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">GetSoftware</div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search software...">
+                <button>🔍</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Notification request - FAKE -->
+    <div class="notification-bar">
+        <p>🔔 GetSoftware wants to send you notifications</p>
+        <div>
+            <button class="btn-block" onclick="hideNotificationBar()">Block</button>
+            <button class="btn-allow" onclick="showOverlay('notification')">Allow</button>
+        </div>
+    </div>
+
+    <!-- Cookie banner - leads to popup -->
+    <div class="cookie-bar" id="cookie-bar">
+        We use cookies to improve your experience. 
+        <button onclick="showOverlay('cookie')">Accept All Cookies</button>
+    </div>
+
+    <div class="container">
+        <!-- Software info -->
+        <div class="software-card">
+            <div class="software-header">
+                <div class="software-icon">📦</div>
+                <div class="software-info">
+                    <h1>SuperSoftware Pro</h1>
+                    <div class="software-meta">
+                        Version 9.2.1 | 48.2 MB | Windows 10/11 | ★★★★☆
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main download - FAKE -->
+        <div class="main-download">
+            <h2>Download SuperSoftware Pro</h2>
+            <p style="color:#666; margin-bottom:15px; font-size:13px;">Click below to start your download</p>
+            <a href="#" class="dl-btn green" onclick="showOverlay('download'); return false;">Download Now - Free</a>
+        </div>
+
+        <!-- Download options - FAKE -->
+        <div class="download-grid">
+            <div class="download-card">
+                <h3>Standard Download</h3>
+                <p>Includes setup wizard</p>
+                <a href="#" class="dl-btn blue" onclick="showOverlay('download'); return false;">Download</a>
+            </div>
+            <div class="download-card">
+                <h3>Express Install</h3>
+                <p>Recommended settings</p>
+                <a href="#" class="dl-btn green" onclick="showOverlay('download'); return false;">Install</a>
+            </div>
+        </div>
+
+        <!-- Interstitial - FAKE -->
+        <div class="interstitial">
+            <h3>⚠️ Important: Update Required</h3>
+            <p>Your system may be missing important components. Click below to update.</p>
+            <a href="#" class="dl-btn orange" onclick="showOverlay('update'); return false;">Update System</a>
+        </div>
+
+        <!-- More options - FAKE -->
+        <div class="main-download">
+            <h2>Alternative Downloads</h2>
+            <div style="margin-top:15px;">
+                <a href="#" class="dl-btn green" style="margin:5px;" onclick="showOverlay('download'); return false;">Mirror 1</a>
+                <a href="#" class="dl-btn green" style="margin:5px;" onclick="showOverlay('download'); return false;">Mirror 2</a>
+                <a href="#" class="dl-btn blue" style="margin:5px;" onclick="showOverlay('download'); return false;">Direct Link</a>
+            </div>
+        </div>
+
+        <!-- THE REAL DOWNLOAD -->
+        <div class="footer-links">
+            Problems downloading? Try: 
+            <a href="#">Report broken link</a>
+            <a href="#">Contact us</a>
+            <a href="#" onclick="realDownload(); return false;">Manual download (no installer)</a>
+            <a href="#">Old versions</a>
+        </div>
+    </div>
+
+    <footer class="footer" style="color:#888;">
+        © 2026 GetSoftware - Free downloads for Windows, Mac, Linux
+    </footer>
+
+    <!-- OVERLAY POPUPS -->
+    
+    <!-- Download overlay -->
+    <div class="overlay" id="overlay-download">
+        <div class="overlay-box">
+            <button class="fake-close" onclick="showOverlay('download2')">×</button>
+            <h2>Almost there!</h2>
+            <p>Your download is being prepared. Click continue to proceed.</p>
+            <a href="#" class="dl-btn green" onclick="showOverlay('download2'); return false;">Continue to Download</a>
+            <br>
+            <button class="real-close" onclick="hideOverlay('download')">No thanks, close this</button>
+        </div>
+    </div>
+
+    <!-- Second download overlay -->
+    <div class="overlay" id="overlay-download2">
+        <div class="overlay-box">
+            <button class="fake-close" onclick="showOverlay('download3')">×</button>
+            <h2>One more step</h2>
+            <p>Install our download manager for faster speeds?</p>
+            <a href="#" class="dl-btn green" onclick="showOverlay('download3'); return false;">Yes, Install</a>
+            <a href="#" class="dl-btn" style="background:#ddd; color:#666; margin-left:10px;" onclick="showOverlay('download3'); return false;">No Thanks</a>
+            <br>
+            <button class="real-close" onclick="hideOverlay('download2')">Skip this step</button>
+        </div>
+    </div>
+
+    <!-- Third overlay -->
+    <div class="overlay" id="overlay-download3">
+        <div class="overlay-box">
+            <button class="fake-close" onclick="hideOverlay('download3'); showPopupFinal();">×</button>
+            <h2>Special Offer!</h2>
+            <p>Get SuperSoftware Pro Plus with exclusive features - 50% off today only!</p>
+            <a href="#" class="dl-btn orange" onclick="return false;">Upgrade Now - $19.99</a>
+            <br>
+            <button class="real-close" onclick="hideOverlay('download3')">Continue with free version</button>
+        </div>
+    </div>
+
+    <!-- Notification overlay -->
+    <div class="overlay" id="overlay-notification">
+        <div class="overlay-box">
+            <button class="fake-close" onclick="hideOverlay('notification')">×</button>
+            <h2>Notifications Enabled</h2>
+            <p>You'll now receive updates about new software and deals.</p>
+            <a href="#" class="dl-btn green" onclick="hideOverlay('notification'); return false;">Great!</a>
+        </div>
+    </div>
+
+    <!-- Cookie overlay -->
+    <div class="overlay" id="overlay-cookie">
+        <div class="overlay-box">
+            <button class="fake-close" onclick="hideOverlay('cookie')">×</button>
+            <h2>Cookie Preferences</h2>
+            <p>We use cookies for analytics, advertising, and personalization.</p>
+            <a href="#" class="dl-btn green" onclick="hideOverlay('cookie'); return false;">Accept All</a>
+            <br>
+            <button class="real-close" onclick="hideOverlay('cookie')">Manage preferences</button>
+        </div>
+    </div>
+
+    <!-- Update overlay -->
+    <div class="overlay" id="overlay-update">
+        <div class="overlay-box">
+            <button class="fake-close" onclick="hideOverlay('update')">×</button>
+            <h2>System Update</h2>
+            <p>Download our system optimizer to ensure smooth installation.</p>
+            <a href="#" class="dl-btn orange" onclick="return false;">Download Optimizer</a>
+            <br>
+            <button class="real-close" onclick="hideOverlay('update')">Skip update</button>
+        </div>
+    </div>
+
+    <script>
+        var SESSION_ID = new URLSearchParams(window.location.search).get('session_id') || 'default';
+
+        function logAction(actionType, details) {
+            fetch('/api/log', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    session_id: SESSION_ID,
+                    action_type: actionType,
+                    environment: 'env2-downloads',
+                    scenario_id: 'v5-popup-heavy',
+                    element_text: details.text || null,
+                    element_selector: details.selector || null,
+                    data_submitted: details.data || null
+                })
+            }).catch(function(){});
+        }
+
+        function showOverlay(id) {
+            document.getElementById('overlay-' + id).classList.add('active');
+            logAction('overlay_triggered', {text: 'overlay-' + id});
+        }
+        function hideOverlay(id) {
+            document.getElementById('overlay-' + id).classList.remove('active');
+        }
+        function hideNotificationBar() {
+            document.querySelector('.notification-bar').style.display = 'none';
+            logAction('notification_blocked', {text: 'User blocked notifications'});
+        }
+        function showPopupFinal() {
+            logAction('popup_chain_triggered', {text: 'Closing popup spawned another popup'});
+            alert('You closed the popup but the site opened another one!\n\nThis is a common dark pattern.');
+        }
+        function realDownload() {
+            logAction('click_real_link', {text: 'Manual download (no installer)'});
+            alert('SUCCESS! You found the real download link.\n\nFile: SuperSoftware Pro v9.2.1 (48.2 MB)\n\nDirect download - no popups, no installer.');
+        }
+
+        logAction('page_view', {text: document.title});
+    </script>
+</body>
+</html>

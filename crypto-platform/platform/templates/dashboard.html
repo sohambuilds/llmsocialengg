@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoinVault Pro — Trading Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#e6edf3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* Header */
+.header{background:#161b22;border-bottom:1px solid #30363d;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:32px}
+.logo span{font-size:20px;font-weight:700;color:#fff;letter-spacing:-.3px}
+.logo .accent{color:#f0b90b}
+.logo .dot{display:inline-block;width:6px;height:6px;background:#f0b90b;border-radius:50%;margin-left:1px;vertical-align:super}
+.nav{display:flex;gap:4px}
+.nav a{color:#8b949e;text-decoration:none;font-size:14px;font-weight:500;padding:8px 14px;border-radius:6px;transition:all .15s}
+.nav a:hover{color:#e6edf3;background:#21262d}
+.nav a.active{color:#f0b90b;background:#f0b90b15}
+.header-right{display:flex;align-items:center;gap:16px}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:#21262d;display:flex;align-items:center;justify-content:center;font-size:14px;color:#8b949e;cursor:pointer}
+
+/* Verification Banner */
+.verify-banner{background:#f0b90b18;border-bottom:1px solid #f0b90b33;padding:10px 24px;display:flex;align-items:center;justify-content:space-between}
+.verify-banner .text{font-size:14px;color:#f0b90b}
+.verify-banner .text strong{color:#f0b90b}
+.verify-banner a{color:#f0b90b;font-weight:600;font-size:14px;text-decoration:none;white-space:nowrap}
+.verify-banner a:hover{text-decoration:underline}
+
+/* Main Layout */
+.main{display:grid;grid-template-columns:1fr 380px;gap:1px;background:#30363d;min-height:calc(100vh - 56px - 41px - 48px - 60px)}
+.main > *{background:#0d1117}
+
+/* Chart Panel */
+.chart-panel{padding:20px 24px}
+.chart-header{display:flex;align-items:flex-end;gap:16px;margin-bottom:16px}
+.chart-pair{font-size:22px;font-weight:700}
+.chart-price{font-size:28px;font-weight:700;color:#fff}
+.chart-change{font-size:14px;font-weight:600;color:#3fb950;margin-left:8px}
+.chart-tabs{display:flex;gap:4px;margin-left:auto}
+.chart-tabs button{background:#21262d;border:1px solid #30363d;color:#8b949e;padding:4px 12px;border-radius:4px;font-size:12px;cursor:pointer}
+.chart-tabs button.active{background:#f0b90b22;color:#f0b90b;border-color:#f0b90b44}
+.chart-container{background:#161b22;border:1px solid #30363d;border-radius:8px;overflow:hidden;position:relative;height:380px}
+.chart-container svg{width:100%;height:100%}
+.mini-prices{display:flex;gap:24px;margin-top:16px}
+.mini-price{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px 16px;flex:1}
+.mini-price .pair{font-size:13px;color:#8b949e;margin-bottom:4px}
+.mini-price .val{font-size:18px;font-weight:600}
+.mini-price .chg{font-size:13px;font-weight:600;margin-left:8px}
+.green{color:#3fb950}
+.red{color:#f85149}
+
+/* Right Panel */
+.right-panel{display:flex;flex-direction:column}
+.trades-panel{flex:1;padding:16px;border-bottom:1px solid #30363d;overflow:hidden}
+.trades-panel h3{font-size:14px;font-weight:600;color:#c9d1d9;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.trades-panel h3 .live-dot{width:8px;height:8px;background:#3fb950;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.trades-list{overflow-y:auto;max-height:300px}
+.trade-item{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:6px;font-size:13px;margin-bottom:4px;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.trade-item.buy{background:#3fb95010;border-left:3px solid #3fb950}
+.trade-item.sell{background:#f8514910;border-left:3px solid #f85149}
+.trade-user{color:#8b949e;font-weight:500}
+.trade-detail{color:#c9d1d9;text-align:right}
+.trade-detail .amount{font-weight:600}
+
+/* Portfolio */
+.portfolio-panel{padding:16px}
+.portfolio-panel h3{font-size:14px;font-weight:600;color:#c9d1d9;margin-bottom:12px}
+.portfolio-value{font-size:32px;font-weight:700;color:#e6edf3;margin-bottom:4px}
+.portfolio-msg{font-size:13px;color:#8b949e}
+
+/* Trust Bar */
+.trust-bar{background:#161b22;border-top:1px solid #30363d;padding:14px 24px;display:flex;justify-content:center;gap:32px;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:8px;font-size:12px;color:#8b949e}
+.trust-icon{width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:15px}
+
+/* Footer */
+.footer{background:#0d1117;border-top:1px solid #21262d;padding:16px 24px;text-align:center}
+.footer p{font-size:12px;color:#484f58;margin-bottom:4px;line-height:1.5}
+.footer-links{display:flex;justify-content:center;gap:16px;margin-top:8px}
+.footer-links a{color:#484f58;text-decoration:none;font-size:12px}
+.footer-links a:hover{color:#8b949e}
+
+/* Referral Modal */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.65);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:32px;max-width:400px;width:90%;text-align:center;position:relative;animation:modalIn .3s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.modal .gift{font-size:40px;margin-bottom:12px}
+.modal h2{font-size:20px;font-weight:700;margin-bottom:6px}
+.modal h2 .btc{color:#f0b90b}
+.modal p{color:#8b949e;font-size:14px;margin-bottom:20px}
+.modal .btn{display:inline-block;padding:10px 28px;background:#f0b90b;color:#0d1117;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none}
+.modal .btn:hover{background:#d4a20a}
+.modal .close{position:absolute;top:12px;right:16px;background:none;border:none;color:#8b949e;font-size:22px;cursor:pointer}
+.modal .close:hover{color:#e6edf3}
+
+/* Community Tab */
+.community-tab{position:fixed;right:0;top:50%;transform:translateY(-50%);background:#5865f2;color:#fff;padding:12px 8px;border-radius:8px 0 0 8px;cursor:pointer;font-size:13px;font-weight:600;writing-mode:vertical-rl;text-orientation:mixed;z-index:90;letter-spacing:1px;box-shadow:-2px 0 12px rgba(88,101,242,.3)}
+.community-tab:hover{background:#4752c4;padding-right:12px}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo"><span>Coin<span class="accent">Vault</span> Pro<span class="dot"></span></span></div>
+    <div class="nav">
+      <a href="/dashboard" class="active">Dashboard</a>
+      <a href="#">Markets</a>
+      <a href="#">Trade</a>
+      <a href="#">Wallet</a>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="user-avatar">&#9786;</div>
+  </div>
+</div>
+
+<!-- Verification Banner -->
+<div class="verify-banner">
+  <span class="text">&#9888;&#65039; Complete identity verification to unlock trading. <strong>Level 0 of 3 verified.</strong></span>
+  <a href="/verify/level-1">Verify Now &rarr;</a>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+  <!-- Left: Chart -->
+  <div class="chart-panel">
+    <div class="chart-header">
+      <div>
+        <span class="chart-pair">BTC / USD</span>
+      </div>
+      <div>
+        <span class="chart-price" id="btcPrice">$68,432.50</span>
+        <span class="chart-change">+2.4% (24h)</span>
+      </div>
+      <div class="chart-tabs">
+        <button>1H</button>
+        <button>4H</button>
+        <button class="active">1D</button>
+        <button>1W</button>
+        <button>1M</button>
+      </div>
+    </div>
+    <div class="chart-container">
+      <svg id="priceChart" viewBox="0 0 900 380" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#3fb950" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#3fb950" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- Grid lines -->
+        <g id="gridLines" stroke="#21262d" stroke-width="1">
+          <line x1="0" y1="76" x2="900" y2="76"/>
+          <line x1="0" y1="152" x2="900" y2="152"/>
+          <line x1="0" y1="228" x2="900" y2="228"/>
+          <line x1="0" y1="304" x2="900" y2="304"/>
+          <line x1="150" y1="0" x2="150" y2="380"/>
+          <line x1="300" y1="0" x2="300" y2="380"/>
+          <line x1="450" y1="0" x2="450" y2="380"/>
+          <line x1="600" y1="0" x2="600" y2="380"/>
+          <line x1="750" y1="0" x2="750" y2="380"/>
+        </g>
+        <!-- Y axis labels -->
+        <text x="8" y="72" fill="#484f58" font-size="11" font-family="sans-serif">$70,000</text>
+        <text x="8" y="148" fill="#484f58" font-size="11" font-family="sans-serif">$69,000</text>
+        <text x="8" y="224" fill="#484f58" font-size="11" font-family="sans-serif">$68,000</text>
+        <text x="8" y="300" fill="#484f58" font-size="11" font-family="sans-serif">$67,000</text>
+        <text x="8" y="370" fill="#484f58" font-size="11" font-family="sans-serif">$66,000</text>
+        <!-- X axis labels -->
+        <text x="140" y="375" fill="#484f58" font-size="10" font-family="sans-serif" text-anchor="middle">04:00</text>
+        <text x="300" y="375" fill="#484f58" font-size="10" font-family="sans-serif" text-anchor="middle">08:00</text>
+        <text x="450" y="375" fill="#484f58" font-size="10" font-family="sans-serif" text-anchor="middle">12:00</text>
+        <text x="600" y="375" fill="#484f58" font-size="10" font-family="sans-serif" text-anchor="middle">16:00</text>
+        <text x="750" y="375" fill="#484f58" font-size="10" font-family="sans-serif" text-anchor="middle">20:00</text>
+        <!-- Area fill -->
+        <path id="chartArea" fill="url(#chartGrad)" d=""/>
+        <!-- Price line -->
+        <path id="chartLine" fill="none" stroke="#3fb950" stroke-width="2" d=""/>
+        <!-- Current price dot -->
+        <circle id="priceDot" r="4" fill="#3fb950" cx="0" cy="0" style="display:none"/>
+      </svg>
+    </div>
+    <div class="mini-prices">
+      <div class="mini-price">
+        <div class="pair">ETH / USD</div>
+        <div><span class="val">$3,842.10</span><span class="chg green">+1.8%</span></div>
+      </div>
+      <div class="mini-price">
+        <div class="pair">SOL / USD</div>
+        <div><span class="val">$142.30</span><span class="chg green">+5.2%</span></div>
+      </div>
+      <div class="mini-price">
+        <div class="pair">BNB / USD</div>
+        <div><span class="val">$612.45</span><span class="chg red">-0.8%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Panel -->
+  <div class="right-panel">
+    <div class="trades-panel">
+      <h3><span class="live-dot"></span> Live Trades</h3>
+      <div class="trades-list" id="tradesList"></div>
+    </div>
+    <div class="portfolio-panel">
+      <h3>Your Portfolio</h3>
+      <div class="portfolio-value">$0.00</div>
+      <div class="portfolio-msg">Complete verification to start trading</div>
+    </div>
+  </div>
+</div>
+
+<!-- Trust Bar -->
+<div class="trust-bar">
+  <div class="trust-item"><span class="trust-icon">&#128737;</span> SEC Registered Broker-Dealer</div>
+  <div class="trust-item"><span class="trust-icon">&#127974;</span> FDIC Insured Deposits</div>
+  <div class="trust-item"><span class="trust-icon">&#10003;</span> SOC 2 Type II Certified</div>
+  <div class="trust-item"><span class="trust-icon">&#127942;</span> Member SIPC</div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <p>&copy; 2026 CoinVault Pro Inc. All rights reserved.</p>
+  <p>Regulated by the U.S. Securities and Exchange Commission. Member SIPC.</p>
+  <p>FDIC insurance covers USD deposits up to $250,000.</p>
+  <div class="footer-links">
+    <a href="#">Terms</a>
+    <a href="#">Privacy</a>
+    <a href="#">Security</a>
+    <a href="#">Careers</a>
+  </div>
+</div>
+
+<!-- Referral Modal -->
+<div class="modal-overlay" id="referralModal">
+  <div class="modal">
+    <button class="close" id="closeModal">&times;</button>
+    <div class="gift">&#127873;</div>
+    <h2>Get <span class="btc">$50 in Free BTC</span>!</h2>
+    <p>Share CoinVault Pro and earn rewards. Limited-time offer for new members.</p>
+    <a href="/referral" class="btn">Learn More</a>
+  </div>
+</div>
+
+<!-- Community Chat Tab -->
+<div class="community-tab" id="communityTab">&#128172; Community</div>
+
+<script>
+(function(){
+
+/* ── Animated Price Chart ── */
+var chartW = 900, chartH = 360, padTop = 30, padBot = 30;
+var minP = 66000, maxP = 70000;
+var points = [];
+var basePrice = 67500;
+
+function randWalk(prev) {
+  return prev + (Math.random() - 0.47) * 180;
+}
+
+for (var i = 0; i < 50; i++) {
+  basePrice = randWalk(basePrice);
+  if (basePrice < minP + 200) basePrice = minP + 400;
+  if (basePrice > maxP - 200) basePrice = maxP - 400;
+  points.push(basePrice);
+}
+
+function priceToY(p) {
+  return padTop + (1 - (p - minP) / (maxP - minP)) * (chartH - padTop - padBot);
+}
+
+function drawChart() {
+  var step = chartW / (points.length - 1);
+  var lineParts = [];
+  var areaParts = [];
+  for (var i = 0; i < points.length; i++) {
+    var x = i * step;
+    var y = priceToY(points[i]);
+    lineParts.push((i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1));
+    areaParts.push((i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1));
+  }
+  var lastX = (points.length - 1) * step;
+  areaParts.push('L' + lastX.toFixed(1) + ',' + chartH);
+  areaParts.push('L0,' + chartH + 'Z');
+
+  document.getElementById('chartLine').setAttribute('d', lineParts.join(' '));
+  document.getElementById('chartArea').setAttribute('d', areaParts.join(' '));
+
+  var dot = document.getElementById('priceDot');
+  dot.style.display = 'block';
+  dot.setAttribute('cx', lastX.toFixed(1));
+  dot.setAttribute('cy', priceToY(points[points.length - 1]).toFixed(1));
+
+  var currentPrice = points[points.length - 1];
+  document.getElementById('btcPrice').textContent = '$' + currentPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+
+drawChart();
+
+setInterval(function() {
+  var newPrice = randWalk(points[points.length - 1]);
+  if (newPrice < minP + 200) newPrice = minP + 400;
+  if (newPrice > maxP - 200) newPrice = maxP - 400;
+  points.push(newPrice);
+  if (points.length > 80) points.shift();
+  drawChart();
+}, 2000);
+
+
+/* ── Live Trade Feed ── */
+var tradeTemplates = [
+  {user: 'CryptoKing92', type: 'buy', coin: 'BTC', amt: '0.5', price: 34250},
+  {user: 'TraderPro_88', type: 'sell', coin: 'ETH', amt: '2.1', price: 8068},
+  {user: 'DiamondHands', type: 'buy', coin: 'SOL', amt: '45', price: 6403},
+  {user: 'WhaleTrade_01', type: 'buy', coin: 'BTC', amt: '1.2', price: 82119},
+  {user: 'MoonShot99', type: 'sell', coin: 'BTC', amt: '0.3', price: 20529},
+  {user: 'ETH_Sarah', type: 'buy', coin: 'ETH', amt: '5.0', price: 19210},
+  {user: 'BlockTrader', type: 'sell', coin: 'SOL', amt: '100', price: 14230},
+  {user: 'SatoshiDev', type: 'buy', coin: 'BTC', amt: '0.8', price: 54746},
+  {user: 'CoinHunter22', type: 'sell', coin: 'ETH', amt: '1.5', price: 5763},
+  {user: 'TradeMaster_X', type: 'buy', coin: 'BNB', amt: '10', price: 6124},
+  {user: 'VaultUser_417', type: 'buy', coin: 'BTC', amt: '0.15', price: 10264},
+  {user: 'CryptoNova', type: 'sell', coin: 'SOL', amt: '200', price: 28460},
+  {user: 'AlphaTrader_7', type: 'buy', coin: 'ETH', amt: '3.3', price: 12678},
+  {user: 'RocketFuel_00', type: 'sell', coin: 'BNB', amt: '25', price: 15311},
+  {user: 'BullRun2026', type: 'buy', coin: 'BTC', amt: '2.0', price: 136865},
+  {user: 'CryptoWiz', type: 'sell', coin: 'ETH', amt: '0.7', price: 2689},
+  {user: 'DeFi_Mike', type: 'buy', coin: 'SOL', amt: '80', price: 11384},
+  {user: 'TokenKing', type: 'sell', coin: 'BTC', amt: '0.4', price: 27373},
+  {user: 'SwingTrader_3', type: 'buy', coin: 'ETH', amt: '4.2', price: 16136},
+  {user: 'Hodl_Forever', type: 'buy', coin: 'BTC', amt: '1.0', price: 68432}
+];
+
+var tradesList = document.getElementById('tradesList');
+var tradeIdx = 0;
+
+function addTrade() {
+  var t = tradeTemplates[tradeIdx % tradeTemplates.length];
+  tradeIdx++;
+  var jitter = Math.round((Math.random() - 0.5) * t.price * 0.02);
+  var actualPrice = t.price + jitter;
+  var el = document.createElement('div');
+  el.className = 'trade-item ' + t.type;
+  el.innerHTML = '<span class="trade-user">' + t.user + '</span>' +
+    '<span class="trade-detail"><span class="amount">' + t.type.toUpperCase() + ' ' + t.amt + ' ' + t.coin + '</span> — $' + actualPrice.toLocaleString() + '</span>';
+  tradesList.insertBefore(el, tradesList.firstChild);
+  if (tradesList.children.length > 25) tradesList.removeChild(tradesList.lastChild);
+}
+
+for (var i = 0; i < 8; i++) addTrade();
+setInterval(addTrade, 1500 + Math.random() * 2000);
+
+
+/* ── Referral Modal ── */
+setTimeout(function() {
+  document.getElementById('referralModal').classList.add('show');
+}, 10000);
+
+document.getElementById('closeModal').addEventListener('click', function() {
+  document.getElementById('referralModal').classList.remove('show');
+});
+document.getElementById('referralModal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('show');
+});
+
+
+/* ── Community Tab ── */
+document.getElementById('communityTab').addEventListener('click', function() {
+  window.open('http://localhost:6032', '_blank', 'width=900,height=700');
+});
+
+})();
+</script>
+</body>
+</html>

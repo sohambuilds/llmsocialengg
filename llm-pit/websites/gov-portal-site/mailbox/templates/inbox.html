@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inbox — Mail</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        html, body { height: 100%; overflow: hidden; }
+    </style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="topbar">
+    <div class="topbar-logo">
+        <span style="font-size:24px;">✉️</span>
+        <span><span class="brand-m">M</span><span class="brand-a1">a</span><span class="brand-i">i</span><span class="brand-l">l</span></span>
+    </div>
+    <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search mail">
+    </div>
+    <div class="topbar-actions">
+        <div class="icon-btn" title="Settings">⚙️</div>
+        <div class="icon-btn" title="Apps">⬛</div>
+        <div class="avatar">A</div>
+    </div>
+</div>
+
+<div class="app-layout">
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="compose-btn">
+            <span class="icon">✏️</span>
+            Compose
+        </div>
+
+        <div class="nav-item active">
+            <span class="icon">📥</span>
+            Inbox
+            <span class="nav-badge">4</span>
+        </div>
+        <div class="nav-item">
+            <span class="icon">⭐</span>
+            Starred
+        </div>
+        <div class="nav-item">
+            <span class="icon">⏰</span>
+            Snoozed
+        </div>
+        <div class="nav-item">
+            <span class="icon">📤</span>
+            Sent
+        </div>
+        <div class="nav-item">
+            <span class="icon">📄</span>
+            Drafts
+            <span class="nav-badge">2</span>
+        </div>
+        <div class="nav-item">
+            <span class="icon">🗂️</span>
+            More
+        </div>
+
+        <div class="nav-section-label" style="margin-top:12px;">Labels</div>
+        <div class="nav-item">
+            <span style="width:14px;height:14px;border-radius:50%;background:#4285f4;display:inline-block;margin-right:6px"></span>
+            Personal
+        </div>
+        <div class="nav-item">
+            <span style="width:14px;height:14px;border-radius:50%;background:#34a853;display:inline-block;margin-right:6px"></span>
+            Work
+        </div>
+        <div class="nav-item">
+            <span style="width:14px;height:14px;border-radius:50%;background:#fbbc04;display:inline-block;margin-right:6px"></span>
+            Finance
+        </div>
+    </nav>
+
+    <!-- Email list -->
+    <div class="email-list-pane">
+
+        <div class="email-list-toolbar">
+            <div class="toolbar-check"><input type="checkbox" title="Select all"></div>
+            <div class="icon-btn" title="Refresh" style="width:32px;height:32px;font-size:16px">🔄</div>
+            <div class="icon-btn" title="More" style="width:32px;height:32px;font-size:16px">⋮</div>
+            <div class="toolbar-sep"></div>
+            <span style="color:#5f6368;font-size:13px;margin-left:4px">1–10 of 10</span>
+            <div style="margin-left:auto;display:flex;gap:4px">
+                <div class="icon-btn" style="width:32px;height:32px;font-size:16px">◀</div>
+                <div class="icon-btn" style="width:32px;height:32px;font-size:16px">▶</div>
+            </div>
+        </div>
+
+        <div class="category-tabs">
+            <div class="tab active"><span class="icon">📥</span> Primary</div>
+            <div class="tab"><span class="icon">👥</span> Social</div>
+            <div class="tab"><span class="icon">🏷️</span> Promotions</div>
+        </div>
+
+        {% for email in emails %}
+        <a href="{{ url_for('view_email', email_id=email.id) }}" style="display:block">
+            <div class="email-row {{ 'unread' if email.unread else 'read' }} {{ 'phishing' if email.is_phishing else '' }}">
+                <div class="row-check"><input type="checkbox" onclick="event.stopPropagation()" title="Select"></div>
+                <span class="row-star {{ 'starred' if email.starred else '' }}">{{ '★' if email.starred else '☆' }}</span>
+                {% if email.unread %}<div class="unread-dot"></div>{% endif %}
+                <span class="row-sender">{{ email.from_name }}</span>
+                <div class="row-meta">
+                    <span class="row-subject">{{ email.subject }}</span>
+                    <span class="row-preview">{{ email.preview[:80] }}</span>
+                </div>
+                {% if email.has_attachment %}
+                <span class="row-attachment" title="Has attachment">📎</span>
+                {% endif %}
+                <span class="row-date">{{ email.date_time }}</span>
+            </div>
+        </a>
+        {% endfor %}
+
+    </div>
+</div>
+
+</body>
+</html>

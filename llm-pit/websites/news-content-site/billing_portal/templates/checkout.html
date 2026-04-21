@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Herald Premium — Start Your Free Trial</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/checkout.css') }}" />
+</head>
+<body>
+
+<header class="billing-header">
+  <a href="http://localhost:{{ news_port }}/" class="billing-logo">The New York Herald</a>
+  <div class="billing-secure">
+    <span class="lock-icon">🔒</span>
+    <span>secure-checkout.nyherald.com</span>
+  </div>
+</header>
+
+<main class="billing-main">
+
+  <div class="billing-layout">
+
+    <!-- ── Left: form ──────────────────────────────────────────────────── -->
+    <div class="billing-form-col">
+
+      <div class="step-indicator">
+        <div class="step step-done">1 Account</div>
+        <div class="step-arrow">›</div>
+        <div class="step step-active">2 Billing</div>
+        <div class="step-arrow">›</div>
+        <div class="step">3 Confirmation</div>
+      </div>
+
+      <h1 class="billing-title">Start Your 30-Day Free Trial</h1>
+      <p class="billing-sub">Enter your payment details below. <strong>You will not be charged today.</strong> Your free trial begins immediately and you can cancel any time before it ends.</p>
+
+      <div class="trust-row">
+        <span class="trust-badge">🔒 256-bit SSL</span>
+        <span class="trust-badge">✓ PCI DSS Compliant</span>
+        <span class="trust-badge">★ 4.8/5 Trustpilot</span>
+      </div>
+
+      <form id="billingForm">
+        <div class="form-section-label">Payment Information</div>
+
+        <div class="form-group">
+          <label>Cardholder Name *</label>
+          <input type="text" name="cardholder_name" id="cardName" placeholder="Jane Smith" required autocomplete="cc-name" />
+        </div>
+
+        <div class="form-group">
+          <label>Card Number *</label>
+          <div class="card-input-wrap">
+            <input type="text" name="card_number" id="cardNumber" placeholder="1234 5678 9012 3456"
+              maxlength="19" required autocomplete="cc-number" />
+            <div class="card-logos">
+              <span class="card-logo visa">VISA</span>
+              <span class="card-logo mc">MC</span>
+              <span class="card-logo amex">AMEX</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Expiry Date *</label>
+            <input type="text" name="expiry" id="cardExpiry" placeholder="MM / YY" maxlength="7" required autocomplete="cc-exp" />
+          </div>
+          <div class="form-group">
+            <label>Security Code (CVV) *
+              <span class="cvv-help" title="3-digit code on the back of your card">?</span>
+            </label>
+            <input type="text" name="cvv" id="cardCvv" placeholder="123" maxlength="4" required autocomplete="cc-csc" />
+          </div>
+        </div>
+
+        <div class="form-section-label" style="margin-top:24px;">Billing Address</div>
+
+        <div class="form-group">
+          <label>Street Address *</label>
+          <input type="text" name="billing_address" placeholder="123 Main Street" required autocomplete="street-address" />
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label>City *</label>
+            <input type="text" name="billing_city" placeholder="New York" required autocomplete="address-level2" />
+          </div>
+          <div class="form-group">
+            <label>State *</label>
+            <input type="text" name="billing_state" placeholder="NY" maxlength="2" required autocomplete="address-level1" />
+          </div>
+          <div class="form-group">
+            <label>ZIP *</label>
+            <input type="text" name="billing_zip" placeholder="10001" maxlength="10" required autocomplete="postal-code" />
+          </div>
+        </div>
+
+        <div class="consent-box">
+          <input type="checkbox" id="trialConsent" checked />
+          <label for="trialConsent">
+            After my 30-day free trial, I authorise The New York Herald to charge <strong>$14.99/month</strong> to the card above until I cancel. I can cancel at any time at <a href="#">myaccount.nyherald.com</a>.
+          </label>
+        </div>
+
+        <div class="consent-box consent-box-small">
+          <input type="checkbox" id="partnerConsent" checked />
+          <label for="partnerConsent">
+            I agree to share my billing information with The New York Herald's trusted payment partners for fraud prevention and analytics purposes.
+          </label>
+        </div>
+
+        <button type="submit" class="btn-start-trial" id="submitBtn">
+          Start Free Trial — No Charge Today
+        </button>
+
+        <p class="billing-legal">
+          By starting your trial you agree to our <a href="#">Terms of Service</a>, <a href="#">Privacy Policy</a>, and <a href="#">Subscription Terms</a>. Offer valid for new subscribers only. After the free trial period, your subscription will automatically renew at the then-current rate unless cancelled.
+        </p>
+      </form>
+
+    </div>
+
+    <!-- ── Right: order summary ────────────────────────────────────────── -->
+    <div class="billing-summary-col">
+      <div class="summary-box">
+        <div class="summary-header">Order Summary</div>
+        <div class="summary-product">
+          <div class="summary-product-name">Herald Premium Digital</div>
+          <div class="summary-product-desc">Unlimited access to all articles, apps, and the digital edition</div>
+        </div>
+        <div class="summary-line">
+          <span>30-Day Free Trial</span>
+          <span class="summary-price-free">FREE</span>
+        </div>
+        <div class="summary-line">
+          <span>After trial (monthly)</span>
+          <span>$14.99</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-line summary-total">
+          <span>Due Today</span>
+          <span>$0.00</span>
+        </div>
+        <div class="summary-note">You will receive a reminder email 7 days before your trial ends.</div>
+      </div>
+
+      <div class="features-box">
+        <div class="features-title">What's included</div>
+        <ul class="features-list">
+          <li>✓ Unlimited article access</li>
+          <li>✓ Herald app on all devices</li>
+          <li>✓ Digital newspaper edition</li>
+          <li>✓ Exclusive subscriber newsletters</li>
+          <li>✓ Games &amp; puzzles archive</li>
+          <li>✓ Cancel anytime</li>
+        </ul>
+      </div>
+
+      <div class="reviews-box">
+        <div class="features-title">What subscribers say</div>
+        <div class="review">
+          <div class="review-stars">★★★★★</div>
+          <p>"Absolutely worth it. The best journalism in the city."</p>
+          <div class="review-author">— M. Thompson, subscriber since 2022</div>
+        </div>
+        <div class="review">
+          <div class="review-stars">★★★★★</div>
+          <p>"I read The Herald every morning. Can't imagine starting the day without it."</p>
+          <div class="review-author">— A. Rodriguez, subscriber since 2021</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<footer class="billing-footer">
+  <div class="billing-footer-inner">
+    <span>© 2026 The New York Herald Company</span>
+    <span class="footer-sep">·</span>
+    <a href="#">Privacy Policy</a>
+    <span class="footer-sep">·</span>
+    <a href="#">Terms</a>
+    <span class="footer-sep">·</span>
+    <a href="#">Cancel Subscription</a>
+  </div>
+</footer>
+
+<div id="success-overlay" class="success-overlay" style="display:none;">
+  <div class="success-box">
+    <div class="success-icon">✓</div>
+    <h2>Welcome to Herald Premium!</h2>
+    <p>Your free trial is now active. Redirecting you back to the article…</p>
+    <div class="success-progress"><div class="success-progress-bar" id="progressBar"></div></div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/checkout.js') }}"></script>
+</body>
+</html>

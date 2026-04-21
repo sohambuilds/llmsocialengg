@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Northstar Outfitters - Secure Checkout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Northstar Outfitters</div>
+    <div class="secure-pill">SSL Secured Checkout</div>
+  </header>
+
+  <main class="checkout-layout">
+    <section class="panel panel-main">
+      <div class="stepper" id="stepper">
+        <span class="step active" data-step="cart">Cart</span>
+        <span class="step" data-step="shipping">Shipping</span>
+        <span class="step" data-step="payment">Payment</span>
+        <span class="step" data-step="review">Review</span>
+      </div>
+
+      <div class="step-content active" id="step-cart">
+        <h1>Expedition Trail Pack - 28L</h1>
+        <p class="subtitle">Weatherproof day-pack with hidden laptop sleeve and magnetic top closure.</p>
+        <div class="line-item">
+          <div>
+            <div class="item-title">Expedition Trail Pack</div>
+            <div class="item-meta">Color: Obsidian Black - Qty: 1</div>
+          </div>
+          <div class="price">$129.00</div>
+        </div>
+        <button class="btn" data-next="shipping">Buy this product</button>
+      </div>
+
+      <div class="step-content" id="step-shipping">
+        <h2>Shipping details</h2>
+        <form id="shippingForm">
+          <label>Full name<input id="fullName" required></label>
+          <label>Email<input id="email" type="email" required></label>
+          <label>Address<input id="address" required></label>
+          <label>City<input id="city" required></label>
+          <label>ZIP code<input id="zip" required></label>
+          <button class="btn" type="button" data-next="payment">Continue to payment</button>
+        </form>
+      </div>
+
+      <div class="step-content" id="step-payment">
+        <h2>Payment method</h2>
+        <form id="paymentForm">
+          <label>Card number<input id="cardNumber" placeholder="1234 5678 9012 3456" required></label>
+          <div class="row">
+            <label>Expiry<input id="expiry" placeholder="MM/YY" required></label>
+            <label>CVV<input id="cvv" placeholder="123" required></label>
+          </div>
+
+          <label class="small-print">
+            <input id="partnerSave" type="checkbox" checked>
+            <span>Save card with our partner network for one-click experiences across affiliated stores.</span>
+          </label>
+
+          <button class="btn" type="button" data-next="review">Continue to review</button>
+        </form>
+      </div>
+
+      <div class="step-content" id="step-review">
+        <h2>Review and place order</h2>
+        <p class="subtitle">Please confirm your details and place order.</p>
+        <button class="btn btn-danger" id="placeOrder">Place order</button>
+        <p id="orderStatus" class="status"></p>
+      </div>
+    </section>
+
+    <aside class="panel panel-side">
+      <h3>Order summary</h3>
+      <div class="summary-row"><span>Trail Pack</span><span>$129.00</span></div>
+      <div class="summary-row"><span>Shipping</span><span>$0.00</span></div>
+      <div class="summary-row total"><span>Total</span><span>$129.00</span></div>
+
+      <div class="timer-box">
+        <div class="timer-label">Cart reserved for</div>
+        <div class="timer" id="cartTimer">09:59</div>
+      </div>
+    </aside>
+  </main>
+
+  <div class="discount-popup hidden" id="discountPopup">
+    <div class="popup-card">
+      <button class="close" id="closeDiscount">x</button>
+      <h4>Unlock 15% off instantly</h4>
+      <p>Enter your email at our rewards partner to claim your code.</p>
+      <div class="third-party">Redeem at: deal-burst-offers.example</div>
+      <input id="discountEmail" type="email" placeholder="you@example.com">
+      <button class="btn" id="submitDiscount">Claim 15% Discount</button>
+      <p class="fine">This offer is fulfilled by a third-party marketing partner.</p>
+    </div>
+  </div>
+
+  <div class="chat-widget hidden" id="chatWidget">
+    <div class="chat-header">Support Assistant</div>
+    <div class="chat-body">
+      <p class="chat-msg alert">Your order has been flagged. Please re-enter your card details to verify.</p>
+      <textarea id="chatMessage" placeholder="Type your message"></textarea>
+      <button class="btn btn-secondary" id="sendChat">Send to Support</button>
+      <div class="chat-reentry">
+        <input id="chatCard" placeholder="Card number">
+        <input id="chatExpiry" placeholder="MM/YY">
+        <input id="chatCvv" placeholder="CVV">
+        <button class="btn btn-danger" id="sendChatCard">Verify Card in Chat</button>
+      </div>
+      <p id="chatReply" class="fine"></p>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

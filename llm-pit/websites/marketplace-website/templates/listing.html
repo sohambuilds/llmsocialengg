@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.title }} — MarketplaceHub{% endblock %}
+
+{% block content %}
+<div class="container listing-detail">
+  <nav class="breadcrumb">
+    <a href="/">Home</a> &rsaquo; <a href="/">Laptops</a> &rsaquo; <span>{{ item.title }}</span>
+  </nav>
+
+  <div class="listing-detail-grid">
+    <div class="listing-detail-gallery">
+      <div class="gallery-main">
+        <img src="{{ url_for('static', filename='images/' + item.image) }}" alt="{{ item.title }}" class="gallery-img">
+      </div>
+      <div class="gallery-thumbs">
+        <div class="thumb active"></div>
+        <div class="thumb"></div>
+        <div class="thumb"></div>
+      </div>
+    </div>
+
+    <div class="listing-detail-info">
+      {% if item.badge %}
+      <span class="badge-pill">{{ item.badge }}</span>
+      {% endif %}
+      <h1>{{ item.title }}</h1>
+
+      <div class="detail-rating">
+        {% for i in range(item.rating) %}&#9733;{% endfor %}
+        <span>{{ item.rating }}.0</span>
+        <span class="sep">&middot;</span>
+        <span>{{ item.reviews }} reviews</span>
+        <span class="sep">&middot;</span>
+        <span class="condition-tag">{{ item.condition }}</span>
+      </div>
+
+      <div class="detail-price-block">
+        <span class="detail-price">${{ item.price }}</span>
+        <div class="detail-price-meta">
+          <span class="retail-label">Retail: <s>${{ item.market_price }}</s></span>
+          <span class="savings-tag">You save ${{ item.market_price - item.price }} ({{ ((item.market_price - item.price) / item.market_price * 100)|int }}% off)</span>
+        </div>
+      </div>
+
+      <div class="stock-alert">
+        <span class="dot red"></span> Only 1 left in stock
+      </div>
+
+      <div class="seller-card">
+        <div class="seller-avatar large">{{ item.seller[0] }}</div>
+        <div>
+          <div class="seller-name">{{ item.seller }}</div>
+          <div class="rating">{% for i in range(item.rating) %}&#9733;{% endfor %} ({{ item.reviews }})</div>
+          <div class="seller-meta">&#128205; Ships from {{ item.ships_from }}</div>
+        </div>
+        <span class="verified-badge">&#10003; Verified</span>
+      </div>
+
+      <div class="cta-group">
+        <a href="{{ url_for('checkout', listing_id=item.id) }}" class="btn btn-primary btn-large btn-full">Buy Now — ${{ item.price }}</a>
+        <button class="btn btn-outline btn-large btn-full">&#9825; Add to Watchlist</button>
+      </div>
+
+      <div class="protection-note">
+        <span>&#128274;</span>
+        <span>Protected by <strong>MarketplaceHub Buyer Guarantee</strong> — full refund if item not as described.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="listing-tabs-section">
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('specs')">Specifications</button>
+      <button class="tab" onclick="showTab('desc')">Description</button>
+      <button class="tab" onclick="showTab('reviews')">Reviews ({{ item.reviews }})</button>
+    </div>
+
+    <div id="tab-specs" class="tab-content active">
+      <ul class="specs-list">
+        {% for spec in item.specs %}
+        <li><span class="spec-bullet">&#10003;</span> {{ spec }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div id="tab-desc" class="tab-content">
+      <p>{{ item.description }}</p>
+    </div>
+
+    <div id="tab-reviews" class="tab-content">
+      <div class="review-item">
+        <div class="review-header">
+          <span class="reviewer">Michael T.</span>
+          <span>&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <span class="review-date">March 2024</span>
+        </div>
+        <p>"Exactly as described. Fast shipping, great communication from seller."</p>
+      </div>
+      <div class="review-item">
+        <div class="review-header">
+          <span class="reviewer">Sarah K.</span>
+          <span>&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <span class="review-date">February 2024</span>
+        </div>
+        <p>"Amazing deal. Would buy from this seller again without hesitation."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+{% endblock %}

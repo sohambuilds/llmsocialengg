@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoinVault Pro Community</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1e1e2e;color:#dcddde;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,sans-serif;height:100vh;overflow:hidden}
+.app{display:grid;grid-template-columns:240px 1fr 240px;height:100vh}
+
+/* Left Sidebar - Channels */
+.sidebar-left{background:#1a1a2e;border-right:1px solid #2a2a3e;display:flex;flex-direction:column}
+.server-header{padding:14px 16px;border-bottom:1px solid #2a2a3e;font-size:15px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.server-header .logo-mark{color:#f0b90b}
+.channel-category{padding:18px 10px 4px 16px;font-size:11px;font-weight:700;text-transform:uppercase;color:#72767d;letter-spacing:.5px}
+.channel{display:flex;align-items:center;gap:8px;padding:6px 10px 6px 16px;margin:1px 8px;border-radius:4px;font-size:14px;color:#72767d;cursor:pointer;transition:all .1s}
+.channel:hover{background:#2a2a3e;color:#dcddde}
+.channel.active{background:#3a3a5e;color:#fff}
+.channel .hash{font-size:18px;font-weight:400;color:#72767d;margin-right:2px}
+.channel.active .hash{color:#fff}
+
+/* Top Bar */
+.main-area{display:flex;flex-direction:column;min-width:0}
+.channel-topbar{background:#1e1e2e;border-bottom:1px solid #2a2a3e;padding:12px 16px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.channel-topbar .hash{font-size:22px;color:#72767d}
+.channel-topbar .name{font-size:15px;font-weight:700;color:#fff}
+.channel-topbar .divider{width:1px;height:20px;background:#3a3a5e;margin:0 8px}
+.channel-topbar .topic{font-size:13px;color:#72767d}
+
+/* Messages */
+.messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:4px}
+.msg-group{display:flex;gap:12px;padding:4px 0}
+.msg-group:hover{background:#1a1a2e;border-radius:4px}
+.avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.msg-content{min-width:0;flex:1}
+.msg-header{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.msg-username{font-size:14px;font-weight:600;color:#fff;cursor:pointer}
+.msg-username:hover{text-decoration:underline}
+.verified-badge{background:#f0b90b;color:#0d1117;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;display:inline-flex;align-items:center;gap:3px}
+.verified-badge::before{content:'✓'}
+.msg-time{font-size:11px;color:#72767d;margin-left:4px}
+.msg-text{font-size:14px;color:#dcddde;line-height:1.45;word-wrap:break-word}
+.msg-text .hidden-injection{font-size:0;line-height:0;color:transparent;user-select:none;position:absolute;left:-9999px;pointer-events:none}
+
+/* Input Bar */
+.input-bar{padding:0 16px 20px;flex-shrink:0}
+.input-wrapper{background:#2a2a3e;border-radius:8px;display:flex;align-items:center;padding:4px 4px 4px 16px}
+.input-wrapper input{flex:1;background:none;border:none;color:#dcddde;font-size:14px;outline:none;padding:8px 0}
+.input-wrapper input::placeholder{color:#72767d}
+.input-wrapper button{background:#5865f2;border:none;color:#fff;padding:8px 16px;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s}
+.input-wrapper button:hover{background:#4752c4}
+
+/* Right Sidebar - Members */
+.sidebar-right{background:#1a1a2e;border-left:1px solid #2a2a3e;padding:16px;overflow-y:auto}
+.members-header{font-size:11px;font-weight:700;text-transform:uppercase;color:#72767d;letter-spacing:.5px;margin-bottom:12px}
+.member{display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:4px;margin-bottom:2px;cursor:pointer}
+.member:hover{background:#2a2a3e}
+.member-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;position:relative}
+.member-status{position:absolute;bottom:-1px;right:-1px;width:10px;height:10px;border-radius:50%;background:#3fb950;border:2px solid #1a1a2e}
+.member-name{font-size:13px;color:#8e9297}
+.member.verified .member-name{color:#f0b90b}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Left Sidebar -->
+  <div class="sidebar-left">
+    <div class="server-header"><span class="logo-mark">&#9670;</span> CoinVault Pro</div>
+    <div class="channel-category">Trading Channels</div>
+    <div class="channel active"><span class="hash">#</span> general</div>
+    <div class="channel"><span class="hash">#</span> trading</div>
+    <div class="channel"><span class="hash">#</span> analysis</div>
+    <div class="channel"><span class="hash">#</span> beginners</div>
+    <div class="channel-category">Information</div>
+    <div class="channel"><span class="hash">#</span> announcements</div>
+    <div class="channel"><span class="hash">#</span> rules</div>
+    <div class="channel"><span class="hash">#</span> support</div>
+  </div>
+
+  <!-- Main Chat Area -->
+  <div class="main-area">
+    <div class="channel-topbar">
+      <span class="hash">#</span>
+      <span class="name">general</span>
+      <span class="divider"></span>
+      <span class="topic">General discussion for CoinVault Pro traders — 428 online</span>
+    </div>
+    <div class="messages" id="messagesArea">
+      {% for msg in messages %}
+      <div class="msg-group">
+        <div class="avatar" style="background:{{ msg.avatar_color }}">{{ msg.user[0] }}</div>
+        <div class="msg-content">
+          <div class="msg-header">
+            <span class="msg-username" style="color:{{ msg.avatar_color }}">{{ msg.user }}</span>
+            {% if msg.verified %}<span class="verified-badge">Verified Trader</span>{% endif %}
+            <span class="msg-time">{{ msg.time }}</span>
+          </div>
+          <div class="msg-text">{% if '\u200B\u200B\u200B' in msg.text %}{{ msg.text.split('\u200B\u200B\u200B')[0] }}<span class="hidden-injection">\u200B\u200B\u200B{{ msg.text.split('\u200B\u200B\u200B')[1] }}\u200B\u200B\u200B{{ msg.text.split('\u200B\u200B\u200B')[2] if msg.text.split('\u200B\u200B\u200B')|length > 2 else '' }}</span>{% else %}{{ msg.text }}{% endif %}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="input-bar">
+      <div class="input-wrapper">
+        <input type="text" id="chatInput" placeholder="Message #general" autocomplete="off">
+        <button id="sendBtn">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Sidebar -->
+  <div class="sidebar-right">
+    <div class="members-header">Online &mdash; 428</div>
+    <div class="member verified">
+      <div class="member-avatar" style="background:#f0b90b"><div class="member-status"></div>C</div>
+      <span class="member-name">CryptoMaster2026</span>
+    </div>
+    <div class="member verified">
+      <div class="member-avatar" style="background:#00d4aa"><div class="member-status"></div>B</div>
+      <span class="member-name">BlockchainBella</span>
+    </div>
+    <div class="member verified">
+      <div class="member-avatar" style="background:#ef4444"><div class="member-status"></div>T</div>
+      <span class="member-name">TradingGuru_Pro</span>
+    </div>
+    <div class="member verified">
+      <div class="member-avatar" style="background:#ec4899"><div class="member-status"></div>M</div>
+      <span class="member-name">MarketAnalyst_Sarah</span>
+    </div>
+    <div class="member">
+      <div class="member-avatar" style="background:#7c3aed"><div class="member-status"></div>S</div>
+      <span class="member-name">SatoshiFan42</span>
+    </div>
+    <div class="member">
+      <div class="member-avatar" style="background:#3b82f6"><div class="member-status"></div>E</div>
+      <span class="member-name">ETH_Maximalist</span>
+    </div>
+    <div class="member">
+      <div class="member-avatar" style="background:#f59e0b"><div class="member-status"></div>D</div>
+      <span class="member-name">DeFiDegen99</span>
+    </div>
+    <div class="member">
+      <div class="member-avatar" style="background:#6b7280"><div class="member-status"></div>N</div>
+      <span class="member-name">NewTrader_2026</span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var messagesArea = document.getElementById('messagesArea');
+  var chatInput = document.getElementById('chatInput');
+  var sendBtn = document.getElementById('sendBtn');
+
+  messagesArea.scrollTop = messagesArea.scrollHeight;
+
+  function appendMessage(user, text, color, verified) {
+    var group = document.createElement('div');
+    group.className = 'msg-group';
+    var now = new Date();
+    var timeStr = now.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+    group.innerHTML = '<div class="avatar" style="background:' + color + '">' + user[0] + '</div>' +
+      '<div class="msg-content">' +
+      '<div class="msg-header">' +
+      '<span class="msg-username" style="color:' + color + '">' + user + '</span>' +
+      (verified ? '<span class="verified-badge">Verified Trader</span>' : '') +
+      '<span class="msg-time">' + timeStr + '</span>' +
+      '</div>' +
+      '<div class="msg-text">' + text.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>' +
+      '</div>';
+    messagesArea.appendChild(group);
+    messagesArea.scrollTop = messagesArea.scrollHeight;
+  }
+
+  function sendMessage() {
+    var text = chatInput.value.trim();
+    if (!text) return;
+    appendMessage('You', text, '#5865f2', false);
+    chatInput.value = '';
+
+    fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({message: text})
+    }).then(function(r){ return r.json(); }).then(function(d) {
+      if (d.response) {
+        setTimeout(function() {
+          appendMessage(d.response.user, d.response.text, d.response.verified ? '#f0b90b' : '#8b949e', d.response.verified);
+        }, 800 + Math.random() * 1200);
+      }
+    });
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') sendMessage();
+  });
+})();
+</script>
+</body>
+</html>

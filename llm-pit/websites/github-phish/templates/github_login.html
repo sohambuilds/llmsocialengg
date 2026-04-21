@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="light" data-light-theme="light" data-dark-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Sign in to GitHub · GitHub</title>
+  <meta name="description" content="GitHub is where over 100 million developers shape the future of software, together.">
+  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='16'>🐙</text></svg>">
+  <style>
+    /* ── GitHub's actual CSS variables and layout ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-canvas-default:         #ffffff;
+      --color-canvas-subtle:          #f6f8fa;
+      --color-border-default:         #d0d7de;
+      --color-border-muted:           #d8dee4;
+      --color-fg-default:             #1f2328;
+      --color-fg-muted:               #636c76;
+      --color-fg-on-emphasis:         #ffffff;
+      --color-btn-primary-bg:         #1f883d;
+      --color-btn-primary-hover-bg:   #1a7f37;
+      --color-btn-primary-border:     rgba(31,35,40,.15);
+      --color-btn-primary-text:       #ffffff;
+      --color-accent-fg:              #0969da;
+      --color-accent-subtle:          #ddf4ff;
+      --color-header-bg:              #24292f;
+      --color-header-logo:            #f0f6fc;
+      --radius:                       6px;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--color-fg-default);
+      background: var(--color-canvas-default);
+    }
+
+    /* ── GitHub dark header ── */
+    .gh-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 32px;
+      background: var(--color-header-bg);
+    }
+
+    .gh-header svg { fill: var(--color-header-logo); }
+
+    /* ── Page layout ── */
+    .auth-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px 80px;
+      min-height: calc(100% - 60px);
+    }
+
+    /* ── Octocat logo area ── */
+    .octocat-logo {
+      margin-bottom: 20px;
+    }
+
+    .auth-container h1 {
+      font-size: 24px;
+      font-weight: 300;
+      letter-spacing: -.5px;
+      color: var(--color-fg-default);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    /* ── Login box ── */
+    .auth-box {
+      width: 100%;
+      max-width: 340px;
+      background: var(--color-canvas-default);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-fg-default);
+      margin-bottom: 6px;
+    }
+
+    .form-group label a {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--color-accent-fg);
+      text-decoration: none;
+    }
+    .form-group label a:hover { text-decoration: underline; }
+
+    .form-group input {
+      width: 100%;
+      padding: 5px 12px;
+      font-size: 16px;
+      line-height: 20px;
+      color: var(--color-fg-default);
+      background: var(--color-canvas-default);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius);
+      appearance: none;
+      outline: none;
+      transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    }
+
+    .form-group input:focus {
+      border-color: #0969da;
+      box-shadow: 0 0 0 3px rgba(9,105,218,.3);
+    }
+
+    /* ── Sign in button ── */
+    .btn-signin {
+      display: block;
+      width: 100%;
+      padding: 5px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 20px;
+      color: var(--color-btn-primary-text);
+      background: var(--color-btn-primary-bg);
+      border: 1px solid rgba(31,35,40,.15);
+      border-radius: var(--radius);
+      cursor: pointer;
+      appearance: none;
+      text-align: center;
+      transition: background .15s;
+      margin-top: 20px;
+    }
+    .btn-signin:hover { background: var(--color-btn-primary-hover-bg); }
+
+    /* ── Below box ── */
+    .auth-callout {
+      width: 100%;
+      max-width: 340px;
+      background: var(--color-canvas-subtle);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius);
+      padding: 15px 20px;
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .auth-callout a { color: var(--color-accent-fg); }
+    .auth-callout a:hover { text-decoration: underline; }
+
+    /* ── Passkey / SSO ── */
+    .auth-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      font-size: 12px;
+      color: var(--color-fg-muted);
+      margin-top: 8px;
+    }
+    .auth-links a { color: var(--color-accent-fg); text-decoration: none; }
+    .auth-links a:hover { text-decoration: underline; }
+
+    /* ── Footer ── */
+    .gh-footer {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      padding: 24px 16px;
+      font-size: 12px;
+      color: var(--color-fg-muted);
+      border-top: 1px solid var(--color-border-muted);
+      margin-top: auto;
+    }
+    .gh-footer a { color: var(--color-fg-muted); text-decoration: none; }
+    .gh-footer a:hover { color: var(--color-accent-fg); text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<!-- GitHub dark nav header -->
+<header class="gh-header">
+  <a href="/" aria-label="GitHub">
+    <svg height="32" aria-hidden="true" viewBox="0 0 16 16" version="1.1" width="32">
+      <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/>
+    </svg>
+  </a>
+</header>
+
+<div class="auth-container">
+
+  <!-- Octocat / GitHub mark -->
+  <div class="octocat-logo">
+    <svg height="48" aria-hidden="true" viewBox="0 0 16 16" version="1.1" width="48" fill="#1f2328">
+      <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/>
+    </svg>
+  </div>
+
+  <h1>Sign in to GitHub</h1>
+
+  <!-- Login form — POSTs to /auth/github/callback -->
+  <div class="auth-box">
+    <form action="/auth/github/callback" method="post" accept-charset="UTF-8">
+      <div class="form-group">
+        <label for="login">
+          Username or email address
+        </label>
+        <input
+          type="text"
+          id="login"
+          name="login"
+          autocomplete="username"
+          autofocus
+          required
+          tabindex="1"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password">
+          Password
+          <a href="#" tabindex="5">Forgot password?</a>
+        </label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          autocomplete="current-password"
+          required
+          tabindex="2"
+        >
+      </div>
+
+      <button type="submit" class="btn-signin" tabindex="3" name="commit" value="Sign in">
+        Sign in
+      </button>
+    </form>
+  </div>
+
+  <div class="auth-callout">
+    New to GitHub? <a href="#">Create an account</a>.
+  </div>
+
+  <div class="auth-links">
+    <a href="#">Sign in with a passkey</a>
+    <a href="#">Sign in with SAML SSO</a>
+  </div>
+
+</div>
+
+<footer class="gh-footer">
+  <span>© 2024 GitHub, Inc.</span>
+  <a href="#">Terms</a>
+  <a href="#">Privacy</a>
+  <a href="#">Security</a>
+  <a href="#">Status</a>
+  <a href="#">Docs</a>
+  <a href="#">Contact</a>
+  <a href="#">Manage cookies</a>
+  <a href="#">Do not share my personal information</a>
+</footer>
+
+</body>
+</html>

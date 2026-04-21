@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}MarketplaceHub — Laptops &amp; Electronics at Great Prices{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <div class="hero-text">
+      <h1>Buy &amp; Sell Electronics<br><span class="accent">Peer-to-Peer</span></h1>
+      <p>Find great deals from trusted sellers. Every purchase protected by MarketplaceHub Buyer Guarantee.</p>
+      <div class="hero-badges">
+        <span class="trust-pill">&#10003; Verified Sellers</span>
+        <span class="trust-pill">&#10003; Secure Checkout</span>
+        <span class="trust-pill">&#10003; 30-Day Buyer Protection</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-deals">
+  <div class="container">
+    <div class="section-header">
+      <h2>Featured Laptops</h2>
+      <p class="section-sub">Limited inventory — prices updated daily</p>
+    </div>
+
+    <div class="listings-grid">
+      {% for item in listings %}
+      <article class="listing-card">
+        {% if item.badge %}
+        <div class="listing-badge badge-{{ loop.index }}">{{ item.badge }}</div>
+        {% endif %}
+        <div class="listing-image">
+          <img src="{{ url_for('static', filename='images/' + item.image) }}" alt="{{ item.title }}" class="product-img">
+        </div>
+        <div class="listing-body">
+          <h3 class="listing-title">{{ item.title }}</h3>
+          <div class="listing-meta">
+            <span class="condition-tag">{{ item.condition }}</span>
+            <span class="posted-time">{{ item.posted }}</span>
+          </div>
+          <div class="price-block">
+            <span class="price-current">${{ item.price }}</span>
+            <span class="price-market">Market: ${{ item.market_price }}</span>
+            <span class="price-savings">Save ${{ item.market_price - item.price }}</span>
+          </div>
+          <div class="seller-info">
+            <div class="seller-avatar">{{ item.seller[0] }}</div>
+            <div>
+              <span class="seller-name">{{ item.seller }}</span>
+              <div class="rating">
+                {% for i in range(item.rating) %}&#9733;{% endfor %}
+                <span class="review-count">({{ item.reviews }} reviews)</span>
+              </div>
+            </div>
+          </div>
+          <p class="listing-desc">{{ item.description[:100] }}...</p>
+          <div class="listing-actions">
+            <a href="{{ url_for('listing', listing_id=item.id) }}" class="btn btn-outline btn-full">View Details</a>
+            <a href="{{ url_for('checkout', listing_id=item.id) }}" class="btn btn-primary btn-full">Buy Now</a>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <div class="info-banner">
+      <div class="info-banner-item">
+        <span class="info-icon">&#128274;</span>
+        <div>
+          <strong>Secure Payments</strong>
+          <p>All transactions encrypted end-to-end</p>
+        </div>
+      </div>
+      <div class="info-banner-item">
+        <span class="info-icon">&#128666;</span>
+        <div>
+          <strong>Fast Shipping</strong>
+          <p>Most items ship within 24 hours</p>
+        </div>
+      </div>
+      <div class="info-banner-item">
+        <span class="info-icon">&#9989;</span>
+        <div>
+          <strong>Buyer Protection</strong>
+          <p>Full refund if item not as described</p>
+        </div>
+      </div>
+      <div class="info-banner-item">
+        <span class="info-icon">&#9734;</span>
+        <div>
+          <strong>Verified Sellers</strong>
+          <p>Every seller ID-verified by our team</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-categories">
+  <div class="container">
+    <h2>Browse by Category</h2>
+    <div class="categories-row">
+      <a href="#" class="category-tile">
+        <span class="cat-icon">&#128187;</span>
+        <span>Laptops</span>
+      </a>
+      <a href="#" class="category-tile">
+        <span class="cat-icon">&#128241;</span>
+        <span>Phones</span>
+      </a>
+      <a href="#" class="category-tile">
+        <span class="cat-icon">&#128250;</span>
+        <span>Tablets</span>
+      </a>
+      <a href="#" class="category-tile">
+        <span class="cat-icon">&#127897;</span>
+        <span>Audio</span>
+      </a>
+      <a href="#" class="category-tile">
+        <span class="cat-icon">&#128247;</span>
+        <span>Cameras</span>
+      </a>
+      <a href="#" class="category-tile">
+        <span class="cat-icon">&#127918;</span>
+        <span>Gaming</span>
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

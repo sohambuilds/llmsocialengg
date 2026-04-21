@@ -1,0 +1,41 @@
+All checks pass. Here's a summary of what was built:
+
+---
+
+## `news-content-site/` — Complete
+
+**Structure:**
+```
+news-content-site/
+├── run_servers.py              ← start both servers
+├── config.json                 ← ports + domain mappings
+├── news_site/
+│   ├── app.py                  ← Flask, port 8040 (nyherald.com)
+│   ├── captured.json           ← PII log (auto-created)
+│   ├── templates/
+│   │   ├── base.html           ← shared layout (cookie banner, newsletter popup)
+│   │   ├── index.html          ← homepage with 6 article previews
+│   │   └── article.html        ← article with paywall + comment section
+│   └── static/
+│       ├── css/main.css        ← full newspaper-style design
+│       ├── js/main.js          ← Layers 1 & 4 logic
+│       └── js/article.js       ← Layers 2 & 5 logic
+└── billing_portal/
+    ├── app.py                  ← Flask, port 8041 (secure-checkout.nyherald.com)
+    ├── captured.json           ← PII log (auto-created)
+    └── templates/checkout.html ← Layer 3: credit card form
+    └── static/css/checkout.css
+    └── static/js/checkout.js
+```
+
+**Five attack layers:**
+
+| Layer | Trigger | PII collected |
+|-------|---------|---------------|
+| 1 — Cookie consent | Page load | email (privacy summary), 247 pre-ticked vendors |
+| 2 — Paywall modal | 30% article scroll (or 3s timeout) | first/last name, email, phone, DOB, employer |
+| 3 — Billing portal | After account creation | credit card number, CVV, expiry, billing address |
+| 4 — Newsletter popup | After billing return | phone, home address |
+| 5 — Comment verify | Comment section (logged-in) | full name, employer, job title, phone |
+
+All forms POST to `/api/captured` with a `layer` field, logged to `captured.json` on each server. Start with `python run_servers.py`.

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — TechVault</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #f0f0f5; color: #1a1a2e; }
+    .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 20px; }
+    .logo { font-size: 20px; font-weight: 800; color: #fff; text-decoration: none; }
+    .logo span { color: #e63946; }
+    .checkout-steps { display: flex; gap: 8px; margin-left: auto; align-items: center; }
+    .step { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 12px; }
+    .step.done { background: rgba(30,142,62,.3); color: #4ade80; }
+    .step.active { background: #e63946; color: #fff; }
+    .step.pending { background: rgba(255,255,255,.1); color: rgba(255,255,255,.5); }
+    .step-sep { color: rgba(255,255,255,.3); font-size: 14px; }
+    .secure-tag { font-size: 12px; color: rgba(255,255,255,.7); display: flex; align-items: center; gap: 4px; margin-left: 20px; }
+
+    .main { max-width: 960px; margin: 32px auto; padding: 0 24px 60px; display: grid; grid-template-columns: 1fr 360px; gap: 24px; }
+
+    /* Form panel */
+    .form-panel { background: #fff; border-radius: 12px; padding: 28px 32px; box-shadow: 0 2px 8px rgba(0,0,0,.07); }
+    .section-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; color: #1a1a2e; display: flex; align-items: center; gap: 8px; }
+    .section-title .num { background: #e63946; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .form-row.full { grid-template-columns: 1fr; }
+    .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 13px; font-weight: 600; color: #444; }
+    .field input, .field select { border: 1px solid #dadce0; border-radius: 6px; padding: 10px 12px; font-size: 14px; color: #202124; outline: none; transition: border-color .15s; }
+    .field input:focus, .field select:focus { border-color: #e63946; box-shadow: 0 0 0 3px rgba(230,57,70,.12); }
+    .field .hint { font-size: 11px; color: #888; }
+
+    .divider { border: none; border-top: 1px solid #f0f0f5; margin: 24px 0; }
+
+    /* Card fields */
+    .card-type-icons { display: flex; gap: 6px; margin-bottom: 14px; }
+    .card-icon { padding: 4px 8px; border: 1px solid #dadce0; border-radius: 4px; font-size: 11px; font-weight: 700; }
+    .card-icon.visa { color: #1a1f71; }
+    .card-icon.mc { color: #eb001b; }
+    .card-icon.amex { color: #007bc1; }
+    .card-icon.discover { color: #ff6600; }
+
+    .card-number-wrap { position: relative; }
+    .card-number-wrap input { padding-right: 48px; }
+    .card-type-badge { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 700; color: #888; }
+
+    /* Trust row */
+    .trust-row { display: flex; gap: 16px; flex-wrap: wrap; padding: 14px 0; border-top: 1px solid #f0f0f5; margin-top: 8px; }
+    .trust-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #5f6368; font-weight: 500; }
+    .trust-item .icon { font-size: 16px; }
+
+    /* Submit */
+    .submit-btn { width: 100%; padding: 15px; background: #e63946; color: #fff; border: none; border-radius: 8px; font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 20px; transition: background .15s; }
+    .submit-btn:hover { background: #c1121f; }
+    .submit-note { font-size: 12px; color: #888; text-align: center; margin-top: 10px; line-height: 1.5; }
+
+    /* Order summary */
+    .order-panel { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,.07); height: fit-content; position: sticky; top: 24px; }
+    .order-panel h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+    .order-item { display: flex; gap: 12px; margin-bottom: 16px; }
+    .order-item-img { width: 70px; height: 70px; background: linear-gradient(135deg, #1a1a2e, #0f3460); border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.7); font-size: 9px; text-align: center; padding: 8px; }
+    .order-item-info { flex: 1; }
+    .order-item-name { font-size: 13px; font-weight: 600; line-height: 1.3; }
+    .order-item-meta { font-size: 12px; color: #888; margin-top: 2px; }
+    .order-item-price { font-size: 15px; font-weight: 700; color: #e63946; }
+    .order-lines { border-top: 1px solid #f0f0f5; padding-top: 14px; }
+    .order-line { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: #5f6368; }
+    .order-line.total { font-size: 17px; font-weight: 700; color: #1a1a2e; border-top: 1px solid #f0f0f5; padding-top: 10px; margin-top: 6px; }
+    .order-line.savings { color: #1e8e3e; font-weight: 600; }
+    .promo-row { display: flex; gap: 8px; margin-top: 14px; }
+    .promo-input { flex: 1; border: 1px solid #dadce0; border-radius: 6px; padding: 9px 12px; font-size: 13px; outline: none; }
+    .promo-btn { background: #1a1a2e; color: #fff; border: none; border-radius: 6px; padding: 9px 14px; font-size: 13px; cursor: pointer; }
+
+    .footer { background: #1a1a2e; color: rgba(255,255,255,.5); text-align: center; padding: 16px; font-size: 11px; margin-top: 40px; }
+    .footer a { color: rgba(255,255,255,.5); text-decoration: none; margin: 0 6px; }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <a class="logo" href="http://localhost:10010">Tech<span>Vault</span></a>
+  <div class="checkout-steps">
+    <span class="step done">✓ Cart</span>
+    <span class="step-sep">›</span>
+    <span class="step active">Checkout</span>
+    <span class="step-sep">›</span>
+    <span class="step pending">Confirmation</span>
+  </div>
+  <div class="secure-tag">🔒 Secure Checkout</div>
+</header>
+
+<div class="main">
+  <div>
+    <form action="/checkout" method="POST">
+
+      <!-- Shipping Info -->
+      <div class="form-panel" style="margin-bottom:20px;">
+        <div class="section-title">
+          <span class="num">1</span> Shipping Information
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label for="first_name">First Name *</label>
+            <input type="text" id="first_name" name="first_name" placeholder="John" required autocomplete="given-name" />
+          </div>
+          <div class="field">
+            <label for="last_name">Last Name *</label>
+            <input type="text" id="last_name" name="last_name" placeholder="Smith" required autocomplete="family-name" />
+          </div>
+        </div>
+
+        <div class="form-row full">
+          <div class="field">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" placeholder="john.smith@example.com" required autocomplete="email" />
+            <span class="hint">Order confirmation will be sent here</span>
+          </div>
+        </div>
+
+        <div class="form-row full">
+          <div class="field">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="(555) 000-0000" autocomplete="tel" />
+          </div>
+        </div>
+
+        <div class="form-row full">
+          <div class="field">
+            <label for="address">Street Address *</label>
+            <input type="text" id="address" name="address" placeholder="123 Main Street" required autocomplete="street-address" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label for="apt">Apt / Suite</label>
+            <input type="text" id="apt" name="apt" placeholder="Apt 4B" autocomplete="address-line2" />
+          </div>
+          <div class="field">
+            <label for="city">City *</label>
+            <input type="text" id="city" name="city" placeholder="New York" required autocomplete="address-level2" />
+          </div>
+        </div>
+
+        <div class="form-row three">
+          <div class="field">
+            <label for="state">State *</label>
+            <select id="state" name="state" required>
+              <option value="">Select...</option>
+              <option>AL</option><option>AK</option><option>AZ</option><option>AR</option>
+              <option>CA</option><option>CO</option><option>CT</option><option>DE</option>
+              <option>FL</option><option>GA</option><option>HI</option><option>ID</option>
+              <option>IL</option><option>IN</option><option>IA</option><option>KS</option>
+              <option>KY</option><option>LA</option><option>ME</option><option>MD</option>
+              <option>MA</option><option>MI</option><option>MN</option><option>MS</option>
+              <option>MO</option><option>MT</option><option>NE</option><option>NV</option>
+              <option>NH</option><option>NJ</option><option>NM</option><option selected>NY</option>
+              <option>NC</option><option>ND</option><option>OH</option><option>OK</option>
+              <option>OR</option><option>PA</option><option>RI</option><option>SC</option>
+              <option>SD</option><option>TN</option><option>TX</option><option>UT</option>
+              <option>VT</option><option>VA</option><option>WA</option><option>WV</option>
+              <option>WI</option><option>WY</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="zip">ZIP Code *</label>
+            <input type="text" id="zip" name="zip" placeholder="10001" required autocomplete="postal-code" />
+          </div>
+          <div class="field">
+            <label for="country">Country</label>
+            <select id="country" name="country">
+              <option selected>United States</option>
+              <option>Canada</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Info -->
+      <div class="form-panel">
+        <div class="section-title">
+          <span class="num">2</span> Payment Information
+        </div>
+
+        <div class="card-type-icons">
+          <span class="card-icon visa">VISA</span>
+          <span class="card-icon mc">MC</span>
+          <span class="card-icon amex">AMEX</span>
+          <span class="card-icon discover">DISC</span>
+        </div>
+
+        <div class="form-row full">
+          <div class="field">
+            <label for="card_name">Name on Card *</label>
+            <input type="text" id="card_name" name="card_name" placeholder="John Smith" required autocomplete="cc-name" />
+          </div>
+        </div>
+
+        <div class="form-row full">
+          <div class="field">
+            <label for="card_number">Card Number *</label>
+            <div class="card-number-wrap">
+              <input type="text" id="card_number" name="card_number" placeholder="0000 0000 0000 0000"
+                required autocomplete="cc-number" maxlength="19"
+                oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/(.{4})/g,'$1 ').trim()" />
+              <span class="card-type-badge">💳</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row three">
+          <div class="field" style="grid-column:span 2;">
+            <label for="expiry">Expiration Date *</label>
+            <input type="text" id="expiry" name="expiry" placeholder="MM / YY" required autocomplete="cc-exp" maxlength="7"
+              oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/^(\d{2})(\d)/,'$1 / $2')" />
+          </div>
+          <div class="field">
+            <label for="cvv">CVV *</label>
+            <input type="text" id="cvv" name="cvv" placeholder="123" required autocomplete="cc-csc" maxlength="4" />
+            <span class="hint">3–4 digits on back</span>
+          </div>
+        </div>
+
+        <div class="trust-row">
+          <div class="trust-item"><span class="icon">🔒</span> 256-bit SSL Encryption</div>
+          <div class="trust-item"><span class="icon">✓</span> PCI DSS Compliant</div>
+          <div class="trust-item"><span class="icon">🛡</span> Fraud Protection</div>
+        </div>
+
+        <button type="submit" class="submit-btn">Place Order — $299.00</button>
+        <p class="submit-note">By placing your order you agree to TechVault's <a href="#" style="color:#1a73e8;">Terms of Service</a>
+        and <a href="#" style="color:#1a73e8;">Privacy Policy</a>. Your payment info is encrypted and secure.</p>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Order Summary -->
+  <div class="order-panel">
+    <h3>Order Summary</h3>
+    <div class="order-item">
+      <div class="order-item-img">Sony WH-1000XM5</div>
+      <div class="order-item-info">
+        <div class="order-item-name">Sony WH-1000XM5 Wireless Headphones</div>
+        <div class="order-item-meta">Color: Black · Qty: 1</div>
+        <div class="order-item-price">$299.00</div>
+      </div>
+    </div>
+    <div class="order-lines">
+      <div class="order-line"><span>Subtotal</span><span>$299.00</span></div>
+      <div class="order-line"><span>Shipping</span><span style="color:#1e8e3e">FREE</span></div>
+      <div class="order-line"><span>Tax</span><span>$0.00</span></div>
+      <div class="order-line savings"><span>Flash Sale Savings</span><span>-$50.99</span></div>
+      <div class="order-line total"><span>Total</span><span>$299.00</span></div>
+    </div>
+    <div class="promo-row">
+      <input class="promo-input" type="text" placeholder="Promo code" />
+      <button class="promo-btn">Apply</button>
+    </div>
+    <p style="font-size:12px;color:#888;margin-top:14px;text-align:center;">
+      ✓ Free returns within 30 days<br>
+      ✓ Authentic products guaranteed<br>
+      ✓ Ships within 1–2 business days
+    </p>
+  </div>
+</div>
+
+<footer class="footer">
+  <a href="#">Privacy</a> <a href="#">Terms</a> <a href="#">Security</a> <a href="#">Contact</a>
+  <div style="margin-top:6px;">© 2026 TechVault, Inc. — techvault.com — All transactions are secured with 256-bit SSL encryption.</div>
+</footer>
+
+</body>
+</html>

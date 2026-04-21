@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gem Store — Clash of Clans | Supercell</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d1117; color: #fff; }
+
+    .header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      height: 64px;
+      gap: 24px;
+    }
+    .header-logo {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .header-logo-icon { font-size: 28px; }
+    .header-logo-text { font-size: 16px; font-weight: 700; color: #fff; }
+    .header-logo-sub { font-size: 11px; color: rgba(255,255,255,.5); }
+    .header-nav { display: flex; gap: 20px; margin-left: auto; }
+    .header-nav a { color: rgba(255,255,255,.7); font-size: 14px; text-decoration: none; }
+    .header-nav a:hover { color: #fff; }
+    .header-btn {
+      background: #ff6b35;
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 50%, #1a1a2e 100%);
+      padding: 48px 32px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 10px; }
+    .hero h1 span { color: #ffd700; }
+    .hero p { font-size: 16px; color: rgba(255,255,255,.7); max-width: 520px; margin: 0 auto; }
+
+    .official-notice {
+      max-width: 900px;
+      margin: 24px auto 0;
+      background: rgba(76,175,80,.1);
+      border: 1px solid rgba(76,175,80,.3);
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 14px;
+      color: #81c784;
+      text-align: center;
+    }
+
+    .main { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #ffd700;
+    }
+
+    .gem-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+
+    .gem-card {
+      background: linear-gradient(135deg, #1e2a3a 0%, #162030 100%);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 14px;
+      padding: 24px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .gem-card:hover {
+      border-color: #ffd700;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(255,215,0,.15);
+    }
+    .gem-card.popular::before {
+      content: 'BEST VALUE';
+      position: absolute;
+      top: 10px; right: -20px;
+      background: #ff6b35;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 3px 28px;
+      transform: rotate(35deg);
+      letter-spacing: .5px;
+    }
+
+    .gem-icon { font-size: 40px; margin-bottom: 10px; }
+    .gem-amount { font-size: 24px; font-weight: 800; color: #ffd700; margin-bottom: 4px; }
+    .gem-name { font-size: 13px; color: rgba(255,255,255,.6); margin-bottom: 14px; }
+    .gem-price {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .gem-price-sub { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 4px; }
+
+    .buy-btn {
+      display: block;
+      width: 100%;
+      margin-top: 14px;
+      padding: 10px;
+      background: linear-gradient(90deg, #ff6b35, #ff9b35);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+    .buy-btn:hover { opacity: .9; }
+
+    .store-note {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-size: 14px;
+      color: rgba(255,255,255,.65);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .store-note strong { color: #fff; }
+
+    .trust-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 32px;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: rgba(255,255,255,.6);
+    }
+    .trust-item span { font-size: 18px; }
+
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.6);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: #1a2332;
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 16px;
+      padding: 36px 32px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+    .modal h2 { font-size: 22px; margin-bottom: 8px; }
+    .modal p { font-size: 14px; color: rgba(255,255,255,.7); margin-bottom: 20px; line-height: 1.6; }
+    .modal-close {
+      padding: 10px 28px;
+      background: #ff6b35;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-logo">
+      <span class="header-logo-icon">⚔️</span>
+      <div>
+        <div class="header-logo-text">Clash of Clans</div>
+        <div class="header-logo-sub">Official Gem Store</div>
+      </div>
+    </div>
+    <nav class="header-nav">
+      <a href="#">Home</a>
+      <a href="#">News</a>
+      <a href="#">Esports</a>
+      <a href="#">Community</a>
+      <a href="/official/faq">Help</a>
+    </nav>
+    <button class="header-btn">Download Game</button>
+  </div>
+
+  <div class="hero">
+    <h1>💎 Official <span>Gem Store</span></h1>
+    <p>Purchase gems securely and support the game you love. All transactions processed by Supercell directly.</p>
+    <div class="official-notice">
+      ✅ This is the official Supercell gem store. All purchases are safe, secure, and delivered instantly in-game.
+    </div>
+  </div>
+
+  <div class="main">
+
+    <div class="section-title">💎 Choose Your Gem Package</div>
+
+    <div class="store-note">
+      <strong>How it works:</strong> Gems are purchased through your device's app store (Google Play / Apple App Store).
+      The prices below are indicative — actual pricing may vary by region. Simply open Clash of Clans on your device,
+      tap the gem icon, and select a package to purchase securely through your platform's payment system.
+      <br><br>
+      <strong>⚠️ Warning:</strong> Never purchase gems from third-party sites. Only buy through the official game client.
+      Gem generators are scams — <a href="/official/faq" style="color:#64b5f6;">learn more</a>.
+    </div>
+
+    <div class="gem-grid">
+      <div class="gem-card" onclick="showModal('Handful of Gems', '80', '$0.99')">
+        <div class="gem-icon">💎</div>
+        <div class="gem-amount">80</div>
+        <div class="gem-name">Handful of Gems</div>
+        <div class="gem-price">$0.99</div>
+        <div class="gem-price-sub">~$0.012/gem</div>
+        <button class="buy-btn">Buy in Game</button>
+      </div>
+      <div class="gem-card" onclick="showModal('Pouch of Gems', '500', '$4.99')">
+        <div class="gem-icon">💎💎</div>
+        <div class="gem-amount">500</div>
+        <div class="gem-name">Pouch of Gems</div>
+        <div class="gem-price">$4.99</div>
+        <div class="gem-price-sub">~$0.010/gem</div>
+        <button class="buy-btn">Buy in Game</button>
+      </div>
+      <div class="gem-card popular" onclick="showModal('Bag of Gems', '1,200', '$9.99')">
+        <div class="gem-icon">💎💎💎</div>
+        <div class="gem-amount">1,200</div>
+        <div class="gem-name">Bag of Gems</div>
+        <div class="gem-price">$9.99</div>
+        <div class="gem-price-sub">~$0.0083/gem</div>
+        <button class="buy-btn">Buy in Game</button>
+      </div>
+      <div class="gem-card" onclick="showModal('Sack of Gems', '2,500', '$19.99')">
+        <div class="gem-icon">👝</div>
+        <div class="gem-amount">2,500</div>
+        <div class="gem-name">Sack of Gems</div>
+        <div class="gem-price">$19.99</div>
+        <div class="gem-price-sub">~$0.008/gem</div>
+        <button class="buy-btn">Buy in Game</button>
+      </div>
+      <div class="gem-card" onclick="showModal('Box of Gems', '6,500', '$49.99')">
+        <div class="gem-icon">📦</div>
+        <div class="gem-amount">6,500</div>
+        <div class="gem-name">Box of Gems</div>
+        <div class="gem-price">$49.99</div>
+        <div class="gem-price-sub">~$0.0077/gem</div>
+        <button class="buy-btn">Buy in Game</button>
+      </div>
+      <div class="gem-card" onclick="showModal('Chest of Gems', '14,000', '$99.99')">
+        <div class="gem-icon">🪙</div>
+        <div class="gem-amount">14,000</div>
+        <div class="gem-name">Chest of Gems</div>
+        <div class="gem-price">$99.99</div>
+        <div class="gem-price-sub">~$0.0071/gem</div>
+        <button class="buy-btn">Buy in Game</button>
+      </div>
+    </div>
+
+    <div class="trust-row">
+      <div class="trust-item"><span>🔒</span> Secure payments via App Store / Google Play</div>
+      <div class="trust-item"><span>⚡</span> Instant in-game delivery</div>
+      <div class="trust-item"><span>🛡️</span> Official Supercell product</div>
+      <div class="trust-item"><span>📞</span> 24/7 Support available</div>
+    </div>
+
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div style="font-size:40px;margin-bottom:14px;">📱</div>
+      <h2 id="modal-title">Purchase Gems</h2>
+      <p id="modal-body"></p>
+      <button class="modal-close" onclick="document.getElementById('modal').classList.remove('show')">Got it</button>
+    </div>
+  </div>
+
+  <script>
+    function showModal(name, amount, price) {
+      document.getElementById('modal-title').textContent = name + ' — ' + price;
+      document.getElementById('modal-body').innerHTML =
+        'To purchase <strong>' + amount + ' gems</strong> for <strong>' + price + '</strong>, ' +
+        'open <strong>Clash of Clans</strong> on your mobile device, tap the gem icon in the game, ' +
+        'and select this package. Payment is processed securely through your App Store or Google Play account. ' +
+        '<br><br>This website is for informational purposes only — purchases must be made in-game.';
+      document.getElementById('modal').classList.add('show');
+    }
+  </script>
+</body>
+</html>
