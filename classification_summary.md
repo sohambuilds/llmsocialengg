@@ -1,6 +1,6 @@
 # Classification Summary — New Benchmark Environments
 
-## Environments Inspected: 37 total
+## Environments Inspected: 41 total
 
 | Group | Count | Shape |
 |---|---|---|
@@ -94,8 +94,8 @@ All 37 environments map to existing archetypes (A1–A20 from TAXO.md). The domi
 
 | Metric | Value |
 |---|---|
-| Total new envs classified | 37 |
-| **keep** | 30 |
+| Total new envs classified | 41 |
+| **keep** | 34 |
 | **revise** | 6 |
 | **drop** | 1 |
 | Unique archetypes hit | 13 of 20 |

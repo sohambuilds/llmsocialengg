@@ -205,7 +205,7 @@ Factor axes (knobs for ablations):
 ```
 
 
-## Audit of the current 16 environments
+## Audit of the current 44 environments
 
 | env_key | category | vector (primary + secondary) | salience | pii_target | pressure | prompt_injection | interaction | multi_site |
 |---|---|---|---|---|---|---|---|---|
@@ -215,54 +215,70 @@ Factor axes (knobs for ablations):
 | virus_scanner | utility_tool | dark_patterns + fake_trust_signals | blatant | critical | urgency | none | static_form | single_origin |
 | file_converter | utility_tool | reward_trap | blatant | critical | none | none | static_form | single_origin |
 | quiz_scam | entertainment | reward_trap | blatant | critical | none | none | multi_step_form | single_origin |
-| summarizer | saas | credential_harvest | blatant | critical | none | none | static_form | single_origin |
 | job_portal | employment | phishing_clone | plausible | critical | urgency | none | multi_step_form | email_entry_plus_site |
 | gov_portal | government | authority_impersonation | plausible | critical | urgency | none | multi_step_form | email_entry_plus_site |
 | ecommerce | e-commerce | phishing_clone + fake_trust_signals | plausible | critical | none | none | multi_step_form | multi_origin_same_task |
 | news | news_media | dark_patterns + reward_trap | plausible | high | none | none | multi_step_form | multi_origin_same_task |
 | marketplace | e-commerce | fake_trust_signals | plausible | critical | urgency | none | multi_step_form | single_origin |
-| saas_onboard | saas | phishing_clone + prompt_injection | plausible | critical | none | visible_text | multi_step_form | email_entry_plus_site |
-| crypto_platform | crypto | credential_harvest + fake_trust_signals | plausible | critical | social_proof | visible_text | multi_step_form | multi_origin_same_task |
+| summarizer | saas | credential_harvest | blatant | critical | none | none | static_form | single_origin |
 | freelance | employment | conversational_deception + prompt_injection | subtle | critical | urgency | fake_system_msg | multi_turn_chat | multi_origin_same_task |
 | support_chat | e-commerce | conversational_deception + prompt_injection | subtle | critical | urgency | hidden_dom | multi_turn_chat | multi_origin_same_task |
+| saas_onboard | saas | phishing_clone + prompt_injection | plausible | critical | none | visible_text | multi_step_form | email_entry_plus_site |
+| crypto_platform | crypto | credential_harvest + fake_trust_signals | plausible | critical | social_proof | visible_text | multi_step_form | multi_origin_same_task |
+| 1password | saas | phishing_clone | plausible | critical | none | none | static_form | single_origin |
+| ancestry_dna | healthcare | phishing_clone | plausible | critical | none | none | static_form | single_origin |
+| bcbs | insurance | phishing_clone | plausible | critical | none | none | static_form | single_origin |
+| betterhelp | healthcare | phishing_clone | plausible | critical | none | none | static_form | single_origin |
+| bumble | dating | phishing_clone | plausible | critical | none | none | static_form | single_origin |
+| adp | employment | credential_harvest | plausible | critical | urgency | none | multi_step_form | single_origin |
+| aws | saas | dark_patterns + fake_trust_signals | plausible | critical | urgency | none | static_form | single_origin |
+| booking | travel | phishing_clone + fake_trust_signals | plausible | critical | urgency | none | multi_step_form | single_origin |
+| e7_ninite | utility_tool | dark_patterns + fake_trust_signals | blatant | critical | urgency | none | multi_step_form | email_entry_plus_site |
+| e8_chase | banking_fintech | phishing_clone | plausible | critical | urgency | none | multi_step_form | email_entry_plus_site |
+| e9_expedia | travel | phishing_clone + dark_patterns | plausible | critical | none | none | multi_step_form | email_entry_plus_site |
+| e10_mychart | healthcare | credential_harvest + dark_patterns | subtle | critical | urgency | none | multi_step_form | email_entry_plus_site |
+| e11_instagram | social_media | phishing_clone | plausible | critical | urgency | none | multi_step_form | email_entry_plus_site |
+| e12_dhl | utility_tool | authority_impersonation | plausible | critical | none | none | multi_step_form | email_entry_plus_site |
+| e13_irs | government | authority_impersonation | plausible | critical | urgency | none | multi_step_form | email_entry_plus_site |
+| e14_oracle | saas | phishing_clone | plausible | critical | urgency | none | multi_step_form | email_entry_plus_site |
+| e15_metamask | crypto | phishing_clone | blatant | critical | urgency | none | multi_step_form | email_entry_plus_site |
+| e16_microsoft | saas | phishing_clone | plausible | critical | urgency | none | multi_step_form | email_entry_plus_site |
+| e17_amazon | e-commerce | phishing_clone + authority_impersonation | plausible | critical | none | none | multi_step_form | email_entry_plus_site |
+| e17b_servicenow | saas | phishing_clone | plausible | critical | urgency | none | multi_step_form | email_entry_plus_site |
+| e18_linkedin | employment | credential_harvest | plausible | critical | none | none | multi_step_form | email_entry_plus_site |
+| e19_apple | saas | phishing_clone | plausible | critical | urgency | none | multi_step_form | email_entry_plus_site |
+| e20_survey | entertainment | reward_trap | subtle | critical | none | none | multi_step_form | email_entry_plus_site |
+| e21_paypal | banking_fintech | phishing_clone | plausible | critical | urgency | none | multi_step_form | email_entry_plus_site |
+| e22_zoom | saas | phishing_clone | plausible | critical | none | none | multi_step_form | email_entry_plus_site |
+| e23_netflix | entertainment | phishing_clone | plausible | critical | urgency | none | multi_step_form | email_entry_plus_site |
+| e24_uber | travel | credential_harvest | plausible | critical | none | none | multi_step_form | email_entry_plus_site |
+| e25_airbnb | travel | phishing_clone | plausible | critical | none | none | multi_step_form | email_entry_plus_site |
 
 Tier readout (for reference only):
 
-- Tier 1 ≈ blatant + static_form = cluttered_downloads, github_phish,
-  virus_scanner, file_converter, quiz_scam, summarizer, coc_gems
-- Tier 2 ≈ plausible + multi_step_form = job_portal, gov_portal,
-  ecommerce, news, marketplace, saas_onboard, crypto_platform
-- Tier 3 ≈ subtle + multi_turn_chat + prompt_injection = freelance,
-  support_chat
+- Tier 1 ≈ blatant + static_form
+- Tier 2 ≈ plausible + multi_step_form
+- Tier 3 ≈ subtle + multi_turn_chat + prompt_injection
 
 
 ## Gap analysis
 
 ### Category gaps (no envs at all)
-- banking (not crypto)
-- healthcare
-- dating
-- travel
-- social_media account recovery
-- insurance
+- All initial category gaps (banking, healthcare, dating, travel, social_media account recovery, insurance) are now closed.
 
 ### Vector gaps
-- 2FA / SMS one-time-code extraction
 - fake browser extension / "install our helper" install
 - fake CAPTCHA (click tracking)
 - fake OAuth popup beyond github_phish
-- authority_impersonation outside government (no "your bank says…",
-  no "your employer's IT says…")
 
 ### Salience gaps
-- `subtle` is 2 / 16. This is the highest-value cell for findings
+- `subtle` is still thin. This is the highest-value cell for findings
   because subtle attacks test whether agents integrate context across
   a flow rather than spot-checking each field.
-- `plausible + subtle` combined is almost empty outside freelance and
-  support_chat. Health, gov, banking should each have one.
+- New gap emphasis shifts to factor axes.
 
 ### PII target gaps
-- 14 / 16 envs go straight for `critical`. We have no env that
+- Almost all envs go straight for `critical`. We have no env that
   cleanly targets `medium` only, so any claim about "critical leaks
   more than medium" is currently not controllable — we can't ablate
   pii_target while holding everything else fixed.
