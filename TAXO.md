@@ -298,45 +298,80 @@ Tier readout (for reference only):
   point.
 
 
-## Archetype consolidation (13 shapes from the current 16)
+## Archetype coverage (current 44 environments)
 
-The existing 16 envs cluster into 13 distinct attack shapes. Some
-archetypes are represented by multiple envs already.
+After the Phase 1 merge, the 44 envs cover 18 of the 20 archetypes
+defined earlier. Counts and env lists below. Envs flagged
+*(deferred)* are `revise` cases held back for Phase 2.
 
-- A1 — Cluttered landing with hidden real option
-  (cluttered_downloads, file_converter)
-- A2 — Search engine with scam results (coc_gems)
-- A3 — Fake OAuth / login clone (github_phish)
-- A4 — Fake service urgency scam (virus_scanner)
-- A5 — Quiz flattery to certificate trap (quiz_scam)
-- A6 — Email → legit → typosquat phishing
-  (job_portal, partial gov_portal)
-- A7 — Multi-vendor checkout with traps (ecommerce)
-- A8 — Layered dark patterns on content site (news)
-- A9 — P2P marketplace with fake trust + urgency (marketplace)
-- A10 — Paywalled tool demanding credentials (summarizer)
-- A11 — Adaptive multi-turn conversational scam
-  (freelance, support_chat)
-- A12 — Progressive onboarding harvest
-  (saas_onboard, partial gov_portal)
-- A13 — Plausible KYC-style extraction (crypto_platform)
+- A1 — Cluttered landing with hidden real option *(count: 2)*
+  cluttered_downloads, file_converter
+- A2 — Search engine with scam results *(1)*
+  coc_gems
+- A3 — Fake OAuth / login clone *(10)*
+  github_phish, 1password, ancestry_dna, bcbs, betterhelp, bumble,
+  e16_microsoft, e19_apple, e22_zoom, e25_airbnb
+- A4 — Fake service urgency scam *(4)*
+  virus_scanner, aws, e7_ninite, e23_netflix
+- A5 — Quiz flattery to certificate trap *(2)*
+  quiz_scam, e20_survey
+- A6 — Email → legit → typosquat phishing *(2)*
+  job_portal, e18_linkedin
+- A7 — Multi-vendor checkout with traps *(2)*
+  ecommerce, e17_amazon
+- A8 — Layered dark patterns on content site *(1)*
+  news
+- A9 — P2P marketplace with fake trust + urgency *(1)*
+  marketplace
+- A10 — Paywalled tool demanding credentials *(1 merged + 6 deferred)*
+  summarizer (merged); awscert, blog_website, coupons_website,
+  email_generator, file_downloader, finance_analysis *(all deferred
+  to Phase 2; unit_converter was dropped as a duplicate)*
+- A11 — Adaptive multi-turn conversational scam *(2)*
+  freelance, support_chat
+- A12 — Progressive onboarding harvest *(7)*
+  saas_onboard, gov_portal, adp, e13_irs, e14_oracle, e17b_servicenow,
+  e24_uber
+- A13 — Plausible KYC-style extraction *(2)*
+  crypto_platform, e15_metamask
+- A14 — Banking login + 2FA extraction *(2)*
+  e8_chase, e21_paypal
+- A15 — Healthcare patient intake *(1)*
+  e10_mychart
+- A17 — Travel booking + fake payment redirect *(2)*
+  booking, e9_expedia
+- A18 — Social media account recovery *(1)*
+  e11_instagram
+- A20 — Fake overdue bill / customs fee *(1)*
+  e12_dhl
+
+Archetypes not yet covered: **A16** (dating profile verification with
+photo / ID extraction — note that `bumble` is classified as A3, a
+generic login clone, not A16's photo-upload flow) and **A19**
+(insurance quote with progressive PII harvest — `bcbs` is A3, not
+A19's quote-flow shape).
 
 
-## Archetype candidates to add (for 100-env target)
+## Remaining archetype candidates
 
-Seven new archetypes to plug category and vector gaps:
+Most of the archetypes proposed earlier (A14, A15, A17, A18, A20) are
+now covered by merged envs — see the coverage table above. Two
+archetypes from the original proposal list are still open:
 
-- A14 — Banking login phishing with 2FA extraction
-- A15 — Healthcare patient intake (subtle CC add-on to medical
-  history)
-- A16 — Dating profile verification (photo / ID extraction)
-- A17 — Travel booking confirmation with fake payment redirect
-- A18 — Social media account recovery via fake security alert
-- A19 — Insurance quote with progressive PII harvest
-- A20 — Fake overdue utility bill (urgency + payment scam)
+- **A16** — Dating profile verification with photo / ID extraction.
+  `bumble` covers the dating *category* but uses a generic login-clone
+  shape (A3); A16's distinct flow (upload a photo / government ID
+  under a "verify your profile" pretext) is not yet represented.
+- **A19** — Insurance quote with progressive PII harvest. `bcbs`
+  covers the insurance *category* but again as an A3 login clone;
+  A19's distinct shape (multi-step quote form that escalates from
+  benign info to SSN / medical history / bank details) is not yet
+  represented.
 
-These are proposals, not commitments. Pick and choose based on how
-they slot into the ablation-readiness matrix below.
+These are optional. Priority for generation has shifted from new
+archetypes to factor-axis sibling variants on existing ones (see
+Phase 3 of the benchmark plan). Adding A16 and A19 is worthwhile
+only if they also slot into a specific ablation row below.
 
 
 ## Scaling to 100
