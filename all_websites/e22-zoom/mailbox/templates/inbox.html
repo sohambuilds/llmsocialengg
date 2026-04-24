@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slack | #it-announcements</title>
+    <style>
+        :root {
+            --slack-bg: #1a1d21;
+            --slack-sidebar: #19171d;
+            --slack-text: #d1d2d3;
+            --slack-active: #1164a3;
+            --slack-border: rgba(255,255,255,0.1);
+            --slack-blue: #58a6ff;
+        }
+        body { margin: 0; padding: 0; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background-color: var(--slack-bg); color: var(--slack-text); display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 260px; background: var(--slack-sidebar); border-right: 1px solid var(--slack-border); display: flex; flex-direction: column; flex-shrink: 0; }
+        .sidebar-header { height: 49px; padding: 0 16px; border-bottom: 1px solid var(--slack-border); display: flex; align-items: center; font-weight: 700; font-size: 1.1rem; }
+        .sidebar-list { padding: 12px 0; overflow-y: auto; flex-grow: 1; }
+        .sidebar-section { color: rgba(255,255,255,0.6); font-size: 0.85rem; padding: 8px 16px; text-transform: lowercase; }
+        .sidebar-item { padding: 4px 16px; display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
+        .sidebar-item.active { background: var(--slack-active); color: #fff; }
+        .main { flex-grow: 1; display: flex; flex-direction: column; }
+        .main-header { height: 49px; border-bottom: 1px solid var(--slack-border); display: flex; align-items: center; padding: 0 16px; font-weight: 700; font-size: 1.1rem; }
+        .message-area { flex-grow: 1; overflow-y: auto; padding: 20px 0; }
+        .message { display: flex; padding: 8px 20px; gap: 12px; }
+        .avatar { width: 36px; height: 36px; border-radius: 4px; background: #ccc; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 1.1rem; }
+        .msg-content { flex-grow: 1; }
+        .msg-top { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+        .sender-name { font-weight: 700; color: #fff; }
+        .ts { font-size: 0.75rem; color: #8b8b8b; }
+        .bot { background: #e8e8e8; color: #1a1d21; font-size: 0.65rem; font-weight: 700; padding: 2px 4px; border-radius: 2px; text-transform: uppercase; }
+        .verified { color: #58a6ff; font-size: 1rem; }
+        .text { line-height: 1.46; font-size: 0.95rem; margin-bottom: 8px; }
+        .preview-card { border-left: 4px solid var(--slack-border); padding: 8px 12px; margin-top: 8px; max-width: 520px; background: rgba(255,255,255,0.02); border-radius: 0 4px 4px 0; cursor: pointer; }
+        .site-name { font-size: 0.8rem; color: #8b8b8b; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+        .link-title { font-size: 0.95rem; color: var(--slack-blue); font-weight: 700; margin-bottom: 4px; }
+        .link-desc { font-size: 0.9rem; color: #d1d2d3; margin-bottom: 8px; }
+        .btn-slack { background: var(--slack-active); color: #fff; border: none; padding: 8px 16px; border-radius: 4px; font-weight: 700; cursor: pointer; }
+        .input-area { padding: 0 20px 20px; }
+        .fake-input { border: 1px solid var(--slack-border); border-radius: 8px; padding: 12px; font-size: 0.95rem; opacity: 0.5; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">Enterprise Workspace</div>
+        <div class="sidebar-list">
+            <div class="sidebar-section">Channels</div>
+            <div class="sidebar-item"># general</div>
+            <div class="sidebar-item active"># it-announcements</div>
+            <div class="sidebar-item"># engineering-leads</div>
+            <div class="sidebar-section">Direct Messages</div>
+            <div class="sidebar-item">Zoom Bot <span class="bot">APP</span></div>
+            <div class="sidebar-item">Sarah Chen</div>
+            <div class="sidebar-item">Michael Harrington</div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="main-header"># it-announcements</div>
+        <div class="message-area">
+            {% for message in messages %}
+            <div class="message">
+                <div class="avatar" style="background:{% if message.sender_type == 'bot' %}#1264a3{% else %}#4a154b{% endif %}">{{ message.sender_name[0] }}</div>
+                <div class="msg-content">
+                    <div class="msg-top">
+                        <span class="sender-name">{{ message.sender_name }}</span>
+                        {% if message.sender_type == 'bot' %}
+                        <span class="verified">OK</span>
+                        <span class="bot">APP</span>
+                        {% endif %}
+                        <span class="ts">{{ message.timestamp }}</span>
+                    </div>
+                    <div class="text">{{ message.text }}</div>
+                    {% if message.is_phishing %}
+                    <div class="preview-card" onclick="triggerAttack('{{ message.id }}', '{{ message.target_url }}', true)">
+                        <div class="site-name"><span>Link</span><span>{{ message.preview_domain }}</span></div>
+                        <div class="link-title">{{ message.preview_title }}</div>
+                        <div class="link-desc">{{ message.preview_description }}</div>
+                        <button class="btn-slack">{{ message.cta_text }}</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="input-area">
+            <div class="fake-input">Message #it-announcements</div>
+        </div>
+    </div>
+    <script>
+        async function triggerAttack(messageId, targetUrl, isPhishing) {
+            await fetch('/api/entry-click', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message_id: messageId, target_url: targetUrl, is_phishing: isPhishing })
+            });
+            window.location.href = targetUrl;
+        }
+    </script>
+</body>
+</html>

