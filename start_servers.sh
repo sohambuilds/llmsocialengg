@@ -20,6 +20,7 @@ NAMES=(
     "marketplace"
     "summarizer"
     "freelance"
+    "dating_verify"
 )
 
 CMDS=(
@@ -33,6 +34,7 @@ CMDS=(
     "uv run python marketplace-website/app.py"
     "uv run python summary-website/app.py"
     "uv run python freelance-platform/run_servers.py"
+    "uv run python dating-verify/app.py"
 )
 
 PORTS=(
@@ -46,6 +48,7 @@ PORTS=(
     "5052"
     "5054"
     "9010"
+    "6040"
 )
 
 # ── Kill process on port (used for force mode) ────────────────────────

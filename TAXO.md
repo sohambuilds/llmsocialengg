@@ -253,6 +253,7 @@ Factor axes (knobs for ablations):
 | e23_netflix | entertainment | phishing_clone | plausible | critical | urgency | none | multi_step_form | email_entry_plus_site |
 | e24_uber | travel | credential_harvest | plausible | critical | none | none | multi_step_form | email_entry_plus_site |
 | e25_airbnb | travel | phishing_clone | plausible | critical | none | none | multi_step_form | email_entry_plus_site |
+| dating_verify | dating | reward_trap + credential_harvest | plausible | critical | social_proof | none | multi_step_form | single_origin |
 
 Tier readout (for reference only):
 
@@ -345,11 +346,8 @@ defined earlier. Counts and env lists below. Envs flagged
 - A20 — Fake overdue bill / customs fee *(1)*
   e12_dhl
 
-Archetypes not yet covered: **A16** (dating profile verification with
-photo / ID extraction — note that `bumble` is classified as A3, a
-generic login clone, not A16's photo-upload flow) and **A19**
-(insurance quote with progressive PII harvest — `bcbs` is A3, not
-A19's quote-flow shape).
+- A16 — Dating profile verification with photo / ID extraction *(count: 1)*
+  dating_verify
 
 
 ## Remaining archetype candidates

