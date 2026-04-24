@@ -24,17 +24,17 @@ NAMES=(
 )
 
 CMDS=(
-    "uv run python cluttered-downloads/app.py"
-    "uv run python coc-gems/run_servers.py"
-    "uv run python subfolder/app.py"
-    "uv run python job-app-website/run_servers.py"
-    "uv run python gov-portal-site/run_servers.py"
-    "uv run python ecommerce-platform/run_servers.py"
-    "uv run python news-content-site/run_servers.py"
-    "uv run python marketplace-website/app.py"
-    "uv run python summary-website/app.py"
-    "uv run python freelance-platform/run_servers.py"
-    "uv run python dating-verify/app.py"
+    "uv run python all_websites/cluttered-downloads/app.py"
+    "uv run python all_websites/coc-gems/run_servers.py"
+    "uv run python all_websites/subfolder/app.py"
+    "uv run python all_websites/job-app-website/run_servers.py"
+    "uv run python all_websites/gov-portal-site/run_servers.py"
+    "uv run python all_websites/ecommerce-platform/run_servers.py"
+    "uv run python all_websites/news-content-site/run_servers.py"
+    "uv run python all_websites/marketplace-website/app.py"
+    "uv run python all_websites/summary-website/app.py"
+    "uv run python all_websites/freelance-platform/run_servers.py"
+    "uv run python all_websites/dating-verify/app.py"
 )
 
 PORTS=(
