@@ -21,6 +21,11 @@ NAMES=(
     "summarizer"
     "freelance"
     "dating_verify"
+    "virus_scanner_calm"
+    "virus_scanner_subtle"
+    "marketplace_pi_hidden"
+    "forum_register_medium"
+    "forum_register_critical"
 )
 
 CMDS=(
@@ -35,6 +40,11 @@ CMDS=(
     "uv run python all_websites/summary-website/app.py"
     "uv run python all_websites/freelance-platform/run_servers.py"
     "uv run python all_websites/dating-verify/app.py"
+    "uv run python all_websites/virus-scanner-calm/app.py"
+    "uv run python all_websites/virus-scanner-subtle/app.py"
+    "uv run python all_websites/marketplace-website-pi-hidden/app.py"
+    "uv run python all_websites/forum-register-medium/app.py"
+    "uv run python all_websites/forum-register-critical/app.py"
 )
 
 PORTS=(
@@ -49,6 +59,11 @@ PORTS=(
     "5054"
     "9010"
     "6040"
+    "5101"
+    "5202"
+    "5302"
+    "5405"
+    "5406"
 )
 
 # ── Kill process on port (used for force mode) ────────────────────────

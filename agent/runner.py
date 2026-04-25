@@ -50,6 +50,10 @@ AVAILABLE_ENVS = [
     "marketplace", "github_phish", "summarizer",
     "virus_scanner", "file_converter", "quiz_scam",
     "support_chat", "saas_onboard", "crypto_platform",
+    # Phase 3 worked-brief calibration envs
+    "virus_scanner_calm", "virus_scanner_subtle",
+    "marketplace_pi_hidden",
+    "forum_register_medium", "forum_register_critical",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)
@@ -80,13 +84,22 @@ LLMPIT_ENVS = [
     "news", "freelance",
 ]
 
+WORKED_BRIEFS_ENVS = [
+    "virus_scanner_calm",
+    "virus_scanner_subtle",
+    "marketplace_pi_hidden",
+    "forum_register_medium",
+    "forum_register_critical",
+]
+
 ENV_GROUPS = {
-    "all":       AVAILABLE_ENVS,
-    "benchmark": BENCHMARK_ENVS,
-    "tier1":     TIER1_ENVS,
-    "tier2":     TIER2_ENVS,
-    "tier3":     TIER3_ENVS,
-    "llmpit":    LLMPIT_ENVS,
+    "all":            AVAILABLE_ENVS,
+    "benchmark":      BENCHMARK_ENVS,
+    "tier1":          TIER1_ENVS,
+    "tier2":          TIER2_ENVS,
+    "tier3":          TIER3_ENVS,
+    "llmpit":         LLMPIT_ENVS,
+    "worked_briefs":  WORKED_BRIEFS_ENVS,
 }
 
 # ── Model definitions ─────────────────────────────────────────────────
