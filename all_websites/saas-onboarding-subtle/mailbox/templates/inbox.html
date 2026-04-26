@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><title>Inbox · Gmail</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Roboto,Arial,sans-serif;color:#202124;background:#f6f8fc;font-size:14px;min-height:100vh}
+.header{background:#fff;border-bottom:1px solid #dadce0;padding:6px 16px;display:flex;align-items:center;gap:14px;height:54px}
+.header-logo-text{display:flex;font-size:22px;font-weight:400;letter-spacing:-1px}
+.header-logo-text span:nth-child(1){color:#4285f4}.header-logo-text span:nth-child(2){color:#ea4335}
+.header-logo-text span:nth-child(3){color:#fbbc04}.header-logo-text span:nth-child(4){color:#4285f4}
+.header-logo-text span:nth-child(5){color:#34a853}
+.search-bar{flex:1;max-width:720px;background:#eaf1fb;border-radius:8px;padding:8px 16px}
+.search-bar input{width:100%;border:none;background:transparent;font-size:14px;outline:none}
+.avatar{width:32px;height:32px;border-radius:50%;background:#1a73e8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:500}
+.layout{display:flex;height:calc(100vh - 54px)}
+.sidebar{width:240px;padding:8px}
+.compose{display:inline-flex;align-items:center;gap:10px;background:#c2e7ff;color:#001d35;border-radius:16px;padding:10px 22px;margin:8px;font-weight:500;cursor:pointer}
+.nav-item{display:flex;align-items:center;gap:14px;padding:6px 12px;border-radius:0 16px 16px 0;color:#202124;text-decoration:none;font-size:14px;cursor:pointer}
+.nav-item.active{background:#d3e3fd;color:#001d35;font-weight:600}
+.main{flex:1;background:#fff;border-radius:14px 0 0 0;margin-top:6px;overflow-y:auto}
+.email-row{display:flex;align-items:center;padding:9px 16px;border-bottom:1px solid #f1f3f4;font-size:14px;cursor:pointer;text-decoration:none;color:#202124}
+.email-row.unread{background:#f2f6fc;font-weight:600}
+.email-row:hover{box-shadow:inset 0 0 0 1px #dadce0}
+.sender{flex:0 0 200px;padding-right:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.subject{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.preview{color:#5f6368;font-weight:400}
+.date{flex:0 0 70px;text-align:right;color:#5f6368;font-size:12px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-logo-text"><span>G</span><span>m</span><span>a</span><span>i</span><span>l</span></div>
+  <div class="search-bar"><input placeholder="Search mail"></div>
+  <div class="avatar">J</div>
+</div>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="compose">+ Compose</div>
+    <a class="nav-item active" href="/">📥 Inbox</a>
+    <a class="nav-item" href="#">⭐ Starred</a>
+    <a class="nav-item" href="#">➤ Sent</a>
+    <a class="nav-item" href="#">📄 Drafts</a>
+  </aside>
+  <main class="main">
+    {% for e in emails %}
+    <a class="email-row {% if not e.read %}unread{% endif %}" href="/email/{{ e.id }}">
+      <div class="sender">{{ e.from_name }}</div>
+      <div class="subject">{{ e.subject }} <span class="preview">— {{ e.preview }}</span></div>
+      <div class="date">{{ e.date }}</div>
+    </a>
+    {% endfor %}
+  </main>
+</div>
+</body>
+</html>

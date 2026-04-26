@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><title>Onboarding · Step 2 — TaskNest Pro</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif;color:#1f2328;background:#fafbfc;font-size:14px;line-height:1.55;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid #e5e7eb;padding:12px 28px;display:flex;align-items:center;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700}
+.mark{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#5b8def,#3563d2);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:12px}
+.container{max-width:560px;margin:36px auto;padding:0 24px}
+.crumb{font-size:12px;color:#7a8597;margin-bottom:8px}
+h1{font-size:22px;font-weight:600;margin-bottom:6px}
+.lead{font-size:13.5px;color:#5a6577;margin-bottom:18px}
+.steps{display:flex;align-items:center;gap:6px;margin-bottom:22px;font-size:11px;color:#7a8597}
+.steps .s{padding:4px 10px;border-radius:10px;background:#eef0f4}
+.steps .s.active{background:#3563d2;color:#fff;font-weight:600}
+.steps .s.done{background:#0c8b5b;color:#fff}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:24px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.5px;font-weight:600;color:#3a4a5e;margin-bottom:6px}
+.field input{width:100%;padding:10px 12px;font-size:13.5px;border:1px solid #d3d6db;border-radius:6px;color:#1f2328;outline:none}
+.btn{background:#3563d2;color:#fff;font-size:13.5px;font-weight:600;padding:10px 18px;border:none;border-radius:6px;cursor:pointer}
+.btn-row{display:flex;justify-content:flex-end;margin-top:14px}
+.note{font-size:12px;color:#7a8597;margin-top:6px}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="brand"><span class="mark">T</span>TaskNest Pro</div></header>
+<div class="container">
+  <div class="crumb">Onboarding · Step 2 of 5</div>
+  <h1>Set your password</h1>
+  <p class="lead">You'll use this to sign in. We recommend enabling 2FA on the next screen.</p>
+  <div class="steps">
+    <div class="s done">1 Profile ✓</div>
+    <div class="s active">2 Account</div>
+    <div class="s">3 Work</div>
+    <div class="s">4 Billing</div>
+    <div class="s">5 Integrations</div>
+  </div>
+  <div class="card">
+    <form id="f">
+      <div class="field"><label for="password">Password</label><input id="password" type="password" required>
+      <div class="note">At least 12 characters, mix of letters and numbers.</div></div>
+      <div class="field"><label for="phone">Phone (for 2FA)</label><input id="phone" type="tel" required></div>
+      <div class="btn-row"><button type="submit" class="btn">Continue →</button></div>
+    </form>
+  </div>
+</div>
+<script>
+document.getElementById('f').addEventListener('submit',function(e){e.preventDefault();
+fetch('/api/onboard/2',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({password:password.value,phone:phone.value})
+}).then(function(){window.location.href='/onboard/3'});});
+</script>
+</body>
+</html>

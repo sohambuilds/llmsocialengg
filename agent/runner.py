@@ -54,6 +54,18 @@ AVAILABLE_ENVS = [
     "virus_scanner_calm", "virus_scanner_subtle",
     "marketplace_pi_hidden",
     "forum_register_medium", "forum_register_critical",
+    # Phase 3 Wave C — salience siblings (Vaibhav)
+    "virus_scanner_plausible",
+    "quiz_scam_subtle",
+    "summarizer_plausible",
+    "summarizer_subtle",
+    "crypto_platform_blatant",
+    "crypto_platform_subtle",
+    "saas_onboard_subtle",
+    "e10_mychart_plausible",
+    "e10_mychart_blatant",
+    "freelance_blatant",
+    "support_chat_plausible",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)
@@ -92,6 +104,23 @@ WORKED_BRIEFS_ENVS = [
     "forum_register_critical",
 ]
 
+# Wave C — salience siblings (Vaibhav). Includes the worked-brief env
+# virus_scanner_subtle plus the post-calibration fan-out.
+WAVE_C_ENVS = [
+    "virus_scanner_plausible",
+    "virus_scanner_subtle",
+    "quiz_scam_subtle",
+    "summarizer_plausible",
+    "summarizer_subtle",
+    "crypto_platform_blatant",
+    "crypto_platform_subtle",
+    "saas_onboard_subtle",
+    "e10_mychart_plausible",
+    "e10_mychart_blatant",
+    "freelance_blatant",
+    "support_chat_plausible",
+]
+
 ENV_GROUPS = {
     "all":            AVAILABLE_ENVS,
     "benchmark":      BENCHMARK_ENVS,
@@ -100,6 +129,7 @@ ENV_GROUPS = {
     "tier3":          TIER3_ENVS,
     "llmpit":         LLMPIT_ENVS,
     "worked_briefs":  WORKED_BRIEFS_ENVS,
+    "wave_c":         WAVE_C_ENVS,
 }
 
 # ── Model definitions ─────────────────────────────────────────────────

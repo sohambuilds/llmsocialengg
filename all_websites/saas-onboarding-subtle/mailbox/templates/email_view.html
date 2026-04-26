@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><title>{{ email.subject }} · Gmail</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Roboto,Arial,sans-serif;color:#202124;background:#f6f8fc;font-size:14px;min-height:100vh}
+.header{background:#fff;border-bottom:1px solid #dadce0;padding:6px 16px;display:flex;align-items:center;gap:14px;height:54px}
+.header-logo-text{display:flex;font-size:22px;font-weight:400;letter-spacing:-1px}
+.header-logo-text span:nth-child(1){color:#4285f4}.header-logo-text span:nth-child(2){color:#ea4335}
+.header-logo-text span:nth-child(3){color:#fbbc04}.header-logo-text span:nth-child(4){color:#4285f4}
+.header-logo-text span:nth-child(5){color:#34a853}
+.search-bar{flex:1;max-width:720px;background:#eaf1fb;border-radius:8px;padding:8px 16px}
+.search-bar input{width:100%;border:none;background:transparent;font-size:14px;outline:none}
+.avatar{width:32px;height:32px;border-radius:50%;background:#1a73e8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:500}
+.layout{display:flex;height:calc(100vh - 54px)}
+.sidebar{width:240px;padding:8px}
+.nav-item{display:flex;align-items:center;gap:14px;padding:6px 12px;border-radius:0 16px 16px 0;color:#202124;text-decoration:none;font-size:14px;cursor:pointer}
+.nav-item.active{background:#d3e3fd;color:#001d35;font-weight:600}
+.main{flex:1;padding:0 32px;background:#fff;border-radius:14px 0 0 0;margin-top:6px;overflow-y:auto}
+.toolbar{display:flex;gap:8px;padding:8px 0}
+.toolbar a{padding:8px 12px;color:#5f6368;text-decoration:none;border-radius:50%}
+.email-view{padding:14px 0 30px}
+.subject-line{font-size:22px;font-weight:400;margin-bottom:18px}
+.sender-row{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.sender-avatar{width:38px;height:38px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:500}
+.sender-info{flex:1}.sender-name{font-size:14px;font-weight:500}.sender-to{font-size:12px;color:#5f6368}
+.sender-date{font-size:12px;color:#5f6368;margin-right:8px}
+.email-body{padding:8px 0;font-size:14px;line-height:1.7;color:#202124;white-space:pre-wrap}
+.email-body a{color:#1a73e8;text-decoration:none}
+.email-body a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-logo-text"><span>G</span><span>m</span><span>a</span><span>i</span><span>l</span></div>
+  <div class="search-bar"><input placeholder="Search mail"></div>
+  <div class="avatar">J</div>
+</div>
+<div class="layout">
+  <aside class="sidebar">
+    <a class="nav-item active" href="/">📥 Inbox</a>
+    <a class="nav-item" href="#">⭐ Starred</a>
+  </aside>
+  <main class="main">
+    <div class="toolbar"><a href="/">←</a></div>
+    <div class="email-view">
+      <h1 class="subject-line">{{ email.subject }}</h1>
+      <div class="sender-row">
+        <div class="sender-avatar" style="background:#e17055">{{ email.from_name[0] }}</div>
+        <div class="sender-info">
+          <div class="sender-name">{{ email.from_name }} <span style="font-weight:400;color:#5f6368">&lt;{{ email.from }}&gt;</span></div>
+          <div class="sender-to">to me</div>
+        </div>
+        <span class="sender-date">{{ email.date }}, 2026</span>
+      </div>
+      <div class="email-body">{{ email.body | replace('\n', '<br>') | replace('http://tasknest-pro.com:5213', '<a href="http://localhost:5213">http://tasknest-pro.com:5213</a>') | safe }}</div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

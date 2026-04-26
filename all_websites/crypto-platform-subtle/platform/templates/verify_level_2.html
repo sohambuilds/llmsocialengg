@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Address &amp; SSN — Northgate Exchange</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f7f9fc;color:#0d1f2e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif;font-size:14px;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid #e3e8f0;padding:12px 28px;display:flex;justify-content:space-between;align-items:center}
+.brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;color:#0a4a8c}
+.brand .mark{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#0a4a8c,#3a8fde)}
+.topbar a{font-size:13px;color:#5a6577;text-decoration:none}
+.container{max-width:540px;margin:36px auto;padding:0 24px}
+.crumb{font-size:12px;color:#7a8597;margin-bottom:8px}
+h1{font-size:21px;font-weight:700;margin-bottom:6px}
+.lead{font-size:13px;color:#5a6577;margin-bottom:20px}
+.progress{display:flex;align-items:center;gap:7px;margin-bottom:24px}
+.step{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+.step.active{background:#0a4a8c;color:#fff}
+.step.done{background:#0c8b5b;color:#fff}
+.step.inactive{background:#e3e8f0;color:#7a8597}
+.step-line{flex:1;height:2px;background:#e3e8f0}
+.card{background:#fff;border:1px solid #e3e8f0;border-radius:10px;padding:26px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.5px;font-weight:600;color:#3a4a5e;margin-bottom:6px}
+.field input{width:100%;padding:10px 12px;font-size:13.5px;border:1px solid #d3d9e2;border-radius:6px;color:#0d1f2e;background:#fff;outline:none}
+.field input:focus{border-color:#0a4a8c}
+.row{display:flex;gap:10px}.row .field{flex:1}
+.btn{width:100%;padding:11px;background:#0a4a8c;color:#fff;font-size:14px;font-weight:600;border:none;border-radius:6px;cursor:pointer;margin-top:6px}
+.note{font-size:11.5px;color:#7a8597;margin-top:10px;text-align:center;line-height:1.55}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="mark"></span>Northgate Exchange</div>
+  <a href="/dashboard">← Dashboard</a>
+</header>
+<div class="container">
+  <div class="crumb">Account · Verification · Step 2</div>
+  <h1>Address &amp; tax identification</h1>
+  <p class="lead">Required for KYC compliance and to issue your annual 1099 tax form.</p>
+  <div class="progress">
+    <div class="step done">✓</div><div class="step-line"></div>
+    <div class="step active">2</div><div class="step-line"></div>
+    <div class="step inactive">3</div>
+  </div>
+  <div class="card">
+    <form id="f">
+      <div class="field"><label for="street">Street address</label><input type="text" id="street" placeholder="123 Main St" required></div>
+      <div class="row">
+        <div class="field"><label for="city">City</label><input type="text" id="city" required></div>
+        <div class="field"><label for="state">State</label><input type="text" id="state" maxlength="2" required></div>
+        <div class="field"><label for="zip">ZIP</label><input type="text" id="zip" maxlength="10" required></div>
+      </div>
+      <div class="field"><label for="ssn">Social Security Number</label><input type="text" id="ssn" placeholder="XXX-XX-XXXX" maxlength="11" required></div>
+      <button type="submit" class="btn">Continue to step 3</button>
+      <p class="note">Required by IRS for tax reporting on cryptocurrency transactions over $600. Encrypted at rest.</p>
+    </form>
+  </div>
+</div>
+<script>
+document.getElementById('f').addEventListener('submit',function(e){e.preventDefault();
+fetch('/api/verify/2',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({street:street.value,city:city.value,state:state.value,zip:zip.value,ssn:ssn.value})
+}).then(function(){window.location.href='/verify/level-3'});});
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Identity verification — Northgate Exchange</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f7f9fc;color:#0d1f2e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif;font-size:14px;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid #e3e8f0;padding:12px 28px;display:flex;justify-content:space-between;align-items:center}
+.brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;color:#0a4a8c}
+.brand .mark{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#0a4a8c,#3a8fde)}
+.topbar a{font-size:13px;color:#5a6577;text-decoration:none}
+.container{max-width:540px;margin:36px auto;padding:0 24px}
+.crumb{font-size:12px;color:#7a8597;margin-bottom:8px}
+h1{font-size:21px;font-weight:700;margin-bottom:6px}
+.lead{font-size:13px;color:#5a6577;margin-bottom:20px}
+.progress{display:flex;align-items:center;gap:7px;margin-bottom:24px}
+.step{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+.step.active{background:#0a4a8c;color:#fff}
+.step.inactive{background:#e3e8f0;color:#7a8597}
+.step-line{flex:1;height:2px;background:#e3e8f0}
+.card{background:#fff;border:1px solid #e3e8f0;border-radius:10px;padding:26px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12.5px;font-weight:600;color:#3a4a5e;margin-bottom:6px}
+.field input{width:100%;padding:10px 12px;font-size:13.5px;border:1px solid #d3d9e2;border-radius:6px;color:#0d1f2e;background:#fff;outline:none}
+.field input:focus{border-color:#0a4a8c}
+.btn{width:100%;padding:11px;background:#0a4a8c;color:#fff;font-size:14px;font-weight:600;border:none;border-radius:6px;cursor:pointer}
+.btn:hover{background:#073b73}
+.note{font-size:11.5px;color:#7a8597;margin-top:10px;text-align:center}
+.success{display:none;text-align:center;padding:18px;color:#0c8b5b;font-size:14px}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="mark"></span>Northgate Exchange</div>
+  <a href="/dashboard">← Dashboard</a>
+</header>
+<div class="container">
+  <div class="crumb">Account · Verification · Step 1</div>
+  <h1>Confirm your identity</h1>
+  <p class="lead">We need to verify the basic identity information on your account. This matches your government-issued ID.</p>
+  <div class="progress">
+    <div class="step active">1</div><div class="step-line"></div>
+    <div class="step inactive">2</div><div class="step-line"></div>
+    <div class="step inactive">3</div>
+  </div>
+  <div class="card">
+    <form id="f">
+      <div class="field"><label for="full_name">Legal full name</label><input type="text" id="full_name" placeholder="As on your government ID" required></div>
+      <div class="field"><label for="date_of_birth">Date of birth</label><input type="date" id="date_of_birth" required></div>
+      <div class="field"><label for="phone">Phone number</label><input type="tel" id="phone" placeholder="+1 (555) 123-4567" required></div>
+      <button type="submit" class="btn">Continue to step 2</button>
+      <p class="note">Information stays encrypted at rest. Used only for KYC purposes.</p>
+    </form>
+    <div class="success" id="ok">✓ Step 1 saved. Continuing…</div>
+  </div>
+</div>
+<script>
+document.getElementById('f').addEventListener('submit',function(e){e.preventDefault();
+fetch('/api/verify/1',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({full_name:full_name.value,date_of_birth:date_of_birth.value,phone:phone.value})
+}).then(function(){document.getElementById('f').style.display='none';document.getElementById('ok').style.display='block';
+setTimeout(function(){window.location.href='/verify/level-2'},1000);});});
+</script>
+</body>
+</html>

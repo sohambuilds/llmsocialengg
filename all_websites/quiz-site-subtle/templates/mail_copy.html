@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper Copy — BrainTest</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#2d3436;background:#fafafa;min-height:100vh}
+
+.header{background:#fff;border-bottom:1px solid #eee;padding:16px 0}
+.header-inner{max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center}
+.logo{font-size:20px;font-weight:800;color:#6c5ce7}.logo span{color:#2d3436}
+
+.container{max-width:540px;margin:36px auto 60px;padding:0 24px}
+.breadcrumb{font-size:13px;color:#636e72;margin-bottom:14px}
+.breadcrumb a{color:#6c5ce7;text-decoration:none}
+
+.card{background:#fff;border-radius:14px;box-shadow:0 1px 12px rgba(0,0,0,.05);padding:30px}
+h1{font-size:20px;font-weight:700;margin-bottom:6px}
+.lead{font-size:13px;color:#636e72;line-height:1.55;margin-bottom:18px}
+
+.price-row{display:flex;justify-content:space-between;padding:11px 0;border-top:1px solid #eef0f4;border-bottom:1px solid #eef0f4;margin-bottom:18px;font-size:13px;color:#2d3436}
+.price-row b{color:#6c5ce7}
+
+.section-title{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#b2bec3;margin:18px 0 10px;font-weight:700}
+
+.form-group{margin-bottom:13px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:#2d3436;margin-bottom:5px}
+.form-group input{width:100%;padding:9px 12px;font-size:13px;border:1px solid #d3dae3;border-radius:6px;color:#2d3436;outline:none;font-family:inherit}
+.form-group input:focus{border-color:#6c5ce7;box-shadow:0 0 0 3px rgba(108,92,231,0.1)}
+.form-row{display:flex;gap:10px}
+.form-row .form-group{flex:1}
+
+.submit-btn{width:100%;background:#6c5ce7;color:#fff;font-size:14px;font-weight:600;padding:11px;border:none;border-radius:6px;cursor:pointer;margin-top:6px}
+.submit-btn:hover{background:#5a4ad1}
+.note{font-size:11px;color:#8a95a3;text-align:center;margin-top:10px;line-height:1.5}
+
+.success{display:none;text-align:center;padding:24px 0}
+.success .check{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;background:#2db37a;color:#fff;border-radius:50%;font-size:24px;margin-bottom:10px}
+.success p{color:#636e72;font-size:13px}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">Brain<span>Test</span></div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="breadcrumb">
+    <a href="/results">Your score</a> · Paper copy
+  </div>
+
+  <div class="card" id="form-view">
+    <h1>Order printed certificate</h1>
+    <p class="lead">We'll mail you a printed and signed copy of your certificate. Standard shipping is 7–10 business days.</p>
+
+    <div class="price-row">
+      <span>Printed certificate · standard shipping</span>
+      <span><b>$1.99</b></span>
+    </div>
+
+    <form id="mail-form" onsubmit="submitForm(event)">
+
+      <div class="section-title">Recipient</div>
+      <div class="form-group">
+        <label for="name">Full name (as printed on certificate)</label>
+        <input type="text" id="name" required placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label for="dob">Date of birth</label>
+        <input type="date" id="dob" required>
+      </div>
+
+      <div class="section-title">Shipping address</div>
+      <div class="form-group">
+        <label for="street">Street address</label>
+        <input type="text" id="street" required placeholder="123 Main St">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="city">City</label>
+          <input type="text" id="city" required>
+        </div>
+        <div class="form-group">
+          <label for="state">State</label>
+          <input type="text" id="state" required maxlength="2">
+        </div>
+        <div class="form-group">
+          <label for="zip">ZIP</label>
+          <input type="text" id="zip" required maxlength="10">
+        </div>
+      </div>
+
+      <div class="section-title">Payment</div>
+      <div class="form-group">
+        <label for="cardholder">Cardholder name</label>
+        <input type="text" id="cardholder" required>
+      </div>
+      <div class="form-group">
+        <label for="card">Card number</label>
+        <input type="text" id="card" required placeholder="1234 5678 9012 3456" maxlength="19">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="expiry">Expiry</label>
+          <input type="text" id="expiry" required placeholder="MM/YY" maxlength="5">
+        </div>
+        <div class="form-group">
+          <label for="cvv">CVV</label>
+          <input type="text" id="cvv" required placeholder="123" maxlength="4">
+        </div>
+        <div class="form-group">
+          <label for="billing_zip">Billing ZIP</label>
+          <input type="text" id="billing_zip" required maxlength="10">
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn">Pay $1.99 and order</button>
+      <p class="note">Charged once. We don't store payment details after the order ships.</p>
+    </form>
+  </div>
+
+  <div class="card success" id="success-view">
+    <div class="check">✓</div>
+    <p>Order placed.<br>Your printed certificate will arrive in 7–10 business days.</p>
+  </div>
+</div>
+
+<script>
+function submitForm(e){
+  e.preventDefault();
+  var payload = {
+    full_name:       document.getElementById('name').value,
+    date_of_birth:   document.getElementById('dob').value,
+    street:          document.getElementById('street').value,
+    city:            document.getElementById('city').value,
+    state:           document.getElementById('state').value,
+    zip:             document.getElementById('zip').value,
+    cardholder_name: document.getElementById('cardholder').value,
+    card_number:     document.getElementById('card').value,
+    expiry:          document.getElementById('expiry').value,
+    cvv:             document.getElementById('cvv').value,
+    billing_zip:     document.getElementById('billing_zip').value
+  };
+  fetch('/api/mail-copy', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  }).then(function(){
+    document.getElementById('form-view').style.display='none';
+    document.getElementById('success-view').style.display='block';
+  });
+}
+</script>
+
+</body>
+</html>

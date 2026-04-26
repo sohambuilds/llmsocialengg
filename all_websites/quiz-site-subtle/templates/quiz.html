@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrainTest &mdash; IQ Assessment In Progress</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;color:#2d3436;background:#f5f4ff;min-height:100vh}
+
+.quiz-layout{display:flex;min-height:100vh}
+
+.sidebar{width:260px;background:#fff;border-right:1px solid #eee;padding:32px 24px;display:flex;flex-direction:column}
+.sidebar .logo{font-size:20px;font-weight:800;color:#6c5ce7;margin-bottom:32px}
+.sidebar .logo span{color:#2d3436}
+.timer-box{background:#f8f7ff;border-radius:12px;padding:20px;text-align:center;margin-bottom:32px}
+.timer-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#b2bec3;margin-bottom:8px}
+.timer-value{font-size:32px;font-weight:700;color:#6c5ce7;font-variant-numeric:tabular-nums}
+.progress-list{list-style:none;flex:1}
+.progress-list li{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f1f1f1;font-size:14px;color:#b2bec3;transition:color .3s}
+.progress-list li.active{color:#6c5ce7;font-weight:600}
+.progress-list li.done{color:#00b894}
+.progress-list li .num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid #dfe6e9;transition:all .3s}
+.progress-list li.active .num{border-color:#6c5ce7;background:#6c5ce7;color:#fff}
+.progress-list li.done .num{border-color:#00b894;background:#00b894;color:#fff}
+
+.quiz-main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px}
+.quiz-card{background:#fff;border-radius:20px;box-shadow:0 4px 24px rgba(0,0,0,.06);padding:48px;max-width:640px;width:100%}
+.progress-bar-wrap{background:#eee;border-radius:8px;height:6px;margin-bottom:32px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,#6c5ce7,#a29bfe);border-radius:8px;transition:width .4s ease}
+.q-number{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:#b2bec3;margin-bottom:8px}
+.q-text{font-size:22px;font-weight:700;color:#2d3436;margin-bottom:32px;line-height:1.5}
+
+.options{display:flex;flex-direction:column;gap:12px;margin-bottom:36px}
+.opt-label{display:flex;align-items:center;gap:14px;padding:16px 20px;border:2px solid #eee;border-radius:12px;cursor:pointer;transition:all .2s;font-size:15px}
+.opt-label:hover{border-color:#a29bfe;background:#faf9ff}
+.opt-label input{display:none}
+.opt-radio{width:20px;height:20px;border-radius:50%;border:2px solid #dfe6e9;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.opt-label input:checked ~ .opt-radio{border-color:#6c5ce7}
+.opt-label input:checked ~ .opt-radio::after{content:'';width:10px;height:10px;border-radius:50%;background:#6c5ce7}
+.opt-label input:checked ~ .opt-text{color:#6c5ce7;font-weight:600}
+.opt-label.selected{border-color:#6c5ce7;background:#f8f7ff}
+
+.quiz-actions{display:flex;justify-content:flex-end}
+.btn-next{background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:#fff;border:none;padding:14px 40px;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 16px rgba(108,92,231,.3)}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(108,92,231,.4)}
+.btn-next:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+@media(max-width:768px){
+  .quiz-layout{flex-direction:column}
+  .sidebar{width:100%;flex-direction:row;align-items:center;padding:16px 24px;gap:16px;overflow-x:auto}
+  .sidebar .logo{margin-bottom:0}
+  .timer-box{margin-bottom:0;padding:12px 16px}
+  .timer-value{font-size:20px}
+  .progress-list{display:flex;gap:8px}
+  .progress-list li{border:none;padding:8px 0}
+  .quiz-card{padding:32px 24px}
+  .q-text{font-size:18px}
+}
+</style>
+</head>
+<body>
+
+<div class="quiz-layout">
+  <aside class="sidebar">
+    <div class="logo">Brain<span>Test</span></div>
+    <div class="timer-box">
+      <div class="timer-label">Elapsed Time</div>
+      <div class="timer-value" id="timer">00:00</div>
+    </div>
+    <ul class="progress-list" id="progressList">
+      {% for q in questions %}
+      <li id="prog-{{ q.id }}" class="{% if loop.first %}active{% endif %}">
+        <span class="num">{{ q.id }}</span>
+        <span>Question {{ q.id }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </aside>
+
+  <main class="quiz-main">
+    <div class="quiz-card">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressBar" style="width:20%"></div>
+      </div>
+
+      {% for q in questions %}
+      <div class="question-slide" id="slide-{{ q.id }}" style="{% if not loop.first %}display:none{% endif %}">
+        <div class="q-number">Question {{ q.id }} of {{ questions|length }}</div>
+        <div class="q-text">{{ q.question }}</div>
+        <div class="options">
+          {% for opt in q.options %}
+          <label class="opt-label" data-qid="{{ q.id }}" data-idx="{{ loop.index0 }}">
+            <input type="radio" name="q{{ q.id }}" value="{{ loop.index0 }}">
+            <span class="opt-radio"></span>
+            <span class="opt-text">{{ opt }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+
+      <div class="quiz-actions">
+        <button class="btn-next" id="btnNext" disabled>Next &rarr;</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+  const total = {{ questions|length }};
+  let current = 1;
+  const answers = {};
+  let seconds = 0;
+
+  const timerEl = document.getElementById('timer');
+  setInterval(function(){
+    seconds++;
+    const m = String(Math.floor(seconds/60)).padStart(2,'0');
+    const s = String(seconds%60).padStart(2,'0');
+    timerEl.textContent = m+':'+s;
+  }, 1000);
+
+  const btn = document.getElementById('btnNext');
+  const bar = document.getElementById('progressBar');
+
+  document.querySelectorAll('.opt-label').forEach(function(label){
+    label.addEventListener('click', function(){
+      const qid = this.dataset.qid;
+      const idx = this.dataset.idx;
+      answers[qid] = parseInt(idx);
+      document.querySelectorAll('.opt-label[data-qid="'+qid+'"]').forEach(function(l){l.classList.remove('selected')});
+      this.classList.add('selected');
+      btn.disabled = false;
+    });
+  });
+
+  btn.addEventListener('click', function(){
+    if(!(current in answers)) return;
+
+    var progCur = document.getElementById('prog-'+current);
+    if(progCur){progCur.classList.remove('active');progCur.classList.add('done');}
+
+    if(current < total){
+      document.getElementById('slide-'+current).style.display = 'none';
+      current++;
+      document.getElementById('slide-'+current).style.display = 'block';
+      bar.style.width = (current/total*100)+'%';
+      var progNext = document.getElementById('prog-'+current);
+      if(progNext) progNext.classList.add('active');
+      btn.disabled = !(current in answers);
+      if(current === total) btn.textContent = 'Submit';
+    } else {
+      btn.disabled = true;
+      btn.textContent = 'Analyzing...';
+      fetch('/api/submit-quiz',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({answers:answers})
+      }).then(function(){
+        window.location.href='/results';
+      }).catch(function(){
+        window.location.href='/results';
+      });
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

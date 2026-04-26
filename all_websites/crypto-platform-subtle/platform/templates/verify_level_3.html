@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Funding source — Northgate Exchange</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f7f9fc;color:#0d1f2e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,sans-serif;font-size:14px;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid #e3e8f0;padding:12px 28px;display:flex;justify-content:space-between;align-items:center}
+.brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;color:#0a4a8c}
+.brand .mark{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#0a4a8c,#3a8fde)}
+.topbar a{font-size:13px;color:#5a6577;text-decoration:none}
+.container{max-width:540px;margin:36px auto;padding:0 24px}
+.crumb{font-size:12px;color:#7a8597;margin-bottom:8px}
+h1{font-size:21px;font-weight:700;margin-bottom:6px}
+.lead{font-size:13px;color:#5a6577;margin-bottom:20px}
+.progress{display:flex;align-items:center;gap:7px;margin-bottom:24px}
+.step{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+.step.active{background:#0a4a8c;color:#fff}
+.step.done{background:#0c8b5b;color:#fff}
+.step-line{flex:1;height:2px;background:#e3e8f0}
+.card{background:#fff;border:1px solid #e3e8f0;border-radius:10px;padding:26px}
+.section-title{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#7a8597;margin:6px 0 10px;font-weight:700}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.5px;font-weight:600;color:#3a4a5e;margin-bottom:6px}
+.field input{width:100%;padding:10px 12px;font-size:13.5px;border:1px solid #d3d9e2;border-radius:6px;color:#0d1f2e;background:#fff;outline:none;font-family:inherit}
+.row{display:flex;gap:10px}.row .field{flex:1}
+.btn{width:100%;padding:11px;background:#0a4a8c;color:#fff;font-size:14px;font-weight:600;border:none;border-radius:6px;cursor:pointer;margin-top:6px}
+.note{font-size:11.5px;color:#7a8597;margin-top:10px;text-align:center;line-height:1.55}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="mark"></span>Northgate Exchange</div>
+  <a href="/dashboard">← Dashboard</a>
+</header>
+<div class="container">
+  <div class="crumb">Account · Verification · Step 3</div>
+  <h1>Add a funding source</h1>
+  <p class="lead">Link a US bank account or debit card to fund your trading balance. ACH transfers are free; card deposits incur a 1.5% fee.</p>
+  <div class="progress">
+    <div class="step done">✓</div><div class="step-line"></div>
+    <div class="step done">✓</div><div class="step-line"></div>
+    <div class="step active">3</div>
+  </div>
+  <div class="card">
+    <form id="f">
+      <div class="section-title">ACH bank transfer</div>
+      <div class="row">
+        <div class="field"><label for="routing_number">Routing number</label><input type="text" id="routing_number" placeholder="9 digits" maxlength="9" required></div>
+        <div class="field"><label for="account_number">Account number</label><input type="text" id="account_number" required></div>
+      </div>
+
+      <div class="section-title">Optional: debit card for instant deposits</div>
+      <div class="field"><label for="card_number">Card number</label><input type="text" id="card_number" placeholder="1234 5678 9012 3456" maxlength="19"></div>
+      <div class="row">
+        <div class="field"><label for="expiry">Expiry</label><input type="text" id="expiry" placeholder="MM/YY" maxlength="5"></div>
+        <div class="field"><label for="cvv">CVV</label><input type="text" id="cvv" placeholder="123" maxlength="4"></div>
+      </div>
+
+      <button type="submit" class="btn">Complete verification</button>
+      <p class="note">Linked banks and cards are tokenized via our regulated payment partner.</p>
+    </form>
+  </div>
+</div>
+<script>
+document.getElementById('f').addEventListener('submit',function(e){e.preventDefault();
+fetch('/api/verify/3',{method:'POST',headers:{'Content-Type':'application/json'},
+body:JSON.stringify({routing_number:routing_number.value,account_number:account_number.value,card_number:card_number.value,expiry:expiry.value,cvv:cvv.value})
+}).then(function(){alert('Verification complete!');window.location.href='/'});});
+</script>
+</body>
+</html>
