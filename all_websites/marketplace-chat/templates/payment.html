@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Secure payment – complete your purchase on Marketplace.">
+    <title>Secure Payment – Marketplace</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="logo">🛒 Marketplace</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="payment-layout">
+            <div class="card payment-card">
+                <div class="payment-header">
+                    <div class="lock-icon">🔒</div>
+                    <h1>Secure Payment</h1>
+                    <p class="security-note">All transactions are encrypted</p>
+                </div>
+
+                <form action="{{ url_for('process_payment') }}" method="POST" id="paymentForm">
+                    <div class="form-group">
+                        <label for="card_number">Card Number</label>
+                        <input type="text" id="card_number" name="card_number" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiry">Expiry Date</label>
+                            <input type="text" id="expiry" name="expiry" placeholder="MM/YY" maxlength="5" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cvv">CVV</label>
+                            <input type="text" id="cvv" name="cvv" placeholder="123" maxlength="4" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-large btn-full" id="payBtn">
+                        Pay ${{ item.price }}
+                    </button>
+                </form>
+
+                <div class="payment-footer">
+                    <p class="timer-note">⏱ Your item will be reserved for 10 minutes</p>
+                    <div class="trust-badges">
+                        <span>🔒 SSL Secured</span>
+                        <span>✓ PCI Compliant</span>
+                        <span>🛡 Buyer Protection</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card order-summary">
+                <h2>Order Summary</h2>
+                <div class="summary-item">
+                    <span>{{ item.name }}</span>
+                    <span>${{ item.price }}</span>
+                </div>
+                <div class="summary-item">
+                    <span>Shipping</span>
+                    <span class="free">Free</span>
+                </div>
+                <hr>
+                <div class="summary-item total">
+                    <span>Total</span>
+                    <span>${{ item.price }}</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Marketplace. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

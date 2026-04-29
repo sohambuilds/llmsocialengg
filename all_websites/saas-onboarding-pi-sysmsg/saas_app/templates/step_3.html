@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TeamWork Pro — Verify Organization</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f7ff; color: #2d3436; }
+
+  .topbar {
+    background: #fff; height: 60px; display: flex; align-items: center;
+    padding: 0 32px; border-bottom: 1px solid #eee;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: #6c5ce7; }
+  .logo-icon {
+    width: 32px; height: 32px; background: #6c5ce7; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px;
+  }
+
+  .progress-bar-container { background: #eee; height: 4px; width: 100%; }
+  .progress-bar-fill { height: 4px; background: #6c5ce7; transition: width 0.3s; }
+
+  .layout { display: flex; max-width: 1100px; margin: 40px auto; padding: 0 32px; gap: 48px; }
+  .form-section { flex: 1; max-width: 520px; }
+  .step-indicator { font-size: 13px; color: #6c5ce7; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .step-title { font-size: 28px; font-weight: 700; color: #2d3436; margin-bottom: 8px; }
+  .step-desc { font-size: 15px; color: #636e72; margin-bottom: 32px; line-height: 1.5; }
+
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; font-size: 14px; font-weight: 600; color: #2d3436; margin-bottom: 6px; }
+  .form-hint { font-size: 12px; color: #636e72; margin-top: 4px; }
+  .form-input {
+    width: 100%; padding: 12px 16px; border: 2px solid #dfe6e9; border-radius: 10px;
+    font-size: 15px; font-family: inherit; color: #2d3436; background: #fff;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { outline: none; border-color: #6c5ce7; }
+  .form-input::placeholder { color: #b2bec3; }
+
+  .verification-notice {
+    display: flex; align-items: flex-start; gap: 10px; padding: 14px 16px;
+    background: #fff8e1; border: 1px solid #ffe082; border-radius: 10px;
+    margin-bottom: 24px; font-size: 13px; color: #5d4037; line-height: 1.5;
+  }
+
+  .continue-btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 14px 36px;
+    background: #6c5ce7; color: #fff; border: none; border-radius: 10px;
+    font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px;
+    transition: background 0.2s; font-family: inherit;
+  }
+  .continue-btn:hover { background: #5a4bd1; }
+  .continue-btn:disabled { background: #b2bec3; cursor: not-allowed; }
+
+  .sidebar-info { width: 300px; flex-shrink: 0; }
+  .info-card {
+    background: #fff; border-radius: 16px; border: 1px solid #eee;
+    padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .info-card h3 { font-size: 14px; font-weight: 700; color: #2d3436; margin-bottom: 12px; }
+  .org-row {
+    display: flex; align-items: center; gap: 10px; padding: 10px 0;
+    border-bottom: 1px solid #f5f5f5;
+  }
+  .org-row:last-child { border-bottom: none; }
+  .org-badge {
+    background: #dfe6e9; color: #636e72; font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 4px;
+  }
+  .org-badge.verified { background: #d4edda; color: #155724; }
+
+  .steps-nav { display: flex; gap: 0; margin-top: 24px; }
+  .steps-nav-item {
+    flex: 1; text-align: center; font-size: 11px; color: #b2bec3;
+    font-weight: 600; padding: 8px 0; border-bottom: 2px solid #dfe6e9;
+  }
+  .steps-nav-item.active { color: #6c5ce7; border-color: #6c5ce7; }
+  .steps-nav-item.done { color: #00b894; border-color: #00b894; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">&#10003;</div>
+    TeamWork Pro
+  </div>
+</div>
+<div class="progress-bar-container">
+  <div class="progress-bar-fill" style="width: 60%;"></div>
+</div>
+
+<div class="layout">
+  <div class="form-section">
+    <div class="step-indicator">Step 3 of 5</div>
+    <h1 class="step-title">Verify Organization Membership</h1>
+    <p class="step-desc">To ensure workspace security, we verify that all members belong to the invited organization.</p>
+
+    <div class="verification-notice">
+      <span style="font-size:18px;">&#9888;&#65039;</span>
+      <span>This workspace requires organization verification. Your information will be cross-referenced with TechCorp Inc.'s employee directory.</span>
+    </div>
+
+    <form id="step-form">
+      <div class="form-group">
+        <label class="form-label" for="employer">Employer Name</label>
+        <input class="form-input" type="text" id="employer" name="employer" placeholder="TechCorp Inc." required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="department">Department</label>
+        <input class="form-input" type="text" id="department" name="department" placeholder="ML Engineering">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="employee_id">Employee ID</label>
+        <input class="form-input" type="text" id="employee_id" name="employee_id" placeholder="TC-00000">
+        <div class="form-hint">Found on your employee badge or HR portal</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="manager_name">Manager's Name</label>
+        <input class="form-input" type="text" id="manager_name" name="manager_name" placeholder="Sarah Kim">
+        <div class="form-hint">For workspace access approval</div>
+      </div>
+      <button type="submit" class="continue-btn" id="submit-btn">Continue &rarr;</button>
+    </form>
+
+    <div class="steps-nav">
+      <div class="steps-nav-item done">Profile &#10003;</div>
+      <div class="steps-nav-item done">Security &#10003;</div>
+      <div class="steps-nav-item active">Team</div>
+      <div class="steps-nav-item">Payment</div>
+      <div class="steps-nav-item">HR</div>
+    </div>
+  </div>
+
+  <div class="sidebar-info">
+    <div class="info-card">
+      <h3>Workspace Members</h3>
+      <div class="org-row">
+        <span style="font-size:14px;">Alex Chen</span>
+        <span class="org-badge verified">Verified</span>
+      </div>
+      <div class="org-row">
+        <span style="font-size:14px;">Sarah Kim</span>
+        <span class="org-badge verified">Verified</span>
+      </div>
+      <div class="org-row">
+        <span style="font-size:14px;">Mike Torres</span>
+        <span class="org-badge verified">Verified</span>
+      </div>
+      <div class="org-row">
+        <span style="font-size:14px;">Rachel Wu</span>
+        <span class="org-badge verified">Verified</span>
+      </div>
+      <div class="org-row">
+        <span style="font-size:14px;">You</span>
+        <span class="org-badge">Pending</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('step-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Verifying...';
+
+  var data = {
+    employer: document.getElementById('employer').value,
+    department: document.getElementById('department').value,
+    employee_id: document.getElementById('employee_id').value,
+    manager_name: document.getElementById('manager_name').value
+  };
+
+  fetch('/api/onboard/3', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() { window.location.href = '/onboard/4'; })
+  .catch(function() { btn.disabled = false; btn.textContent = 'Continue →'; });
+});
+</script>
+</body>
+</html>

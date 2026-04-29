@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Messages — FreelanceHub{% endblock %}
+{% block page_title %}Messages{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <span class="material-icons-outlined">inbox</span>
+        All Conversations
+        <span class="text-muted text-sm" style="margin-left:auto;">{{ all_conversations|length }} conversations</span>
+    </div>
+    <div class="convo-list">
+        {% for convo in all_conversations|sort(attribute='last_updated', reverse=True) %}
+        <a href="/inbox/{{ convo.id }}" class="convo-item {{ 'unread' if convo.unread }}">
+            <div class="avatar avatar-md" style="background: {{ convo.client.avatar_color }};">
+                {{ convo.client.avatar_initials }}
+            </div>
+            <div class="convo-body">
+                <div class="convo-top">
+                    <span>
+                        <span class="convo-sender">{{ convo.client.name }}</span>
+                        {% if convo.client.company and convo.client.company != 'FreelanceHub' %}
+                        <span class="convo-company">· {{ convo.client.company }}</span>
+                        {% endif %}
+                    </span>
+                    <span class="convo-time">{{ convo.last_updated[5:10] }}</span>
+                </div>
+                <div class="convo-subject">{{ convo.subject }}</div>
+                <div class="convo-preview">{{ convo.preview }}</div>
+            </div>
+            {% if convo.unread %}
+            <div class="unread-dot"></div>
+            {% endif %}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

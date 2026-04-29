@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Your Free Trial — The New York Herald</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Libre+Franklin:wght@300;400;500;600;700&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="billing-header">
+        <div class="billing-header-inner">
+            <div class="billing-brand">The New York Herald</div>
+            <div class="billing-secure-badge">
+                <span class="lock-icon">&#128274;</span>
+                <span>Secure Checkout</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="billing-main">
+        <div class="billing-layout">
+            <!-- Left: Form -->
+            <div class="billing-form-section">
+                <div class="billing-welcome">
+                    <h1>Start your 30-day free trial</h1>
+                    <p>Unlimited access to all articles, newsletters, podcasts, and exclusive reporting. Cancel anytime.</p>
+                </div>
+
+                {% if name %}
+                <div class="billing-greeting">
+                    <span>Welcome, {{ name }}.</span> Complete the form below to activate your trial.
+                </div>
+                {% endif %}
+
+                <form id="paymentForm" class="payment-form">
+                    <input type="hidden" id="payEmail" value="{{ email }}">
+                    <input type="hidden" id="payName" value="{{ name }}">
+
+                    <div class="form-section-title">Payment Method</div>
+                    <p class="form-section-desc">For your security, payment processing is handled by our PCI-compliant billing partner. You will not be charged during your 30-day trial.</p>
+
+                    <div class="pay-form-group">
+                        <label for="cardNumber">Card Number</label>
+                        <input type="text" id="cardNumber" name="card_number" placeholder="1234 5678 9012 3456" maxlength="19" required autocomplete="cc-number">
+                        <div class="card-icons">
+                            <span class="card-icon">VISA</span>
+                            <span class="card-icon">MC</span>
+                            <span class="card-icon">AMEX</span>
+                        </div>
+                    </div>
+
+                    <div class="pay-form-row">
+                        <div class="pay-form-group pay-form-half">
+                            <label for="expiryMonth">Expiration</label>
+                            <div class="expiry-inputs">
+                                <select id="expiryMonth" name="expiry_month" required>
+                                    <option value="">MM</option>
+                                    <option value="01">01</option>
+                                    <option value="02">02</option>
+                                    <option value="03">03</option>
+                                    <option value="04">04</option>
+                                    <option value="05">05</option>
+                                    <option value="06">06</option>
+                                    <option value="07">07</option>
+                                    <option value="08">08</option>
+                                    <option value="09">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                </select>
+                                <span class="expiry-sep">/</span>
+                                <select id="expiryYear" name="expiry_year" required>
+                                    <option value="">YY</option>
+                                    <option value="25">25</option>
+                                    <option value="26">26</option>
+                                    <option value="27">27</option>
+                                    <option value="28">28</option>
+                                    <option value="29">29</option>
+                                    <option value="30">30</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="pay-form-group pay-form-half">
+                            <label for="cvv">Security Code (CVV)</label>
+                            <input type="text" id="cvv" name="cvv" placeholder="123" maxlength="4" required autocomplete="cc-csc">
+                        </div>
+                    </div>
+
+                    <div class="pay-form-group">
+                        <label for="billingZip">Billing ZIP Code</label>
+                        <input type="text" id="billingZip" name="billing_zip" placeholder="10001" maxlength="10" required autocomplete="postal-code">
+                    </div>
+
+                    <div class="pay-checkbox-group">
+                        <label class="pay-checkbox">
+                            <input type="checkbox" id="savePayment" checked>
+                            <span>Save payment method for future purchases</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="pay-submit-btn">Start Free Trial</button>
+
+                    <p class="pay-terms">$9.99/month after trial. By continuing, you authorize charges to your payment method. You may cancel at any time before your trial ends to avoid being charged. <a href="#">Terms</a> &middot; <a href="#">Privacy</a></p>
+                </form>
+            </div>
+
+            <!-- Right: Summary -->
+            <div class="billing-summary-section">
+                <div class="summary-card">
+                    <h3 class="summary-title">Order Summary</h3>
+                    <div class="summary-item">
+                        <span>Digital All Access</span>
+                        <span class="summary-price">$9.99/mo</span>
+                    </div>
+                    <div class="summary-item summary-trial">
+                        <span>30-day free trial</span>
+                        <span class="summary-discount">-$9.99</span>
+                    </div>
+                    <hr class="summary-divider">
+                    <div class="summary-item summary-total">
+                        <span>Due today</span>
+                        <span class="summary-total-price">$0.00</span>
+                    </div>
+
+                    <div class="summary-features">
+                        <h4>What's included:</h4>
+                        <ul>
+                            <li>Unlimited article access</li>
+                            <li>Exclusive newsletters</li>
+                            <li>Podcast library</li>
+                            <li>Comment and discuss</li>
+                            <li>Ad-lite experience</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="security-badges">
+                    <div class="badge-item">
+                        <span class="badge-icon">&#128274;</span>
+                        <span>256-bit SSL Encryption</span>
+                    </div>
+                    <div class="badge-item">
+                        <span class="badge-icon">&#9989;</span>
+                        <span>PCI DSS Compliant</span>
+                    </div>
+                    <div class="badge-item">
+                        <span class="badge-icon">&#128737;</span>
+                        <span>Secure Payment Processing</span>
+                    </div>
+                </div>
+
+                <p class="billing-guarantee">Cancel anytime during your trial and you won't be charged. No commitments, no hidden fees.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="billing-footer">
+        <p>&copy; 2025 The New York Herald Company. All rights reserved. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a> &middot; <a href="#">Contact</a></p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
