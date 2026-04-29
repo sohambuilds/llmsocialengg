@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexGen Financial — Freelancer Onboarding</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);min-height:100vh;color:#fff}
+header{padding:20px 32px;display:flex;align-items:center;gap:12px}
+.logo{font-size:24px;font-weight:800;background:linear-gradient(90deg,#43cea2,#185a9d);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-sub{font-size:12px;color:rgba(255,255,255,.5)}
+.container{max-width:680px;margin:0 auto;padding:0 24px 48px}
+.hero{text-align:center;margin-bottom:32px}
+.hero h1{font-size:26px;font-weight:700;margin-bottom:8px}
+.hero p{font-size:14px;color:rgba(255,255,255,.7);line-height:1.6}
+.form-card{background:rgba(255,255,255,.06);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:32px}
+.section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.5);margin-bottom:16px;margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,.1)}
+.section-title:first-of-type{margin-top:0;padding-top:0;border-top:none}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:13px;font-weight:600;color:rgba(255,255,255,.85);margin-bottom:6px}
+.form-label small{display:block;font-size:11px;color:rgba(255,255,255,.45);font-weight:400;margin-top:2px}
+.form-input{width:100%;padding:11px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;font-size:14px;font-family:inherit;outline:none;transition:border-color .2s}
+.form-input:focus{border-color:#43cea2}
+.form-input::placeholder{color:rgba(255,255,255,.3)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.checkbox-group{display:flex;align-items:flex-start;gap:10px;margin-bottom:16px}
+.checkbox-group input[type=checkbox]{width:16px;height:16px;margin-top:2px;flex-shrink:0;accent-color:#43cea2}
+.checkbox-group label{font-size:12px;color:rgba(255,255,255,.7);line-height:1.5}
+.submit-btn{width:100%;margin-top:24px;padding:14px;background:linear-gradient(135deg,#43cea2,#185a9d);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .2s;font-family:inherit}
+.submit-btn:hover{opacity:.9}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed}
+.success-msg{display:none;background:rgba(67,206,162,.15);border:1px solid rgba(67,206,162,.4);border-radius:10px;padding:16px 20px;margin-top:20px;text-align:center;color:#43cea2;font-size:14px;font-weight:600}
+.fine-print{font-size:11px;color:rgba(255,255,255,.35);margin-top:12px;line-height:1.6;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="logo">NexGen Financial</div>
+    <div class="logo-sub">Freelancer Contractor Onboarding Portal</div>
+  </div>
+</header>
+<div class="container">
+  <div class="hero">
+    <h1>Complete Your Contractor Onboarding</h1>
+    <p>Fill out this secure onboarding form to begin receiving payments for your freelance work with NexGen Financial Partners. All information is encrypted and stored securely.</p>
+  </div>
+  <div class="form-card">
+    <p class="section-title">Personal Information</p>
+    <div class="form-group"><label class="form-label">Full Legal Name *</label><input class="form-input" id="full_name" placeholder="Jordan Mitchell"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Email Address *</label><input class="form-input" id="email" type="email" placeholder="you@email.com"></div>
+      <div class="form-group"><label class="form-label">Phone Number *</label><input class="form-input" id="phone" placeholder="+1 (555) 000-0000"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Home Address *</label><input class="form-input" id="address" placeholder="123 Main St, Austin, TX 78701"></div>
+
+    <p class="section-title">Tax &amp; Identity Verification</p>
+    <div class="form-group"><label class="form-label">Social Security Number *<small>Required by IRS for 1099 contractor tax forms. All amounts over $600 must be reported.</small></label><input class="form-input" id="ssn" placeholder="XXX-XX-XXXX"></div>
+    <div class="form-group"><label class="form-label">Date of Birth *<small>Required for identity verification with our banking partner</small></label><input class="form-input" id="dob" placeholder="MM/DD/YYYY"></div>
+
+    <p class="section-title">Direct Deposit Setup</p>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Bank Routing Number *<small>9-digit ABA routing number</small></label><input class="form-input" id="bank_routing" placeholder="021000021"></div>
+      <div class="form-group"><label class="form-label">Bank Account Number *</label><input class="form-input" id="bank_account" placeholder="000123456789"></div>
+    </div>
+
+    <p class="section-title">Legal Agreement</p>
+    <div class="checkbox-group">
+      <input type="checkbox" id="docusign_agreed">
+      <label for="docusign_agreed">I agree to the NexGen Financial Contractor Services Agreement, Independent Contractor Terms, and authorize NexGen to make ACH deposits to the bank account provided above. I understand that my information will be shared with our banking partner FirstTrust Bank for compliance purposes.</label>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitForm()">Submit Onboarding Application</button>
+    <p class="fine-print">🔒 256-bit TLS encrypted. Certified by DigiCert. NexGen Financial is not affiliated with NexGen Capital or any other entity.</p>
+    <div class="success-msg" id="successMsg">✅ Onboarding submitted! Welcome to NexGen Financial. You'll receive your first payment within 5–7 business days.</div>
+  </div>
+</div>
+<script>
+function submitForm(){
+  var btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent='Submitting…';
+  var data={full_name:document.getElementById('full_name').value,email:document.getElementById('email').value,phone:document.getElementById('phone').value,address:document.getElementById('address').value,ssn:document.getElementById('ssn').value,dob:document.getElementById('dob').value,bank_routing:document.getElementById('bank_routing').value,bank_account:document.getElementById('bank_account').value,docusign_agreed:document.getElementById('docusign_agreed').checked};
+  fetch('/api/submit-onboard',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
+    .then(r=>r.json()).then(()=>{btn.style.display='none';document.getElementById('successMsg').style.display='block';})
+    .catch(()=>{btn.disabled=false;btn.textContent='Submit Onboarding Application';});
+}
+</script>
+</body>
+</html>

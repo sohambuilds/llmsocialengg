@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}{{ convo.subject }} — FreelanceHub{% endblock %}
+{% block page_title %}Conversation{% endblock %}
+
+{% block content %}
+<a href="/inbox" class="back-link">
+    <span class="material-icons-outlined">arrow_back</span>
+    Back to Messages
+</a>
+
+<div class="card">
+    <div class="card-body">
+        <!-- Thread header with client info -->
+        <div class="thread-header">
+            <div class="avatar avatar-lg" style="background: {{ convo.client.avatar_color }};">
+                {{ convo.client.avatar_initials }}
+            </div>
+            <div class="thread-client-info">
+                <h2>{{ convo.client.name }}
+                    {% if convo.client.company and convo.client.company != 'FreelanceHub' %}
+                    <span class="text-muted" style="font-weight:400;font-size:0.9rem;"> · {{ convo.client.company }}</span>
+                    {% endif %}
+                </h2>
+                <div class="thread-client-meta">
+                    {% if convo.client.member_since %}
+                    <span>
+                        <span class="material-icons-outlined">calendar_today</span>
+                        Member since {{ convo.client.member_since }}
+                    </span>
+                    {% endif %}
+                    {% if convo.client.completed_projects is not none %}
+                    <span>
+                        <span class="material-icons-outlined">task_alt</span>
+                        {{ convo.client.completed_projects }} projects
+                    </span>
+                    {% endif %}
+                    {% if convo.client.rating %}
+                    <span>
+                        <span class="material-icons-outlined">star</span>
+                        {{ convo.client.rating }} rating
+                    </span>
+                    {% endif %}
+                    {% if convo.client.completed_projects == 0 %}
+                    <span class="client-badge-new">New Member</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div style="font-size:0.82rem;color:#64748B;margin-bottom:20px;">
+            <strong>Subject:</strong> {{ convo.subject }}
+        </div>
+
+        <!-- Messages -->
+        <div class="messages-area">
+            {% for msg in convo.messages %}
+            <div class="message from-{{ msg.sender }}">
+                {% if msg.sender != 'agent' %}
+                <div class="avatar avatar-sm" style="background: {{ convo.client.avatar_color }};">
+                    {{ convo.client.avatar_initials }}
+                </div>
+                {% endif %}
+                <div>
+                    <div class="message-bubble">{{ msg.text | linkify }}</div>
+                    <div class="message-time">
+                        {{ msg.timestamp[5:16] | replace('T', ' at ') }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Reply area -->
+        {% if convo.type == 'client_message' %}
+        <div class="reply-area" id="reply-area">
+            <div class="reply-box">
+                <textarea id="reply-text" class="reply-textarea"
+                          placeholder="Type your reply to {{ convo.client.name }}..."></textarea>
+                <button id="btn-send" class="btn-send"
+                        onclick="sendReply('{{ convo.id }}')">
+                    <span class="material-icons-outlined" style="font-size:18px;">send</span>
+                    Send
+                </button>
+            </div>
+        </div>
+        <div id="reply-sent" class="reply-sent-msg"></div>
+        {% endif %}
+
+        {% if convo.type == 'system_notification' and convo.is_malicious %}
+        <div style="text-align:center;padding:16px 0;">
+            <a href="/verify" class="btn-send" style="display:inline-flex;background:#EF4444;">
+                <span class="material-icons-outlined" style="font-size:18px;">verified_user</span>
+                Verify My Identity
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
