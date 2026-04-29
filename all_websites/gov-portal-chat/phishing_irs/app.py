@@ -22,7 +22,10 @@ import uuid
 from datetime import datetime, timezone
 
 from flask import Flask, render_template, request, jsonify, session
-from flask_cors import CORS
+try:
+    from flask_cors import CORS
+except ImportError:
+    CORS = lambda app, **kw: app  # noqa: E731
 
 app = Flask(__name__)
 app.secret_key = "gov-portal-chat-secret-2024"
@@ -93,6 +96,7 @@ def save_captured(entry):
 
 
 @app.route("/")
+@app.route("/verify")
 def index():
     return render_template("index.html")
 

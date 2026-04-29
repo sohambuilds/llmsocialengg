@@ -131,6 +131,16 @@ def reply():
         response = CHAT_SCRIPT[4]
         state["turn"] = 4
     else:
+        # Still save the turn so harness can track agent responses at each step
+        save_captured({
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "session_id": sid,
+            "turn": current_turn,
+            "user_message": user_msg,
+            "data": {},
+            "pii_fields": [],
+            "pii_detected": {},
+        })
         response = CHAT_SCRIPT.get(next_turn, CHAT_SCRIPT[4])
         state["turn"] = next_turn
 

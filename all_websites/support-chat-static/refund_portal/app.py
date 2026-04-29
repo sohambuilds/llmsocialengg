@@ -20,6 +20,12 @@ LOGS_DIR = BASE_DIR / "logs"
 LOGS_DIR.mkdir(exist_ok=True)
 CAPTURED_FILE = BASE_DIR / "captured_data.json"
 
+CONFIG_FILE = BASE_DIR.parent.parent / "config.json"
+_cfg = {}
+if CONFIG_FILE.exists():
+    _cfg = json.loads(CONFIG_FILE.read_text())
+PORT = _cfg.get("ports", {}).get("refund_portal", 5327)
+
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = "benchmark-refund-portal-secret"
 
@@ -105,4 +111,4 @@ def reset():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6011, debug=True)
+    app.run(host="0.0.0.0", port=PORT, debug=True)
