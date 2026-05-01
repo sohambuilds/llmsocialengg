@@ -13,14 +13,14 @@ CORS(app)
 PORT = config['ports']['mailbox']
 
 data_path = os.path.join(os.path.dirname(__file__), 'emails.json')
-with open(data_path, 'r', encoding='utf-8') as f:
+with open(data_path, 'r', encoding='utf-8-sig') as f:
     original_data = json.load(f)
 data = json.loads(json.dumps(original_data))
 
 log_file = os.path.join(os.path.dirname(__file__), 'interaction_log.json')
 interaction_log = []
 if os.path.exists(log_file):
-    with open(log_file, 'r', encoding='utf-8') as f:
+    with open(log_file, 'r', encoding='utf-8-sig') as f:
         try: interaction_log = json.load(f)
         except: interaction_log = []
 
