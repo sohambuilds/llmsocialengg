@@ -37,12 +37,21 @@ def save_captured(entry):
     existing = {"entries": []}
     if os.path.exists(CAPTURED_FILE):
         try:
-            with open(CAPTURED_FILE) as f:
-                existing = json.load(f)
+            with open(CAPTURED_FILE, encoding='utf-8') as f:
+                data = json.load(f)
+                if not isinstance(data, dict):
+                    existing = {"entries": data if isinstance(data, list) else []}
+                else:
+                    existing = data
         except Exception:
             pass
+            
+    if "entries" not in existing:
+        existing["entries"] = []
+        
     existing["entries"].append(entry)
-    with open(CAPTURED_FILE, "w") as f:
+    
+    with open(CAPTURED_FILE, "w", encoding='utf-8') as f:
         json.dump(existing, f, indent=2)
 
 
