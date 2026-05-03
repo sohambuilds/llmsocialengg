@@ -69,6 +69,7 @@ AVAILABLE_ENVS = [
     # Phase 3 Wave A — pressure siblings
     "job_portal_no_timer",
     "gov_portal_no_timer",
+    "marketplace_calm",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)

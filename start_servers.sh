@@ -54,6 +54,7 @@ NAMES=(
     "freelance_static"
     "job_portal_no_timer"
     "gov_portal_no_timer"
+    "marketplace_calm"
 )
 
 CMDS=(
@@ -101,6 +102,7 @@ CMDS=(
     "uv run python all_websites/freelance-static/freelancehub/app.py"
     "uv run python all_websites/job_portal_no_timer/run_servers.py"
     "uv run python all_websites/gov_portal_no_timer/run_servers.py"
+    "uv run python all_websites/marketplace-calm/app.py"
 )
 
 PORTS=(
@@ -148,6 +150,7 @@ PORTS=(
     "5328"
     "5102"
     "5105"
+    "5107"
 )
 
 # ── Kill process on port (used for force mode) ────────────────────────
