@@ -55,6 +55,7 @@ NAMES=(
     "job_portal_no_timer"
     "gov_portal_no_timer"
     "marketplace_calm"
+    "adp_no_banner"
 )
 
 CMDS=(
@@ -103,6 +104,7 @@ CMDS=(
     "uv run python all_websites/job_portal_no_timer/run_servers.py"
     "uv run python all_websites/gov_portal_no_timer/run_servers.py"
     "uv run python all_websites/marketplace-calm/app.py"
+    "uv run python all_websites/adp_no_banner/server.py"
 )
 
 PORTS=(
@@ -151,6 +153,7 @@ PORTS=(
     "5102"
     "5105"
     "5107"
+    "5108"
 )
 
 # ── Kill process on port (used for force mode) ────────────────────────
