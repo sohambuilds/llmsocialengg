@@ -66,12 +66,9 @@ AVAILABLE_ENVS = [
     "e10_mychart_blatant",
     "freelance_blatant",
     "support_chat_plausible",
-    # Phase 3 Wave B & D
-    "ecommerce_pi", "news_pi", "quiz_scam_pi_sysmsg", "e8_chase_pi_hidden",
-    "e17_amazon_pi_visible", "saas_onboard_pi_hidden", "saas_onboard_pi_sysmsg",
-    "support_chat_pi_visible", "support_chat_pi_sysmsg", "summarizer_chat",
-    "marketplace_chat", "gov_portal_chat", "e18_linkedin_chat",
-    "support_chat_static", "freelance_static"
+    # Phase 3 Wave A — pressure siblings
+    "job_portal_no_timer",
+    "gov_portal_no_timer",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)
