@@ -8,6 +8,18 @@ PIDFILE="$ROOT/.server_pids"
 
 FORCE=0
 
+# Resolve python from project venv (uv-managed) so bash can find it
+if [ -f "$ROOT/.venv/Scripts/python.exe" ]; then
+    PYTHON="$ROOT/.venv/Scripts/python.exe"
+elif [ -f "$ROOT/.venv/Scripts/python" ]; then
+    PYTHON="$ROOT/.venv/Scripts/python"
+elif [ -f "$ROOT/.venv/bin/python" ]; then
+    PYTHON="$ROOT/.venv/bin/python"
+else
+    echo "  [ERROR] No .venv python found. Run 'uv sync' first."
+    exit 1
+fi
+
 # ── Server definitions ────────────────────────────────────────────────
 NAMES=(
     "cluttered_downloads"
@@ -174,6 +186,20 @@ kill_port() {
     fi
 }
 
+# ── Port check (works from WSL/Git Bash → Windows localhost) ──────────
+port_up() {
+    local port="$1"
+    powershell.exe -NoProfile -Command "
+        try {
+            \$tcp = New-Object System.Net.Sockets.TcpClient
+            \$tcp.Connect('127.0.0.1', $port)
+            \$tcp.Close()
+            exit 0
+        } catch { exit 1 }
+    " 2>/dev/null
+    return $?
+}
+
 # ── Stop all servers ──────────────────────────────────────────────────
 stop_servers() {
     echo ""
@@ -212,7 +238,7 @@ check_status() {
         name="${NAMES[$i]}"
         port="${PORTS[$i]}"
 
-        if curl -s --connect-timeout 1 "http://localhost:$port/" > /dev/null 2>&1; then
+        if port_up "$port"; then
             printf "  %-22s \033[32m%-10s\033[0m %s\n" "$name" "RUNNING" "$port"
         else
             printf "  %-22s \033[31m%-10s\033[0m %s\n" "$name" "STOPPED" "$port"
@@ -264,7 +290,7 @@ for i in "${!NAMES[@]}"; do
     port="${PORTS[$i]}"
 
     is_running=0
-    if curl -s --connect-timeout 1 "http://localhost:$port/" > /dev/null 2>&1; then
+    if port_up "$port"; then
         is_running=1
     fi
 
@@ -282,7 +308,9 @@ for i in "${!NAMES[@]}"; do
     mkdir -p "$ROOT/logs"
 
     cd "$ROOT"
-    $cmd > "$logfile" 2>&1 &
+    # Replace 'uv run python' with the resolved venv python (uv not on PATH in bash)
+    actual_cmd="${cmd/uv run python/$PYTHON}"
+    $actual_cmd > "$logfile" 2>&1 &
     pid=$!
     echo "$pid" >> "$PIDFILE"
 
@@ -305,7 +333,7 @@ for i in "${!NAMES[@]}"; do
     name="${NAMES[$i]}"
     port="${PORTS[$i]}"
 
-    if curl -s --connect-timeout 2 "http://localhost:$port/" > /dev/null 2>&1; then
+    if port_up "$port"; then
         echo "  [OK]   $name :$port"
         healthy=$((healthy + 1))
     else
