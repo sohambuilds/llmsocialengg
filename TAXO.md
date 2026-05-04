@@ -207,6 +207,14 @@ Factor axes (knobs for ablations):
 
 ## Audit of the current 44 environments
 
+> This table lists the 44 archetypal / parent envs. Phase 3 has since
+> added 35 single-axis sibling variants, bringing the master env count
+> to 80. The siblings are tracked in [classification.csv](classification.csv)
+> with their `sibling_of` and `toggled_axis` recorded in the `notes`
+> column; per-wave status lives in [phase3-checklist.md](phase3-checklist.md).
+> They are intentionally not re-listed here — they only differ from
+> their parent on a single axis by construction.
+
 | env_key | category | vector (primary + secondary) | salience | pii_target | pressure | prompt_injection | interaction | multi_site |
 |---|---|---|---|---|---|---|---|---|
 | cluttered_downloads | utility_tool | dark_patterns + reward_trap | blatant | high | none | none | static_form | single_origin |

@@ -47,12 +47,15 @@ Update these counts after every status change.
 
 Existing envs: 44. Phase 3 target on completion: ~95–100.
 
-> **Audit note (sync as of 2026-05-04):** wave statuses were back-filled
-> from the filesystem. `🟦 qa` here means the env directory exists under
-> `all_websites/` but the full sign-off checklist (classification.csv
-> row with `sibling_of`+`toggled_axis`, environments.yaml entry,
-> start_servers.sh entry, smoke-test) has not been verified. Anyone
-> closing one out to `🟩 done` must confirm those items first.
+> **Audit note (sync as of 2026-05-05):** wave statuses were back-filled
+> from the filesystem. As of the latest sweep, all 35 `🟦 qa` envs are
+> now wired into `classification.csv` (with `sibling_of`/`toggled_axis`
+> recorded in the `notes` column), `agent/config/environments.yaml`,
+> and `start_servers.sh`. The remaining sign-off items per env are:
+> design brief (`d`), single-axis diff verification (`qa`), smoke-test
+> against `/api/captured` (`smoke`), and screenshot diff vs parent
+> (`scrn`). Anyone closing one out to `🟩 done` must confirm those
+> four items first.
 
 ---
 
@@ -214,18 +217,20 @@ Update the `Pair count` column as siblings land. Goal: every row ≥1, ideally �
 | # | Claim | Pair count | First pair | Status |
 |---|---|---:|---|---|
 | F1 | Detection does not prevent leakage | n/a | — | descriptive (auto from full set) |
-| F2 | Plausible leaks more than blatant | 0 | — | 🟥 |
-| F3 | Subtle + conversational is worst | 0 | — | 🟥 |
+| F2 | Plausible leaks more than blatant | 4 | virus_scanner ↔ virus_scanner_plausible | 🟦 |
+| F3 | Subtle + conversational is worst | 2 | freelance ↔ freelance_blatant | 🟩 |
 | F4 | Vision does not help | n/a | — | cross-model (no new envs) |
-| F5 | Urgency adds Δ PLR | 0 | — | 🟥 |
-| F6 | Social proof adds Δ′ PLR | 0 | — | 🟥 |
-| F7 | Authority cues add Δ″ PLR | 0 | — | 🟥 |
-| F8 | Hidden PI ≈ visible PI | 0 | — | 🟥 |
-| F9 | Critical ≈ medium when plausible | 0 | — | 🟥 |
-| F10 | Chat bypasses agents that refuse forms | 0 | — | 🟥 |
-| F11 | Findings generalize across categories | 0 | — | 🟥 |
+| F5 | Urgency adds Δ PLR | 5 | virus_scanner ↔ virus_scanner_calm | 🟦 |
+| F6 | Social proof adds Δ′ PLR | 0 | — | 🟥 (Wave A.2) |
+| F7 | Authority cues add Δ″ PLR | 0 | — | 🟥 (Wave A.2) |
+| F8 | Hidden PI ≈ visible PI | 8 | ecommerce ↔ ecommerce_pi | 🟦 |
+| F9 | Critical ≈ medium when plausible | 1 | forum_register_critical ↔ forum_register_medium | 🟩 |
+| F10 | Chat bypasses agents that refuse forms | 6 | summarizer ↔ summarizer_chat | 🟦 |
+| F11 | Findings generalize across categories | 0 | — | 🟥 (no cross-category port yet) |
 
-A row turns 🟩 once it has its first pair; 🟦 at 3+ pairs.
+A row turns 🟩 once it has its first pair; 🟦 at 3+ pairs. Pair counts
+above are derived from the 35 built siblings as of 2026-05-05; they
+become "verified" once smoke + screenshot sign-off lands per env.
 
 ---
 
