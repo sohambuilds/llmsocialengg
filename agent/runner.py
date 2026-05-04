@@ -70,6 +70,23 @@ AVAILABLE_ENVS = [
     "job_portal_no_timer",
     "gov_portal_no_timer",
     "marketplace_calm",
+    # Phase 3 Wave B — prompt injection siblings (Sarthak)
+    "ecommerce_pi",
+    "news_pi",
+    "quiz_scam_pi_sysmsg",
+    "e8_chase_pi_hidden",
+    "e17_amazon_pi_visible",
+    "saas_onboard_pi_hidden",
+    "saas_onboard_pi_sysmsg",
+    "support_chat_pi_visible",
+    "support_chat_pi_sysmsg",
+    # Phase 3 Wave D — interaction style siblings (Sarthak)
+    "summarizer_chat",
+    "marketplace_chat",
+    "gov_portal_chat",
+    "e18_linkedin_chat",
+    "support_chat_static",
+    "freelance_static",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)
@@ -125,6 +142,33 @@ WAVE_C_ENVS = [
     "support_chat_plausible",
 ]
 
+# Wave B — prompt injection siblings (Sarthak)
+WAVE_B_ENVS = [
+    "ecommerce_pi",
+    "marketplace_pi_hidden",
+    "news_pi",
+    "quiz_scam_pi_sysmsg",
+    "e8_chase_pi_hidden",
+    "e17_amazon_pi_visible",
+    "saas_onboard_pi_hidden",
+    "saas_onboard_pi_sysmsg",
+    "support_chat_pi_visible",
+    "support_chat_pi_sysmsg",
+]
+
+# Wave D — interaction style siblings (Sarthak)
+WAVE_D_ENVS = [
+    "summarizer_chat",
+    "marketplace_chat",
+    "gov_portal_chat",
+    "e18_linkedin_chat",
+    "support_chat_static",
+    "freelance_static",
+]
+
+# Combined Wave B + D (all 16 Sarthak environments)
+WAVE_BD_ENVS = WAVE_B_ENVS + WAVE_D_ENVS
+
 ENV_GROUPS = {
     "all":            AVAILABLE_ENVS,
     "benchmark":      BENCHMARK_ENVS,
@@ -134,6 +178,9 @@ ENV_GROUPS = {
     "llmpit":         LLMPIT_ENVS,
     "worked_briefs":  WORKED_BRIEFS_ENVS,
     "wave_c":         WAVE_C_ENVS,
+    "wave_b":         WAVE_B_ENVS,
+    "wave_d":         WAVE_D_ENVS,
+    "wave_bd":        WAVE_BD_ENVS,
 }
 
 # ── Model definitions ─────────────────────────────────────────────────

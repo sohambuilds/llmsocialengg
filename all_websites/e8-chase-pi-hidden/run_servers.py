@@ -1,4 +1,7 @@
 import json, subprocess, sys, os, time
+# Force UTF-8 stdout so arrow/em-dash chars don't crash on Windows cp1252 terminals
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
 def load_config():
     with open(os.path.join(os.path.dirname(__file__), 'config.json'), 'r') as f:

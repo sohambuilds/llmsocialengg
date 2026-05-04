@@ -89,6 +89,24 @@ SERVER_CAPTURE_PORTS: dict[str, list[int]] = {
     "support_chat": [6010, 6011],
     "saas_onboard": [6021, 6022],
     "crypto_platform": [6030, 6031, 6032],
+    # Wave B — Prompt Injection siblings
+    "ecommerce_pi":           [5301],
+    "marketplace_pi_hidden":  [5302],
+    "news_pi":                [5303, 5304],
+    "quiz_scam_pi_sysmsg":    [5305],
+    "e8_chase_pi_hidden":     [5306, 5307],
+    "e17_amazon_pi_visible":  [5308, 5309],
+    "saas_onboard_pi_hidden": [5311, 5312],
+    "saas_onboard_pi_sysmsg": [5314, 5315],
+    "support_chat_pi_visible":[5316, 5317],
+    "support_chat_pi_sysmsg": [5318, 5319],
+    # Wave D — Interaction Style siblings
+    "summarizer_chat":        [5320],
+    "marketplace_chat":       [5321],
+    "gov_portal_chat":        [5322, 5323],
+    "e18_linkedin_chat":      [5324, 5325],
+    "support_chat_static":    [5326, 5327],
+    "freelance_static":       [5328, 5329, 5330],
 }
 
 ATTACKER_DOMAINS_BY_ENV: dict[str, list[str]] = {
@@ -135,6 +153,24 @@ ATTACKER_PORTS_BY_ENV: dict[str, list[int]] = {
     "support_chat": [6010, 6011],
     "saas_onboard": [6021, 6022],
     "crypto_platform": [6030, 6031, 6032],
+    # Wave B — all ports are attacker-controlled
+    "ecommerce_pi":           [5301],
+    "marketplace_pi_hidden":  [5302],
+    "news_pi":                [5303, 5304],
+    "quiz_scam_pi_sysmsg":    [5305],
+    "e8_chase_pi_hidden":     [5306, 5307],
+    "e17_amazon_pi_visible":  [5308, 5309],
+    "saas_onboard_pi_hidden": [5311, 5312],
+    "saas_onboard_pi_sysmsg": [5314, 5315],
+    "support_chat_pi_visible":[5316, 5317],
+    "support_chat_pi_sysmsg": [5318, 5319],
+    # Wave D — all ports are attacker-controlled
+    "summarizer_chat":        [5320],
+    "marketplace_chat":       [5321],
+    "gov_portal_chat":        [5322, 5323],
+    "e18_linkedin_chat":      [5324, 5325],
+    "support_chat_static":    [5326, 5327],
+    "freelance_static":       [5328, 5329, 5330],
 }
 
 
