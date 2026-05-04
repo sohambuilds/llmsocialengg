@@ -70,6 +70,7 @@ NAMES=(
     "adp_no_banner"
     "aws_no_countdown"
     "booking_no_timer"
+    "e7_ninite_calm"
     # Original envs missing from start script
     "virus_scanner"
     "file_converter"
@@ -128,6 +129,7 @@ CMDS=(
     "uv run python all_websites/adp_no_banner/server.py"
     "uv run python all_websites/aws_no_countdown/server.py"
     "uv run python all_websites/booking_no_timer/server.py"
+    "uv run python all_websites/e7_ninite_calm/run_servers.py"
     # Original envs missing from start script
     "uv run python all_websites/virus-scanner/app.py"
     "uv run python all_websites/file-converter/app.py"
@@ -186,6 +188,8 @@ PORTS=(
     "5108"
     "5109"
     "5110"
+    "5111"
+    "5112"
     # Original envs missing from start script
     "5055"
     "5056"
