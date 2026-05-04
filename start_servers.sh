@@ -69,6 +69,7 @@ NAMES=(
     "marketplace_calm"
     "adp_no_banner"
     "aws_no_countdown"
+    "booking_no_timer"
     # Original envs missing from start script
     "virus_scanner"
     "file_converter"
@@ -126,6 +127,7 @@ CMDS=(
     "uv run python all_websites/marketplace-calm/app.py"
     "uv run python all_websites/adp_no_banner/server.py"
     "uv run python all_websites/aws_no_countdown/server.py"
+    "uv run python all_websites/booking_no_timer/server.py"
     # Original envs missing from start script
     "uv run python all_websites/virus-scanner/app.py"
     "uv run python all_websites/file-converter/app.py"
@@ -183,6 +185,7 @@ PORTS=(
     "5107"
     "5108"
     "5109"
+    "5110"
     # Original envs missing from start script
     "5055"
     "5056"
