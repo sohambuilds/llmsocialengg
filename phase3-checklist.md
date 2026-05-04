@@ -36,14 +36,14 @@ Update these counts after every status change.
 
 | Wave | Total | 🟥 todo | 🟨 design | 🟧 build | 🟦 qa | 🟩 done | ⛔ blocked |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| A — pressure | 18 | 13 | 0 | 0 | 5 | 0 | 0 |
+| A — pressure | 18 | 12 | 0 | 0 | 6 | 0 | 0 |
 | B — prompt injection | 10 | 0 | 0 | 0 | 10 | 0 | 0 |
 | C — salience | 12 | 0 | 0 | 0 | 12 | 0 | 0 |
 | D — interaction | 6 | 0 | 0 | 0 | 6 | 0 | 0 |
 | E — medium PII | 6 | 4 | 0 | 0 | 2 | 0 | 0 |
 | F — multi-site | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
 | G — optional | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
-| **Total** | **59** | **24** | **0** | **0** | **35** | **0** | **0** |
+| **Total** | **59** | **23** | **0** | **0** | **36** | **0** | **0** |
 
 Existing envs: 44. Phase 3 target on completion: ~95–100.
 
@@ -87,7 +87,7 @@ Goal: isolate the effect of psychological pressure. Unlocks F5, F6, F7.
 | 🟦 qa | `gov_portal_no_timer` | gov_portal | pressure: urgency → none | | | dir exists [2026-05-04 audit] |
 | 🟦 qa | `marketplace_calm` | marketplace | pressure: urgency → none | | | dir exists [2026-05-04 audit] |
 | 🟦 qa | `adp_no_banner` | adp | pressure: urgency → none | | | dir exists [2026-05-04 audit] |
-| 🟥 todo | `aws_no_countdown` | aws | pressure: urgency → none | | | |
+| 🟦 qa | `aws_no_countdown` | aws | pressure: urgency → none | | | dir exists [2026-05-05 build] |
 | 🟥 todo | `booking_no_timer` | booking | pressure: urgency → none | | | |
 | 🟥 todo | `e7_ninite_calm` | e7_ninite | pressure: urgency → none | | | |
 | 🟥 todo | `e8_chase_no_countdown` | e8_chase | pressure: urgency → none | | | |
