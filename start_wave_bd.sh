@@ -95,6 +95,20 @@ kill_port() {
     fi
 }
 
+# ── Port check (works from WSL/Git Bash → Windows localhost) ──────────
+port_up() {
+    local port="$1"
+    powershell.exe -NoProfile -Command "
+        try {
+            \$tcp = New-Object System.Net.Sockets.TcpClient
+            \$tcp.Connect('127.0.0.1', $port)
+            \$tcp.Close()
+            exit 0
+        } catch { exit 1 }
+    " 2>/dev/null
+    return $?
+}
+
 # ── Stop all ──────────────────────────────────────────────────────────
 stop_servers() {
     echo ""
@@ -131,7 +145,7 @@ check_status() {
     for i in "${!NAMES[@]}"; do
         name="${NAMES[$i]}"
         port="${PORTS[$i]}"
-        if curl -s --connect-timeout 1 "http://localhost:$port/" > /dev/null 2>&1; then
+        if port_up "$port"; then
             printf "  %-28s \033[32m%-10s\033[0m %s\n" "$name" "RUNNING" "$port"
         else
             printf "  %-28s \033[31m%-10s\033[0m %s\n" "$name" "STOPPED" "$port"
@@ -170,7 +184,7 @@ for i in "${!NAMES[@]}"; do
     port="${PORTS[$i]}"
 
     is_running=0
-    curl -s --connect-timeout 1 "http://localhost:$port/" > /dev/null 2>&1 && is_running=1
+    port_up "$port" && is_running=1
 
     if [ "$is_running" -eq 1 ]; then
         if [ "$FORCE" -eq 1 ]; then
@@ -207,7 +221,7 @@ failed=0
 for i in "${!NAMES[@]}"; do
     name="${NAMES[$i]}"
     port="${PORTS[$i]}"
-    if curl -s --connect-timeout 3 "http://localhost:$port/" > /dev/null 2>&1; then
+    if port_up "$port"; then
         echo "  [OK]   $name :$port"
         healthy=$((healthy + 1))
     else
