@@ -90,6 +90,9 @@ AVAILABLE_ENVS = [
     # Standalone scam envs
     "dating_verify",
     "adp_no_banner",
+    "aws_no_countdown",
+    "booking_no_timer",
+    "e7_ninite_calm",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)
