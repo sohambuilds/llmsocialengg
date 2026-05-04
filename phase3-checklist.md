@@ -36,14 +36,14 @@ Update these counts after every status change.
 
 | Wave | Total | 🟥 todo | 🟨 design | 🟧 build | 🟦 qa | 🟩 done | ⛔ blocked |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| A — pressure | 18 | 12 | 0 | 0 | 6 | 0 | 0 |
+| A — pressure | 18 | 6 | 0 | 0 | 12 | 0 | 0 |
 | B — prompt injection | 10 | 0 | 0 | 0 | 10 | 0 | 0 |
 | C — salience | 12 | 0 | 0 | 0 | 12 | 0 | 0 |
 | D — interaction | 6 | 0 | 0 | 0 | 6 | 0 | 0 |
-| E — medium PII | 6 | 4 | 0 | 0 | 2 | 0 | 0 |
+| E — medium PII | 6 | 1 | 0 | 0 | 5 | 0 | 0 |
 | F — multi-site | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
 | G — optional | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
-| **Total** | **59** | **23** | **0** | **0** | **36** | **0** | **0** |
+| **Total** | **59** | **14** | **0** | **0** | **45** | **0** | **0** |
 
 Existing envs: 44. Phase 3 target on completion: ~95–100.
 
@@ -88,12 +88,12 @@ Goal: isolate the effect of psychological pressure. Unlocks F5, F6, F7.
 | 🟦 qa | `marketplace_calm` | marketplace | pressure: urgency → none | | | dir exists [2026-05-04 audit] |
 | 🟦 qa | `adp_no_banner` | adp | pressure: urgency → none | | | dir exists [2026-05-04 audit] |
 | 🟦 qa | `aws_no_countdown` | aws | pressure: urgency → none | | | dir exists [2026-05-05 build] |
-| 🟥 todo | `booking_no_timer` | booking | pressure: urgency → none | | | |
-| 🟥 todo | `e7_ninite_calm` | e7_ninite | pressure: urgency → none | | | |
-| 🟥 todo | `e8_chase_no_countdown` | e8_chase | pressure: urgency → none | | | |
-| 🟥 todo | `e10_mychart_calm` | e10_mychart | pressure: urgency → none | | | |
-| 🟥 todo | `e13_irs_no_timer` | e13_irs | pressure: urgency → none | | | |
-| 🟥 todo | `e14_oracle_no_timer` | e14_oracle | pressure: urgency → none | | | |
+| 🟦 qa | `booking_no_timer` | booking | pressure: urgency → none | | | dir exists [2026-05-05 build] |
+| 🟦 qa | `e7_ninite_calm` | e7_ninite | pressure: urgency → none | | | dir exists [2026-05-05 build]; FOLLOW-UP: parent has only narrative urgency — needs parent-fix retrofit before F5 datapoint is usable |
+| 🟦 qa | `e8_chase_no_countdown` | e8_chase | pressure: urgency → none | sr | | built + wired [2026-05-05 sr] |
+| 🟦 qa | `e10_mychart_calm` | e10_mychart | pressure: urgency → none | sr | | built + wired [2026-05-05 sr] |
+| 🟦 qa | `e13_irs_no_timer` | e13_irs | pressure: urgency → none | sr | | parent-fix: added 72h CP14 countdown banner+JS; sibling drops banner+CSS+JS and softens LEGAL NOTICE / Federal Tax Lien copy. built + wired [2026-05-05 sr] |
+| 🟦 qa | `e14_oracle_no_timer` | e14_oracle | pressure: urgency → none | sr | | parent-fix: added 24h service-suspension countdown banner+JS; sibling drops banner+CSS+JS and strips email-body 'Failure to verify by April 1' deadline. built + wired [2026-05-05 sr] |
 
 ### A.2 — Other pressure types (6 envs)
 
