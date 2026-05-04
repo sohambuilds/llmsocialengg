@@ -107,6 +107,31 @@ SERVER_CAPTURE_PORTS: dict[str, list[int]] = {
     "e18_linkedin_chat":      [5324, 5325],
     "support_chat_static":    [5326, 5327],
     "freelance_static":       [5328, 5329, 5330],
+    # Wave A — Pressure siblings
+    "job_portal_no_timer":    [5102, 5103, 5104],
+    "gov_portal_no_timer":    [5105, 5106],
+    "marketplace_calm":       [5107],
+    "adp_no_banner":          [5108],
+    # Wave C — Salience siblings
+    "virus_scanner_calm":     [5101],
+    "virus_scanner_subtle":   [5202],
+    "virus_scanner_plausible":[5201],
+    "quiz_scam_subtle":       [5203],
+    "summarizer_plausible":   [5204],
+    "summarizer_subtle":      [5205],
+    "crypto_platform_blatant":[5206, 5207, 5208],
+    "crypto_platform_subtle": [5209, 5210, 5211],
+    "saas_onboard_subtle":    [5212, 5213, 5214],
+    "e10_mychart_plausible":  [5215, 5216],
+    "e10_mychart_blatant":    [5217, 5218],
+    "freelance_blatant":      [5219, 5220, 5221],
+    "support_chat_plausible": [5222, 5223],
+    # Worked-brief calibration envs
+    "forum_register_medium":  [5405],
+    "forum_register_critical":[5406],
+    # Standalone scam envs
+    "dating_verify":          [6040],
+    "adp_no_banner":          [5108],
 }
 
 ATTACKER_DOMAINS_BY_ENV: dict[str, list[str]] = {
@@ -171,6 +196,30 @@ ATTACKER_PORTS_BY_ENV: dict[str, list[int]] = {
     "e18_linkedin_chat":      [5324, 5325],
     "support_chat_static":    [5326, 5327],
     "freelance_static":       [5328, 5329, 5330],
+    # Wave A — phishing/attacker ports only (not the mailbox entry port)
+    "job_portal_no_timer":    [5104],
+    "gov_portal_no_timer":    [5106],
+    "marketplace_calm":       [5107],
+    "adp_no_banner":          [5108],
+    # Wave C — all ports are attacker-controlled
+    "virus_scanner_calm":     [5101],
+    "virus_scanner_subtle":   [5202],
+    "virus_scanner_plausible":[5201],
+    "quiz_scam_subtle":       [5203],
+    "summarizer_plausible":   [5204],
+    "summarizer_subtle":      [5205],
+    "crypto_platform_blatant":[5206, 5207, 5208],
+    "crypto_platform_subtle": [5209, 5210, 5211],
+    "saas_onboard_subtle":    [5213, 5214],
+    "e10_mychart_plausible":  [5216],
+    "e10_mychart_blatant":    [5218],
+    "freelance_blatant":      [5220, 5221],
+    "support_chat_plausible": [5223],
+    # Worked-brief calibration envs
+    "forum_register_medium":  [5405],
+    "forum_register_critical":[5406],
+    # Standalone scam envs
+    "dating_verify":          [6040],
 }
 
 

@@ -68,6 +68,13 @@ NAMES=(
     "gov_portal_no_timer"
     "marketplace_calm"
     "adp_no_banner"
+    # Original envs missing from start script
+    "virus_scanner"
+    "file_converter"
+    "quiz_scam"
+    "support_chat"
+    "saas_onboard"
+    "crypto_platform"
 )
 
 CMDS=(
@@ -117,6 +124,13 @@ CMDS=(
     "uv run python all_websites/gov_portal_no_timer/run_servers.py"
     "uv run python all_websites/marketplace-calm/app.py"
     "uv run python all_websites/adp_no_banner/server.py"
+    # Original envs missing from start script
+    "uv run python all_websites/virus-scanner/app.py"
+    "uv run python all_websites/file-converter/app.py"
+    "uv run python all_websites/quiz-site/app.py"
+    "uv run python all_websites/support-chat/run_servers.py"
+    "uv run python all_websites/saas-onboarding/run_servers.py"
+    "uv run python all_websites/crypto-platform/run_servers.py"
 )
 
 PORTS=(
@@ -166,6 +180,13 @@ PORTS=(
     "5105"
     "5107"
     "5108"
+    # Original envs missing from start script
+    "5055"
+    "5056"
+    "5057"
+    "6010"
+    "6020"
+    "6030"
 )
 
 # ── Kill process on port (used for force mode) ────────────────────────

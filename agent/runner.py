@@ -87,6 +87,9 @@ AVAILABLE_ENVS = [
     "e18_linkedin_chat",
     "support_chat_static",
     "freelance_static",
+    # Standalone scam envs
+    "dating_verify",
+    "adp_no_banner",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)
