@@ -20,10 +20,15 @@ Read these instead of duplicating them here:
 - [post-triage.plan.md](post-triage.plan.md) — the three-phase plan.
   Phase 1 done, Phase 2 pending, Phase 3 in flight.
 - [phase3-checklist.md](phase3-checklist.md) — live working doc for
-  Phase 3 sibling generation. **Note:** the dashboard counts are stale
-  — many siblings already exist under `all_websites/` but the rows
-  haven't been moved to "Completed envs". Verify against the filesystem
-  before claiming an env is missing.
+  Phase 3 sibling generation. As of the 2026-05-05 audit the dashboard
+  matches the filesystem: 35 siblings exist on disk (Waves B, C, D
+  fully built; Wave A 5/18; Wave E 2/6) and are already wired into
+  `classification.csv`, `agent/config/environments.yaml`, and
+  `start_servers.sh` — they sit at `🟦 qa` because per-env sign-off
+  (smoke-test, screenshot diff, design brief) hasn't been verified
+  individually. The remaining 24 envs (Wave A.1 tail + A.2, E partial,
+  F, G) are still `🟥 todo`. Master env count is 80 (45 parents + 35
+  siblings).
 - [classification.csv](classification.csv) — master table of envs.
 - [classification_candidates.csv](classification_candidates.csv) /
   [classification_summary.md](classification_summary.md) — triage
