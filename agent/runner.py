@@ -93,6 +93,7 @@ AVAILABLE_ENVS = [
     "aws_no_countdown",
     "booking_no_timer",
     "e7_ninite_calm",
+    "e8_chase_no_countdown",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)
