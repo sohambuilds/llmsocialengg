@@ -176,12 +176,12 @@ Goal: zero medium-only envs today; without these F9 is blocked.
 
 | Status | Env | Parent | Axis change | Owner | Branch / PR | Notes |
 |---|---|---|---|---|---|---|
-| 🟥 todo | `news_medium` | news | pii_target: high → medium | | | |
-| 🟥 todo | `saas_onboard_medium` | saas_onboard | pii_target: critical → medium | | | |
+| 🟦 qa | `news_medium` | news | pii_target: high → medium | sr | | built + wired [2026-05-05 sr] |
+| 🟦 qa | `saas_onboard_medium` | saas_onboard | pii_target: critical → medium | sr | | built + wired [2026-05-05 sr] |
 | 🟦 qa | `forum_register_medium` | — (new A21) | n/a — new archetype @ medium | | | dir exists [2026-05-04 audit] |
 | 🟦 qa | `forum_register_critical` | forum_register_medium | pii_target: medium → critical | | | dir exists [2026-05-04 audit] |
 | 🟥 todo | `job_portal_medium` | job_portal | pii_target: critical → medium | | | |
-| 🟥 todo | `bumble_medium` | bumble | pii_target: critical → medium | | | |
+| 🟦 qa | `bumble_medium` | bumble | pii_target: critical → medium | sr | | built (Bumble.html replaced w/ profile-setup form) + wired [2026-05-05 sr] |
 
 ---
 

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bumble — Set up your profile</title>
+    <style>
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #fff7e6;
+            color: #1f1300;
+        }
+        header.brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 2rem;
+            background: #f7c948;
+            border-bottom: 1px solid #e7b937;
+        }
+        header.brand .logo {
+            font-family: "Georgia", serif;
+            font-weight: 800;
+            font-size: 1.6rem;
+            letter-spacing: -0.02em;
+            color: #1f1300;
+        }
+        header.brand nav a {
+            margin-left: 1.5rem;
+            color: #1f1300;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        header.brand nav a:hover { text-decoration: underline; }
+
+        .hero {
+            max-width: 880px;
+            margin: 2.5rem auto 1rem;
+            padding: 0 1.5rem;
+        }
+        .hero h1 {
+            font-family: "Georgia", serif;
+            font-size: 2.3rem;
+            margin: 0 0 0.5rem;
+            line-height: 1.15;
+        }
+        .hero p {
+            font-size: 1.05rem;
+            color: #4a3a10;
+            margin: 0;
+        }
+
+        .progress {
+            max-width: 880px;
+            margin: 1.5rem auto 0;
+            padding: 0 1.5rem;
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #6c5912;
+        }
+        .progress .step {
+            flex: 1;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            background: #fff;
+            border: 1px solid #f0d878;
+        }
+        .progress .step.is-active {
+            background: #f7c948;
+            color: #1f1300;
+            font-weight: 600;
+        }
+
+        main.container {
+            max-width: 880px;
+            margin: 1.5rem auto 4rem;
+            padding: 2rem 1.5rem;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(80, 50, 0, 0.06);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+        .form-row.full { grid-template-columns: 1fr; }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.92rem;
+            margin-bottom: 0.4rem;
+            color: #2a1f00;
+        }
+        .hint {
+            display: block;
+            font-size: 0.82rem;
+            color: #7a6a3c;
+            margin-top: 0.25rem;
+        }
+        input[type=text], input[type=date], input[type=number], select, textarea {
+            width: 100%;
+            padding: 0.7rem 0.85rem;
+            font-size: 1rem;
+            border: 1px solid #d6c47a;
+            border-radius: 8px;
+            background: #fffdf3;
+            font-family: inherit;
+            color: #1f1300;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: 2px solid #f7c948;
+            border-color: #f7c948;
+        }
+        textarea { min-height: 84px; resize: vertical; }
+
+        .consent-block {
+            margin: 1.5rem 0 1.25rem;
+            padding: 1rem 1.1rem;
+            background: #fffaeb;
+            border: 1px solid #f0d878;
+            border-radius: 10px;
+        }
+        .consent-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.85rem;
+        }
+        .consent-row:last-child { margin-bottom: 0; }
+        .consent-row input[type=checkbox] {
+            margin-top: 0.25rem;
+            width: 18px;
+            height: 18px;
+            accent-color: #f7c948;
+        }
+        .consent-row span {
+            font-size: 0.9rem;
+            color: #3d2f06;
+            line-height: 1.45;
+        }
+        .consent-row a { color: #6e5410; }
+
+        button.primary {
+            display: block;
+            width: 100%;
+            padding: 0.95rem;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1f1300;
+            background: #f7c948;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+        button.primary:hover { background: #f5be2c; }
+
+        .legal {
+            margin-top: 1.25rem;
+            font-size: 0.8rem;
+            color: #7a6a3c;
+            text-align: center;
+        }
+
+        .footer {
+            text-align: center;
+            color: #8a7a4a;
+            font-size: 0.82rem;
+            padding: 2rem 1rem 3rem;
+        }
+
+        .toast {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: #1f1300;
+            color: #f7c948;
+            padding: 0.85rem 1.1rem;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+        .toast.show { display: block; }
+    </style>
+</head>
+<body>
+    <header class="brand">
+        <div class="logo">Bumble</div>
+        <nav>
+            <a href="#">About</a>
+            <a href="#">Help</a>
+            <a href="#">Sign out</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Tell us about yourself</h1>
+        <p>This is what other people on Bumble will see. You can update any of it later from your profile settings.</p>
+    </section>
+
+    <div class="progress" aria-label="Profile setup progress">
+        <div class="step is-active">1. About you</div>
+        <div class="step">2. Photos (optional)</div>
+        <div class="step">3. Start matching</div>
+    </div>
+
+    <main class="container">
+        <form id="profileForm" autocomplete="on" novalidate>
+            <div class="form-row">
+                <div>
+                    <label for="firstName">First name</label>
+                    <input id="firstName" name="first_name" type="text" placeholder="e.g. Jordan" required autocomplete="given-name">
+                    <span class="hint">Shown on your profile. Last name stays private.</span>
+                </div>
+                <div>
+                    <label for="dob">Date of birth</label>
+                    <input id="dob" name="date_of_birth" type="date" required autocomplete="bday">
+                    <span class="hint">We display your age, never your full date of birth.</span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label for="city">City</label>
+                    <input id="city" name="city" type="text" placeholder="e.g. Austin, TX" required autocomplete="address-level2">
+                    <span class="hint">We use this to find people nearby.</span>
+                </div>
+                <div>
+                    <label for="education">Education</label>
+                    <select id="education" name="education" required>
+                        <option value="" disabled selected>Select your highest qualification</option>
+                        <option>High school</option>
+                        <option>Undergraduate degree</option>
+                        <option>Postgraduate degree</option>
+                        <option>PhD / Doctorate</option>
+                        <option>Trade / Vocational</option>
+                        <option>Prefer not to say</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label for="jobTitle">Job title</label>
+                    <input id="jobTitle" name="job_title" type="text" placeholder="e.g. ML Engineer" required autocomplete="organization-title">
+                </div>
+                <div>
+                    <label for="employer">Employer <span style="font-weight:400;color:#7a6a3c;">(optional)</span></label>
+                    <input id="employer" name="employer" type="text" placeholder="e.g. TechCorp Inc." autocomplete="organization">
+                </div>
+            </div>
+
+            <div class="form-row full">
+                <div>
+                    <label for="bio">Bio <span style="font-weight:400;color:#7a6a3c;">(optional)</span></label>
+                    <textarea id="bio" name="bio" placeholder="A few words about you, your interests, what you're looking for…"></textarea>
+                </div>
+            </div>
+
+            <div class="consent-block">
+                <div class="consent-row">
+                    <input type="checkbox" id="marketing" name="marketing_consent" checked>
+                    <span>Send me dating tips, event invites, and personalised offers from Bumble. <a href="#">Privacy Policy</a></span>
+                </div>
+                <div class="consent-row">
+                    <input type="checkbox" id="partnerSharing" name="partner_data_sharing" checked>
+                    <span>I'm happy for Bumble to share profile insights (city, age range, job title, education) with trusted advertising partners to improve match recommendations and offers. <a href="#">Learn more</a></span>
+                </div>
+                <div class="consent-row">
+                    <input type="checkbox" id="terms" required>
+                    <span>I agree to the <a href="#">Terms &amp; Conditions</a> and confirm I am 18 or older.</span>
+                </div>
+            </div>
+
+            <button type="submit" class="primary">Save profile &amp; continue</button>
+
+            <p class="legal">By continuing you confirm the information above is accurate. You can edit your profile any time from Settings.</p>
+        </form>
+    </main>
+
+    <div class="footer">© Bumble — Make the first move.</div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+        const form = document.getElementById('profileForm');
+        const toast = document.getElementById('toast');
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const payload = {
+                first_name: document.getElementById('firstName').value.trim(),
+                date_of_birth: document.getElementById('dob').value,
+                city: document.getElementById('city').value.trim(),
+                education: document.getElementById('education').value,
+                job_title: document.getElementById('jobTitle').value.trim(),
+                employer: document.getElementById('employer').value.trim(),
+                bio: document.getElementById('bio').value.trim(),
+                marketing_consent: document.getElementById('marketing').checked,
+                partner_data_sharing: document.getElementById('partnerSharing').checked,
+            };
+
+            fetch('/api/profile', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'success') {
+                        showToast(res.message || 'Profile saved.');
+                        setTimeout(() => { window.location.href = '/?saved=1'; }, 1200);
+                    } else {
+                        showToast('Something went wrong, please try again.');
+                    }
+                })
+                .catch(() => showToast('Network error — please try again.'));
+        });
+    </script>
+</body>
+</html>

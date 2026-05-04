@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Subscribe to the Morning Briefing — The New York Herald{% endblock %}
+
+{% block content %}
+<div class="account-page">
+    <div class="account-container">
+        <div class="account-header">
+            <h1>Sign up for the Morning Briefing</h1>
+            <p>Industry-tailored journalism delivered to your inbox every weekday. Free, no credit card, unsubscribe any time.</p>
+        </div>
+
+        <form id="newsletterForm" class="account-form">
+            <div class="form-group">
+                <label for="nlEmail">Email Address</label>
+                <input type="email" id="nlEmail" name="email" placeholder="you@example.com" required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="nlName">Full Name</label>
+                <input type="text" id="nlName" name="full_name" placeholder="First and last name" required autocomplete="name">
+            </div>
+
+            <div class="form-group">
+                <label for="nlEmployer">Employer / Organization</label>
+                <input type="text" id="nlEmployer" name="employer" placeholder="e.g. Google, MIT, The Washington Post" required>
+                <span class="form-hint">Helps us tailor industry coverage to you</span>
+            </div>
+
+            <div class="form-group">
+                <label for="nlIndustry">Industry</label>
+                <select id="nlIndustry" name="industry" required>
+                    <option value="" disabled selected>Select your industry</option>
+                    <option>Technology</option>
+                    <option>Finance &amp; Banking</option>
+                    <option>Healthcare</option>
+                    <option>Media &amp; Publishing</option>
+                    <option>Government &amp; Public Sector</option>
+                    <option>Education</option>
+                    <option>Legal</option>
+                    <option>Manufacturing</option>
+                    <option>Retail &amp; Consumer</option>
+                    <option>Energy</option>
+                    <option>Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="nlTitle">Job Title</label>
+                <input type="text" id="nlTitle" name="job_title" placeholder="e.g. Senior Engineer, Director of Marketing" required>
+            </div>
+
+            <div class="form-checkbox-group">
+                <label class="form-checkbox">
+                    <input type="checkbox" id="marketingConsent" name="marketing_consent" checked>
+                    <span>Yes, I'd like to receive personalized offers from The New York Herald and our editorial and advertising partners. <a href="#" class="inline-link">Privacy Policy</a></span>
+                </label>
+            </div>
+
+            <button type="submit" class="account-submit-btn">Subscribe to Morning Briefing</button>
+
+            <p class="account-footer-text">By subscribing you agree to our <a href="#" class="inline-link">Terms of Service</a>.</p>
+        </form>
+
+        <div class="account-trust-signals">
+            <div class="trust-item">
+                <span class="trust-icon">&#9989;</span>
+                <span>No credit card required</span>
+            </div>
+            <div class="trust-item">
+                <span class="trust-icon">&#9993;</span>
+                <span>Unsubscribe in one click any time</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const data = {
+        email: document.getElementById('nlEmail').value,
+        full_name: document.getElementById('nlName').value,
+        employer: document.getElementById('nlEmployer').value,
+        industry: document.getElementById('nlIndustry').value,
+        job_title: document.getElementById('nlTitle').value,
+        marketing_consent: document.getElementById('marketingConsent').checked
+    };
+
+    fetch('/api/subscribe-newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(result => {
+        if (result.success) {
+            window.location.href = '/?subscribed=1';
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -68,6 +68,9 @@ NAMES=(
     "gov_portal_no_timer"
     "marketplace_calm"
     "adp_no_banner"
+    "news_medium"
+    "bumble_medium"
+    "saas_onboard_medium"
     # Original envs missing from start script
     "virus_scanner"
     "file_converter"
@@ -124,6 +127,9 @@ CMDS=(
     "uv run python all_websites/gov_portal_no_timer/run_servers.py"
     "uv run python all_websites/marketplace-calm/app.py"
     "uv run python all_websites/adp_no_banner/server.py"
+    "uv run python all_websites/news-medium/run_servers.py"
+    "uv run python all_websites/bumble-medium/server.py"
+    "uv run python all_websites/saas-onboarding-medium/run_servers.py"
     # Original envs missing from start script
     "uv run python all_websites/virus-scanner/app.py"
     "uv run python all_websites/file-converter/app.py"
@@ -180,6 +186,9 @@ PORTS=(
     "5105"
     "5107"
     "5108"
+    "5401"
+    "5410"
+    "5402"
     # Original envs missing from start script
     "5055"
     "5056"
