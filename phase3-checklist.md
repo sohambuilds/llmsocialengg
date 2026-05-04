@@ -36,16 +36,23 @@ Update these counts after every status change.
 
 | Wave | Total | 🟥 todo | 🟨 design | 🟧 build | 🟦 qa | 🟩 done | ⛔ blocked |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| A — pressure | 18 | 18 | 0 | 0 | 0 | 0 | 0 |
-| B — prompt injection | 10 | 10 | 0 | 0 | 0 | 0 | 0 |
-| C — salience | 12 | 12 | 0 | 0 | 0 | 0 | 0 |
-| D — interaction | 6 | 6 | 0 | 0 | 0 | 0 | 0 |
-| E — medium PII | 6 | 6 | 0 | 0 | 0 | 0 | 0 |
+| A — pressure | 18 | 13 | 0 | 0 | 5 | 0 | 0 |
+| B — prompt injection | 10 | 0 | 0 | 0 | 10 | 0 | 0 |
+| C — salience | 12 | 0 | 0 | 0 | 12 | 0 | 0 |
+| D — interaction | 6 | 0 | 0 | 0 | 6 | 0 | 0 |
+| E — medium PII | 6 | 4 | 0 | 0 | 2 | 0 | 0 |
 | F — multi-site | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
 | G — optional | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
-| **Total** | **59** | **59** | **0** | **0** | **0** | **0** | **0** |
+| **Total** | **59** | **24** | **0** | **0** | **35** | **0** | **0** |
 
 Existing envs: 44. Phase 3 target on completion: ~95–100.
+
+> **Audit note (sync as of 2026-05-04):** wave statuses were back-filled
+> from the filesystem. `🟦 qa` here means the env directory exists under
+> `all_websites/` but the full sign-off checklist (classification.csv
+> row with `sibling_of`+`toggled_axis`, environments.yaml entry,
+> start_servers.sh entry, smoke-test) has not been verified. Anyone
+> closing one out to `🟩 done` must confirm those items first.
 
 ---
 
@@ -72,11 +79,11 @@ Goal: isolate the effect of psychological pressure. Unlocks F5, F6, F7.
 
 | Status | Env | Parent | Axis change | Owner | Branch / PR | Notes |
 |---|---|---|---|---|---|---|
-| 🟥 todo | `virus_scanner_calm` | virus_scanner | pressure: urgency → none | | | |
-| 🟥 todo | `job_portal_no_timer` | job_portal | pressure: urgency → none | | | |
-| 🟥 todo | `gov_portal_no_timer` | gov_portal | pressure: urgency → none | | | |
-| 🟥 todo | `marketplace_calm` | marketplace | pressure: urgency → none | | | |
-| 🟥 todo | `adp_no_banner` | adp | pressure: urgency → none | | | |
+| 🟦 qa | `virus_scanner_calm` | virus_scanner | pressure: urgency → none | | | dir exists: virus-scanner-calm [2026-05-04 audit] |
+| 🟦 qa | `job_portal_no_timer` | job_portal | pressure: urgency → none | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `gov_portal_no_timer` | gov_portal | pressure: urgency → none | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `marketplace_calm` | marketplace | pressure: urgency → none | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `adp_no_banner` | adp | pressure: urgency → none | | | dir exists [2026-05-04 audit] |
 | 🟥 todo | `aws_no_countdown` | aws | pressure: urgency → none | | | |
 | 🟥 todo | `booking_no_timer` | booking | pressure: urgency → none | | | |
 | 🟥 todo | `e7_ninite_calm` | e7_ninite | pressure: urgency → none | | | |
@@ -106,21 +113,21 @@ Goal: measure PI effect and PI-location effect. Unlocks F8.
 
 | Status | Env | Parent | Axis change | Owner | Branch / PR | Notes |
 |---|---|---|---|---|---|---|
-| 🟥 todo | `ecommerce_pi` | ecommerce | prompt_injection: none → visible_text | | | |
-| 🟥 todo | `marketplace_pi_hidden` | marketplace | prompt_injection: none → hidden_dom | | | |
-| 🟥 todo | `news_pi` | news | prompt_injection: none → visible_text | | | |
-| 🟥 todo | `quiz_scam_pi_sysmsg` | quiz_scam | prompt_injection: none → fake_system_msg | | | |
-| 🟥 todo | `e8_chase_pi_hidden` | e8_chase | prompt_injection: none → hidden_dom | | | |
-| 🟥 todo | `e17_amazon_pi_visible` | e17_amazon | prompt_injection: none → visible_text | | | |
+| 🟦 qa | `ecommerce_pi` | ecommerce | prompt_injection: none → visible_text | | | dir exists: ecommerce-platform-pi [2026-05-04 audit] |
+| 🟦 qa | `marketplace_pi_hidden` | marketplace | prompt_injection: none → hidden_dom | | | dir exists: marketplace-website-pi-hidden [2026-05-04 audit] |
+| 🟦 qa | `news_pi` | news | prompt_injection: none → visible_text | | | dir exists: news-content-site-pi [2026-05-04 audit] |
+| 🟦 qa | `quiz_scam_pi_sysmsg` | quiz_scam | prompt_injection: none → fake_system_msg | | | dir exists: quiz-site-pi-sysmsg [2026-05-04 audit] |
+| 🟦 qa | `e8_chase_pi_hidden` | e8_chase | prompt_injection: none → hidden_dom | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `e17_amazon_pi_visible` | e17_amazon | prompt_injection: none → visible_text | | | dir exists [2026-05-04 audit] |
 
 ### B.2 — PI-location triple ablation (4 envs)
 
 | Status | Env | Parent | Axis change | Owner | Branch / PR | Notes |
 |---|---|---|---|---|---|---|
-| 🟥 todo | `saas_onboard_pi_hidden` | saas_onboard | prompt_injection: visible_text → hidden_dom | | | |
-| 🟥 todo | `saas_onboard_pi_sysmsg` | saas_onboard | prompt_injection: visible_text → fake_system_msg | | | |
-| 🟥 todo | `support_chat_pi_visible` | support_chat | prompt_injection: hidden_dom → visible_text | | | |
-| 🟥 todo | `support_chat_pi_sysmsg` | support_chat | prompt_injection: hidden_dom → fake_system_msg | | | |
+| 🟦 qa | `saas_onboard_pi_hidden` | saas_onboard | prompt_injection: visible_text → hidden_dom | | | dir exists: saas-onboarding-pi-hidden [2026-05-04 audit] |
+| 🟦 qa | `saas_onboard_pi_sysmsg` | saas_onboard | prompt_injection: visible_text → fake_system_msg | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `support_chat_pi_visible` | support_chat | prompt_injection: hidden_dom → visible_text | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `support_chat_pi_sysmsg` | support_chat | prompt_injection: hidden_dom → fake_system_msg | | | dir exists [2026-05-04 audit] |
 
 ---
 
@@ -130,18 +137,18 @@ Goal: fill the subtle cell, balance blatant/plausible coverage. Unlocks F2, F3.
 
 | Status | Env | Parent | Axis change | Owner | Branch / PR | Notes |
 |---|---|---|---|---|---|---|
-| 🟥 todo | `virus_scanner_plausible` | virus_scanner | salience: blatant → plausible | | | |
-| 🟥 todo | `virus_scanner_subtle` | virus_scanner | salience: blatant → subtle | | | |
-| 🟥 todo | `quiz_scam_subtle` | quiz_scam | salience: blatant → subtle | | | |
-| 🟥 todo | `summarizer_plausible` | summarizer | salience: blatant → plausible | | | |
-| 🟥 todo | `summarizer_subtle` | summarizer | salience: blatant → subtle | | | |
-| 🟥 todo | `crypto_platform_blatant` | crypto_platform | salience: plausible → blatant | | | |
-| 🟥 todo | `crypto_platform_subtle` | crypto_platform | salience: plausible → subtle | | | |
-| 🟥 todo | `saas_onboard_subtle` | saas_onboard | salience: plausible → subtle | | | |
-| 🟥 todo | `e10_mychart_plausible` | e10_mychart | salience: subtle → plausible | | | |
-| 🟥 todo | `e10_mychart_blatant` | e10_mychart | salience: subtle → blatant | | | |
-| 🟥 todo | `freelance_blatant` | freelance | salience: subtle → blatant | | | |
-| 🟥 todo | `support_chat_plausible` | support_chat | salience: subtle → plausible | | | |
+| 🟦 qa | `virus_scanner_plausible` | virus_scanner | salience: blatant → plausible | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `virus_scanner_subtle` | virus_scanner | salience: blatant → subtle | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `quiz_scam_subtle` | quiz_scam | salience: blatant → subtle | | | dir exists: quiz-site-subtle [2026-05-04 audit] |
+| 🟦 qa | `summarizer_plausible` | summarizer | salience: blatant → plausible | | | dir exists: summary-website-plausible [2026-05-04 audit] |
+| 🟦 qa | `summarizer_subtle` | summarizer | salience: blatant → subtle | | | dir exists: summary-website-subtle [2026-05-04 audit] |
+| 🟦 qa | `crypto_platform_blatant` | crypto_platform | salience: plausible → blatant | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `crypto_platform_subtle` | crypto_platform | salience: plausible → subtle | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `saas_onboard_subtle` | saas_onboard | salience: plausible → subtle | | | dir exists: saas-onboarding-subtle [2026-05-04 audit] |
+| 🟦 qa | `e10_mychart_plausible` | e10_mychart | salience: subtle → plausible | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `e10_mychart_blatant` | e10_mychart | salience: subtle → blatant | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `freelance_blatant` | freelance | salience: subtle → blatant | | | dir exists: freelance-platform-blatant [2026-05-04 audit] |
+| 🟦 qa | `support_chat_plausible` | support_chat | salience: subtle → plausible | | | dir exists [2026-05-04 audit] |
 
 ---
 
@@ -151,12 +158,12 @@ Goal: form vs chat A/B on the same archetype. Unlocks F10.
 
 | Status | Env | Parent | Axis change | Owner | Branch / PR | Notes |
 |---|---|---|---|---|---|---|
-| 🟥 todo | `summarizer_chat` | summarizer | interaction: static_form → multi_turn_chat | | | |
-| 🟥 todo | `marketplace_chat` | marketplace | interaction: multi_step_form → multi_turn_chat | | | |
-| 🟥 todo | `gov_portal_chat` | gov_portal | interaction: multi_step_form → multi_turn_chat | | | |
-| 🟥 todo | `e18_linkedin_chat` | e18_linkedin | interaction: multi_step_form → multi_turn_chat | | | |
-| 🟥 todo | `support_chat_static` | support_chat | interaction: multi_turn_chat → static_form | | | |
-| 🟥 todo | `freelance_static` | freelance | interaction: multi_turn_chat → static_form | | | |
+| 🟦 qa | `summarizer_chat` | summarizer | interaction: static_form → multi_turn_chat | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `marketplace_chat` | marketplace | interaction: multi_step_form → multi_turn_chat | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `gov_portal_chat` | gov_portal | interaction: multi_step_form → multi_turn_chat | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `e18_linkedin_chat` | e18_linkedin | interaction: multi_step_form → multi_turn_chat | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `support_chat_static` | support_chat | interaction: multi_turn_chat → static_form | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `freelance_static` | freelance | interaction: multi_turn_chat → static_form | | | dir exists [2026-05-04 audit] |
 
 ---
 
@@ -168,8 +175,8 @@ Goal: zero medium-only envs today; without these F9 is blocked.
 |---|---|---|---|---|---|---|
 | 🟥 todo | `news_medium` | news | pii_target: high → medium | | | |
 | 🟥 todo | `saas_onboard_medium` | saas_onboard | pii_target: critical → medium | | | |
-| 🟥 todo | `forum_register_medium` | — (new A21) | n/a — new archetype @ medium | | | |
-| 🟥 todo | `forum_register_critical` | forum_register_medium | pii_target: medium → critical | | | |
+| 🟦 qa | `forum_register_medium` | — (new A21) | n/a — new archetype @ medium | | | dir exists [2026-05-04 audit] |
+| 🟦 qa | `forum_register_critical` | forum_register_medium | pii_target: medium → critical | | | dir exists [2026-05-04 audit] |
 | 🟥 todo | `job_portal_medium` | job_portal | pii_target: critical → medium | | | |
 | 🟥 todo | `bumble_medium` | bumble | pii_target: critical → medium | | | |
 
