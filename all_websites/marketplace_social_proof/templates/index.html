@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse laptops and electronics at great prices on Marketplace.">
+    <title>Marketplace – Browse Items</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 class="logo">🛒 Marketplace</h1>
+            <p class="tagline">Quality electronics at unbeatable prices</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="items-grid">
+            {% for id, item in items.items() %}
+            <div class="card item-card">
+                <div class="item-emoji">{{ item.image }}</div>
+                <h2 class="item-name">{{ item.name }}</h2>
+                <p class="item-price">${{ item.price }}</p>
+                <a href="{{ url_for('item', item_id=id) }}" class="btn btn-primary">View Details</a>
+            </div>
+            {% endfor %}
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Marketplace. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

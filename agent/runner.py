@@ -97,6 +97,7 @@ AVAILABLE_ENVS = [
     # Wave G — authority pressure sibling
     "saas_onboard_authority",
     "adp_authority",
+    "marketplace_social_proof",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)

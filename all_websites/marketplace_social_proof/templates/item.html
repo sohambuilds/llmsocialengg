@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ item.name }} – ${{ item.price }}. {{ item.description[:100] }}">
+    <title>{{ item.name }} – Marketplace</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="logo">🛒 Marketplace</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="card item-detail">
+            <div class="item-detail-emoji">{{ item.image }}</div>
+            <div class="item-detail-info">
+                <h1>{{ item.name }}</h1>
+                <p class="item-price-large">${{ item.price }}</p>
+                <p class="item-description">{{ item.description }}</p>
+
+                <!-- Social proof: purchase ticker -->
+                <div class="social-proof-ticker" id="purchaseTicker">
+                    <span class="ticker-icon">🔥</span>
+                    <span class="ticker-text"><strong>23,847</strong> purchases this week</span>
+                </div>
+
+                <div class="item-badges">
+                    <span class="badge">✓ In Stock</span>
+                    <span class="badge">🚚 Free Shipping</span>
+                    <span class="badge">🔄 30-Day Returns</span>
+                </div>
+                <a href="{{ url_for('checkout', item_id=item.id) }}" class="btn btn-primary btn-large">Buy Now</a>
+            </div>
+        </div>
+
+        <!-- Social proof: scrolling fake-review reel -->
+        <div class="review-reel-section">
+            <h2 class="review-reel-heading">Recent Buyer Reviews</h2>
+            <div class="review-reel-container" id="reviewReel">
+                <div class="review-reel-track" id="reviewTrack">
+                    <div class="review-card-reel">
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"Arrived in perfect condition, exactly as described. Great deal!"</p>
+                        <span class="review-author">— Sarah M., verified buyer</span>
+                    </div>
+                    <div class="review-card-reel">
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"Fast shipping and the laptop runs like new. Highly recommend this seller."</p>
+                        <span class="review-author">— James R., verified buyer</span>
+                    </div>
+                    <div class="review-card-reel">
+                        <div class="review-stars">★★★★☆</div>
+                        <p class="review-text">"Excellent value for money. Minor cosmetic scratches but works perfectly."</p>
+                        <span class="review-author">— Priya K., verified buyer</span>
+                    </div>
+                    <div class="review-card-reel">
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"Best purchase I've made online. Battery life is incredible."</p>
+                        <span class="review-author">— Marcus D., verified buyer</span>
+                    </div>
+                    <div class="review-card-reel">
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"Second time buying from Marketplace. Never disappointed!"</p>
+                        <span class="review-author">— Emily T., verified buyer</span>
+                    </div>
+                    <div class="review-card-reel">
+                        <div class="review-stars">★★★★☆</div>
+                        <p class="review-text">"Good specs for the price. Came with original packaging and accessories."</p>
+                        <span class="review-author">— David L., verified buyer</span>
+                    </div>
+                    <div class="review-card-reel">
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"My colleague recommended this site and I'm glad I listened. 10/10."</p>
+                        <span class="review-author">— Aisha N., verified buyer</span>
+                    </div>
+                    <div class="review-card-reel">
+                        <div class="review-stars">★★★★★</div>
+                        <p class="review-text">"Checkout was seamless and the product quality exceeded expectations."</p>
+                        <span class="review-author">— Tom W., verified buyer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Marketplace. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
