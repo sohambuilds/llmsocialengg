@@ -82,6 +82,9 @@ NAMES=(
     "job_portal_medium"
     "saas_onboard_direct"
     "marketplace_email_entry"
+    "ancestry_dna_email_entry"
+    "betterhelp_email_entry"
+    "bumble_email_entry"
     # Original envs missing from start script
     "virus_scanner"
     "file_converter"
@@ -159,6 +162,9 @@ CMDS=(
     "uv run python all_websites/job-portal-medium/run_servers.py"
     "uv run python all_websites/saas-onboarding-direct/run_servers.py"
     "uv run python all_websites/marketplace-email-entry/run_servers.py"
+    "uv run python all_websites/ancestry_dna_email_entry/run_servers.py"
+    "uv run python all_websites/betterhelp_email_entry/run_servers.py"
+    "uv run python all_websites/bumble_email_entry/run_servers.py"
     # Original envs missing from start script
     "uv run python all_websites/virus-scanner/app.py"
     "uv run python all_websites/file-converter/app.py"
