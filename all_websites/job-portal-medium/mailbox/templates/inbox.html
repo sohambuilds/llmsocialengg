@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gmail - Inbox</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <!-- Top Header Bar -->
+    <header class="gmail-header">
+        <div class="header-left">
+            <button class="icon-btn menu-btn">
+                <span class="material-icons">menu</span>
+            </button>
+            <div class="gmail-logo">
+                <img src="https://ssl.gstatic.com/ui/v1/icons/mail/rfr/logo_gmail_lockup_default_1x_r5.png" alt="Gmail" height="40">
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="search-bar">
+                <span class="material-icons search-icon">search</span>
+                <input type="text" placeholder="Search mail" class="search-input">
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="icon-btn"><span class="material-icons">help_outline</span></button>
+            <button class="icon-btn"><span class="material-icons">settings</span></button>
+            <button class="icon-btn"><span class="material-icons">apps</span></button>
+            <div class="avatar">U</div>
+        </div>
+    </header>
+
+    <div class="gmail-body">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <button class="compose-btn">
+                <span class="material-icons">edit</span>
+                <span class="compose-text">Compose</span>
+            </button>
+            <div class="nav-items">
+                <a class="nav-item active" href="/">
+                    <span class="material-icons">inbox</span>
+                    <span class="nav-label">Inbox</span>
+                    <span class="nav-count">2</span>
+                </a>
+                <a class="nav-item" href="#">
+                    <span class="material-icons">star</span>
+                    <span class="nav-label">Starred</span>
+                </a>
+                <a class="nav-item" href="#">
+                    <span class="material-icons">schedule</span>
+                    <span class="nav-label">Snoozed</span>
+                </a>
+                <a class="nav-item" href="#">
+                    <span class="material-icons">send</span>
+                    <span class="nav-label">Sent</span>
+                </a>
+                <a class="nav-item" href="#">
+                    <span class="material-icons">drafts</span>
+                    <span class="nav-label">Drafts</span>
+                </a>
+                <a class="nav-item" href="#">
+                    <span class="material-icons">label_important</span>
+                    <span class="nav-label">Important</span>
+                </a>
+                <a class="nav-item" href="#">
+                    <span class="material-icons">delete</span>
+                    <span class="nav-label">Trash</span>
+                </a>
+            </div>
+            <div class="sidebar-labels">
+                <div class="labels-header">
+                    <span>Labels</span>
+                    <span class="material-icons" style="font-size:18px; cursor:pointer;">add</span>
+                </div>
+                <a class="nav-item" href="#">
+                    <span class="label-dot" style="background:#15c;"></span>
+                    <span class="nav-label">Work</span>
+                </a>
+                <a class="nav-item" href="#">
+                    <span class="label-dot" style="background:#2da44e;"></span>
+                    <span class="nav-label">Personal</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="inbox-main">
+            <!-- Toolbar -->
+            <div class="inbox-toolbar">
+                <div class="toolbar-left">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="selectAll">
+                        <span class="checkmark"></span>
+                    </label>
+                    <button class="icon-btn small"><span class="material-icons">refresh</span></button>
+                    <button class="icon-btn small"><span class="material-icons">more_vert</span></button>
+                </div>
+                <div class="toolbar-right">
+                    <span class="page-info">1–10 of 10</span>
+                    <button class="icon-btn small" disabled><span class="material-icons">chevron_left</span></button>
+                    <button class="icon-btn small" disabled><span class="material-icons">chevron_right</span></button>
+                </div>
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="category-tabs">
+                <button class="tab active" data-category="primary">
+                    <span class="material-icons">inbox</span>
+                    Primary
+                </button>
+                <button class="tab" data-category="social">
+                    <span class="material-icons">people</span>
+                    Social
+                </button>
+                <button class="tab" data-category="promotions">
+                    <span class="material-icons">local_offer</span>
+                    Promotions
+                </button>
+                <button class="tab" data-category="updates">
+                    <span class="material-icons">info</span>
+                    Updates
+                </button>
+            </div>
+
+            <!-- Email List -->
+            <div class="email-list" id="emailList">
+                {% for email in emails %}
+                <div class="email-row {% if not email.read %}unread{% endif %}"
+                     data-id="{{ email.id }}"
+                     data-category="{{ email.category }}"
+                     onclick="window.location.href='/email/{{ email.id }}'">
+                    <div class="email-select">
+                        <label class="checkbox-container" onclick="event.stopPropagation();">
+                            <input type="checkbox" class="email-checkbox">
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                    <div class="email-star" onclick="event.stopPropagation(); this.classList.toggle('starred');">
+                        <span class="material-icons">{% if email.starred %}star{% else %}star_border{% endif %}</span>
+                    </div>
+                    <div class="email-sender">{{ email.from_name }}</div>
+                    <div class="email-content">
+                        <span class="email-subject">{{ email.subject }}</span>
+                        <span class="email-separator"> - </span>
+                        <span class="email-preview">{{ email.preview }}</span>
+                    </div>
+                    <div class="email-date">{{ email.date_display }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

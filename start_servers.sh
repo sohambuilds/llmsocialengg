@@ -79,6 +79,9 @@ NAMES=(
     "e8_chase_no_countdown"
     "e13_irs_no_timer"
     "e14_oracle_no_timer"
+    "job_portal_medium"
+    "saas_onboard_direct"
+    "marketplace_email_entry"
     # Original envs missing from start script
     "virus_scanner"
     "file_converter"
@@ -149,6 +152,9 @@ CMDS=(
     "uv run python all_websites/e8-chase-no-countdown/run_servers.py"
     "uv run python all_websites/e13-irs-no-timer/run_servers.py"
     "uv run python all_websites/e14-oracle-no-timer/run_servers.py"
+    "uv run python all_websites/job-portal-medium/run_servers.py"
+    "uv run python all_websites/saas-onboarding-direct/run_servers.py"
+    "uv run python all_websites/marketplace-email-entry/run_servers.py"
     # Original envs missing from start script
     "uv run python all_websites/virus-scanner/app.py"
     "uv run python all_websites/file-converter/app.py"

@@ -40,10 +40,10 @@ Update these counts after every status change.
 | B — prompt injection | 10 | 0 | 0 | 0 | 10 | 0 | 0 |
 | C — salience | 12 | 0 | 0 | 0 | 12 | 0 | 0 |
 | D — interaction | 6 | 0 | 0 | 0 | 6 | 0 | 0 |
-| E — medium PII | 6 | 1 | 0 | 0 | 5 | 0 | 0 |
-| F — multi-site | 5 | 5 | 0 | 0 | 0 | 0 | 0 |
+| E — medium PII | 6 | 0 | 0 | 0 | 6 | 0 | 0 |
+| F — multi-site | 5 | 3 | 0 | 0 | 2 | 0 | 0 |
 | G — optional | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
-| **Total** | **59** | **14** | **0** | **0** | **45** | **0** | **0** |
+| **Total** | **59** | **11** | **0** | **0** | **48** | **0** | **0** |
 
 Existing envs: 44. Phase 3 target on completion: ~95–100.
 
@@ -180,7 +180,7 @@ Goal: zero medium-only envs today; without these F9 is blocked.
 | 🟦 qa | `saas_onboard_medium` | saas_onboard | pii_target: critical → medium | sr | | built + wired [2026-05-05 sr] |
 | 🟦 qa | `forum_register_medium` | — (new A21) | n/a — new archetype @ medium | | | dir exists [2026-05-04 audit] |
 | 🟦 qa | `forum_register_critical` | forum_register_medium | pii_target: medium → critical | | | dir exists [2026-05-04 audit] |
-| 🟥 todo | `job_portal_medium` | job_portal | pii_target: critical → medium | | | |
+| 🟦 qa | `job_portal_medium` | job_portal | pii_target: critical → medium | sr | | built + wired [2026-05-05 sr]; mailbox+legit+phishing 3-server clone on 5407/5408/5409; typosquat g00gle retained; SSN/bank/9.99-fee stripped; single-page form asks CV/cover-letter/salary/employer-references; pre-ticked priority-review consent preserves dark_patterns vector |
 | 🟦 qa | `bumble_medium` | bumble | pii_target: critical → medium | sr | | built (Bumble.html replaced w/ profile-setup form) + wired [2026-05-05 sr] |
 
 ---
@@ -191,8 +191,8 @@ Goal: same scam, different entry point. Tests effect of mailbox triage.
 
 | Status | Env | Parent | Axis change | Owner | Branch / PR | Notes |
 |---|---|---|---|---|---|---|
-| 🟥 todo | `saas_onboard_direct` | saas_onboard | multi_site: email_entry → single_origin | | | |
-| 🟥 todo | `marketplace_email_entry` | marketplace | multi_site: single_origin → email_entry | | | |
+| 🟦 qa | `saas_onboard_direct` | saas_onboard | multi_site: email_entry → single_origin | sr | | built + wired [2026-05-05 sr]; mailbox dropped; saas_app+billing on 5411/5412; agent lands directly at teamwork-app.com; scam payload byte-identical to parent |
+| 🟦 qa | `marketplace_email_entry` | marketplace | multi_site: single_origin → email_entry | sr | | built + wired [2026-05-05 sr]; mailbox (5413) + marketplace (5414); shipping-update email links to marketplace-hub.com:5414; marketplace_app byte-identical to parent |
 | 🟥 todo | `ancestry_dna_email_entry` | ancestry_dna | multi_site: single_origin → email_entry | | | |
 | 🟥 todo | `betterhelp_email_entry` | betterhelp | multi_site: single_origin → email_entry | | | |
 | 🟥 todo | `bumble_email_entry` | bumble | multi_site: single_origin → email_entry | | | |
@@ -224,7 +224,7 @@ Update the `Pair count` column as siblings land. Goal: every row ≥1, ideally �
 | F6 | Social proof adds Δ′ PLR | 0 | — | 🟥 (Wave A.2) |
 | F7 | Authority cues add Δ″ PLR | 0 | — | 🟥 (Wave A.2) |
 | F8 | Hidden PI ≈ visible PI | 8 | ecommerce ↔ ecommerce_pi | 🟦 |
-| F9 | Critical ≈ medium when plausible | 1 | forum_register_critical ↔ forum_register_medium | 🟩 |
+| F9 | Critical ≈ medium when plausible | 2 | forum_register_critical ↔ forum_register_medium | 🟩 |
 | F10 | Chat bypasses agents that refuse forms | 6 | summarizer ↔ summarizer_chat | 🟦 |
 | F11 | Findings generalize across categories | 0 | — | 🟥 (no cross-category port yet) |
 
