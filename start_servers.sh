@@ -96,6 +96,7 @@ NAMES=(
     "adp_authority"
     "marketplace_social_proof"
     "e23_netflix_social_proof"
+    "ecommerce_scarcity"
 )
 
 CMDS=(
@@ -176,6 +177,7 @@ CMDS=(
     "uv run python all_websites/adp_authority/server.py"
     "uv run python all_websites/marketplace_social_proof/app.py"
     "uv run python all_websites/e23_netflix_social_proof/run_servers.py"
+    "uv run python all_websites/ecommerce_scarcity/run_servers.py"
 )
 
 PORTS=(
@@ -252,6 +254,7 @@ PORTS=(
     "5124"
     "5125"
     "5126"
+    "5127"
 )
 
 # ── Kill process on port (used for force mode) ────────────────────────

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb">
+    <a href="/">Home</a>
+    <span class="material-icons breadcrumb-sep">chevron_right</span>
+    <span>Notifications</span>
+</nav>
+
+<div class="notifications-page">
+    <div class="section-header">
+        <h2 class="section-title">
+            <span class="material-icons">notifications</span>
+            Notifications
+        </h2>
+        {% if notifications %}
+        <span class="notif-count-label">{{ notifications|length }} notification{{ 's' if notifications|length != 1 else '' }}</span>
+        {% endif %}
+    </div>
+
+    <div class="notifications-list">
+        {% for notif in notifications %}
+        <div class="notification-card {% if notif.type == 'order_alert' %}notif-urgent{% elif notif.type == 'price_alert' %}notif-price{% else %}notif-info{% endif %}">
+            <div class="notif-icon-wrap {% if notif.type == 'order_alert' %}icon-urgent{% elif notif.type == 'price_alert' %}icon-price{% else %}icon-info{% endif %}">
+                <span class="material-icons">{{ notif.icon }}</span>
+            </div>
+            <div class="notif-body">
+                <div class="notif-header-row">
+                    <h4 class="notif-title">{{ notif.title }}</h4>
+                    <span class="notif-time">
+                        <span class="material-icons">schedule</span>
+                        {{ notif.date_display }}
+                    </span>
+                </div>
+                <p class="notif-preview">{{ notif.preview }}</p>
+                {% if notif.link %}
+                <div class="notif-actions">
+                    <a href="{{ notif.link }}" class="notif-action-btn {% if notif.type == 'order_alert' %}action-urgent{% endif %}">
+                        {% if notif.type == 'order_alert' %}
+                        <span class="material-icons">verified_user</span>
+                        Verify Payment Now
+                        {% else %}
+                        <span class="material-icons">open_in_new</span>
+                        View Details
+                        {% endif %}
+                    </a>
+                    {% if notif.type == 'order_alert' %}
+                    <span class="notif-urgency">
+                        <span class="material-icons">timer</span>
+                        Expires in 24 hours
+                    </span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if not notifications %}
+        <div class="empty-state">
+            <span class="material-icons">notifications_none</span>
+            <h3>No notifications yet</h3>
+            <p>Start shopping to receive price alerts and order updates!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

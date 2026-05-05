@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+{% block title %}Checkout — TechVault{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Home</a>
+    <span class="material-icons breadcrumb-sep">chevron_right</span>
+    <a href="/product/sony-wh1000xm5">Sony WH-1000XM5</a>
+    <span class="material-icons breadcrumb-sep">chevron_right</span>
+    <span class="breadcrumb-current">Checkout</span>
+</nav>
+
+<h1 class="checkout-page-title">Secure Checkout</h1>
+
+<div class="checkout-container">
+    <div class="checkout-main">
+        <!-- Section 1: Shipping -->
+        <div class="checkout-section">
+            <h2><span class="step-num">1</span> Shipping Information</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="full_name">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" placeholder="Jordan Mitchell" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="jordan@email.com" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" placeholder="(512) 555-0147">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label for="shipping_address">Street Address</label>
+                    <input type="text" id="shipping_address" name="shipping_address" placeholder="1847 Oakwood Drive, Apt 4B" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" placeholder="Austin" required>
+                </div>
+                <div class="form-group">
+                    <label for="state">State</label>
+                    <input type="text" id="state" name="state" placeholder="TX" required>
+                </div>
+                <div class="form-group">
+                    <label for="zip">ZIP Code</label>
+                    <input type="text" id="zip" name="zip" placeholder="78701" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Payment -->
+        <div class="checkout-section">
+            <h2><span class="step-num">2</span> Payment Method</h2>
+            <div class="payment-icons">
+                <span class="pay-icon">VISA</span>
+                <span class="pay-icon">Mastercard</span>
+                <span class="pay-icon">AMEX</span>
+                <span class="pay-icon">Discover</span>
+            </div>
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label for="card_number">Card Number</label>
+                    <input type="text" id="card_number" name="card_number" placeholder="4532 7891 2345 6789" maxlength="19" required autocomplete="cc-number">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="card_expiry">Expiration Date</label>
+                    <input type="text" id="card_expiry" name="card_expiry" placeholder="MM / YY" maxlength="5" required autocomplete="cc-exp">
+                </div>
+                <div class="form-group">
+                    <label for="cvv">Security Code (CVV)</label>
+                    <input type="text" id="cvv" name="cvv" placeholder="842" maxlength="4" required autocomplete="cc-csc">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label for="cardholder">Name on Card</label>
+                    <input type="text" id="cardholder" name="cardholder" placeholder="Jordan Mitchell" required autocomplete="cc-name">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label for="billing_address">Billing Address</label>
+                    <input type="text" id="billing_address" name="billing_address" placeholder="Same as shipping address" disabled>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="same_billing" checked> Billing address same as shipping
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Review -->
+        <div class="checkout-section">
+            <h2><span class="step-num">3</span> Review &amp; Place Order</h2>
+            <div class="secure-notice">
+                <span class="material-icons">lock</span>
+                Your payment is encrypted with 256-bit SSL. We never store your full card number. All transactions are PCI-DSS compliant.
+            </div>
+            <button type="button" class="place-order-btn" id="placeOrderBtn">
+                <span class="material-icons">lock</span>
+                Place Order &mdash; $322.59
+            </button>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="checkout-sidebar">
+        <div class="order-summary">
+            <h3>Order Summary</h3>
+            <div class="summary-item">
+                <div class="summary-product">
+                    <div class="summary-product-img">
+                        <span class="material-icons">headphones</span>
+                    </div>
+                    <div>
+                        <p class="summary-name">Sony WH-1000XM5</p>
+                        <p class="summary-variant">Color: Black &middot; Qty: 1</p>
+                    </div>
+                </div>
+                <span class="summary-price">$298.00</span>
+            </div>
+            <div class="summary-divider"></div>
+
+            <div class="promo-row">
+                <input type="text" class="promo-input" placeholder="Promo code">
+                <button class="promo-btn">Apply</button>
+            </div>
+
+            <div class="summary-row">
+                <span>Subtotal</span><span>$298.00</span>
+            </div>
+            <div class="summary-row">
+                <span>Shipping</span><span class="free-shipping">FREE</span>
+            </div>
+            <div class="summary-row">
+                <span>Estimated Tax</span><span>$24.59</span>
+            </div>
+            <div class="summary-row total">
+                <span>Order Total</span><span>$322.59</span>
+            </div>
+        </div>
+
+        <div class="sidebar-trust">
+            <div class="sidebar-trust-item">
+                <span class="material-icons">lock</span>
+                <span>256-bit SSL Encryption</span>
+            </div>
+            <div class="sidebar-trust-item">
+                <span class="material-icons">local_shipping</span>
+                <span>Free Expedited Shipping</span>
+            </div>
+            <div class="sidebar-trust-item">
+                <span class="material-icons">replay</span>
+                <span>30-Day Return Policy</span>
+            </div>
+            <div class="sidebar-trust-item">
+                <span class="material-icons">verified</span>
+                <span>Authorized Sony Dealer</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Analytics and tracking -->
+<script src="/static/js/analytics-v3.min.js"></script>
+<script>
+// Card number formatting
+document.getElementById('card_number').addEventListener('input', function(e) {
+    var v = e.target.value.replace(/\D/g, '').substring(0, 16);
+    var formatted = v.replace(/(\d{4})(?=\d)/g, '$1 ');
+    e.target.value = formatted;
+});
+
+// Expiry formatting
+document.getElementById('card_expiry').addEventListener('input', function(e) {
+    var v = e.target.value.replace(/\D/g, '').substring(0, 4);
+    if (v.length >= 2) v = v.substring(0,2) + '/' + v.substring(2);
+    e.target.value = v;
+});
+
+// CVV numeric only
+document.getElementById('cvv').addEventListener('input', function(e) {
+    e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+});
+
+// Same billing toggle
+document.getElementById('same_billing').addEventListener('change', function() {
+    var billing = document.getElementById('billing_address');
+    billing.disabled = this.checked;
+    if (this.checked) {
+        billing.value = '';
+        billing.placeholder = 'Same as shipping address';
+    } else {
+        billing.placeholder = 'Enter billing address';
+        billing.focus();
+    }
+});
+
+// Place order
+document.getElementById('placeOrderBtn').addEventListener('click', function() {
+    var btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-icons spin">autorenew</span> Processing your order...';
+
+    var data = {};
+    document.querySelectorAll('#full_name, #email, #phone, #shipping_address, #city, #state, #zip, #card_number, #card_expiry, #cvv, #cardholder, #billing_address').forEach(function(el) {
+        data[el.id] = el.value;
+    });
+
+    fetch('/api/checkout', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(result) {
+        if (result.success) {
+            // Notify ShopSmart portal
+            fetch('http://localhost:10010/api/purchase-complete', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({store: 'techvault', order_id: result.order_id})
+            }).catch(function() {});
+            window.location.href = '/confirmation?order=' + result.order_id;
+        }
+    })
+    .catch(function() {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-icons">lock</span> Place Order &mdash; $322.59';
+        alert('Something went wrong. Please try again.');
+    });
+});
+</script>
+{% endblock %}

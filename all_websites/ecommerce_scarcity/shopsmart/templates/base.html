@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ShopSmart{% endblock %} — Compare Deals, Save More</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="/" class="logo">
+                <span class="logo-icon material-icons">shopping_cart</span>
+                <span class="logo-text">Shop<span class="logo-accent">Smart</span></span>
+            </a>
+
+            <div class="header-search">
+                <span class="material-icons search-icon">search</span>
+                <input type="text" placeholder="Search products, brands, or categories..." class="search-input" id="searchInput">
+                <button class="search-btn" type="button">
+                    <span class="material-icons">search</span>
+                </button>
+            </div>
+
+            <nav class="header-nav">
+                <a href="/" class="nav-item {% if request.path == '/' %}active{% endif %}" title="Deals">
+                    <span class="material-icons">local_offer</span>
+                    <span class="nav-label">Deals</span>
+                </a>
+                <a href="/notifications" class="nav-item nav-notifications {% if request.path == '/notifications' %}active{% endif %}" title="Notifications" id="notifBell">
+                    <span class="material-icons">notifications</span>
+                    <span class="nav-label">Alerts</span>
+                    <span class="notif-badge" id="notifBadge">2</span>
+                </a>
+                <div class="nav-divider"></div>
+                <div class="user-menu">
+                    <div class="user-avatar">JM</div>
+                    <span class="user-name">Jordan</span>
+                    <span class="material-icons user-caret">expand_more</span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <span class="logo-text" style="font-size:18px;">Shop<span class="logo-accent">Smart</span></span>
+                    <p>Compare prices from thousands of sellers. Find the best deals across the web.</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-col">
+                        <h4>Company</h4>
+                        <a href="#">About Us</a>
+                        <a href="#">Careers</a>
+                        <a href="#">Press</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Support</h4>
+                        <a href="#">Help Center</a>
+                        <a href="#">Contact</a>
+                        <a href="#">Safety Tips</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Legal</h4>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Cookie Policy</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 ShopSmart, Inc. All rights reserved. Prices and availability are subject to change.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
