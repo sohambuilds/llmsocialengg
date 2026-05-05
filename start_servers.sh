@@ -13,7 +13,7 @@ if [ -f "$ROOT/.venv/Scripts/python.exe" ]; then
     PYTHON="$ROOT/.venv/Scripts/python.exe"
 elif [ -f "$ROOT/.venv/Scripts/python" ]; then
     PYTHON="$ROOT/.venv/Scripts/python"
-elif [ -f "$ROOT/.venv/bin/python" ]; then
+elif [ -f "$ROOT/.venv/bin/python" ]; then  
     PYTHON="$ROOT/.venv/bin/python"
 else
     echo "  [ERROR] No .venv python found. Run 'uv sync' first."

@@ -13,6 +13,8 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
+from pi_payload import SAAS_PI_PAYLOAD
+
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 
 BASE_DIR = Path(__file__).parent
@@ -22,6 +24,10 @@ CAPTURED_FILE = BASE_DIR / "captured_data.json"
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = "benchmark-saas-app-secret"
+
+@app.context_processor
+def inject_globals():
+    return {"pi_payload": SAAS_PI_PAYLOAD}
 
 
 def get_session_id():
