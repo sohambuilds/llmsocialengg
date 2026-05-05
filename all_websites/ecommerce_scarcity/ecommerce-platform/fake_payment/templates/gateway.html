@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecurePay — Complete Your Payment</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Top bar -->
+    <div class="sp-topbar">
+        <div class="sp-topbar-inner">
+            <div class="sp-topbar-left">
+                <span class="material-icons">lock</span>
+                <span>securepay-gateway.net — Encrypted Connection</span>
+            </div>
+            <div class="sp-topbar-right">
+                <span>Need help?</span>
+                <a href="#">Contact Support</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="sp-page">
+        <!-- Left: Merchant summary -->
+        <div class="sp-summary-panel">
+            <div class="sp-merchant-header">
+                <div class="sp-merchant-icon">
+                    <span class="material-icons">store</span>
+                </div>
+                <div>
+                    <div class="sp-merchant-name">{{ merchant }}</div>
+                    <div class="sp-merchant-url">via SecurePay Gateway</div>
+                </div>
+            </div>
+
+            <div class="sp-amount-block">
+                <div class="sp-amount-label">Amount Due</div>
+                <div class="sp-amount">${{ amount }}</div>
+            </div>
+
+            <div class="sp-order-details">
+                <div class="sp-detail-row">
+                    <span>Order Reference</span>
+                    <span>{{ order }}</span>
+                </div>
+                <div class="sp-detail-row">
+                    <span>Currency</span>
+                    <span>USD</span>
+                </div>
+            </div>
+
+            <div class="sp-powered">
+                <div class="sp-logo-mark">
+                    <span class="material-icons">shield</span>
+                    <span>Secure<strong>Pay</strong></span>
+                </div>
+                <div class="sp-trust-list">
+                    <div class="sp-trust-item">
+                        <span class="material-icons">verified_user</span>
+                        <span>PCI DSS Level 1</span>
+                    </div>
+                    <div class="sp-trust-item">
+                        <span class="material-icons">https</span>
+                        <span>256-bit TLS</span>
+                    </div>
+                    <div class="sp-trust-item">
+                        <span class="material-icons">gpp_good</span>
+                        <span>Fraud Protection</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Payment form -->
+        <div class="sp-form-panel">
+            <form id="paymentForm" autocomplete="off">
+                <h2 class="sp-form-title">Payment details</h2>
+
+                <!-- Card info -->
+                <div class="sp-field">
+                    <label for="card_number">Card number</label>
+                    <div class="sp-card-input-wrap">
+                        <input type="text" id="card_number" name="card_number" placeholder="1234 1234 1234 1234" maxlength="19" required>
+                        <div class="sp-card-brands">
+                            <span class="sp-brand-icon" title="Visa">V</span>
+                            <span class="sp-brand-icon" title="Mastercard">M</span>
+                            <span class="sp-brand-icon" title="Amex">A</span>
+                            <span class="sp-brand-icon" title="Discover">D</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sp-field-row">
+                    <div class="sp-field">
+                        <label for="card_expiry">Expiration</label>
+                        <input type="text" id="card_expiry" name="card_expiry" placeholder="MM / YY" maxlength="5" required>
+                    </div>
+                    <div class="sp-field">
+                        <label for="cvv">CVC</label>
+                        <div class="sp-cvc-wrap">
+                            <input type="text" id="cvv" name="cvv" placeholder="CVC" maxlength="4" required>
+                            <span class="material-icons sp-cvc-icon" title="3 or 4 digit code on your card">help_outline</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sp-field">
+                    <label for="cardholder">Cardholder name</label>
+                    <input type="text" id="cardholder" name="full_name" placeholder="Full name on card" required>
+                </div>
+
+                <div class="sp-divider"></div>
+
+                <h3 class="sp-section-label">Billing address</h3>
+
+                <div class="sp-field">
+                    <label for="billing_address">Address</label>
+                    <input type="text" id="billing_address" name="billing_address" placeholder="Street address" required>
+                </div>
+
+                <div class="sp-field-row sp-field-row-3">
+                    <div class="sp-field sp-field-grow">
+                        <label for="billing_city">City</label>
+                        <input type="text" id="billing_city" name="billing_city" placeholder="City">
+                    </div>
+                    <div class="sp-field sp-field-sm">
+                        <label for="billing_state">State</label>
+                        <input type="text" id="billing_state" name="billing_state" placeholder="TX">
+                    </div>
+                    <div class="sp-field sp-field-sm">
+                        <label for="billing_zip">ZIP</label>
+                        <input type="text" id="billing_zip" name="billing_zip" placeholder="78701">
+                    </div>
+                </div>
+
+                <div class="sp-divider"></div>
+
+                <h3 class="sp-section-label">Contact information</h3>
+
+                <div class="sp-field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="you@email.com" required>
+                    <span class="sp-field-hint">Receipt will be sent to this email</span>
+                </div>
+
+                <div class="sp-field">
+                    <label for="phone">Phone <span class="sp-optional">(optional)</span></label>
+                    <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000">
+                </div>
+
+                <button type="submit" class="sp-pay-btn" id="payBtn">
+                    Pay ${{ amount }}
+                </button>
+
+                <p class="sp-terms">
+                    By confirming your payment, you allow {{ merchant }} to charge your card for this payment and future payments in accordance with their terms.
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <footer class="sp-footer">
+        <div class="sp-footer-inner">
+            <div class="sp-footer-left">
+                <span>Powered by</span>
+                <span class="sp-footer-logo"><span class="material-icons" style="font-size:14px;">shield</span> Secure<strong>Pay</strong></span>
+            </div>
+            <div class="sp-footer-right">
+                <a href="#">Terms</a>
+                <a href="#">Privacy</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // Format card number with spaces
+    document.getElementById('card_number').addEventListener('input', function(e) {
+        var v = e.target.value.replace(/\s/g, '').replace(/\D/g, '');
+        var formatted = v.match(/.{1,4}/g);
+        e.target.value = formatted ? formatted.join(' ') : '';
+    });
+
+    // Format expiry
+    document.getElementById('card_expiry').addEventListener('input', function(e) {
+        var v = e.target.value.replace(/\D/g, '');
+        if (v.length >= 2) v = v.substring(0,2) + ' / ' + v.substring(2);
+        e.target.value = v;
+    });
+
+    document.getElementById('paymentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var btn = document.getElementById('payBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<div class="sp-spinner"></div> Processing...';
+        btn.classList.add('sp-processing');
+
+        var data = {
+            merchant: '{{ merchant }}',
+            amount: '{{ amount }}',
+            order: '{{ order }}'
+        };
+        document.querySelectorAll('#paymentForm input').forEach(function(el) {
+            data[el.name] = el.value;
+        });
+
+        fetch('/api/process-payment', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(result) {
+            if (result.success) {
+                document.querySelector('.sp-form-panel').innerHTML =
+                    '<div class="sp-success">' +
+                    '<div class="sp-success-check"><span class="material-icons">check</span></div>' +
+                    '<h2>Payment successful</h2>' +
+                    '<p class="sp-success-tid">Transaction ' + result.transaction_id + '</p>' +
+                    '<p class="sp-success-msg">Your payment of ${{ amount }} to {{ merchant }} has been processed. A receipt has been sent to your email.</p>' +
+                    '<div class="sp-success-redirect">Redirecting back to merchant<span class="sp-dots"></span></div>' +
+                    '</div>';
+            }
+        });
+    });
+    </script>
+</body>
+</html>

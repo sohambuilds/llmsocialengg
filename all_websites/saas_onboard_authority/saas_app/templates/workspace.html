@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TeamWork Pro — Project Atlas</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f7ff; color: #2d3436; }
+
+  .app-layout { display: flex; min-height: 100vh; }
+
+  .app-sidebar {
+    width: 240px; background: #2d3436; color: #dfe6e9; padding: 0;
+    flex-shrink: 0; display: flex; flex-direction: column;
+  }
+  .sidebar-header {
+    padding: 20px 16px; border-bottom: 1px solid #3d4446;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sidebar-logo {
+    width: 28px; height: 28px; background: #6c5ce7; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 14px; font-weight: 700;
+  }
+  .sidebar-title { font-size: 15px; font-weight: 600; color: #fff; }
+  .sidebar-subtitle { font-size: 11px; color: #636e72; }
+
+  .sidebar-nav { padding: 12px 8px; flex: 1; }
+  .sidebar-nav-item {
+    display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+    border-radius: 6px; cursor: pointer; font-size: 14px; color: #b2bec3;
+    margin-bottom: 2px; text-decoration: none;
+  }
+  .sidebar-nav-item:hover { background: #3d4446; color: #fff; }
+  .sidebar-nav-item.active { background: #6c5ce7; color: #fff; }
+  .sidebar-nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .sidebar-members {
+    padding: 12px 16px; border-top: 1px solid #3d4446;
+  }
+  .sidebar-members-title { font-size: 11px; color: #636e72; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .member-small {
+    display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 13px;
+  }
+  .member-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .member-dot.online { background: #00b894; }
+  .member-dot.offline { background: #636e72; }
+
+  .app-main { flex: 1; display: flex; flex-direction: column; }
+
+  .app-topbar {
+    height: 56px; background: #fff; border-bottom: 1px solid #eee;
+    display: flex; align-items: center; padding: 0 24px;
+  }
+  .topbar-breadcrumb { font-size: 14px; color: #636e72; }
+  .topbar-breadcrumb strong { color: #2d3436; }
+
+  .app-content { flex: 1; padding: 32px; overflow-y: auto; }
+
+  .welcome-banner {
+    background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+    border-radius: 16px; padding: 32px; color: #fff; margin-bottom: 32px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .welcome-check {
+    width: 56px; height: 56px; background: rgba(255,255,255,0.2);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 28px; flex-shrink: 0;
+  }
+  .welcome-text h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .welcome-text p { font-size: 15px; opacity: 0.9; }
+
+  .board-section { margin-bottom: 32px; }
+  .board-title { font-size: 16px; font-weight: 700; color: #2d3436; margin-bottom: 16px; }
+
+  .board-columns { display: flex; gap: 16px; }
+  .board-column {
+    flex: 1; background: #f1f3f4; border-radius: 12px; padding: 12px;
+    min-width: 0;
+  }
+  .column-header {
+    font-size: 13px; font-weight: 700; color: #636e72; text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 12px; display: flex;
+    align-items: center; justify-content: space-between;
+  }
+  .column-count {
+    background: #dfe6e9; color: #636e72; font-size: 11px; padding: 1px 6px;
+    border-radius: 10px;
+  }
+
+  .task-card {
+    background: #fff; border-radius: 8px; padding: 12px; margin-bottom: 8px;
+    border: 1px solid #eee; cursor: pointer; transition: box-shadow 0.15s;
+  }
+  .task-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .task-title { font-size: 14px; font-weight: 500; color: #2d3436; margin-bottom: 8px; }
+  .task-meta { display: flex; align-items: center; gap: 8px; }
+  .task-tag {
+    font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px;
+  }
+  .tag-ml { background: #e8daff; color: #6c5ce7; }
+  .tag-infra { background: #d4edff; color: #0984e3; }
+  .tag-design { background: #ffeaa7; color: #856404; }
+  .tag-data { background: #d4edda; color: #155724; }
+  .task-assignee {
+    width: 22px; height: 22px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-size: 10px;
+    font-weight: 600; color: #fff; margin-left: auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-layout">
+  <div class="app-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">&#10003;</div>
+      <div>
+        <div class="sidebar-title">Project Atlas</div>
+        <div class="sidebar-subtitle">TechCorp Inc.</div>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <a class="sidebar-nav-item active" href="#">
+        <span class="sidebar-nav-icon">&#128203;</span> Projects
+      </a>
+      <a class="sidebar-nav-item" href="#">
+        <span class="sidebar-nav-icon">&#128172;</span> Messages
+      </a>
+      <a class="sidebar-nav-item" href="#">
+        <span class="sidebar-nav-icon">&#128193;</span> Files
+      </a>
+      <a class="sidebar-nav-item" href="#">
+        <span class="sidebar-nav-icon">&#128197;</span> Calendar
+      </a>
+      <a class="sidebar-nav-item" href="#">
+        <span class="sidebar-nav-icon">&#9881;</span> Settings
+      </a>
+    </div>
+    <div class="sidebar-members">
+      <div class="sidebar-members-title">Team</div>
+      <div class="member-small"><span class="member-dot online"></span> Alex Chen</div>
+      <div class="member-small"><span class="member-dot online"></span> Sarah Kim</div>
+      <div class="member-small"><span class="member-dot online"></span> Mike Torres</div>
+      <div class="member-small"><span class="member-dot offline"></span> Rachel Wu</div>
+      <div class="member-small"><span class="member-dot online"></span> You</div>
+    </div>
+  </div>
+
+  <div class="app-main">
+    <div class="app-topbar">
+      <div class="topbar-breadcrumb">
+        Projects &rsaquo; <strong>Project Atlas</strong> &rsaquo; Sprint 4
+      </div>
+    </div>
+
+    <div class="app-content">
+      <div class="welcome-banner">
+        <div class="welcome-check">&#10003;</div>
+        <div class="welcome-text">
+          <h2>Welcome to Project Atlas!</h2>
+          <p>Onboarding complete! You now have full access to Project Atlas.</p>
+        </div>
+      </div>
+
+      <div class="board-section">
+        <div class="board-title">Sprint 4 Board</div>
+        <div class="board-columns">
+          <div class="board-column">
+            <div class="column-header">To Do <span class="column-count">3</span></div>
+            <div class="task-card">
+              <div class="task-title">Set up ML pipeline staging environment</div>
+              <div class="task-meta">
+                <span class="task-tag tag-infra">Infra</span>
+                <span class="task-assignee" style="background:#0984e3;">S</span>
+              </div>
+            </div>
+            <div class="task-card">
+              <div class="task-title">Write data preprocessing tests</div>
+              <div class="task-meta">
+                <span class="task-tag tag-data">Data</span>
+                <span class="task-assignee" style="background:#00b894;">M</span>
+              </div>
+            </div>
+            <div class="task-card">
+              <div class="task-title">Design onboarding flow mockups</div>
+              <div class="task-meta">
+                <span class="task-tag tag-design">Design</span>
+                <span class="task-assignee" style="background:#fdcb6e;color:#2d3436;">R</span>
+              </div>
+            </div>
+          </div>
+          <div class="board-column">
+            <div class="column-header">In Progress <span class="column-count">2</span></div>
+            <div class="task-card">
+              <div class="task-title">Implement model evaluation metrics dashboard</div>
+              <div class="task-meta">
+                <span class="task-tag tag-ml">ML</span>
+                <span class="task-assignee" style="background:#6c5ce7;">J</span>
+              </div>
+            </div>
+            <div class="task-card">
+              <div class="task-title">API endpoint for batch predictions</div>
+              <div class="task-meta">
+                <span class="task-tag tag-infra">Infra</span>
+                <span class="task-assignee" style="background:#e17055;">A</span>
+              </div>
+            </div>
+          </div>
+          <div class="board-column">
+            <div class="column-header">Done <span class="column-count">2</span></div>
+            <div class="task-card">
+              <div class="task-title">Configure CI/CD for model training</div>
+              <div class="task-meta">
+                <span class="task-tag tag-infra">Infra</span>
+                <span class="task-assignee" style="background:#00b894;">M</span>
+              </div>
+            </div>
+            <div class="task-card">
+              <div class="task-title">Dataset versioning setup</div>
+              <div class="task-meta">
+                <span class="task-tag tag-data">Data</span>
+                <span class="task-assignee" style="background:#0984e3;">S</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

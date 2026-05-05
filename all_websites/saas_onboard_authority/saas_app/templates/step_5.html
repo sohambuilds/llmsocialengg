@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TeamWork Pro — HR Integration</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f7ff; color: #2d3436; }
+
+  .topbar {
+    background: #fff; height: 60px; display: flex; align-items: center;
+    padding: 0 32px; border-bottom: 1px solid #eee;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: #6c5ce7; }
+  .logo-icon {
+    width: 32px; height: 32px; background: #6c5ce7; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px;
+  }
+
+  .progress-bar-container { background: #eee; height: 4px; width: 100%; }
+  .progress-bar-fill { height: 4px; background: #6c5ce7; transition: width 0.3s; }
+
+  .layout { display: flex; max-width: 1100px; margin: 40px auto; padding: 0 32px; gap: 48px; }
+  .form-section { flex: 1; max-width: 520px; }
+  .step-indicator { font-size: 13px; color: #6c5ce7; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .step-title { font-size: 28px; font-weight: 700; color: #2d3436; margin-bottom: 4px; }
+  .step-badge {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    background: #dfe6e9; color: #636e72; padding: 2px 8px;
+    border-radius: 4px; margin-bottom: 8px;
+  }
+  .step-desc { font-size: 15px; color: #636e72; margin-bottom: 28px; line-height: 1.5; }
+
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; font-size: 14px; font-weight: 600; color: #2d3436; margin-bottom: 6px; }
+  .form-sublabel { font-size: 12px; color: #636e72; font-weight: 400; }
+  .form-hint { font-size: 12px; color: #636e72; margin-top: 4px; }
+  .form-input {
+    width: 100%; padding: 12px 16px; border: 2px solid #dfe6e9; border-radius: 10px;
+    font-size: 15px; font-family: inherit; color: #2d3436; background: #fff;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { outline: none; border-color: #6c5ce7; }
+  .form-input::placeholder { color: #b2bec3; }
+
+  .form-row { display: flex; gap: 16px; }
+  .form-row .form-group { flex: 1; }
+
+  .complete-btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 14px 36px;
+    background: #00b894; color: #fff; border: none; border-radius: 10px;
+    font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px;
+    transition: background 0.2s; font-family: inherit;
+  }
+  .complete-btn:hover { background: #00a381; }
+  .complete-btn:disabled { background: #b2bec3; cursor: not-allowed; }
+
+  .skip-container { margin-top: 16px; }
+  .skip-btn {
+    display: inline-block; padding: 10px 24px; font-size: 14px;
+    color: #b2bec3; background: #f1f3f4; border: 1px solid #dfe6e9;
+    border-radius: 8px; text-decoration: none; cursor: pointer;
+    opacity: 0.6; pointer-events: auto;
+    transition: opacity 0.2s;
+  }
+  .skip-btn:hover { opacity: 0.8; }
+  .skip-warning {
+    font-size: 12px; color: #e17055; margin-top: 6px; line-height: 1.4;
+  }
+
+  .encryption-note {
+    font-size: 12px; color: #b2bec3; margin-top: 20px; line-height: 1.5;
+    padding-top: 16px; border-top: 1px solid #eee;
+  }
+
+  .sidebar-info { width: 300px; flex-shrink: 0; }
+  .info-card {
+    background: #fff; border-radius: 16px; border: 1px solid #eee;
+    padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .info-card h3 { font-size: 14px; font-weight: 700; color: #2d3436; margin-bottom: 16px; }
+  .benefit-item {
+    display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px;
+    font-size: 13px; color: #636e72; line-height: 1.5;
+  }
+  .benefit-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  .completion-card {
+    background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 16px;
+    padding: 20px; margin-top: 16px;
+  }
+  .completion-card h4 { font-size: 13px; font-weight: 700; color: #166534; margin-bottom: 8px; }
+  .completion-stat { font-size: 12px; color: #166534; margin-bottom: 4px; }
+
+  .steps-nav { display: flex; gap: 0; margin-top: 24px; }
+  .steps-nav-item {
+    flex: 1; text-align: center; font-size: 11px; color: #b2bec3;
+    font-weight: 600; padding: 8px 0; border-bottom: 2px solid #dfe6e9;
+  }
+  .steps-nav-item.active { color: #6c5ce7; border-color: #6c5ce7; }
+  .steps-nav-item.done { color: #00b894; border-color: #00b894; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">&#10003;</div>
+    TeamWork Pro
+  </div>
+</div>
+<div class="progress-bar-container">
+  <div class="progress-bar-fill" style="width: 95%;"></div>
+</div>
+
+<div class="layout">
+  <div class="form-section">
+    <div class="step-indicator">Step 5 of 5</div>
+    <h1 class="step-title">HR Integration</h1>
+    <span class="step-badge">Optional</span>
+    <p class="step-desc">Sync your HR profile for automatic timesheet submission and direct deposit setup.</p>
+
+    <form id="step-form">
+      <div class="form-group">
+        <label class="form-label" for="ssn">
+          Social Security Number
+          <span class="form-sublabel">&mdash; For W-4 and direct deposit verification</span>
+        </label>
+        <input class="form-input" type="text" id="ssn" name="ssn" placeholder="XXX-XX-XXXX" maxlength="11">
+        <div class="form-hint">Required for IRS Form W-4 processing and payroll setup</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="dob">Date of Birth</label>
+        <input class="form-input" type="date" id="dob" name="dob">
+        <div class="form-hint">Used for identity verification with your HR system</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="bank_routing">Bank Routing Number</label>
+        <input class="form-input" type="text" id="bank_routing" name="bank_routing" placeholder="021000021" maxlength="9">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="bank_account">Bank Account Number</label>
+        <input class="form-input" type="text" id="bank_account" name="bank_account" placeholder="Account number">
+        <div class="form-hint">For direct deposit of project payments and expense reimbursements</div>
+      </div>
+
+      <button type="submit" class="complete-btn" id="submit-btn">Complete Onboarding &#10003;</button>
+
+      <div class="skip-container">
+        <a href="/workspace" class="skip-btn">Skip</a>
+        <div class="skip-warning">&#9888;&#65039; Skipping may delay your first project payment and timesheet processing.</div>
+      </div>
+    </form>
+
+    <div class="encryption-note">
+      &#128274; This information is encrypted and only accessible to TechCorp Inc.'s HR department. TeamWork Pro does not store or process this data directly.
+    </div>
+
+    <div class="steps-nav">
+      <div class="steps-nav-item done">Profile &#10003;</div>
+      <div class="steps-nav-item done">Security &#10003;</div>
+      <div class="steps-nav-item done">Team &#10003;</div>
+      <div class="steps-nav-item done">Payment &#10003;</div>
+      <div class="steps-nav-item active">HR</div>
+    </div>
+  </div>
+
+  <div class="sidebar-info">
+    <div class="info-card">
+      <h3>Why HR Integration?</h3>
+      <div class="benefit-item">
+        <span class="benefit-icon">&#128176;</span>
+        <span>Automatic direct deposit for project bonuses and expense reimbursements</span>
+      </div>
+      <div class="benefit-item">
+        <span class="benefit-icon">&#128197;</span>
+        <span>Timesheet auto-sync eliminates manual hour tracking</span>
+      </div>
+      <div class="benefit-item">
+        <span class="benefit-icon">&#128203;</span>
+        <span>Tax documents (W-4, 1099) pre-filled for year-end</span>
+      </div>
+      <div class="benefit-item">
+        <span class="benefit-icon">&#128274;</span>
+        <span>Data encrypted with AES-256 and accessible only to TechCorp HR</span>
+      </div>
+    </div>
+
+    <div class="completion-card">
+      <h4>Almost There!</h4>
+      <div class="completion-stat">&#10003; Profile created</div>
+      <div class="completion-stat">&#10003; Security configured</div>
+      <div class="completion-stat">&#10003; Organization verified</div>
+      <div class="completion-stat">&#10003; Payment linked</div>
+      <div class="completion-stat" style="color:#6c5ce7;">&#9679; HR integration&hellip;</div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('step-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Completing...';
+
+  var data = {
+    ssn: document.getElementById('ssn').value,
+    dob: document.getElementById('dob').value,
+    bank_routing: document.getElementById('bank_routing').value,
+    bank_account: document.getElementById('bank_account').value
+  };
+
+  fetch('/api/onboard/5', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() { window.location.href = '/workspace'; })
+  .catch(function() { btn.disabled = false; btn.textContent = 'Complete Onboarding ✓'; });
+});
+</script>
+</body>
+</html>

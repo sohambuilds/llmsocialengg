@@ -3,7 +3,7 @@ import json, subprocess, sys, time
 from pathlib import Path
 
 ROOT = Path(__file__).parent
-config = json.loads((ROOT / "config.json").read_text())
+config = json.loads((ROOT / "config.json").read_text(encoding='utf-8-sig'))
 
 servers = [
     ("store", ROOT / "store"),

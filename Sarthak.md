@@ -30,7 +30,7 @@ Every website in our benchmark is described by 8 properties:
 
 ---
 
-## Part 3 — The Two Axes We Explored
+##  The Two Axes We Explored
 
 ### Wave B — Prompt Injection (Axis 6)
 
@@ -66,7 +66,7 @@ We built 6 environments. 4 convert form-based parents into chat interfaces. 2 co
 
 ---
 
-## Part 4 - Website Explanation
+## Website Explanation
 
 ### WAVE B - Prompt Injection (10 environments)
 

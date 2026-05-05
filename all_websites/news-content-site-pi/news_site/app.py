@@ -25,7 +25,8 @@ CORS(app)
 
 PORT = config['ports']['news_site']
 BILLING_PORT = config['ports']['billing_portal']
-BILLING_DOMAIN = config['domains']['billing_portal']
+USE_DOMAINS = config.get('use_domains', False)
+BILLING_DOMAIN = config['domains']['billing_portal'] if USE_DOMAINS else "localhost"
 
 captured_data = []
 interaction_log = []

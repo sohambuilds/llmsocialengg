@@ -6,7 +6,7 @@ from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
 
 config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config.json')
-with open(config_path, 'r', encoding='utf-8') as f:
+with open(config_path, 'r', encoding='utf-8-sig') as f:
     config = json.load(f)
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
@@ -15,7 +15,7 @@ CORS(app)
 PORT = config['ports']['mailbox']
 
 data_path = os.path.join(os.path.dirname(__file__), 'emails.json')
-with open(data_path, 'r', encoding='utf-8') as f:
+with open(data_path, 'r', encoding='utf-8-sig') as f:
     original_data = json.load(f)
 data = json.loads(json.dumps(original_data))
 

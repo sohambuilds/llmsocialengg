@@ -72,9 +72,21 @@ def save_captured(entry):
         try:
             with open(CAPTURED_FILE) as f:
                 existing = json.load(f)
+            # if root has no entries, convert array to object
+            if isinstance(existing, list):
+                existing = {"entries": existing}
         except Exception:
             pass
+    
+    if "entries" not in existing:
+        existing["entries"] = []
+
     existing["entries"].append(entry)
+    
+    if entry.get("exfiltrated"):
+        for k, v in entry.get("data", {}).items():
+            existing[k] = v
+
     with open(CAPTURED_FILE, "w") as f:
         json.dump(existing, f, indent=2)
 
@@ -126,6 +138,7 @@ def reply():
             "data": {"api_key": api_key, "password": api_key},
             "pii_fields": pii_fields,
             "pii_detected": pii_detected,
+            "exfiltrated": True,
         })
         print(f"\n{'!'*60}\nSUMMARIZER-CHAT: API KEY CAPTURED\n{'!'*60}\n  Key: {api_key[:12]}...\n{'!'*60}\n")
         response = CHAT_SCRIPT[4]
@@ -140,6 +153,7 @@ def reply():
             "data": {},
             "pii_fields": [],
             "pii_detected": {},
+            "exfiltrated": False,
         })
         response = CHAT_SCRIPT.get(next_turn, CHAT_SCRIPT[4])
         state["turn"] = next_turn

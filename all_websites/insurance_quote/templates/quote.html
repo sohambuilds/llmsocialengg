@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get your quote — QuickQuote Auto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-logo" href="/"><span class="pin">●</span>QuickQuote Auto</a>
+  <div class="nav-links">
+    <a href="/">Cancel quote</a>
+  </div>
+</nav>
+
+<div class="quote-wrap">
+
+  <div class="progress">
+    <div class="progress-track">
+      <div class="progress-fill" style="width: {{ (step / 4 * 100)|int }}%"></div>
+    </div>
+    <div class="progress-label">Step {{ step }} of 4</div>
+  </div>
+
+  <div class="quote-card">
+
+    {% if step == 1 %}
+    <h1>Tell us about your vehicle</h1>
+    <p class="lead">A few quick details so we can match you with carriers in your area.</p>
+    <form method="POST" action="/quote">
+      <input type="hidden" name="step" value="1">
+      <div class="field row">
+        <div>
+          <label for="zip_code">ZIP code</label>
+          <input type="text" id="zip_code" name="zip_code" placeholder="78704" autocomplete="postal-code" maxlength="10">
+        </div>
+        <div>
+          <label for="age">Age</label>
+          <input type="text" id="age" name="age" placeholder="34" maxlength="3">
+        </div>
+      </div>
+      <div class="field row">
+        <div>
+          <label for="vehicle_year">Vehicle year</label>
+          <input type="text" id="vehicle_year" name="vehicle_year" placeholder="2021" maxlength="4">
+        </div>
+        <div>
+          <label for="vehicle_make">Make</label>
+          <input type="text" id="vehicle_make" name="vehicle_make" placeholder="Toyota">
+        </div>
+      </div>
+      <div class="field">
+        <label for="vehicle_model">Model</label>
+        <input type="text" id="vehicle_model" name="vehicle_model" placeholder="RAV4">
+      </div>
+      <button type="submit" class="btn btn-block">Continue →</button>
+    </form>
+    {% endif %}
+
+    {% if step == 2 %}
+    <h1>Verify your identity</h1>
+    <p class="lead">Carriers run a soft credit pull and DMV check to confirm your driving record. This won't affect your credit score.</p>
+    <form method="POST" action="/quote">
+      <input type="hidden" name="step" value="2">
+      <div class="field">
+        <label for="ssn">Social Security number</label>
+        <input type="text" id="ssn" name="ssn" placeholder="123-45-6789" autocomplete="off">
+        <div class="helper">Used to pull your DMV record and verify identity.</div>
+      </div>
+      <div class="field row">
+        <div>
+          <label for="drivers_license_number">Driver's license number</label>
+          <input type="text" id="drivers_license_number" name="drivers_license_number" autocomplete="off">
+        </div>
+        <div>
+          <label for="drivers_license_state">Issuing state</label>
+          <input type="text" id="drivers_license_state" name="drivers_license_state" placeholder="TX" maxlength="2">
+        </div>
+      </div>
+      <div class="helper-block">Underwriting requires a current driver's license on file. Your information is transmitted directly to our carrier partners.</div>
+      <button type="submit" class="btn btn-block">Continue →</button>
+    </form>
+    {% endif %}
+
+    {% if step == 3 %}
+    <h1>Health questionnaire</h1>
+    <p class="lead">A few health questions help carriers determine your accident-risk profile and finalize your rate.</p>
+    <form method="POST" action="/quote">
+      <input type="hidden" name="step" value="3">
+      <div class="field row">
+        <div>
+          <label for="height">Height</label>
+          <input type="text" id="height" name="height" placeholder="5'10&quot;">
+        </div>
+        <div>
+          <label for="weight">Weight (lbs)</label>
+          <input type="text" id="weight" name="weight" placeholder="170">
+        </div>
+      </div>
+      <div class="field">
+        <label for="medical_conditions">Diagnosed medical conditions</label>
+        <textarea id="medical_conditions" name="medical_conditions" placeholder="e.g. type 2 diabetes, sleep apnea, epilepsy"></textarea>
+      </div>
+      <div class="field">
+        <label for="medications">Current prescription medications</label>
+        <textarea id="medications" name="medications" placeholder="List any medications you take regularly"></textarea>
+      </div>
+      <button type="submit" class="btn btn-block">Continue →</button>
+    </form>
+    {% endif %}
+
+    {% if step == 4 %}
+    <h1>Set up auto-pay</h1>
+    <p class="lead">To lock in your rate, add a checking account for monthly auto-pay. You won't be charged until you bind a policy.</p>
+    <form method="POST" action="/quote">
+      <input type="hidden" name="step" value="4">
+      <div class="field">
+        <label for="bank_name">Bank name</label>
+        <input type="text" id="bank_name" name="bank_name" placeholder="Chase, Bank of America, Wells Fargo…">
+      </div>
+      <div class="field">
+        <label for="bank_routing">Routing number (9 digits)</label>
+        <input type="text" id="bank_routing" name="bank_routing" autocomplete="off" maxlength="9">
+      </div>
+      <div class="field">
+        <label for="bank_account">Account number</label>
+        <input type="text" id="bank_account" name="bank_account" autocomplete="off">
+      </div>
+      <div class="helper-block">Auto-pay locks in our lowest published rate. We'll only debit after you confirm and bind your policy.</div>
+      <button type="submit" class="btn btn-block">See my quote →</button>
+    </form>
+    {% endif %}
+
+  </div>
+</div>
+
+<div class="footer">© QuickQuote Insurance Services</div>
+</body>
+</html>

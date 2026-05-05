@@ -8,6 +8,18 @@ PIDFILE="$ROOT/.server_pids"
 
 FORCE=0
 
+# Resolve python from project venv (uv-managed) so bash can find it
+if [ -f "$ROOT/.venv/Scripts/python.exe" ]; then
+    PYTHON="$ROOT/.venv/Scripts/python.exe"
+elif [ -f "$ROOT/.venv/Scripts/python" ]; then
+    PYTHON="$ROOT/.venv/Scripts/python"
+elif [ -f "$ROOT/.venv/bin/python" ]; then  
+    PYTHON="$ROOT/.venv/bin/python"
+else
+    echo "  [ERROR] No .venv python found. Run 'uv sync' first."
+    exit 1
+fi
+
 # ── Server definitions ────────────────────────────────────────────────
 NAMES=(
     "cluttered_downloads"
@@ -52,6 +64,43 @@ NAMES=(
     "e18_linkedin_chat"
     "support_chat_static"
     "freelance_static"
+    "job_portal_no_timer"
+    "gov_portal_no_timer"
+    "marketplace_calm"
+    "adp_no_banner"
+    "aws_no_countdown"
+    "booking_no_timer"
+    "e7_ninite_calm"
+    "e8_chase_no_countdown"
+    "news_medium"
+    "bumble_medium"
+    "saas_onboard_medium"
+    "e10_mychart_calm"
+    "e8_chase_no_countdown"
+    "e13_irs_no_timer"
+    "e14_oracle_no_timer"
+    "job_portal_medium"
+    "saas_onboard_direct"
+    "marketplace_email_entry"
+    "ancestry_dna_email_entry"
+    "betterhelp_email_entry"
+    "bumble_email_entry"
+    # Original envs missing from start script
+    "virus_scanner"
+    "file_converter"
+    "quiz_scam"
+    "support_chat"
+    "saas_onboard"
+    "crypto_platform"
+    "saas_onboard_authority"
+    "adp_authority"
+    "marketplace_social_proof"
+    "e23_netflix_social_proof"
+    "ecommerce_scarcity"
+    "github_phish_scarcity"
+    "dating_photo_id"
+    "insurance_quote"
+    "insurance_quote_medium"
 )
 
 CMDS=(
@@ -97,6 +146,43 @@ CMDS=(
     "uv run python all_websites/e18-linkedin-chat/run_servers.py"
     "uv run python all_websites/support-chat-static/store/app.py"
     "uv run python all_websites/freelance-static/freelancehub/app.py"
+    "uv run python all_websites/job_portal_no_timer/run_servers.py"
+    "uv run python all_websites/gov_portal_no_timer/run_servers.py"
+    "uv run python all_websites/marketplace-calm/app.py"
+    "uv run python all_websites/adp_no_banner/server.py"
+    "uv run python all_websites/aws_no_countdown/server.py"
+    "uv run python all_websites/booking_no_timer/server.py"
+    "uv run python all_websites/e7_ninite_calm/run_servers.py"
+    "uv run python all_websites/e8_chase_no_countdown/run_servers.py"
+    "uv run python all_websites/news-medium/run_servers.py"
+    "uv run python all_websites/bumble-medium/server.py"
+    "uv run python all_websites/saas-onboarding-medium/run_servers.py"
+    "uv run python all_websites/e10-mychart-calm/run_servers.py"
+    "uv run python all_websites/e8-chase-no-countdown/run_servers.py"
+    "uv run python all_websites/e13-irs-no-timer/run_servers.py"
+    "uv run python all_websites/e14-oracle-no-timer/run_servers.py"
+    "uv run python all_websites/job-portal-medium/run_servers.py"
+    "uv run python all_websites/saas-onboarding-direct/run_servers.py"
+    "uv run python all_websites/marketplace-email-entry/run_servers.py"
+    "uv run python all_websites/ancestry_dna_email_entry/run_servers.py"
+    "uv run python all_websites/betterhelp_email_entry/run_servers.py"
+    "uv run python all_websites/bumble_email_entry/run_servers.py"
+    # Original envs missing from start script
+    "uv run python all_websites/virus-scanner/app.py"
+    "uv run python all_websites/file-converter/app.py"
+    "uv run python all_websites/quiz-site/app.py"
+    "uv run python all_websites/support-chat/run_servers.py"
+    "uv run python all_websites/saas-onboarding/run_servers.py"
+    "uv run python all_websites/crypto-platform/run_servers.py"
+    "uv run python all_websites/saas_onboard_authority/run_servers.py"
+    "uv run python all_websites/adp_authority/server.py"
+    "uv run python all_websites/marketplace_social_proof/app.py"
+    "uv run python all_websites/e23_netflix_social_proof/run_servers.py"
+    "uv run python all_websites/ecommerce_scarcity/run_servers.py"
+    "uv run python all_websites/github_phish_scarcity/app.py"
+    "uv run python all_websites/dating_photo_id/app.py"
+    "uv run python all_websites/insurance_quote/app.py"
+    "uv run python all_websites/insurance_quote_medium/app.py"
 )
 
 PORTS=(
@@ -142,6 +228,39 @@ PORTS=(
     "5324"
     "5326"
     "5328"
+    "5102"
+    "5105"
+    "5107"
+    "5108"
+    "5109"
+    "5110"
+    "5111"
+    "5112"
+    "5113"
+    "5114"
+    "5109"
+    "5110"
+    "5111"
+    "5401"
+    "5410"
+    "5402"
+    "5113"
+    "5115"
+    "5117"
+    "5119"
+    # Original envs missing from start script
+    "5055"
+    "5056"
+    "5057"
+    "6010"
+    "6020"
+    "6030"
+    "5121"
+    "5124"
+    "5125"
+    "5126"
+    "5127"
+    "5135"
 )
 
 # ── Kill process on port (used for force mode) ────────────────────────
@@ -160,6 +279,20 @@ kill_port() {
             kill -9 "$pid" 2>/dev/null
         fi
     fi
+}
+
+# ── Port check (works from WSL/Git Bash → Windows localhost) ──────────
+port_up() {
+    local port="$1"
+    powershell.exe -NoProfile -Command "
+        try {
+            \$tcp = New-Object System.Net.Sockets.TcpClient
+            \$tcp.Connect('127.0.0.1', $port)
+            \$tcp.Close()
+            exit 0
+        } catch { exit 1 }
+    " 2>/dev/null
+    return $?
 }
 
 # ── Stop all servers ──────────────────────────────────────────────────
@@ -200,7 +333,7 @@ check_status() {
         name="${NAMES[$i]}"
         port="${PORTS[$i]}"
 
-        if curl -s --connect-timeout 1 "http://localhost:$port/" > /dev/null 2>&1; then
+        if port_up "$port"; then
             printf "  %-22s \033[32m%-10s\033[0m %s\n" "$name" "RUNNING" "$port"
         else
             printf "  %-22s \033[31m%-10s\033[0m %s\n" "$name" "STOPPED" "$port"
@@ -252,7 +385,7 @@ for i in "${!NAMES[@]}"; do
     port="${PORTS[$i]}"
 
     is_running=0
-    if curl -s --connect-timeout 1 "http://localhost:$port/" > /dev/null 2>&1; then
+    if port_up "$port"; then
         is_running=1
     fi
 
@@ -270,7 +403,9 @@ for i in "${!NAMES[@]}"; do
     mkdir -p "$ROOT/logs"
 
     cd "$ROOT"
-    $cmd > "$logfile" 2>&1 &
+    # Replace 'uv run python' with the resolved venv python (uv not on PATH in bash)
+    actual_cmd="${cmd/uv run python/$PYTHON}"
+    $actual_cmd > "$logfile" 2>&1 &
     pid=$!
     echo "$pid" >> "$PIDFILE"
 
@@ -293,7 +428,7 @@ for i in "${!NAMES[@]}"; do
     name="${NAMES[$i]}"
     port="${PORTS[$i]}"
 
-    if curl -s --connect-timeout 2 "http://localhost:$port/" > /dev/null 2>&1; then
+    if port_up "$port"; then
         echo "  [OK]   $name :$port"
         healthy=$((healthy + 1))
     else

