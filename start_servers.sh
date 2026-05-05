@@ -89,6 +89,7 @@ NAMES=(
     "support_chat"
     "saas_onboard"
     "crypto_platform"
+    "saas_onboard_authority"
 )
 
 CMDS=(
@@ -162,6 +163,7 @@ CMDS=(
     "uv run python all_websites/support-chat/run_servers.py"
     "uv run python all_websites/saas-onboarding/run_servers.py"
     "uv run python all_websites/crypto-platform/run_servers.py"
+    "uv run python all_websites/saas_onboard_authority/run_servers.py"
 )
 
 PORTS=(
@@ -234,6 +236,7 @@ PORTS=(
     "6010"
     "6020"
     "6030"
+    "5121"
 )
 
 # ── Kill process on port (used for force mode) ────────────────────────

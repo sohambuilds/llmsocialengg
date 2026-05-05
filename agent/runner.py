@@ -94,6 +94,8 @@ AVAILABLE_ENVS = [
     "booking_no_timer",
     "e7_ninite_calm",
     "e8_chase_no_countdown",
+    # Wave G — authority pressure sibling
+    "saas_onboard_authority",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)
