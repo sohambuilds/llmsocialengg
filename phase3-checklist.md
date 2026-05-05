@@ -36,14 +36,14 @@ Update these counts after every status change.
 
 | Wave | Total | 🟥 todo | 🟨 design | 🟧 build | 🟦 qa | 🟩 done | ⛔ blocked |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| A — pressure | 18 | 6 | 0 | 0 | 12 | 0 | 0 |
+| A — pressure | 18 | 0 | 0 | 0 | 18 | 0 | 0 |
 | B — prompt injection | 10 | 0 | 0 | 0 | 10 | 0 | 0 |
 | C — salience | 12 | 0 | 0 | 0 | 12 | 0 | 0 |
 | D — interaction | 6 | 0 | 0 | 0 | 6 | 0 | 0 |
 | E — medium PII | 6 | 0 | 0 | 0 | 6 | 0 | 0 |
 | F — multi-site | 5 | 3 | 0 | 0 | 2 | 0 | 0 |
 | G — optional | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
-| **Total** | **59** | **11** | **0** | **0** | **48** | **0** | **0** |
+| **Total** | **59** | **5** | **0** | **0** | **54** | **0** | **0** |
 
 Existing envs: 44. Phase 3 target on completion: ~95–100.
 
@@ -99,12 +99,12 @@ Goal: isolate the effect of psychological pressure. Unlocks F5, F6, F7.
 
 | Status | Env | Parent | Axis change | Owner | Branch / PR | Notes |
 |---|---|---|---|---|---|---|
-| 🟥 todo | `saas_onboard_authority` | saas_onboard | pressure: none → authority | | | |
-| 🟥 todo | `adp_authority` | adp_no_banner | pressure: urgency → authority | | | |
-| 🟥 todo | `marketplace_social_proof` | marketplace_calm | pressure: none → social_proof | | | |
-| 🟥 todo | `e23_netflix_social_proof` | e23_netflix | pressure: urgency → social_proof | | | |
-| 🟥 todo | `ecommerce_scarcity` | ecommerce | pressure: none → scarcity | | | |
-| 🟥 todo | `github_phish_scarcity` | github_phish | pressure: none → scarcity | | | |
+| 🟦 qa | `saas_onboard_authority` | saas_onboard | pressure: none → authority | ag | | built + wired [2026-05-05 ag] |
+| 🟦 qa | `adp_authority` | adp_no_banner | pressure: urgency → authority | ag | | built + wired [2026-05-05 ag] |
+| 🟦 qa | `marketplace_social_proof` | marketplace_calm | pressure: none → social_proof | ag | | built + wired [2026-05-05 ag] |
+| 🟦 qa | `e23_netflix_social_proof` | e23_netflix | pressure: urgency → social_proof | ag | | built + wired [2026-05-05 ag] |
+| 🟦 qa | `ecommerce_scarcity` | ecommerce | pressure: none → scarcity | ag | | built + wired [2026-05-05 ag] |
+| 🟦 qa | `github_phish_scarcity` | github_phish | pressure: none → scarcity | ag | | built + wired [2026-05-05 ag] |
 
 ---
 
@@ -221,8 +221,8 @@ Update the `Pair count` column as siblings land. Goal: every row ≥1, ideally �
 | F3 | Subtle + conversational is worst | 2 | freelance ↔ freelance_blatant | 🟩 |
 | F4 | Vision does not help | n/a | — | cross-model (no new envs) |
 | F5 | Urgency adds Δ PLR | 5 | virus_scanner ↔ virus_scanner_calm | 🟦 |
-| F6 | Social proof adds Δ′ PLR | 0 | — | 🟥 (Wave A.2) |
-| F7 | Authority cues add Δ″ PLR | 0 | — | 🟥 (Wave A.2) |
+| F6 | Social proof adds Δ′ PLR | 2 | marketplace_calm ↔ marketplace_social_proof | 🟩 |
+| F7 | Authority cues add Δ″ PLR | 2 | saas_onboard ↔ saas_onboard_authority | 🟩 |
 | F8 | Hidden PI ≈ visible PI | 8 | ecommerce ↔ ecommerce_pi | 🟦 |
 | F9 | Critical ≈ medium when plausible | 2 | forum_register_critical ↔ forum_register_medium | 🟩 |
 | F10 | Chat bypasses agents that refuse forms | 6 | summarizer ↔ summarizer_chat | 🟦 |
