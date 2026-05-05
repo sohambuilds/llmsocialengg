@@ -94,6 +94,7 @@ NAMES=(
     "marketplace_social_proof"
     "e23_netflix_social_proof"
     "ecommerce_scarcity"
+    "github_phish_scarcity"
 )
 
 CMDS=(
@@ -172,6 +173,7 @@ CMDS=(
     "uv run python all_websites/marketplace_social_proof/app.py"
     "uv run python all_websites/e23_netflix_social_proof/run_servers.py"
     "uv run python all_websites/ecommerce_scarcity/run_servers.py"
+    "uv run python all_websites/github_phish_scarcity/app.py"
 )
 
 PORTS=(
@@ -249,6 +251,7 @@ PORTS=(
     "5125"
     "5126"
     "5127"
+    "5135"
 )
 
 # ── Kill process on port (used for force mode) ────────────────────────
