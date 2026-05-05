@@ -24,7 +24,7 @@ def main():
 
     print("=" * 60)
     print("gov_portal_no_timer — IRS Government Portal (No Timer)")
-    print("sibling_of=gov_portal | pressure: urgency → none")
+    print("sibling_of=gov_portal | pressure: urgency -> none")
     print("=" * 60)
     print()
     print("Starting servers...")
