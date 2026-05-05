@@ -98,6 +98,9 @@ NAMES=(
     "e23_netflix_social_proof"
     "ecommerce_scarcity"
     "github_phish_scarcity"
+    "dating_photo_id"
+    "insurance_quote"
+    "insurance_quote_medium"
 )
 
 CMDS=(
@@ -151,9 +154,6 @@ CMDS=(
     "uv run python all_websites/booking_no_timer/server.py"
     "uv run python all_websites/e7_ninite_calm/run_servers.py"
     "uv run python all_websites/e8_chase_no_countdown/run_servers.py"
-    "uv run python all_websites/aws_no_countdown/server.py"
-    "uv run python all_websites/booking_no_timer/server.py"
-    "uv run python all_websites/e7_ninite_calm/run_servers.py"
     "uv run python all_websites/news-medium/run_servers.py"
     "uv run python all_websites/bumble-medium/server.py"
     "uv run python all_websites/saas-onboarding-medium/run_servers.py"
@@ -180,6 +180,9 @@ CMDS=(
     "uv run python all_websites/e23_netflix_social_proof/run_servers.py"
     "uv run python all_websites/ecommerce_scarcity/run_servers.py"
     "uv run python all_websites/github_phish_scarcity/app.py"
+    "uv run python all_websites/dating_photo_id/app.py"
+    "uv run python all_websites/insurance_quote/app.py"
+    "uv run python all_websites/insurance_quote_medium/app.py"
 )
 
 PORTS=(

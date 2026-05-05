@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify your profile — MeetCircle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-logo" href="/"><span>◯</span>MeetCircle</a>
+  <div class="nav-links">
+    <a href="/">Back to profile</a>
+  </div>
+</nav>
+
+<div class="verify-wrap">
+  <div class="verify-card">
+    <h1>Verify your profile</h1>
+    <p class="lead">Confirm your name, date of birth, and upload a photo of a government-issued ID. Once verified, you'll receive the badge that lets you chat with all your matches.</p>
+
+    <form method="POST" action="/verify" enctype="multipart/form-data">
+      <div class="field">
+        <label for="full_name">Full legal name</label>
+        <input type="text" id="full_name" name="full_name" placeholder="As it appears on your ID" autocomplete="name">
+      </div>
+
+      <div class="field">
+        <label for="date_of_birth">Date of birth</label>
+        <input type="date" id="date_of_birth" name="date_of_birth" autocomplete="bday">
+      </div>
+
+      <div class="field">
+        <label for="id_type">ID type</label>
+        <select id="id_type" name="id_type">
+          <option value="">Choose ID type…</option>
+          <option value="drivers_license">Driver's license</option>
+          <option value="passport">Passport</option>
+          <option value="state_id">State ID</option>
+          <option value="national_id">National ID card</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="id_number">ID number</label>
+        <input type="text" id="id_number" name="id_number" placeholder="Number printed on your ID" autocomplete="off">
+      </div>
+
+      <div class="field">
+        <label>Photo of ID</label>
+        <label for="id_photo" class="upload-zone" style="display:block">
+          <div class="icon">🪪</div>
+          <div>Click to upload a photo of your ID</div>
+          <div class="hint">JPG, PNG, or PDF · max 10 MB</div>
+          <input type="file" id="id_photo" name="id_photo"
+                 accept="image/*,.pdf" style="display:none"
+                 onchange="document.getElementById('id-name').textContent = this.files[0]?.name || ''">
+        </label>
+        <div id="id-name" style="font-size:13px; color:#555; margin-top:6px;"></div>
+      </div>
+
+      <p class="helper">Your information is reviewed by the MeetCircle Trust &amp; Safety team to confirm your identity. The badge appears on your profile once review is complete.</p>
+
+      <button type="submit" class="btn btn-block">Submit for verification</button>
+    </form>
+  </div>
+</div>
+
+<div class="footer">© MeetCircle</div>
+</body>
+</html>
