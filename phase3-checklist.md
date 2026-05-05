@@ -41,21 +41,44 @@ Update these counts after every status change.
 | C — salience | 12 | 0 | 0 | 0 | 12 | 0 | 0 |
 | D — interaction | 6 | 0 | 0 | 0 | 6 | 0 | 0 |
 | E — medium PII | 6 | 0 | 0 | 0 | 6 | 0 | 0 |
-| F — multi-site | 5 | 3 | 0 | 0 | 2 | 0 | 0 |
-| G — optional | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
-| **Total** | **59** | **5** | **0** | **0** | **54** | **0** | **0** |
+| F — multi-site | 5 | 0 | 0 | 0 | 5 | 0 | 0 |
+| G — optional | 2 | 0 | 0 | 0 | 2 | 0 | 0 |
+| **Total** | **59** | **0** | **0** | **0** | **59** | **0** | **0** |
 
-Existing envs: 44. Phase 3 target on completion: ~95–100.
+Existing envs: 44. Phase 3 result: 59 built (+1 bonus
+`insurance_quote_medium` for an extra F9 pair). Master env directory
+count on disk: 105 (44 parents + 60 siblings + 1 `subfolder/` artifact
+that is also nested inside `github_phish_scarcity/`).
 
-> **Audit note (sync as of 2026-05-05):** wave statuses were back-filled
-> from the filesystem. As of the latest sweep, all 35 `🟦 qa` envs are
-> now wired into `classification.csv` (with `sibling_of`/`toggled_axis`
-> recorded in the `notes` column), `agent/config/environments.yaml`,
-> and `start_servers.sh`. The remaining sign-off items per env are:
-> design brief (`d`), single-axis diff verification (`qa`), smoke-test
-> against `/api/captured` (`smoke`), and screenshot diff vs parent
-> (`scrn`). Anyone closing one out to `🟩 done` must confirm those
-> four items first.
+> **Audit note (sync as of 2026-05-06):** all 59 Phase 3 siblings now
+> exist on disk and are wired into `classification.csv` (with
+> `sibling_of`/`toggled_axis` recorded in the `notes` column),
+> `agent/config/environments.yaml`, and `start_servers.sh`. The
+> remaining sign-off items per env are: design brief (`d`), single-axis
+> diff verification (`qa`), smoke-test against `/api/captured`
+> (`smoke`), and screenshot diff vs parent (`scrn`). The smoke-test
+> pass is blocked on API keys (see Open issues §2026-04-28).
+>
+> **Stylesheet/asset sweep (2026-05-06):** all `url_for('static', …)`
+> and `/static/…` references resolve at runtime. Most envs use inline
+> `<style>` blocks (no asset cascade risk). The marketplace family is
+> the only sibling cluster with non-empty `static/` and the cascade is
+> correct: PI-hidden and email-entry siblings have byte-identical
+> `style.css`/`script.js` to parent; calm/chat/social_proof share a
+> de-urgency'd CSS+JS (matches Vaibhav's brief).
+>
+> **Structural cruft to clean up (non-blocking — `start_servers.sh`
+> launches the top-level entry points, so these are inert at runtime):**
+> 1. `ecommerce-platform-pi/` has doubly-nested `templates/templates/`
+>    and `static/static/` (dead-weight duplicates of the same files).
+> 2. `ecommerce-platform-pi/` collapses an 8-store multi-app parent
+>    (`ecommerce-platform/{amazon,bargain_electro,fake_payment,fake_tracker,shopsmart,target,techvault,walmart}`)
+>    into a single-app sibling. The typosquat-vs-legit-store contrast
+>    of the parent is gone — re-check that this still measures F8 the
+>    way you intend.
+> 3. `adp_authority/ADP/`, `ecommerce_scarcity/ecommerce-platform/`,
+>    and `github_phish_scarcity/subfolder/` each contain a full nested
+>    copy of the parent dir. Bloats the repo and confuses diffs.
 
 ---
 
@@ -193,9 +216,9 @@ Goal: same scam, different entry point. Tests effect of mailbox triage.
 |---|---|---|---|---|---|---|
 | 🟦 qa | `saas_onboard_direct` | saas_onboard | multi_site: email_entry → single_origin | sr | | built + wired [2026-05-05 sr]; mailbox dropped; saas_app+billing on 5411/5412; agent lands directly at teamwork-app.com; scam payload byte-identical to parent |
 | 🟦 qa | `marketplace_email_entry` | marketplace | multi_site: single_origin → email_entry | sr | | built + wired [2026-05-05 sr]; mailbox (5413) + marketplace (5414); shipping-update email links to marketplace-hub.com:5414; marketplace_app byte-identical to parent |
-| 🟥 todo | `ancestry_dna_email_entry` | ancestry_dna | multi_site: single_origin → email_entry | | | |
-| 🟥 todo | `betterhelp_email_entry` | betterhelp | multi_site: single_origin → email_entry | | | |
-| 🟥 todo | `bumble_email_entry` | bumble | multi_site: single_origin → email_entry | | | |
+| 🟦 qa | `ancestry_dna_email_entry` | ancestry_dna | multi_site: single_origin → email_entry | sr | | built + wired [2026-05-06 audit]; mailbox + ancestry_app dual-server, run_servers.py present, classification.csv row recorded |
+| 🟦 qa | `betterhelp_email_entry` | betterhelp | multi_site: single_origin → email_entry | sr | | built + wired [2026-05-06 audit]; mailbox + betterhelp_app dual-server, run_servers.py present |
+| 🟦 qa | `bumble_email_entry` | bumble | multi_site: single_origin → email_entry | sr | | built + wired [2026-05-06 audit]; mailbox + bumble_app dual-server, run_servers.py present |
 
 ---
 
@@ -205,8 +228,8 @@ Build only if every higher-priority wave is closed AND the env also fits a Wave 
 
 | Status | Env | Parent | Axis change | Owner | Branch / PR | Notes |
 |---|---|---|---|---|---|---|
-| 🟥 todo | `dating_photo_id` | — (new A16) | new archetype | | | |
-| 🟥 todo | `insurance_quote` | — (new A19) | new archetype | | | |
+| 🟦 qa | `dating_photo_id` | — (new A16) | new archetype | sr | | built + wired [2026-05-06 audit]; classification.csv: dating / credential_harvest / subtle / critical / static_form |
+| 🟦 qa | `insurance_quote` | — (new A19) | new archetype | sr | | built + wired [2026-05-06 audit]; classification.csv: insurance / credential_harvest / plausible / critical / multi_step_form. Bonus sibling `insurance_quote_medium` exists on disk for F9 pair. |
 
 ---
 
@@ -229,8 +252,11 @@ Update the `Pair count` column as siblings land. Goal: every row ≥1, ideally �
 | F11 | Findings generalize across categories | 0 | — | 🟥 (no cross-category port yet) |
 
 A row turns 🟩 once it has its first pair; 🟦 at 3+ pairs. Pair counts
-above are derived from the 35 built siblings as of 2026-05-05; they
-become "verified" once smoke + screenshot sign-off lands per env.
+above were originally derived from the first 35 siblings; with all 59
+siblings now on disk, F8 / F9 / F10 / F11 pair counts should be re-run
+during smoke + screenshot sign-off. F11 (cross-category) becomes
+unblocked now that Waves D/E/F/G have landed cross-category siblings
+(insurance, dating, forum_register, gov_portal_chat, etc.).
 
 ---
 
@@ -251,6 +277,16 @@ Owner: vb
 Affects: all 12 Wave C envs (ports 5201–5223)
 What: All 12 envs have been built, all 4 registration files updated (environments.yaml, classification.csv, start_servers.sh, agent/runner.py), and all 23 ports confirmed HTTP 200 via boot test. The remaining two sign-off items are (1) agent smoke run confirming /api/captured logs a submission and (2) screenshot diff against parent. Both require running the benchmark agent, which requires GEMINI_API_KEY or GROQ_API_KEY. The logger does not persist screenshots to disk by default — logger.py would need a one-line patch to write PNGs alongside the JSON logs before the scrn item can be completed.
 Need: API key from Vaibhav to unblock. Alternatively, screenshot sign-off can be done manually with the Playwright script tools/screenshot_wavec.py once created.
+
+### 2026-05-06 — Structural cruft from `cp -r` cascades — [open]
+Owner: unassigned
+Affects: ecommerce-platform-pi, adp_authority, ecommerce_scarcity, github_phish_scarcity
+What: A stylesheet/asset audit on 2026-05-06 found four envs with dead-weight nested directories left over from sibling-build `cp -r` operations:
+(1) `ecommerce-platform-pi/` has both `templates/templates/` and `static/static/` with duplicated copies of the same files. The active app uses the top-level `templates/` and `static/css/` so it runs correctly; the nested copies are inert.
+(2) `ecommerce-platform-pi/` is also a SINGLE-app collapse of the parent `ecommerce-platform/`, which is an 8-store multi-app environment (amazon, bargain_electro, fake_payment, fake_tracker, shopsmart, target, techvault, walmart). The PI sibling kept only one store, losing the typosquat-vs-legitimate-store contrast that gives the parent its F8 measurement power. This is a design issue, not just cleanup.
+(3) `adp_authority/ADP/`, `ecommerce_scarcity/ecommerce-platform/`, and `github_phish_scarcity/subfolder/` each contain a complete nested copy of the parent directory. `start_servers.sh` launches the top-level entry point in every case, so they are inert at runtime — but they bloat the repo (~110 files in ecommerce_scarcity is roughly half dead weight) and confuse anyone diffing parent ↔ sibling.
+Stylesheet refs themselves all resolve at runtime — the issue is purely structural cleanup plus the F8-design question for #2.
+Need: (a) decide whether to redo `ecommerce-platform-pi` as a proper multi-app sibling that preserves the parent's contrast, or accept the simplified version and update the F8 brief. (b) Once decided, delete the four nested-parent directories.
 
 ---
 

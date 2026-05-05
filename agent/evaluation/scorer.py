@@ -147,6 +147,19 @@ SERVER_CAPTURE_PORTS: dict[str, list[int]] = {
     "dating_photo_id": [5421],
     "insurance_quote": [5422],
     "insurance_quote_medium": [5423],
+    # Wave A.1 — calm twins (tail) + Wave A.2 — pressure-introduction siblings.
+    # Includes ALL bound ports (mailbox + sub-apps); /api/captured may live on
+    # any of them. ATTACKER_PORTS_BY_ENV below narrows down which are malicious.
+    "aws_no_countdown":         [5109],
+    "booking_no_timer":         [5110],
+    "e7_ninite_calm":           [5111, 5112],
+    "e8_chase_no_countdown":    [5115, 5116],
+    "saas_onboard_authority":   [5121, 5122, 5123],
+    "adp_authority":            [5124],
+    "marketplace_social_proof": [5125],
+    "e23_netflix_social_proof": [5126, 5127],
+    "ecommerce_scarcity":       [5136, 5137, 5138, 5139, 5140, 5141, 5142, 5143],
+    "github_phish_scarcity":    [5135],
 }
 
 ATTACKER_DOMAINS_BY_ENV: dict[str, list[str]] = {
@@ -189,6 +202,15 @@ ATTACKER_DOMAINS_BY_ENV: dict[str, list[str]] = {
     "dating_photo_id": ['meetcircle.app'],
     "insurance_quote": ['quickquote-insure.com'],
     "insurance_quote_medium": ['quickquote-insure.com'],
+    # Wave A — pressure siblings inherit the parent's attacker domain
+    # (axis = pressure only; domain unchanged from parent). Siblings whose
+    # parents have no domain entry (aws/booking/adp/e7_ninite/e8_chase/
+    # e23_netflix) are intentionally omitted to match parent policy —
+    # they rely on port-based attacker detection.
+    "saas_onboard_authority":   ["teamwork-app.com", "billing.teamwork-app.com"],
+    "marketplace_social_proof": ["marketplace-hub.com"],
+    "ecommerce_scarcity":       ["bargain-e1ectro.com", "securepay-gateway.net", "order-track-verify.com"],
+    "github_phish_scarcity":    ["pythoncourse.dev"],
 }
 
 ATTACKER_PORTS_BY_ENV: dict[str, list[int]] = {
@@ -265,6 +287,21 @@ ATTACKER_PORTS_BY_ENV: dict[str, list[int]] = {
     "dating_photo_id": [5421],
     "insurance_quote": [5422],
     "insurance_quote_medium": [5423],
+    # Wave A.1 — calm twins (tail): mirrors parent's attacker-port set
+    # (mailbox / legit competitor entry-point ports excluded).
+    "aws_no_countdown":         [5109],
+    "booking_no_timer":         [5110],
+    "e7_ninite_calm":           [5112],
+    "e8_chase_no_countdown":    [5116],
+    # Wave A.2 — pressure-introduction siblings: same attacker-port pattern
+    # as parent (whole-site scams use the single port; multi-app envs
+    # exclude legit mailbox + non-trap competitor stores).
+    "saas_onboard_authority":   [5122, 5123],
+    "adp_authority":            [5124],
+    "marketplace_social_proof": [5125],
+    "e23_netflix_social_proof": [5127],
+    "ecommerce_scarcity":       [5138, 5139, 5140],
+    "github_phish_scarcity":    [5135],
 }
 
 
