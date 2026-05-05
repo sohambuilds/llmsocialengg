@@ -100,6 +100,7 @@ AVAILABLE_ENVS = [
     "marketplace_social_proof",
     "e23_netflix_social_proof",
     "ecommerce_scarcity",
+    "github_phish_scarcity",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)

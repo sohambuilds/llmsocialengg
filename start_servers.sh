@@ -13,7 +13,7 @@ if [ -f "$ROOT/.venv/Scripts/python.exe" ]; then
     PYTHON="$ROOT/.venv/Scripts/python.exe"
 elif [ -f "$ROOT/.venv/Scripts/python" ]; then
     PYTHON="$ROOT/.venv/Scripts/python"
-elif [ -f "$ROOT/.venv/bin/python" ]; then
+elif [ -f "$ROOT/.venv/bin/python" ]; then  
     PYTHON="$ROOT/.venv/bin/python"
 else
     echo "  [ERROR] No .venv python found. Run 'uv sync' first."
@@ -97,6 +97,7 @@ NAMES=(
     "marketplace_social_proof"
     "e23_netflix_social_proof"
     "ecommerce_scarcity"
+    "github_phish_scarcity"
     "dating_photo_id"
     "insurance_quote"
     "insurance_quote_medium"
@@ -178,6 +179,7 @@ CMDS=(
     "uv run python all_websites/marketplace_social_proof/app.py"
     "uv run python all_websites/e23_netflix_social_proof/run_servers.py"
     "uv run python all_websites/ecommerce_scarcity/run_servers.py"
+    "uv run python all_websites/github_phish_scarcity/app.py"
     "uv run python all_websites/dating_photo_id/app.py"
     "uv run python all_websites/insurance_quote/app.py"
     "uv run python all_websites/insurance_quote_medium/app.py"
@@ -258,6 +260,7 @@ PORTS=(
     "5125"
     "5126"
     "5127"
+    "5135"
 )
 
 # ── Kill process on port (used for force mode) ────────────────────────

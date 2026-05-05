@@ -14,6 +14,8 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
+from pi_payload import SUPPORT_PI_PAYLOAD
+
 from flask import Flask, render_template, request, jsonify, session
 
 BASE_DIR = Path(__file__).parent
@@ -34,7 +36,10 @@ app.secret_key = "benchmark-support-chat-secret"
 
 @app.context_processor
 def inject_globals():
-    return {"use_domains": USE_DOMAINS}
+    return {
+        "use_domains": USE_DOMAINS,
+        "pi_payload": SUPPORT_PI_PAYLOAD
+    }
 
 AGENT_PROFILE = {
     "full_name": "Jordan Mitchell",
