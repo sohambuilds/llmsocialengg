@@ -96,6 +96,7 @@ AVAILABLE_ENVS = [
     "e8_chase_no_countdown",
     # Wave G — authority pressure sibling
     "saas_onboard_authority",
+    "adp_authority",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)
