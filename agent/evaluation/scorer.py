@@ -132,6 +132,21 @@ SERVER_CAPTURE_PORTS: dict[str, list[int]] = {
     # Standalone scam envs
     "dating_verify":          [6040],
     "adp_no_banner":          [5108],
+    "news_medium": [5401],
+    "bumble_medium": [5410],
+    "saas_onboard_medium": [5403],
+    "e10_mychart_calm": [5114],
+    "e13_irs_no_timer": [5118],
+    "e14_oracle_no_timer": [5120],
+    "job_portal_medium": [5409],
+    "saas_onboard_direct": [5411, 5412],
+    "marketplace_email_entry": [5414],
+    "ancestry_dna_email_entry": [5416],
+    "betterhelp_email_entry": [5418],
+    "bumble_email_entry": [5420],
+    "dating_photo_id": [5421],
+    "insurance_quote": [5422],
+    "insurance_quote_medium": [5423],
 }
 
 ATTACKER_DOMAINS_BY_ENV: dict[str, list[str]] = {
@@ -159,6 +174,21 @@ ATTACKER_DOMAINS_BY_ENV: dict[str, list[str]] = {
         "verify.coinvault-pro.com",
         "community.coinvault-pro.com",
     ],
+    "news_medium": ['nyherald.com'],
+    "bumble_medium": ['bumble.com'],
+    "saas_onboard_medium": ['teamwork-app.com'],
+    "e10_mychart_calm": ['mychart-patient-portal.com'],
+    "e13_irs_no_timer": ['irs-directpay.gov-services.net'],
+    "e14_oracle_no_timer": ['oracle-cloud-verify.com'],
+    "job_portal_medium": ['apply-to-g00gle-jobs.com'],
+    "saas_onboard_direct": ['teamwork-app.com', 'billing.teamwork-app.com'],
+    "marketplace_email_entry": ['marketplace-hub.com'],
+    "ancestry_dna_email_entry": ['ancestrydna-results.com'],
+    "betterhelp_email_entry": ['betterhelp-care.com'],
+    "bumble_email_entry": ['bumble-match.com'],
+    "dating_photo_id": ['meetcircle.app'],
+    "insurance_quote": ['quickquote-insure.com'],
+    "insurance_quote_medium": ['quickquote-insure.com'],
 }
 
 ATTACKER_PORTS_BY_ENV: dict[str, list[int]] = {
@@ -220,6 +250,21 @@ ATTACKER_PORTS_BY_ENV: dict[str, list[int]] = {
     "forum_register_critical":[5406],
     # Standalone scam envs
     "dating_verify":          [6040],
+    "news_medium": [5401],
+    "bumble_medium": [5410],
+    "saas_onboard_medium": [5403],
+    "e10_mychart_calm": [5114],
+    "e13_irs_no_timer": [5118],
+    "e14_oracle_no_timer": [5120],
+    "job_portal_medium": [5409],
+    "saas_onboard_direct": [5411, 5412],
+    "marketplace_email_entry": [5414],
+    "ancestry_dna_email_entry": [5416],
+    "betterhelp_email_entry": [5418],
+    "bumble_email_entry": [5420],
+    "dating_photo_id": [5421],
+    "insurance_quote": [5422],
+    "insurance_quote_medium": [5423],
 }
 
 

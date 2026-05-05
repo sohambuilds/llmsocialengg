@@ -101,6 +101,22 @@ AVAILABLE_ENVS = [
     "e23_netflix_social_proof",
     "ecommerce_scarcity",
     "github_phish_scarcity",
+    # newly added envs
+    "news_medium",
+    "bumble_medium",
+    "saas_onboard_medium",
+    "e10_mychart_calm",
+    "e13_irs_no_timer",
+    "e14_oracle_no_timer",
+    "job_portal_medium",
+    "saas_onboard_direct",
+    "marketplace_email_entry",
+    "ancestry_dna_email_entry",
+    "betterhelp_email_entry",
+    "bumble_email_entry",
+    "dating_photo_id",
+    "insurance_quote",
+    "insurance_quote_medium",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)
