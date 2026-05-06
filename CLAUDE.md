@@ -19,20 +19,25 @@ Read these instead of duplicating them here:
   the organising principle.
 - [post-triage.plan.md](post-triage.plan.md) — the three-phase plan.
   Phase 1 done, Phase 2 pending, Phase 3 in flight.
+- [paper-plan.md](paper-plan.md) — **paper direction + 21-day action
+  plan for the EMNLP 2026 main-track submission.** Source of truth for
+  thesis, methodological commitments (4 models, n=5 seeds, mitigation
+  condition, LLM-as-judge DR, pre-registration), positioning vs. prior
+  work (AgentDAM, AgentDojo, AgentLeak), and the day-by-day schedule
+  through submission. Read this before touching paper-relevant code.
 - [phase3-checklist.md](phase3-checklist.md) — live working doc for
   Phase 3 sibling generation. As of the 2026-05-06 audit, **all 59
-  Phase 3 siblings exist on disk and are wired into
-  `classification.csv`, `agent/config/environments.yaml`, and
-  `start_servers.sh`** (Waves A–G all built). Plus one bonus sibling
-  (`insurance_quote_medium`) for an extra F9 pair. Every Phase 3 env
-  sits at `🟦 qa` because per-env sign-off (agent smoke-test against
-  `/api/captured`, screenshot diff vs parent, design brief, single-axis
-  diff verification) hasn't been completed yet — the smoke pass is
-  blocked on API keys per the open issue in the checklist. **Master env
-  count is 105** (44 parents + 60 siblings + 1 dead `subfolder/` parent
-  artifact). NB: the checklist file itself currently has unresolved Git
-  conflict markers from a recent merge; the post-merge side matches
-  the filesystem, the HEAD side is stale.
+  Phase 3 siblings + 1 bonus + 14 stranded parents are now wired into
+  `classification.csv`, `agent/config/environments.yaml`,
+  `agent/runner.py`, `agent/evaluation/scorer.py`, and
+  `start_servers.sh`**. Total: **91 logical envs** (full audit clean).
+  Phase 3 envs sit at `🟦 qa` — per-env sign-off (agent smoke-test
+  against `/api/captured`, screenshot diff vs parent, design brief,
+  single-axis diff verification) is the remaining gate, blocked on
+  API keys per the open issue. **106 directory count on disk:** the
+  91 wired envs + 14 abandoned-brand parents (no F-claim role; not
+  promoted) + 1 duplicate-naming artifact + 4 inert nested-parent
+  cruft dirs flagged in phase3-checklist.
 - [classification.csv](classification.csv) — master table of envs.
 - [classification_candidates.csv](classification_candidates.csv) /
   [classification_summary.md](classification_summary.md) — triage
@@ -129,9 +134,21 @@ Authoritative list lives in `agent/config/environments.yaml` and
 
 ```
 5050–5060   tier-1-ish single-server envs + coc_gems multi-server
+5101–5145   Phase 3 Wave A pressure siblings + Wave A.2 introductions
+            (e.g. virus_scanner_calm 5101, ecommerce_scarcity 5136–5143,
+             github_phish_scarcity 5135)
+5201–5223   Phase 3 Wave C salience siblings
+5301–5330   Phase 3 Wave B (prompt-injection) + Wave D (interaction)
+5401–5423   Phase 3 Wave E (medium PII) + Wave F (multi-site) + Wave G
+5500–5525   Stranded parents (ADP 5500, AWS 5501, ancestry_dna 5502,
+            betterhelp 5503, booking 5504, bumble 5505, e7_ninite 5510–11,
+            e8_chase 5512–13, e10_mychart 5514–15, e13_irs 5516–17,
+            e14_oracle 5518–19, e17_amazon 5520–21, e18_linkedin 5522–23,
+            e23_netflix 5524–25)
 6010–6011   support_chat (store, refund portal)
 6020–6022   saas_onboard (mailbox, app, billing)
 6030–6032   crypto_platform (platform, KYC, community)
+6040        dating_verify
 8010, 8025  job_portal (legit, mailbox)
 8040–8041   news (site, billing)
 8050–8051   gov_portal (mailbox, phishing)
@@ -140,8 +157,9 @@ Authoritative list lives in `agent/config/environments.yaml` and
 12999       job_portal phishing
 ```
 
-Phase 3 sibling envs reuse a parent's structure on a new port; check
-the YAML for current assignments, not this file.
+Authoritative list lives in `agent/config/environments.yaml` and
+`start_servers.sh`. The table above is a quick map; treat YAML as
+source of truth when in doubt.
 
 ## Project config
 

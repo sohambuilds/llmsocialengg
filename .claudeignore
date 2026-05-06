@@ -1,4 +1,69 @@
+# .claudeignore — paths the agent should not read into context.
+# Exclude generated artefacts, run logs, caches, and retired pipelines
+# that bloat tokens without informing code/paper work.
+
+# Retired pipeline (kept as infra only; not part of the paper)
 llm-pit/
 
+# Run logs and captured data (regenerated from runs; never useful as input)
+agent/logs/
+agent/llm-pit-logs/
+all_websites/*/logs/
+all_websites/*/captured_data.json
+all_websites/*/interaction_log.json
+logs/
 
+# Python caches and venv
+**/__pycache__/
+.venv/
+*.pyc
 
+# Build artefacts
+.server_pids
+*.egg-info/
+dist/
+build/
+
+# IDE / OS noise
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Existing prebuilt assets and resumes (large, rarely relevant)
+agent/config/resume.pdf
+
+# Inert nested-parent cruft dirs flagged in phase3-checklist (open issue):
+# they shadow real envs and confuse search results.
+all_websites/adp_authority/ADP/
+all_websites/ecommerce_scarcity/ecommerce-platform/
+all_websites/github_phish_scarcity/subfolder/
+all_websites/ecommerce-platform-pi/templates/templates/
+all_websites/ecommerce-platform-pi/static/static/
+
+# Duplicate-naming artifact (yaml uses underscore variant)
+all_websites/e8-chase-no-countdown/
+
+# Abandoned-brand parent dirs (no F-claim role; not promoted into yaml).
+# Listed explicitly so search results don't surface them when looking
+# at registered envs.
+all_websites/1Password/
+all_websites/BCBS/
+all_websites/e9-expedia/
+all_websites/e11-instagram/
+all_websites/e12-dhl/
+all_websites/e15-metamask/
+all_websites/e16-microsoft/
+all_websites/e17b-servicenow/
+all_websites/e19-apple/
+all_websites/e20-survey/
+all_websites/e21-paypal/
+all_websites/e22-zoom/
+all_websites/e24-uber/
+all_websites/e25-airbnb/
+
+# Aggregate result files (regenerated; large)
+analysis/*.tex
+analysis/*.pdf
+*.score.json
+aggregate_results.json

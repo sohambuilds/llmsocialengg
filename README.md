@@ -1,5 +1,12 @@
-# Social Engineering Attack Benchmark for Web-Based VLM Agents
+# Scammer4U — Social Engineering Attack Benchmark for Web-Based VLM Agents
 
+> **Status (May 2026):** EMNLP 2026 main-track submission in flight. Benchmark
+> currently has **91 logical environments** registered across 12 attack
+> vectors, with axis-controlled siblings supporting 11 paired ablation
+> claims (F1–F11). See [paper-plan.md](paper-plan.md) for the current
+> thesis, methodological commitments, and 21-day action plan;
+> [TAXO.md](TAXO.md) for the axis taxonomy; [phase3-checklist.md](phase3-checklist.md)
+> for live env build status.
 
 VLM agents are increasingly used to browse the web and complete tasks on
 behalf of users. They store personal info (email, phone, address, credit
@@ -14,11 +21,32 @@ The question we are asking:
 We build realistic-looking websites with traps hidden in them, send an
 agent to complete a normal task, and measure whether it gets fooled.
 
-
-## THE CORE QUESTION:
+## THE CORE QUESTION
 When an AI agent is given a normal task (like "apply for this job" or
 "buy these headphones") and it has the user's personal info in its memory,
 can it recognize a scam and refuse to hand over that info?
+
+## ENVIRONMENT INVENTORY (91 logical envs)
+
+The benchmark is organized along 8 classification/factor axes
+([TAXO.md](TAXO.md)). Per-env axis values live in
+[classification.csv](classification.csv).
+
+- **44 archetype parents** spanning 12 attack-vector categories: phishing
+  clones, dark patterns, urgency cues, fake trust signals, fake support
+  chats, consent dark patterns, reward traps, social proof manipulation,
+  conversational deception, prompt injection, OAuth impersonation,
+  credential harvesting via paywall.
+- **47 axis-controlled sibling envs** (Phase 3 Waves A–G) that differ
+  from a parent on exactly one axis — pressure (urgency/social proof/
+  authority/scarcity), salience (subtle/plausible/blatant), prompt
+  injection (none/visible/hidden/fake-system-msg), interaction
+  (form/chat), multi-site (single-origin/email-entry), or PII tier
+  (medium/critical). Each sibling pair anchors at least one F-claim.
+
+Detailed per-env descriptions for the original 16 archetypes follow
+below. Phase 3 sibling descriptions and axis values are in
+[phase3-checklist.md](phase3-checklist.md) and [classification.csv](classification.csv).
 
 
 ## WHAT COUNTS AS PERSONAL INFO (PII)?

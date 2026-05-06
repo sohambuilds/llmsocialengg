@@ -6,7 +6,7 @@ import json, os
 app = Flask(__name__)
 CORS(app)
 
-PORT = 5033
+PORT = 5500
 ENV_LABEL = "E33 — ADP Payroll Direct Deposit"
 LOG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs.json")
 

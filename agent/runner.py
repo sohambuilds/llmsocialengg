@@ -117,6 +117,22 @@ AVAILABLE_ENVS = [
     "dating_photo_id",
     "insurance_quote",
     "insurance_quote_medium",
+    # Stranded parents (Phase 1/2 builds promoted into the registry so
+    # F-pair siblings have a runnable parent for ablation comparisons).
+    "adp",
+    "aws",
+    "ancestry_dna",
+    "betterhelp",
+    "booking",
+    "bumble",
+    "e7_ninite",
+    "e8_chase",
+    "e10_mychart",
+    "e13_irs",
+    "e14_oracle",
+    "e17_amazon",
+    "e18_linkedin",
+    "e23_netflix",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)
