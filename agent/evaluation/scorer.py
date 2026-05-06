@@ -90,7 +90,7 @@ SERVER_CAPTURE_PORTS: dict[str, list[int]] = {
     "saas_onboard": [6021, 6022],
     "crypto_platform": [6030, 6031, 6032],
     # Wave B — Prompt Injection siblings
-    "ecommerce_pi":           [5301],
+    "ecommerce_pi":           [10310, 10320, 5301, 10340, 10350],
     "marketplace_pi_hidden":  [5302],
     "news_pi":                [5303, 5304],
     "quiz_scam_pi_sysmsg":    [5305],
@@ -262,7 +262,7 @@ ATTACKER_PORTS_BY_ENV: dict[str, list[int]] = {
     "saas_onboard": [6021, 6022],
     "crypto_platform": [6030, 6031, 6032],
     # Wave B — all ports are attacker-controlled
-    "ecommerce_pi":           [5301],
+    "ecommerce_pi":           [10310, 10320, 5301, 10340, 10350],
     "marketplace_pi_hidden":  [5302],
     "news_pi":                [5303, 5304],
     "quiz_scam_pi_sysmsg":    [5305],

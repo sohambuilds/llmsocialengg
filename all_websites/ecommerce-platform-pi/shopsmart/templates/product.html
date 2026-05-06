@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block title %}{{ listing.store_name }} — {{ product.name }}{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb">
+    <a href="/">Home</a>
+    <span class="material-icons breadcrumb-sep">chevron_right</span>
+    <a href="/">Compare Deals</a>
+    <span class="material-icons breadcrumb-sep">chevron_right</span>
+    <span>{{ listing.store_name }}</span>
+</nav>
+
+<div class="product-detail-layout">
+    <!-- Left: Product Image -->
+    <div class="detail-image-col">
+        <div class="detail-image-card">
+            <div class="detail-image-placeholder">
+                <span class="material-icons">headphones</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Product Info -->
+    <div class="detail-info-col">
+        <div class="detail-info-card">
+            <!-- Store Header -->
+            <div class="detail-store-header">
+                <div class="store-avatar-lg">
+                    <span class="material-icons">storefront</span>
+                </div>
+                <div class="detail-store-info">
+                    <div class="detail-store-name">
+                        {{ listing.store_name }}
+                        {% if listing.get('verified_seller') %}
+                        <span class="verified-chip" title="Verified Seller">
+                            <span class="material-icons">verified</span>
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% if listing.get('verified_seller') %}
+                    <span class="seller-status verified">Verified Seller</span>
+                    {% else %}
+                    <span class="seller-status unverified">
+                        <span class="material-icons">info_outline</span> Not verified
+                    </span>
+                    {% endif %}
+                    <div class="detail-store-rating">
+                        <div class="stars-row">
+                            {% for i in range(5) %}
+                            <span class="material-icons star-icon {% if i < listing.rating|int %}filled{% elif i < listing.rating %}half{% endif %}">
+                                {% if i < listing.rating|int %}star{% elif i < listing.rating %}star_half{% else %}star_border{% endif %}
+                            </span>
+                            {% endfor %}
+                        </div>
+                        <span>{{ listing.rating }} &middot; {{ "{:,}".format(listing.review_count) }} reviews</span>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="detail-divider">
+
+            <!-- Product Name -->
+            <h1 class="detail-product-title">{{ product.name }}</h1>
+            <p class="detail-product-desc">{{ product.description }}</p>
+
+            <!-- Price Block -->
+            <div class="detail-price-block">
+                <div class="detail-price-row">
+                    <span class="detail-price">${{ "%.2f"|format(listing.price) }}</span>
+                    {% if listing.get('original_price') and listing.original_price > listing.price %}
+                    <span class="detail-price-was"><s>${{ "%.2f"|format(listing.original_price) }}</s></span>
+                    <span class="discount-pill">{{ listing.discount_label }}</span>
+                    {% endif %}
+                </div>
+                <div class="detail-price-note">
+                    <span class="material-icons">info_outline</span>
+                    MSRP: ${{ "%.2f"|format(product.msrp) }}
+                </div>
+            </div>
+
+            <!-- Shipping & Delivery -->
+            <div class="detail-shipping-grid">
+                <div class="detail-shipping-item">
+                    <span class="material-icons">local_shipping</span>
+                    <div>
+                        <strong>{{ listing.shipping }}</strong>
+                        <span>{{ listing.delivery_estimate }}</span>
+                    </div>
+                </div>
+                <div class="detail-shipping-item">
+                    <span class="material-icons">security</span>
+                    <div>
+                        <strong>Buyer Protection</strong>
+                        <span>ShopSmart purchase guarantee</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            {% if listing.get('sold_out') %}
+            <div class="detail-sold-out">
+                <span class="material-icons">remove_shopping_cart</span>
+                <div>
+                    <strong>Out of Stock</strong>
+                    <p>{{ listing.sold_out_message }}</p>
+                </div>
+            </div>
+            {% else %}
+            <a href="http://localhost:{{ listing.store_port }}/product/sony-wh1000xm5"
+               class="buy-button buy-button-lg"
+               data-store="{{ listing.store_name }}"
+               data-listing="{{ listing.id }}">
+                <span class="material-icons">shopping_cart</span>
+                Buy from {{ listing.store_name }} &mdash; ${{ "%.2f"|format(listing.price) }}
+            </a>
+            {% endif %}
+
+            <a href="/" class="back-to-compare">
+                <span class="material-icons">arrow_back</span>
+                Back to price comparison
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Reviews -->
+<section class="detail-reviews-section">
+    <div class="section-header">
+        <h2 class="section-title">
+            <span class="material-icons">rate_review</span>
+            Customer Reviews ({{ reviews|length }})
+        </h2>
+    </div>
+
+    {% if reviews %}
+    <div class="detail-reviews-grid">
+        {% for review in reviews %}
+        <div class="review-card">
+            <div class="review-card-header">
+                <div class="review-avatar">{{ review.author[0] }}</div>
+                <div>
+                    <strong class="review-author">{{ review.author }}</strong>
+                    <span class="review-date">{{ review.date }}</span>
+                </div>
+            </div>
+            <div class="review-card-stars">
+                {% for i in range(review.rating) %}<span class="material-icons star-icon filled">star</span>{% endfor %}{% for i in range(5 - review.rating) %}<span class="material-icons star-icon">star_border</span>{% endfor %}
+            </div>
+            <p class="review-card-text">{{ review.text }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <span class="material-icons">rate_review</span>
+        <p>No reviews available for this seller yet.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

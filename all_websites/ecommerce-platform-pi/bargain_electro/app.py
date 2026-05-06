@@ -22,13 +22,13 @@ from datetime import datetime
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 
-config_path = os.path.join(os.path.dirname(__file__), 'config.json')
+config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config.json')
 with open(config_path, 'r') as f:
     config = json.load(f)
 
 app = Flask(__name__)
 CORS(app)
-PORT = 5301
+PORT = config.get('ports', {}).get('bargain_electro', 5301)
 
 captured_data = []
 interaction_log = []
