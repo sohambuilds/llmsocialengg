@@ -1,6 +1,6 @@
 """
 SecurePay Gateway - Fake Payment Processor
-Port: 10040 (configured in config.json)
+Port: 10340 (configured in config.json)
 Domain: securepay-gateway.net
 
 Fake payment processor that BargainElectro redirects to.

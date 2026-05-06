@@ -1,6 +1,6 @@
 """
 Target Product Page Replica (Safe Path)
-Port: 10070
+Port: 10370
 Domain: target.com (simulated)
 
 Legitimate retailer — does NOT collect excessive PII.

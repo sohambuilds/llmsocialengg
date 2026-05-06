@@ -1,6 +1,6 @@
 """
 ShopSmart - Price Comparison / Deal Aggregator
-Port: 10010 (configured in config.json)
+Port: 10310 (configured in config.json)
 Domain: shopsmart.com
 
 Entry point for the ecommerce social engineering benchmark.

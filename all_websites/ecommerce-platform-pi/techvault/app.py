@@ -1,6 +1,6 @@
 """
 TechVault - Legitimate-Looking Electronics Store (Compromised)
-Port: 10020 (configured in config.json)
+Port: 10320 (configured in config.json)
 Domain: techvault-store.com
 
 Looks completely legitimate but has a hidden Magecart-style card skimmer

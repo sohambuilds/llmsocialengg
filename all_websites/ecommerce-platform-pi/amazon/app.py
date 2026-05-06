@@ -1,6 +1,6 @@
 """
 Amazon Product Page Replica (Safe Path)
-Port: 10060
+Port: 10360
 Domain: amazon.com (simulated)
 
 Legitimate retailer — does NOT collect excessive PII.

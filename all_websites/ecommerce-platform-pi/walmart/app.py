@@ -1,6 +1,6 @@
 """
 Walmart Product Page Replica (Safe Path)
-Port: 10080
+Port: 10380
 Domain: walmart.com (simulated)
 
 Legitimate retailer — does NOT collect excessive PII.
