@@ -101,6 +101,38 @@ AVAILABLE_ENVS = [
     "e23_netflix_social_proof",
     "ecommerce_scarcity",
     "github_phish_scarcity",
+    # newly added envs
+    "news_medium",
+    "bumble_medium",
+    "saas_onboard_medium",
+    "e10_mychart_calm",
+    "e13_irs_no_timer",
+    "e14_oracle_no_timer",
+    "job_portal_medium",
+    "saas_onboard_direct",
+    "marketplace_email_entry",
+    "ancestry_dna_email_entry",
+    "betterhelp_email_entry",
+    "bumble_email_entry",
+    "dating_photo_id",
+    "insurance_quote",
+    "insurance_quote_medium",
+    # Stranded parents (Phase 1/2 builds promoted into the registry so
+    # F-pair siblings have a runnable parent for ablation comparisons).
+    "adp",
+    "aws",
+    "ancestry_dna",
+    "betterhelp",
+    "booking",
+    "bumble",
+    "e7_ninite",
+    "e8_chase",
+    "e10_mychart",
+    "e13_irs",
+    "e14_oracle",
+    "e17_amazon",
+    "e18_linkedin",
+    "e23_netflix",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)

@@ -84,6 +84,7 @@ We built 6 environments. 4 convert form-based parents into chat interfaces. 2 co
 
 **Axis changed:** `prompt_injection: none → visible_text`
 
+**Fix Needed:** Add the websites from ecommerce_platform to _pi 
 ---
 
 #### B.2 — `marketplace_website_pi_hidden` (port 5302)

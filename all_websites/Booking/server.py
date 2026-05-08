@@ -6,7 +6,7 @@ import json, os
 app = Flask(__name__)
 CORS(app)
 
-PORT = 5034
+PORT = 5504
 ENV_LABEL = "E34 — Booking.com Card Declined Trap"
 LOG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs.json")
 

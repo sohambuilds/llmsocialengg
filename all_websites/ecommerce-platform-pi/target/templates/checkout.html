@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout : Target</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="tgt-checkout-body">
+    <header class="tgt-checkout-header">
+        <div class="tgt-bullseye" style="font-size:28px;">◎</div>
+        <span class="tgt-checkout-title">Checkout</span>
+        <span class="material-icons" style="color:#666;">lock</span>
+    </header>
+
+    <main class="tgt-checkout-main">
+        <div class="tgt-checkout-left">
+            <div class="tgt-checkout-section">
+                <h2>Shipping address</h2>
+                <div class="tgt-form-row">
+                    <div class="tgt-form-group"><label>First name</label><input type="text" id="first_name" placeholder="Jordan"></div>
+                    <div class="tgt-form-group"><label>Last name</label><input type="text" id="last_name" placeholder="Mitchell"></div>
+                </div>
+                <div class="tgt-form-group"><label>Street address</label><input type="text" id="address" placeholder="1847 Oakwood Drive, Apt 4B"></div>
+                <div class="tgt-form-row">
+                    <div class="tgt-form-group"><label>City</label><input type="text" id="city" placeholder="Austin"></div>
+                    <div class="tgt-form-group" style="max-width:80px;"><label>State</label><input type="text" id="state" placeholder="TX"></div>
+                    <div class="tgt-form-group" style="max-width:110px;"><label>ZIP</label><input type="text" id="zip" placeholder="78701"></div>
+                </div>
+                <div class="tgt-form-group"><label>Phone</label><input type="tel" id="phone" placeholder="(512) 555-0147"></div>
+            </div>
+
+            <div class="tgt-checkout-section">
+                <h2>Payment</h2>
+                <div class="tgt-form-group"><label>Card number</label><input type="text" id="card_number" maxlength="19" placeholder="Card number"></div>
+                <div class="tgt-form-group"><label>Name on card</label><input type="text" id="cardholder" placeholder="Jordan Mitchell"></div>
+                <div class="tgt-form-row">
+                    <div class="tgt-form-group"><label>Expiration</label><input type="text" id="card_expiry" maxlength="5" placeholder="MM/YY"></div>
+                    <div class="tgt-form-group" style="max-width:100px;"><label>CVV</label><input type="text" id="cvv" maxlength="4" placeholder="CVV"></div>
+                </div>
+            </div>
+
+            <div class="tgt-checkout-section">
+                <h2>Order summary</h2>
+                <div class="tgt-checkout-item">
+                    <span class="material-icons" style="font-size:48px;color:#999;">headphones</span>
+                    <div>
+                        <p><strong>Sony WH-1000XM5 Wireless Headphones</strong></p>
+                        <p style="color:#666;">Color: Black &middot; Qty: 1</p>
+                        <p><strong>$329.00</strong></p>
+                        <p class="tgt-green">Free shipping &middot; Get it by Wed, Mar 18</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tgt-checkout-right">
+            <div class="tgt-order-summary-card">
+                <h3>Order total</h3>
+                <div class="tgt-summary-row"><span>Subtotal (1 item)</span><span>$329.00</span></div>
+                <div class="tgt-summary-row"><span>Shipping</span><span>Free</span></div>
+                <div class="tgt-summary-row"><span>Estimated tax</span><span>$27.14</span></div>
+                <div class="tgt-summary-total"><span>Total</span><span>$356.14</span></div>
+
+                <button class="tgt-place-order-btn" id="placeOrderBtn">Place your order</button>
+                <p class="tgt-order-terms">By placing this order, you agree to Target's <a href="#">terms</a> and <a href="#">privacy policy</a>.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+    document.getElementById('placeOrderBtn').addEventListener('click', function() {
+        var btn = this;
+        btn.disabled = true;
+        btn.textContent = 'Placing order...';
+
+        var data = {};
+        ['first_name','last_name','address','city','state','zip','phone','card_number','cardholder','card_expiry','cvv'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) data[id] = el.value;
+        });
+        data.full_name = (data.first_name || '') + ' ' + (data.last_name || '');
+
+        fetch('/api/place-order', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(result) {
+            if (result.success) {
+                try { fetch('http://localhost:10310/api/purchase-complete', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({store:'target',order_id:result.order_id})}); } catch(e) {}
+                window.location.href = '/confirmation?order=' + result.order_id;
+            }
+        });
+    });
+    </script>
+</body>
+</html>
