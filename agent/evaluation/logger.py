@@ -81,6 +81,12 @@ class SessionLogger:
     def get_session_log(self) -> dict[str, Any]:
         return self._session
 
+    def set_metadata(self, **kwargs: Any) -> None:
+        """Set additional metadata fields on the session log."""
+        for key, value in kwargs.items():
+            self._session[key] = value
+        self._save()
+
     def _save(self) -> None:
         with open(self._filepath, "w") as f:
             json.dump(self._session, f, indent=2, default=str)
