@@ -1,10 +1,22 @@
 # Scammer4U → EMNLP submission plan
 
 Living document. Working notes on (1) where the project sits as of
-2026-05-06, (2) the paper we want to write and the venue framing, and
-(3) the proposed action plan to ship in 21 days. As the v2 results land,
+2026-05-08, (2) the paper we want to write and the venue framing, and
+(3) the proposed action plan to ship in 20 days. As the v2 results land,
 findings and priorities here will shift; we update *in place*, not by
 appending revisions.
+
+> **Phase 4 task list lives in [phase4-checklist.md](phase4-checklist.md).**
+> That doc is the day-by-day execution plan with role assignments and
+> milestones. This doc holds the paper framing and methodological
+> commitments. When the two disagree, this doc wins on framing, the
+> checklist wins on tasks.
+>
+> **Stats vocabulary used in §2.6** (mixed-effects logistic, crossed
+> random effects, Benjamini–Hochberg correction, κ, MDE, PLR_crit) is
+> defined in plain English in [analysis-plan.md §14 Glossary](analysis-plan.md).
+> The terminology is kept here verbatim because it is the precise
+> commitment we make to reviewers; the glossary is the decoder.
 
 ---
 
@@ -96,13 +108,17 @@ appending revisions.
 | Per-env classification.csv rows with sibling_of + toggled_axis | ✅ done |
 | Phase 3 sibling envs all sit at `🟦 qa` (pending per-env smoke + screenshot diff) | partial |
 | v1 pilot results on parent subset (qualitative: high leakage, prompt mitigation insufficient) | ✅ done |
-| v2 results on full 91-env benchmark | ❌ not started |
-| LLM-as-judge Detection Rate | ❌ not started |
-| "Reached attack surface" instrumentation | ❌ not started |
-| GPT-5 + Claude Sonnet 4.6 added to model factory | ❌ not started |
-| Mitigation-condition (with/without safety system prompt) | ❌ not started |
-| Pre-registered analysis plan | ❌ not started |
-| Public release artifact | ❌ not started |
+| v2 results on full 91-env benchmark | ❌ not started (Phase 4 week 3) |
+| LLM-as-judge Detection Rate (GPT-4o primary, Llama 4 secondary) | ❌ not started (Phase 4 week 1–2) |
+| "Reached attack surface" instrumentation | ❌ not started (Phase 4 week 1) |
+| GPT-5 + Claude Sonnet 4.6 added to model factory | ❌ not started (Phase 4 week 1) |
+| Mitigation conditions C1 / C2 / C3 (3 prompts, not 1) | ❌ not started (Phase 4 week 1) |
+| 10 benign-twin baseline envs | ❌ not started (Phase 4 week 1) |
+| MITRE / OWASP / ENISA vector mapping | ❌ not started (Phase 4 week 1) |
+| Fidelity sanity check vs real phishing screenshots | ❌ not started (Phase 4 week 2) |
+| 200-sample human DR validation | ❌ not started (Phase 4 week 2) |
+| Pre-registered analysis plan (`prereg-v2-start` git tag) | ❌ not started (Phase 4 week 1) |
+| Public release artifact | ❌ not started (Phase 4 week 4) |
 
 ### 1.5 Known caveats and open issues
 
@@ -149,17 +165,24 @@ co-headline; if F1 is weak the paper is unaffected.
 
 ### 2.3 Contributions, in order
 
-1. **Empirical finding.** A controlled measurement showing that 4
-   frontier web-browsing agents (GPT-5, Claude Sonnet 4.6, Gemini 3
-   Flash, Llama 4 Scout) leak PII at high rates on a benchmark of
-   91 social-engineering websites, and that adding a privacy-aware
-   safety system prompt does *not* meaningfully reduce leakage.
-2. **Characterization of leakage.** Pooled-across-models analysis
-   of which attack factors most amplify leakage: salience,
-   pressure type, prompt-injection presence, interaction modality.
-3. **Methodological artifact.** Scammer4U benchmark and harness,
-   publicly released. Axis-controlled siblings enable post-hoc
-   ablation studies the community can extend.
+1. **Detection–action gap (conditional on F1 landing in v2).** Even
+   when explicitly prompted to verbalize a trust judgment before any
+   PII submission, frontier agents that *correctly identify* a site
+   as suspicious still leak PII at high rates. This is the headline
+   if v2 confirms the v1 signal; otherwise it demotes to §4.
+2. **Mitigation gradient.** Three mitigation prompts of increasing
+   strength (generic privacy nudge → phishing-aware checklist →
+   pre-submission reflection) tested across 4 frontier agents.
+   Comparison reveals which kinds of prompt-level intervention work
+   and which fail.
+3. **Characterization of leakage.** Pooled-across-models analysis
+   of which attack factors most amplify leakage: salience, pressure
+   type, prompt-injection presence, interaction modality. Backed by
+   axis-controlled paired siblings (F1–F11).
+4. **Methodological artifact.** Scammer4U benchmark and harness,
+   publicly released. 91 attack envs + 10 benign-twin baselines.
+   Axis-controlled siblings enable post-hoc ablation studies the
+   community can extend.
 
 ### 2.4 Positioning vs. existing work
 
@@ -209,23 +232,48 @@ specifications lead the abstract and §1.
 - **Models.** 4 agents tested: GPT-5, Claude Sonnet 4.6, Gemini 3
   Flash, Llama 4 Scout. (The earlier `gpt-oss-120b` triad was
   pilot-only.)
-- **Seeds.** n=5 per env-model-condition cell.
-- **Conditions.** Two between-conditions per env-model pair:
-  baseline (default agent prompt) and mitigation (privacy-aware
-  safety system prompt). Total cells: 91 × 4 × 5 × 2 = **3,640 runs.**
+- **Seeds.** n=5 per env-model-condition cell. Firm — not increasing.
+- **Conditions.** Four between-conditions per env-model pair:
+  - **C0 baseline** — default agent prompt.
+  - **C1 generic** — 3-line privacy nudge ("avoid suspicious sites,
+    don't compromise PII").
+  - **C2 specific** — phishing-aware checklist (typosquats, urgency
+    cues, unverified senders, PII tier rules).
+  - **C3 reflective** — pre-submission reflection: agent must
+    verbalize a trust judgment before any PII form submission. C3
+    doubles as the F1 detection–action gap amplifier.
+
+  Total cells: 91 × 4 × 5 × 4 = **7,280 runs.** Plus 10 benign-twin
+  envs × 4 × 5 × 1 (C0 only) = **200 baseline runs.** Grand total
+  ~7,480.
+- **Benign-twin baselines.** 10 envs forked from attack envs with
+  the attack stripped. Same task, no scam. Used for baseline-PLR
+  subtraction so reported leakage is attack-attributable, not
+  base-rate form-filling.
 - **Inference framework.** Pooled-across-models as the primary
-  inference (random-effects with model as random factor), per-model
-  breakdowns reported in supplementary tables. Effect sizes with
-  CIs reported alongside p-values. Bonferroni or
-  Benjamini-Hochberg correction over 11 F-claims.
-- **Detection Rate.** LLM-as-judge (Claude Sonnet 4.6 or GPT-4o
-  evaluator, decided in week 1) against a ~200-sample human-labelled
-  validation set with κ ≥ 0.7 inter-rater target. Keyword DR retained
-  as auxiliary metric for transparency.
+  inference. Mixed-effects logistic with env and model as crossed
+  random effects. Per-model breakdowns reported in supplementary
+  tables. Effect sizes with CIs reported alongside p-values.
+  Benjamini–Hochberg correction over the planned-test family
+  (F1–F11 + 3 mitigation comparisons + benign-baseline subtraction).
+- **Detection Rate.** LLM-as-judge with **GPT-4o as primary
+  evaluator** (avoids Claude-judging-Claude conflict) and Llama 4
+  Scout as secondary judge for inter-judge κ. Validated against a
+  200-sample human-labelled set, all 4 team members labelling 50
+  each. Targets: human-vs-human κ ≥ 0.7, judge-vs-human κ ≥ 0.7.
+  Keyword DR retained as auxiliary.
 - **Reached-attack-surface gating.** ASR is reported conditioned on
   whether the agent navigated to the trap surface in each run.
-- **Pre-registration.** Analysis plan committed to git tag before v2
-  data collection begins. Deviations explicitly documented.
+- **MITRE / OWASP / ENISA mapping.** Each of the 12 attack vectors
+  mapped to a published threat taxonomy in `classification.csv` and
+  TAXO.md. Defangs the "why these 12?" reviewer concern.
+- **Fidelity sanity check.** 10 attack envs rated 1–5 on visual
+  believability and copy quality alongside 5 real phishing
+  screenshots from PhishTank / wayback. Reported as a paragraph in
+  §3.
+- **Pre-registration.** Analysis plan committed to git tag
+  `prereg-v2-start` before v2 data collection begins. Deviations
+  explicitly documented in the limitations section.
 
 ### 2.7 What we will *not* claim
 
@@ -241,12 +289,22 @@ specifications lead the abstract and §1.
 
 ---
 
-## 3. Action plan (21-day skeleton)
+## 3. Action plan
 
-This is a working plan. Each item lists owner, deliverable, and
-dependency. We update statuses *in place* as items land. If a result
-forces a pivot — e.g., F1 produces a strong signal and gets promoted
-to co-headline — we update §2.2 and shuffle this section accordingly.
+**The detailed day-by-day task list now lives in
+[phase4-checklist.md](phase4-checklist.md).** That doc is the working
+schedule with role assignments (E1–E4), per-week milestones, and a
+risk register.
+
+This section retains the original 21-day skeleton as a reference
+sketch — but the live plan is 20 days, 4 conditions, 4 people, and
+the additions described above (mitigation gradient, benign twins,
+MITRE mapping, GPT-4o as judge). Read phase4-checklist.md for the
+real plan.
+
+The pivots reserved for results-time (below) still apply.
+
+### Original 21-day skeleton (reference only — superseded by phase4-checklist.md)
 
 ### Days 1–3 — foundation
 

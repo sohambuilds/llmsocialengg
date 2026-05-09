@@ -8,6 +8,10 @@ Companion to [paper-plan.md](paper-plan.md) — that doc holds the
 list*. When the two disagree, paper-plan.md wins.
 
 Pre-registration tag: `prereg-v2-start` (set at end of week 1).
+The pre-registered analysis itself lives in
+[analysis-plan.md](analysis-plan.md); its §14 glossary defines the
+stats terms used in this checklist (BH correction, mixed-effects
+logistic, κ, BH-q, PLR_crit, etc.) in plain English.
 
 ---
 

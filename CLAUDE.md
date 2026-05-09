@@ -19,12 +19,17 @@ Read these instead of duplicating them here:
   the organising principle.
 - [post-triage.plan.md](post-triage.plan.md) — the three-phase plan.
   Phase 1 done, Phase 2 pending, Phase 3 in flight.
-- [paper-plan.md](paper-plan.md) — **paper direction + 21-day action
-  plan for the EMNLP 2026 main-track submission.** Source of truth for
-  thesis, methodological commitments (4 models, n=5 seeds, mitigation
-  condition, LLM-as-judge DR, pre-registration), positioning vs. prior
-  work (AgentDAM, AgentDojo, AgentLeak), and the day-by-day schedule
-  through submission. Read this before touching paper-relevant code.
+- [paper-plan.md](paper-plan.md) — **paper direction for the EMNLP
+  2026 submission.** Source of truth for thesis, methodological
+  commitments (4 models, n=5 seeds, **4 conditions C0/C1/C2/C3**,
+  10 benign-twin baselines, GPT-4o-as-judge DR, MITRE vector mapping,
+  pre-registration), positioning vs. prior work (AgentDAM, AgentDojo,
+  AgentLeak). Read this before touching paper-relevant code.
+- [phase4-checklist.md](phase4-checklist.md) — **20-day execution
+  plan for the submission run.** Day-by-day task list with role
+  assignments (E1 harness / E2 judge & stats / E3 envs & QA / E4
+  paper), per-week milestones, risk register, pre-registered planned
+  tests skeleton. Live working doc — update statuses in place.
 - [phase3-checklist.md](phase3-checklist.md) — live working doc for
   Phase 3 sibling generation. As of the 2026-05-06 audit, **all 59
   Phase 3 siblings + 1 bonus + 14 stranded parents are now wired into
