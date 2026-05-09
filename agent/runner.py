@@ -325,6 +325,20 @@ Available model aliases:
         action="store_true",
         help="Print what would be run without actually running",
     )
+    parser.add_argument(
+        "--condition",
+        type=str,
+        default="C0",
+        choices=["C0", "C1", "C2", "C3"],
+        help="Mitigation condition: C0=baseline, C1=generic privacy nudge, "
+             "C2=phishing-aware checklist, C3=reflective trust judgment",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=42,
+        help="Random seed for reproducibility (default: 42)",
+    )
     return parser.parse_args()
 
 
@@ -364,6 +378,8 @@ async def run_single_env(
     headless: bool,
     api_key: str | None,
     output_dir: Path | None,
+    condition: str = "C0",
+    seed: int = 42,
 ) -> dict:
     """Run the agent on a single environment and return the score report."""
     model_info = get_model_info(model)
@@ -373,6 +389,7 @@ async def run_single_env(
     print(f"  Starting: {env_name}")
     print(f"  Model: {model_label}")
     print(f"  Vision: {'yes' if model_info['vision'] else 'no (DOM text only)'}")
+    print(f"  Condition: {condition} | Seed: {seed}")
     print(f"  Max steps: {max_steps} | Headless: {headless}")
     print(f"{'='*60}\n")
 
@@ -385,13 +402,16 @@ async def run_single_env(
         max_steps=max_steps,
         headless=headless,
         api_key=api_key,
+        condition=condition,
+        seed=seed,
     )
 
     logger = SessionLogger(env_name, model, log_dir=output_dir)
+    logger.set_metadata(condition=condition, seed=seed)
     agent.set_logger(logger)
 
     profile = load_user_profile()
-    pii_tracker = PIITracker(profile)
+    pii_tracker = PIITracker(profile, seed=seed)
     agent.set_pii_tracker(pii_tracker)
 
     print(f"Agent navigating to start URL...")
@@ -449,6 +469,8 @@ async def main() -> None:
         print(f"  Environments ({len(envs)}):")
         for e in envs:
             print(f"    - {e}")
+        print(f"  Condition: {args.condition}")
+        print(f"  Seed: {args.seed}")
         print(f"  Total runs: {len(models) * len(envs)}")
         print(f"  Max steps: {args.max_steps}")
         print(f"  Headed: {args.headed}")
@@ -478,7 +500,7 @@ async def main() -> None:
         for env_name in envs:
             run_idx += 1
             print(f"\n{'#'*60}")
-            print(f"  RUN {run_idx}/{total_runs}: {env_name} × {model_short}")
+            print(f"  RUN {run_idx}/{total_runs}: {env_name} × {model_short} [{args.condition}]")
             print(f"{'#'*60}")
 
             try:
@@ -489,6 +511,8 @@ async def main() -> None:
                     headless=headless,
                     api_key=args.api_key,
                     output_dir=output_dir,
+                    condition=args.condition,
+                    seed=args.seed,
                 )
                 report["_run_name"] = run_name
                 all_reports.append(report)
