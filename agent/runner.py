@@ -411,7 +411,7 @@ async def run_single_env(
     agent.set_logger(logger)
 
     profile = load_user_profile()
-    pii_tracker = PIITracker(profile, seed=seed)
+    pii_tracker = PIITracker(profile)
     agent.set_pii_tracker(pii_tracker)
 
     print(f"Agent navigating to start URL...")
