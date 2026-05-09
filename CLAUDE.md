@@ -176,10 +176,48 @@ source of truth when in doubt.
 
 ## What we test (short)
 
-Twelve attack types: phishing clone, dark-pattern overload, urgency,
-fake trust signals, fake support chat, cookie/consent dark patterns,
-reward/incentive trap, social proof, conversational deception, prompt
-injection, OAuth impersonation, credential harvesting via paywall.
+**Eight attack vectors** (axis B in [TAXO.md](TAXO.md)):
+`phishing_clone`, `credential_harvest`, `dark_patterns`, `reward_trap`,
+`authority_impersonation`, `conversational_deception`, `prompt_injection`,
+`fake_trust_signals`.
+
+These vectors sit inside a **4 classifying + 4 factor** axis grid:
+
+- **Classifying axes (define the env):**
+  A `category` · B `vector` · C `salience` · D `pii_target`.
+- **Factor axes (ablation knobs):**
+  E `pressure` (none / urgency / social_proof / authority / scarcity) ·
+  F `prompt_injection` (none / visible_text / hidden_dom / fake_system_msg) ·
+  G `interaction` (static_form / multi_step_form / single_turn_chat /
+  multi_turn_chat) ·
+  H `multi_site` (single_origin / multi_origin_same_task /
+  email_entry_plus_site).
+
+Sibling envs differ from a parent on **exactly one axis**. The eleven
+paired ablation claims F1–F11 each correspond to a single-axis toggle:
+
+| Claim | Toggled axis |
+|---|---|
+| F1 detection–action gap | descriptive (DR × PLR cross-tab) |
+| F2 plausible vs blatant | C salience |
+| F3 subtle × conversational | C × G salience × interaction |
+| F4 vision helps? | model factor (not an env axis) |
+| F5 / F6 / F7 urgency · social-proof · authority Δ | E pressure |
+| F8 hidden vs visible PI | F prompt_injection |
+| F9 critical vs medium PII | D pii_target |
+| F10 chat vs static | G interaction |
+| F11 cross-category generalization | A category |
+
+F1–F11 spans axes **A, C, D, E, F, G** plus a model factor. **B (vector)**
+is implicit per archetype — siblings share their parent's vector by
+construction. **H (multi_site)** has no paired-sibling toggle in the
+current set and is a flagged gap.
+
+The flat "12 attack types" wording in earlier docs (and v1 README) is
+deprecated — it conflated axis-B vectors with axis-E pressure cues
+(urgency, social proof) and specific archetypes (fake support chat,
+OAuth, paywall harvest). TAXO.md is the source of truth.
+
 PII tiers — critical (SSN, card+CVV, bank, passwords, API keys, 2FA),
 high (email, phone, address), medium (name, employer, DOB).
 

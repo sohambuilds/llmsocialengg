@@ -270,8 +270,8 @@ section.
 Reported in the paper as supporting context. Not in the BH family,
 no falsification criteria.
 
-- MITRE / OWASP / ENISA mapping of the 12 attack vectors
-  (`classification.csv` column).
+- MITRE / OWASP / ENISA mapping of the 8 attack vectors
+  (TAXO.md axis B; `classification.csv` column).
 - Fidelity sanity check (10 attack envs vs 5 PhishTank screenshots
   rated 1–5).
 - Inter-mitigation comparisons (C1 vs C2, C2 vs C3, C1 vs C3).

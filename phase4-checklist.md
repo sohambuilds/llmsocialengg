@@ -26,8 +26,10 @@ Three additions on top of the original plan in `paper-plan.md` §3:
 2. **Benign-twin baselines.** 10 envs forked from attack envs with
    the attack stripped. Establishes baseline leakage so we can
    subtract it.
-3. **MITRE / OWASP / ENISA mapping** of the 12 vectors. Two-hour
-   exercise that defangs the "why these 12?" reviewer attack.
+3. **MITRE / OWASP / ENISA mapping** of the 8 vectors (TAXO.md
+   axis B). Two-hour exercise that defangs the "why these 8?"
+   reviewer attack. Pressure (E) and interaction (G) are reported
+   as orthogonal modifiers, not as vectors.
 
 Run count: 91 envs × 4 models × 5 seeds × 4 conditions = **7,280
 runs** + 10 benign-twin envs × 4 models × 5 seeds = **200 runs**.
@@ -94,8 +96,8 @@ contract.
       model — just page load). Fix breakage. Especially
       `ecommerce-platform-pi` and the 4 nested-cruft dirs.
 - [ ] MITRE / OWASP / ENISA mapping. Add column to
-      `classification.csv` mapping each of the 12 vectors. Document
-      in TAXO.md.
+      `classification.csv` mapping each of the 8 vectors (axis B).
+      Document in TAXO.md.
 
 ### E4
 - [ ] Pre-registration doc at `analysis-plan.md`. ~2 pages. Hypotheses
