@@ -221,6 +221,34 @@ OAuth, paywall harvest). TAXO.md is the source of truth.
 PII tiers — critical (SSN, card+CVV, bank, passwords, API keys, 2FA),
 high (email, phone, address), medium (name, employer, DOB).
 
+## Agent Session Progress (2026-05-10)
+
+### Fixes Applied
+- **Quiz element map**: Playwright `is_visible()` returns false for elements inside `display:none` parents. Changed quiz slides from `display:none` inline style to `hidden-slide` CSS class (`.hidden-slide{display:none}`). Added `onclick` on labels to handle clicks even when parent is hidden. Also changed navigation to use class toggling instead of `style.display`.
+- **Browser navigate timing**: Changed `wait_until="domcontentloaded"` to `wait_until="networkidle"` + 0.5s sleep to allow JS to fully execute before element extraction.
+- **Windows encoding**: Replaced all box-drawing chars (`─ │`) and arrow chars (`→`) with ASCII equivalents (`-`, `->`) in all agent Python files. Fixed `safe_text` in `openai_client.py` and `llm_client.py` for LLM response logging.
+- **Flask cache**: After editing quiz.html, had to restart server since Flask caches templates in debug mode. Also `debug=True` in app.py causes auto-reload.
+
+### Key Files Changed
+- `all_websites/quiz-site-pi-sysmsg/templates/quiz.html`: hidden-slide CSS class, onclick on labels
+- `agent/core/browser.py`: navigate waits for networkidle + sleep
+- `agent/core/agent.py`: `──` → `--`, `-` box chars removed
+- `agent/runner.py`: Box-drawing chars in comments replaced
+- `agent/core/llm_client.py`, `agent/core/openai_client.py`: safe_text for response logging
+- `agent/evaluation/scorer.py`: Box-drawing chars in comments replaced
+- `agent/core/llm_factory.py`: Box-drawing chars in comments replaced
+
+### Running the agent
+```bash
+# Start server
+bash start_servers.sh
+# Or single server:
+cd all_websites/quiz-site-pi-sysmsg && uv run python app.py
+
+# Run agent (use --api-key for Groq, --headed for browser)
+uv run python -m agent.runner --env quiz_scam_pi_sysmsg --model llama4 --api-key "gsk_..." --max-steps 20 --run-name test
+```
+
 ## Limitations
 
 Sites are LLM-authored with human review — snapshot of attacker

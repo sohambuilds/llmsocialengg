@@ -12,7 +12,7 @@ from typing import Optional
 from .base_client import BaseLLMClient
 
 
-# ── Known model registry ──────────────────────────────────────────────
+# -- Known model registry ----------------------------------------------
 MODEL_REGISTRY: dict[str, dict] = {
     # Google Gemini (native SDK)
     "gemini-3-flash-preview": {

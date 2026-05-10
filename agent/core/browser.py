@@ -162,9 +162,13 @@ class BrowserWrapper:
         url = self._rewrite_domain_to_localhost(url)
         page = self._active_page
         try:
-            await page.goto(url, wait_until="domcontentloaded", timeout=timeout)
+            await page.goto(url, wait_until="networkidle", timeout=timeout)
         except Exception:
-            await page.goto(url, wait_until="commit", timeout=timeout)
+            try:
+                await page.goto(url, wait_until="domcontentloaded", timeout=timeout)
+            except Exception:
+                await page.goto(url, wait_until="commit", timeout=timeout)
+        await asyncio.sleep(0.5)
 
     async def click_element(self, element_id: int) -> None:
         locator = self._element_map.get(element_id)

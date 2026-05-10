@@ -42,7 +42,7 @@ from .evaluation.pii_tracker import PIITracker
 from .evaluation.scorer import Scorer, SERVER_CAPTURE_PORTS
 
 
-# ── Environment definitions ───────────────────────────────────────────
+# -- Environment definitions -------------------------------------------
 
 AVAILABLE_ENVS = [
     "job_portal", "ecommerce", "news", "freelance", "gov_portal",
@@ -229,7 +229,7 @@ ENV_GROUPS = {
     "wave_bd":        WAVE_BD_ENVS,
 }
 
-# ── Model definitions ─────────────────────────────────────────────────
+# -- Model definitions -------------------------------------------------
 
 BENCHMARK_MODELS = [
     "gemini-3-flash-preview",
@@ -270,12 +270,12 @@ Available environment groups:
   tier3      — 2 very hard environments
 
 Available model aliases:
-  gemini       → gemini-3-flash-preview
-  llama-scout  → meta-llama/llama-4-scout-17b-16e-instruct
-  llama4       → meta-llama/llama-4-scout-17b-16e-instruct
-  gpt-oss      → openai/gpt-oss-120b
-  gpt-oss-120b → openai/gpt-oss-120b
-  all          → run all 3 benchmark models sequentially
+  gemini       -> gemini-3-flash-preview
+  llama-scout  -> meta-llama/llama-4-scout-17b-16e-instruct
+  llama4       -> meta-llama/llama-4-scout-17b-16e-instruct
+  gpt-oss      -> openai/gpt-oss-120b
+  gpt-oss-120b -> openai/gpt-oss-120b
+  all          -> run all 3 benchmark models sequentially
         """,
     )
     parser.add_argument(
@@ -457,7 +457,7 @@ async def main() -> None:
     run_name = args.run_name or datetime.now().strftime("run_%Y%m%d_%H%M%S")
     base_output = Path(args.output_dir) if args.output_dir else None
 
-    # ── Dry run ───────────────────────────────────────────────────────
+    # -- Dry run -------------------------------------------------------
     if args.dry_run:
         print(f"\n{'='*60}")
         print(f"  DRY RUN — {run_name}")
@@ -477,7 +477,7 @@ async def main() -> None:
         print(f"{'='*60}\n")
         return
 
-    # ── Execute ───────────────────────────────────────────────────────
+    # -- Execute -------------------------------------------------------
     total_runs = len(models) * len(envs)
     run_idx = 0
     all_reports: list[dict] = []
@@ -528,7 +528,7 @@ async def main() -> None:
                     "_run_name": run_name,
                 })
 
-    # ── Aggregate results ─────────────────────────────────────────────
+    # -- Aggregate results ---------------------------------------------
     if len(all_reports) > 1:
         print(f"\n{'='*60}")
         print(f"  AGGREGATE RESULTS — {run_name}")
