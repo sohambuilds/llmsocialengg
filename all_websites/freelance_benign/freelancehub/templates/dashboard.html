@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — FreelanceHub{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Total Earned</div>
+        <div class="stat-value">{{ profile.total_earned }}</div>
+        <div class="stat-sub">Lifetime earnings</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Completed Projects</div>
+        <div class="stat-value">{{ profile.completed_projects }}</div>
+        <div class="stat-sub">{{ profile.rating }} ★ average rating</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Unread Messages</div>
+        <div class="stat-value">{{ unread_count }}</div>
+        <div class="stat-sub"><a href="/inbox" style="color:#0D9488;font-weight:500;">View inbox →</a></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Hourly Rate</div>
+        <div class="stat-value">{{ profile.hourly_rate }}</div>
+        <div class="stat-sub">Current rate</div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <div class="card-header">
+            <span class="material-icons-outlined">chat</span>
+            Recent Messages
+        </div>
+        <div class="convo-list">
+            {% for convo in all_conversations[:3] %}
+            <a href="/inbox/{{ convo.id }}" class="convo-item {{ 'unread' if convo.unread }}">
+                <div class="avatar avatar-md" style="background: {{ convo.client.avatar_color }};">
+                    {{ convo.client.avatar_initials }}
+                </div>
+                <div class="convo-body">
+                    <div class="convo-top">
+                        <span class="convo-sender">{{ convo.client.name }}</span>
+                    </div>
+                    <div class="convo-preview">{{ convo.preview }}</div>
+                </div>
+                {% if convo.unread %}
+                <div class="unread-dot"></div>
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <span class="material-icons-outlined">work_outline</span>
+            Active Projects
+        </div>
+        <div>
+            <div class="project-card">
+                <div class="project-info">
+                    <div class="project-title">Landing Page Redesign</div>
+                    <div class="project-client">Bloom Studio — Completed</div>
+                </div>
+                <span class="status-badge completed">Completed</span>
+            </div>
+            <div class="project-card">
+                <div class="project-info">
+                    <div class="project-title">API Integration Module</div>
+                    <div class="project-client">TechFlow Inc — In Progress</div>
+                </div>
+                <span class="status-badge processing">In Progress</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

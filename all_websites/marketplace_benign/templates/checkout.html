@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Checkout – complete your purchase on Marketplace.">
+    <title>Checkout – Marketplace</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="logo">🛒 Marketplace</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="checkout-layout">
+            <div class="card form-card">
+                <h1>Checkout</h1>
+                <p class="form-subtitle">Enter your shipping details</p>
+
+                <form action="{{ url_for('checkout', item_id=item.id) }}" method="POST" id="checkoutForm">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" placeholder="John Doe" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="john@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Shipping Address</label>
+                        <textarea id="address" name="address" rows="3" placeholder="123 Main St, City, State, ZIP" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-large btn-full">Proceed to Payment</button>
+                </form>
+            </div>
+
+            <div class="card order-summary">
+                <h2>Order Summary</h2>
+                <div class="summary-item">
+                    <span>{{ item.name }}</span>
+                    <span>${{ item.price }}</span>
+                </div>
+                <div class="summary-item">
+                    <span>Shipping</span>
+                    <span class="free">Free</span>
+                </div>
+                <hr>
+                <div class="summary-item total">
+                    <span>Total</span>
+                    <span>${{ item.price }}</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Marketplace. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ item.name }} – ${{ item.price }}. {{ item.description[:100] }}">
+    <title>{{ item.name }} – Marketplace</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="logo">🛒 Marketplace</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="card item-detail">
+            <div class="item-detail-emoji">{{ item.image }}</div>
+            <div class="item-detail-info">
+                <h1>{{ item.name }}</h1>
+                <p class="item-price-large">${{ item.price }}</p>
+                <p class="item-description">{{ item.description }}</p>
+                <div class="item-badges">
+                    <span class="badge">✓ In Stock</span>
+                    <span class="badge">🚚 Free Shipping</span>
+                    <span class="badge">🔄 30-Day Returns</span>
+                </div>
+                <a href="{{ url_for('checkout', item_id=item.id) }}" class="btn btn-primary btn-large">Buy Now</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Marketplace. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

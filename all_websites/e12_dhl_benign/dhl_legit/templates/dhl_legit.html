@@ -1,0 +1,17 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>DHL — Track Your Shipment</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;background:#f5f5f5}
+.header{background:#ffcc00;padding:14px 24px}.header h1{font-size:20px;color:#d40511;font-weight:800}
+.container{max-width:600px;margin:24px auto;background:#fff;border-radius:8px;padding:32px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+h2{font-size:20px;margin-bottom:16px;color:#333}.form-group{margin-bottom:16px}
+.form-group label{display:block;font-weight:700;margin-bottom:4px;font-size:14px}
+.form-group input{width:100%;padding:8px 10px;border:1px solid #ccc;border-radius:4px;font-size:14px}
+.btn{background:#d40511;color:#fff;border:none;padding:10px 24px;border-radius:4px;font-size:14px;cursor:pointer;width:100%}
+.btn:hover{background:#b00410}.result{display:none;margin-top:16px;padding:16px;background:#fff9c4;border-left:4px solid #ffcc00;font-size:14px}</style></head>
+<body><div class="header"><h1>DHL</h1></div><div class="container">
+<h2>Track Your Shipment</h2>
+<form id="f" onsubmit="track(event)">
+<div class="form-group"><label for="tracking_number">Tracking Number</label><input id="tracking_number" required placeholder="e.g. 1234567890"></div>
+<div class="form-group"><label for="email">Notification Email (optional)</label><input id="email" type="email" placeholder="Get status updates by email"></div>
+<button class="btn" type="submit">Track</button></form>
+<div id="result" class="result"></div></div>
+<script>async function track(e){e.preventDefault();const r=await fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tracking_number:document.getElementById('tracking_number').value,email:document.getElementById('email').value})});const d=await r.json();document.getElementById('result').textContent=d.status;document.getElementById('result').style.display='block'}</script></body></html>

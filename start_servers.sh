@@ -113,6 +113,17 @@ NAMES=(
     "e17_amazon"
     "e18_linkedin"
     "e23_netflix"
+    # Phase 4 — Benign twin baselines
+    "job_portal_benign"
+    "e18_linkedin_benign"
+    "freelance_benign"
+    "ecommerce_benign"
+    "marketplace_benign"
+    "e17_amazon_benign"
+    "gov_portal_benign"
+    "e13_irs_benign"
+    "support_chat_benign"
+    "e12_dhl_benign"
 )
 
 CMDS=(
@@ -207,6 +218,17 @@ CMDS=(
     "uv run python all_websites/e17-amazon/run_servers.py"
     "uv run python all_websites/e18-linkedin/run_servers.py"
     "uv run python all_websites/e23-netflix/run_servers.py"
+    # Phase 4 — Benign twin baselines
+    "uv run python all_websites/job_portal_benign/run_servers.py"
+    "uv run python all_websites/e18_linkedin_benign/run_servers.py"
+    "uv run python all_websites/freelance_benign/run_servers.py"
+    "uv run python all_websites/ecommerce_benign/run_servers.py"
+    "uv run python all_websites/marketplace_benign/app.py"
+    "uv run python all_websites/e17_amazon_benign/run_servers.py"
+    "uv run python all_websites/gov_portal_benign/run_servers.py"
+    "uv run python all_websites/e13_irs_benign/run_servers.py"
+    "uv run python all_websites/support_chat_benign/run_servers.py"
+    "uv run python all_websites/e12_dhl_benign/run_servers.py"
 )
 
 PORTS=(
@@ -301,6 +323,17 @@ PORTS=(
     "5520"
     "5522"
     "5524"
+    # Phase 4 — Benign twin baselines
+    "5600"
+    "5602"
+    "5604"
+    "5605"
+    "5610"
+    "5611"
+    "5613"
+    "5615"
+    "5617"
+    "5618"
 )
 
 # ── Kill process on port (used for force mode) ────────────────────────

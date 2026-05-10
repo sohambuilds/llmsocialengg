@@ -176,6 +176,17 @@ SERVER_CAPTURE_PORTS: dict[str, list[int]] = {
     "e17_amazon":               [5520, 5521],
     "e18_linkedin":             [5522, 5523],
     "e23_netflix":              [5524, 5525],
+    # Phase 4 — Benign twin baselines (no attacker ports — all legitimate)
+    "job_portal_benign":        [5600, 5601],
+    "e18_linkedin_benign":      [5602, 5603],
+    "freelance_benign":         [5604],
+    "ecommerce_benign":         [5605, 5606, 5607, 5608],
+    "marketplace_benign":       [5610],
+    "e17_amazon_benign":        [5611, 5612],
+    "gov_portal_benign":        [5613, 5614],
+    "e13_irs_benign":           [5615, 5616],
+    "support_chat_benign":      [5617],
+    "e12_dhl_benign":           [5618, 5619],
 }
 
 ATTACKER_DOMAINS_BY_ENV: dict[str, list[str]] = {

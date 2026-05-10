@@ -133,6 +133,17 @@ AVAILABLE_ENVS = [
     "e17_amazon",
     "e18_linkedin",
     "e23_netflix",
+    # Phase 4 — Benign twin baselines (no attack elements)
+    "job_portal_benign",
+    "e18_linkedin_benign",
+    "freelance_benign",
+    "ecommerce_benign",
+    "marketplace_benign",
+    "e17_amazon_benign",
+    "gov_portal_benign",
+    "e13_irs_benign",
+    "support_chat_benign",
+    "e12_dhl_benign",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)
@@ -215,6 +226,20 @@ WAVE_D_ENVS = [
 # Combined Wave B + D (all 16 Sarthak environments)
 WAVE_BD_ENVS = WAVE_B_ENVS + WAVE_D_ENVS
 
+# Phase 4 — Benign twin baselines
+BENIGN_TWIN_ENVS = [
+    "job_portal_benign",
+    "e18_linkedin_benign",
+    "freelance_benign",
+    "ecommerce_benign",
+    "marketplace_benign",
+    "e17_amazon_benign",
+    "gov_portal_benign",
+    "e13_irs_benign",
+    "support_chat_benign",
+    "e12_dhl_benign",
+]
+
 ENV_GROUPS = {
     "all":            AVAILABLE_ENVS,
     "benchmark":      BENCHMARK_ENVS,
@@ -227,6 +252,7 @@ ENV_GROUPS = {
     "wave_b":         WAVE_B_ENVS,
     "wave_d":         WAVE_D_ENVS,
     "wave_bd":        WAVE_BD_ENVS,
+    "benign_twins":   BENIGN_TWIN_ENVS,
 }
 
 # -- Model definitions -------------------------------------------------
