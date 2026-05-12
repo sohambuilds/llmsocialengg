@@ -254,11 +254,55 @@ exist, pre-reg is tagged.
         hosts — otherwise occasional cells will fail unpredictably.
 
 ### E1
-- [ ] Parallel run harness. Worker pool, retry on browser crash,
-      resumable log dir layout
-      (`agent/logs/v2/<run_id>/<env>/<model>/<condition>/<seed>/`).
-- [ ] Fix model-specific quirks from smoke test (rate limits, JSON
-      mode, image format).
+- [x] **Parallel run harness shipped at `agent/parallel_runner.py`.**
+      - **Sharding strategy:** worker pool drains a queue of *env
+        bundles*, never two workers on the same env simultaneously.
+        This protects per-env `/api/captured` state from racing
+        between cells. With 91 envs and N=8 workers each worker takes
+        ~12 envs serially.
+      - **Retry on browser crash:** `_looks_like_browser_crash`
+        classifies Playwright / network errors (TargetClosed,
+        net::ERR_*, navigation timeouts, etc.). Bounded retries with
+        exponential backoff (default base 5s, doubled per attempt,
+        configurable via `--max-retries`). Non-recoverable errors
+        fail-fast with full traceback recorded in cell meta.json.
+      - **Resumable layout:**
+        `agent/logs/v2/<run_id>/<env>/<model_label>/<condition>/seed_<n>/`
+        with `session.json` + `<session>.score.json` + `meta.json`
+        per cell. Re-invoke with the same `--run-id` to pick up
+        where the previous run left off; the harness skips cells
+        whose dir already contains a `.score.json` (or a `meta.json`
+        with `status=ok`).
+      - **Status snapshot** at `<run_root>/status.json` rolls forward
+        every cell completion so a watcher can monitor progress.
+      - **Smoke-tested end-to-end:** 2-cell run (cluttered_downloads ×
+        Llama-4 × C0/C1 × seed_1) → 2/2 ok; resume re-invocation
+        correctly skipped both cells. Output at
+        `agent/logs/v2/smoke-harness/`.
+- [x] **Model-specific quirks from the smoke test patched.**
+      1. **UTF-8 stdout on Windows** (`agent/runner.py` +
+         `agent/parallel_runner.py`): `sys.stdout.reconfigure(encoding="utf-8")`
+         at module top so glyphs rendered into agent logs / scorer
+         prints don't crash with cp1252 charmap errors. Backported
+         the lesson learned from `_smoke_matrix.py`.
+      2. **Llama-4 Python-dict response tolerance**
+         (`agent/core/action_space.py::_extract_json`): when
+         `json.loads` fails, fall back to `ast.literal_eval`, then a
+         JSON5-ish loose pass that normalizes single quotes +
+         `True/False/None` → JSON booleans/null. Recovers the
+         most common parse failure observed in smoke ("Expecting
+         property name enclosed in double quotes" on `{'action': ...}`).
+      3. **429 / rate-limit aware backoff**
+         (`agent/core/openai_client.py`): detect `429`, "rate limit",
+         "too many requests" in error strings, and either honor the
+         provider's `Retry-After` header or fall back to aggressive
+         backoff (15 × 2^attempt, capped at 5 min) instead of the
+         standard exponential. Connection / server errors keep the
+         old 2^attempt schedule.
+      Out of scope (these are model-behavior, not code-quirks): gpt-oss
+      emitting `done` after 1–3 steps on simple envs (a prompt-design
+      decision); image-format issues — none observed; vision compress
+      already handled in `OpenAICompatClient._maybe_compress_image`.
 
 ### E3
 - [ ] Finalize benign twins. Each gets a 1-page design brief stating

@@ -5,7 +5,9 @@ Each action is a structured dict the VLM outputs as JSON.
 
 from __future__ import annotations
 
+import ast
 import json
+import re
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
@@ -139,8 +141,30 @@ def _extract_json(text: str) -> dict:
     json_str = text[brace_start : brace_end + 1]
     try:
         return json.loads(json_str)
-    except json.JSONDecodeError as e:
-        raise ActionParseError(f"Invalid JSON: {e}. Raw: {json_str[:200]}")
+    except json.JSONDecodeError as je:
+        # Llama-4 Scout occasionally emits Python-dict syntax (single
+        # quotes, True/False/None instead of true/false/null). Try
+        # ast.literal_eval as a tolerance fallback before giving up.
+        try:
+            parsed = ast.literal_eval(json_str)
+            if isinstance(parsed, dict):
+                return parsed
+            if isinstance(parsed, list):
+                # Sometimes the model returns a bare action list; wrap it.
+                return {"actions": parsed}
+        except (ValueError, SyntaxError):
+            pass
+        # One more pass: JSON5-ish — replace `True/False/None` keywords
+        # and convert single-quoted keys to double-quoted, then retry.
+        loose = json_str
+        loose = re.sub(r"\bTrue\b", "true", loose)
+        loose = re.sub(r"\bFalse\b", "false", loose)
+        loose = re.sub(r"\bNone\b", "null", loose)
+        loose = re.sub(r"'(\\?.)*?'", lambda m: '"' + m.group(0)[1:-1].replace('"', '\\"') + '"', loose)
+        try:
+            return json.loads(loose)
+        except json.JSONDecodeError:
+            raise ActionParseError(f"Invalid JSON: {je}. Raw: {json_str[:200]}")
 
 
 def parse_action_batch(raw: str | dict) -> list[AgentAction]:

@@ -30,6 +30,15 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+# Force UTF-8 stdout on Windows. Without this, agent / scorer prints
+# that include glyphs from rendered page content (e.g. ⬇ from a
+# website's HTML) crash the whole run with a cp1252 charmap error.
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[attr-defined]
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[attr-defined]
+except Exception:
+    pass
+
 from .core.agent import WebNavigationAgent, load_user_profile, load_env_config
 from .core.llm_factory import (
     MODEL_REGISTRY,
