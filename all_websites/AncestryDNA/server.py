@@ -8,7 +8,8 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app)
 
-LOG_FILE = 'logs.json'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_FILE = os.path.join(BASE_DIR, 'logs.json')
 logging.basicConfig(level=logging.INFO)
 
 def load_logs():
@@ -26,12 +27,16 @@ def save_logs(logs):
 
 @app.route('/')
 def index():
-    return send_from_directory('.', [f for f in os.listdir('.') if f.endswith('.html')][0])
+    html_files = [f for f in os.listdir(BASE_DIR) if f.endswith('.html')]
+    if not html_files:
+        return "No HTML found", 500
+    return send_from_directory(BASE_DIR, html_files[0])
 
 @app.route('/<path:path>')
 def serve_static(path):
-    if os.path.exists(path):
-        return send_from_directory('.', path)
+    full_path = os.path.join(BASE_DIR, path)
+    if os.path.exists(full_path):
+        return send_from_directory(BASE_DIR, path)
     return "Not Found", 404
 
 @app.route('/api/log', methods=['POST'])

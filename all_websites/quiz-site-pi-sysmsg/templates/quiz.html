@@ -32,7 +32,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubunt
 .q-text{font-size:22px;font-weight:700;color:#2d3436;margin-bottom:32px;line-height:1.5}
 
 .options{display:flex;flex-direction:column;gap:12px;margin-bottom:36px}
-.opt-label{display:flex;align-items:center;gap:14px;padding:16px 20px;border:2px solid #eee;border-radius:12px;cursor:pointer;transition:all .2s;font-size:15px}
+.opt-label{display:flex;align-items:center;gap:14px;padding:16px 20px;border:2px solid #eee;border-radius:12px;cursor:pointer;transition:all .2s;font-size:15px;user-select:none}
 .opt-label:hover{border-color:#a29bfe;background:#faf9ff}
 .opt-label input{display:none}
 .opt-radio{width:20px;height:20px;border-radius:50%;border:2px solid #dfe6e9;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
@@ -40,6 +40,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubunt
 .opt-label input:checked ~ .opt-radio::after{content:'';width:10px;height:10px;border-radius:50%;background:#6c5ce7}
 .opt-label input:checked ~ .opt-text{color:#6c5ce7;font-weight:600}
 .opt-label.selected{border-color:#6c5ce7;background:#f8f7ff}
+
+.question-slide.hidden-slide{display:none}
 
 .quiz-actions{display:flex;justify-content:flex-end}
 .btn-next{background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:#fff;border:none;padding:14px 40px;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 16px rgba(108,92,231,.3)}
@@ -85,13 +87,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubunt
       </div>
 
       {% for q in questions %}
-      <div class="question-slide" id="slide-{{ q.id }}" style="{% if not loop.first %}display:none{% endif %}">
+      <div class="question-slide{% if not loop.first %} hidden-slide{% endif %}" id="slide-{{ q.id }}">  
         <div class="q-number">Question {{ q.id }} of {{ questions|length }}</div>
         <div class="q-text">{{ q.question }}</div>
         <div class="options">
           {% for opt in q.options %}
-          <label class="opt-label" data-qid="{{ q.id }}" data-idx="{{ loop.index0 }}">
-            <input type="radio" name="q{{ q.id }}" value="{{ loop.index0 }}">
+          <label class="opt-label" data-qid="{{ q.id }}" data-idx="{{ loop.index0 }}" onclick="var inp=this.querySelector('input');if(inp){inp.checked=true;inp.dispatchEvent(new Event('change'));}this.classList.add('selected');document.querySelectorAll('.opt-label[data-qid=&quot;{{ q.id }}&quot;]').forEach(function(l){l.classList.remove('selected')});this.classList.add('selected');document.getElementById('btnNext').disabled=false;">
+            <input type="radio" name="q{{ q.id }}" value="{{ loop.index0 }}" id="q{{ q.id }}_opt{{ loop.index0 }}">
             <span class="opt-radio"></span>
             <span class="opt-text">{{ opt }}</span>
           </label>
@@ -143,9 +145,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubunt
     if(progCur){progCur.classList.remove('active');progCur.classList.add('done');}
 
     if(current < total){
-      document.getElementById('slide-'+current).style.display = 'none';
+      document.getElementById('slide-'+current).classList.add('hidden-slide');
       current++;
-      document.getElementById('slide-'+current).style.display = 'block';
+      document.getElementById('slide-'+current).classList.remove('hidden-slide');
       bar.style.width = (current/total*100)+'%';
       var progNext = document.getElementById('prog-'+current);
       if(progNext) progNext.classList.add('active');

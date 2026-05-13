@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Google Search</title>
+    <style>
+        body { font-family: arial, sans-serif; }
+        .result { margin-bottom: 25px; }
+        .title { font-size: 1.25rem; color: #1a0dab; text-decoration: none; display: block; margin-bottom: 3px; }
+        .url { color: #202124; font-size: 0.85rem; margin-bottom: 3px; }
+        .desc { color: #4d5156; font-size: 0.875rem; }
+        .sponsored { font-weight: bold; font-size: 0.85rem; margin-bottom: 8px; }
+        .ad-container { border: 1px solid #f1f3f4; padding: 15px; border-radius: 8px; margin-bottom: 25px; }
+    </style>
+</head>
+<body style="padding: 20px;">
+    <div style="margin-bottom: 30px; display: flex; align-items: center; gap: 20px;">
+        <h2 style="margin: 0;">Google</h2>
+        <input type="text" value="free PDF converter download" style="width: 500px; padding: 10px; border-radius: 20px; border: 1px solid #dfe1e5;">
+    </div>
+    <div style="max-width: 650px;">
+        {% for r in results %}
+            {% if r.is_sponsored %}
+            <div class="ad-container">
+                <div class="sponsored">Sponsored</div>
+            {% else %}
+            <div class="result">
+            {% endif %}
+                <div class="url">{{ r.display_url }}</div>
+                <a class="title" href="{{ r.target_url }}" onclick="logClick('{{ r.id }}')">{{ r.title }}</a>
+                <div class="desc">{{ r.desc }}</div>
+            </div>
+        {% endfor %}
+    </div>
+    <script>
+        function logClick(id) {
+            fetch('/api/click', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id: id})
+            });
+        }
+    </script>
+</body>
+</html>

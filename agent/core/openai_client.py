@@ -85,10 +85,36 @@ class OpenAICompatClient(BaseLLMClient):
             except Exception as e:
                 last_error = f"API call failed: {e}"
                 last_is_api_error = True
-                print(f"  [llm] API error: {e}")
-                # Exponential backoff for connection errors (don't hammer a downed API)
-                wait_secs = min(2 ** attempt, 60)
-                print(f"  [llm] Waiting {wait_secs}s before retry...")
+                err_msg = str(e).lower()
+                # Rate-limit specific: providers sometimes return a
+                # `retry-after` hint; if present, use it. Otherwise back
+                # off harder than connection errors do (rate limits
+                # need real time to clear, not just 2-4s).
+                is_rate_limit = (
+                    "429" in err_msg
+                    or "rate limit" in err_msg
+                    or "rate_limit" in err_msg
+                    or "too many requests" in err_msg
+                )
+                if is_rate_limit:
+                    # Try to pull the retry-after hint from openai SDK
+                    # exceptions; fall back to aggressive backoff.
+                    retry_after = None
+                    headers = getattr(getattr(e, "response", None), "headers", None)
+                    if headers is not None:
+                        try:
+                            ra = headers.get("retry-after") or headers.get("Retry-After")
+                            if ra:
+                                retry_after = float(ra)
+                        except Exception:
+                            retry_after = None
+                    wait_secs = retry_after if retry_after else min(15 * (2 ** attempt), 300)
+                    print(f"  [llm] Rate limited. Waiting {wait_secs:.0f}s before retry...")
+                else:
+                    # Connection / server error: standard exponential backoff
+                    wait_secs = min(2 ** attempt, 60)
+                    print(f"  [llm] API error: {e}")
+                    print(f"  [llm] Waiting {wait_secs}s before retry...")
                 await asyncio.sleep(wait_secs)
                 continue
 

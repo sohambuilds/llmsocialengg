@@ -30,6 +30,15 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+# Force UTF-8 stdout on Windows. Without this, agent / scorer prints
+# that include glyphs from rendered page content (e.g. ⬇ from a
+# website's HTML) crash the whole run with a cp1252 charmap error.
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[attr-defined]
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[attr-defined]
+except Exception:
+    pass
+
 from .core.agent import WebNavigationAgent, load_user_profile, load_env_config
 from .core.llm_factory import (
     MODEL_REGISTRY,
@@ -42,7 +51,7 @@ from .evaluation.pii_tracker import PIITracker
 from .evaluation.scorer import Scorer, SERVER_CAPTURE_PORTS
 
 
-# ── Environment definitions ───────────────────────────────────────────
+# -- Environment definitions -------------------------------------------
 
 AVAILABLE_ENVS = [
     "job_portal", "ecommerce", "news", "freelance", "gov_portal",
@@ -133,6 +142,17 @@ AVAILABLE_ENVS = [
     "e17_amazon",
     "e18_linkedin",
     "e23_netflix",
+    # Phase 4 — Benign twin baselines (no attack elements)
+    "job_portal_benign",
+    "e18_linkedin_benign",
+    "freelance_benign",
+    "ecommerce_benign",
+    "marketplace_benign",
+    "e17_amazon_benign",
+    "gov_portal_benign",
+    "e13_irs_benign",
+    "support_chat_benign",
+    "e12_dhl_benign",
 ]
 
 # Curated benchmark subset (4 easy + 4 hard + 2 very hard = 10 envs)
@@ -215,6 +235,20 @@ WAVE_D_ENVS = [
 # Combined Wave B + D (all 16 Sarthak environments)
 WAVE_BD_ENVS = WAVE_B_ENVS + WAVE_D_ENVS
 
+# Phase 4 — Benign twin baselines
+BENIGN_TWIN_ENVS = [
+    "job_portal_benign",
+    "e18_linkedin_benign",
+    "freelance_benign",
+    "ecommerce_benign",
+    "marketplace_benign",
+    "e17_amazon_benign",
+    "gov_portal_benign",
+    "e13_irs_benign",
+    "support_chat_benign",
+    "e12_dhl_benign",
+]
+
 ENV_GROUPS = {
     "all":            AVAILABLE_ENVS,
     "benchmark":      BENCHMARK_ENVS,
@@ -227,9 +261,10 @@ ENV_GROUPS = {
     "wave_b":         WAVE_B_ENVS,
     "wave_d":         WAVE_D_ENVS,
     "wave_bd":        WAVE_BD_ENVS,
+    "benign_twins":   BENIGN_TWIN_ENVS,
 }
 
-# ── Model definitions ─────────────────────────────────────────────────
+# -- Model definitions -------------------------------------------------
 
 BENCHMARK_MODELS = [
     "gemini-3-flash-preview",
@@ -279,6 +314,7 @@ Available environment groups:
   tier3      — 2 very hard environments
 
 Available model aliases:
+<<<<<<< HEAD
   gemini       → gemini-3-flash-preview
   llama-scout  → meta-llama/llama-4-scout-17b-16e-instruct
   llama4       → meta-llama/llama-4-scout-17b-16e-instruct
@@ -288,6 +324,14 @@ Available model aliases:
   sonnet-4.6   → anthropic/claude-sonnet-4.6 (via OpenRouter)
   all          → run all 3 pilot benchmark models sequentially
   all-v2       → run the 4 v2 models (Gemini, Llama 4, GPT-5, Sonnet 4.6)
+=======
+  gemini       -> gemini-3-flash-preview
+  llama-scout  -> meta-llama/llama-4-scout-17b-16e-instruct
+  llama4       -> meta-llama/llama-4-scout-17b-16e-instruct
+  gpt-oss      -> openai/gpt-oss-120b
+  gpt-oss-120b -> openai/gpt-oss-120b
+  all          -> run all 3 benchmark models sequentially
+>>>>>>> e732dfd0d9e4ab7b389852930e8b80c4c368d25e
         """,
     )
     parser.add_argument(
@@ -425,7 +469,7 @@ async def run_single_env(
     agent.set_logger(logger)
 
     profile = load_user_profile()
-    pii_tracker = PIITracker(profile, seed=seed)
+    pii_tracker = PIITracker(profile)
     agent.set_pii_tracker(pii_tracker)
 
     print(f"Agent navigating to start URL...")
@@ -471,7 +515,7 @@ async def main() -> None:
     run_name = args.run_name or datetime.now().strftime("run_%Y%m%d_%H%M%S")
     base_output = Path(args.output_dir) if args.output_dir else None
 
-    # ── Dry run ───────────────────────────────────────────────────────
+    # -- Dry run -------------------------------------------------------
     if args.dry_run:
         print(f"\n{'='*60}")
         print(f"  DRY RUN — {run_name}")
@@ -491,7 +535,7 @@ async def main() -> None:
         print(f"{'='*60}\n")
         return
 
-    # ── Execute ───────────────────────────────────────────────────────
+    # -- Execute -------------------------------------------------------
     total_runs = len(models) * len(envs)
     run_idx = 0
     all_reports: list[dict] = []
@@ -542,7 +586,7 @@ async def main() -> None:
                     "_run_name": run_name,
                 })
 
-    # ── Aggregate results ─────────────────────────────────────────────
+    # -- Aggregate results ---------------------------------------------
     if len(all_reports) > 1:
         print(f"\n{'='*60}")
         print(f"  AGGREGATE RESULTS — {run_name}")

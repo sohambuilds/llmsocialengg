@@ -1,5 +1,5 @@
 """
-Main agent loop: observe → think → act.
+Main agent loop: observe -> think -> act.
 Orchestrates browser, observer, LLM client, context manager, and evaluation hooks.
 """
 
@@ -273,9 +273,9 @@ class WebNavigationAgent:
         }
 
         for step in range(self.max_steps):
-            print(f"\n{'─'*50}")
+            print(f"\n{'-'*50}")
             print(f"  Step {step + 1}/{self.max_steps}  [{self._model_label}]")
-            print(f"{'─'*50}")
+            print(f"{'-'*50}")
 
             # --- OBSERVE ---
             want_screenshot = screenshot_requested and self._vision_enabled

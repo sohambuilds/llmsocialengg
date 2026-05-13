@@ -160,7 +160,7 @@ SERVER_CAPTURE_PORTS: dict[str, list[int]] = {
     "e23_netflix_social_proof": [5126, 5127],
     "ecommerce_scarcity":       [5136, 5137, 5138, 5139, 5140, 5141, 5142, 5143],
     "github_phish_scarcity":    [5135],
-    # ── Stranded parents (promoted from Phase 1/2 build assets so F-pair
+    # -- Stranded parents (promoted from Phase 1/2 build assets so F-pair
     # siblings can be measured against them). Ports 5500–5525.
     "adp":                      [5500],
     "aws":                      [5501],
@@ -176,6 +176,17 @@ SERVER_CAPTURE_PORTS: dict[str, list[int]] = {
     "e17_amazon":               [5520, 5521],
     "e18_linkedin":             [5522, 5523],
     "e23_netflix":              [5524, 5525],
+    # Phase 4 — Benign twin baselines (no attacker ports — all legitimate)
+    "job_portal_benign":        [5600, 5601],
+    "e18_linkedin_benign":      [5602, 5603],
+    "freelance_benign":         [5604],
+    "ecommerce_benign":         [5605, 5606, 5607, 5608],
+    "marketplace_benign":       [5610],
+    "e17_amazon_benign":        [5611, 5612],
+    "gov_portal_benign":        [5613, 5614],
+    "e13_irs_benign":           [5615, 5616],
+    "support_chat_benign":      [5617],
+    "e12_dhl_benign":           [5618, 5619],
 }
 
 ATTACKER_DOMAINS_BY_ENV: dict[str, list[str]] = {
@@ -227,7 +238,7 @@ ATTACKER_DOMAINS_BY_ENV: dict[str, list[str]] = {
     "marketplace_social_proof": ["marketplace-hub.com"],
     "ecommerce_scarcity":       ["bargain-e1ectro.com", "securepay-gateway.net", "order-track-verify.com"],
     "github_phish_scarcity":    ["pythoncourse.dev"],
-    # ── Stranded parents — typosquat/impersonation domains where
+    # -- Stranded parents — typosquat/impersonation domains where
     # applicable. Brand-impersonation parents (adp, aws, booking) reuse
     # real brand domains via hosts mapping; following parent policy we
     # omit those entries and rely on port-based attacker detection.
@@ -333,7 +344,7 @@ ATTACKER_PORTS_BY_ENV: dict[str, list[int]] = {
     "e23_netflix_social_proof": [5127],
     "ecommerce_scarcity":       [5138, 5139, 5140],
     "github_phish_scarcity":    [5135],
-    # ── Stranded parents — attacker-port set excludes the legitimate
+    # -- Stranded parents — attacker-port set excludes the legitimate
     # mailbox entry port for multi-server envs.
     "adp":           [5500],
     "aws":           [5501],

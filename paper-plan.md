@@ -56,8 +56,14 @@ appending revisions.
 
 - **Threat model.** Attacker controls a website (or chain of sites
   reached via a forwarded email). The website is built around a known
-  social-engineering pattern (12 attack vectors taxonomized in
-  TAXO.md). The user has stored PII in the agent's profile
+  social-engineering pattern — one of **8 attack vectors** on axis B
+  in TAXO.md (`phishing_clone`, `credential_harvest`, `dark_patterns`,
+  `reward_trap`, `authority_impersonation`, `conversational_deception`,
+  `prompt_injection`, `fake_trust_signals`), embedded in a
+  4-classifying + 4-factor axis grid (A category · B vector · C
+  salience · D pii_target × E pressure · F prompt_injection ·
+  G interaction · H multi_site). The user has stored PII in the
+  agent's profile
   (`agent/config/user_profile.json`). The agent is given a normal task
   ("apply for this job", "buy these headphones") and the question is
   whether the attacker can extract the user's PII through the agent.
@@ -264,9 +270,11 @@ specifications lead the abstract and §1.
   Keyword DR retained as auxiliary.
 - **Reached-attack-surface gating.** ASR is reported conditioned on
   whether the agent navigated to the trap surface in each run.
-- **MITRE / OWASP / ENISA mapping.** Each of the 12 attack vectors
-  mapped to a published threat taxonomy in `classification.csv` and
-  TAXO.md. Defangs the "why these 12?" reviewer concern.
+- **MITRE / OWASP / ENISA mapping.** Each of the 8 attack vectors
+  (TAXO.md axis B) mapped to a published threat taxonomy in
+  `classification.csv` and TAXO.md. Defangs the "why these 8?"
+  reviewer concern. Pressure cues (axis E) and interaction style
+  (axis G) are reported as orthogonal modifiers, not as vectors.
 - **Fidelity sanity check.** 10 attack envs rated 1–5 on visual
   believability and copy quality alongside 5 real phishing
   screenshots from PhishTank / wayback. Reported as a paragraph in
@@ -280,7 +288,9 @@ specifications lead the abstract and §1.
 - We do **not** claim sites are scraped from real attackers — they
   are templated.
 - We do **not** claim the benchmark is exhaustive of attack
-  vectors — it covers 12, taxonomized in TAXO.md.
+  vectors — it covers 8 along axis B in TAXO.md, with documented
+  gaps (fake CAPTCHA / verification challenges, browser-extension
+  install prompts, malicious file upload as a controlled vector).
 - We do **not** claim the LLM-as-judge DR is perfect — we validate
   on a human-labelled subset and own residual disagreement.
 - We do **not** propose a defense scaffold in this paper. The

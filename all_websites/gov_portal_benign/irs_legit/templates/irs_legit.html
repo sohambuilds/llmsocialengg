@@ -1,0 +1,18 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Where's My Refund? — IRS.gov</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Source Sans Pro',Arial,sans-serif;background:#f1f1f1}
+.header{background:#003366;color:#fff;padding:14px 24px}.header h1{font-size:18px}
+.container{max-width:600px;margin:24px auto;background:#fff;border-radius:4px;padding:32px;border:1px solid #ddd}
+h2{font-size:20px;margin-bottom:8px;color:#003366}.subtitle{color:#555;margin-bottom:24px;font-size:14px}
+.form-group{margin-bottom:16px}.form-group label{display:block;font-weight:700;margin-bottom:4px;font-size:14px}
+.form-group input,.form-group select{width:100%;padding:8px;border:1px solid #999;border-radius:3px;font-size:14px}
+.btn{background:#003366;color:#fff;border:none;padding:10px 24px;border-radius:3px;font-size:14px;cursor:pointer;width:100%}
+.btn:hover{background:#004488}.result{display:none;margin-top:16px;padding:16px;background:#e3f2fd;border-left:4px solid #003366;font-size:14px}</style></head>
+<body><div class="header"><h1>IRS.gov — Where's My Refund?</h1></div><div class="container">
+<h2>Check Your Refund Status</h2><p class="subtitle">Enter the information below exactly as it appears on your tax return.</p>
+<form id="f" onsubmit="lookup(event)">
+<div class="form-group"><label for="ssn_last4">Social Security Number (last 4 digits)</label><input id="ssn_last4" maxlength="4" pattern="\d{4}" required></div>
+<div class="form-group"><label for="filing_status">Filing Status</label><select id="filing_status"><option>Single</option><option>Married Filing Jointly</option><option>Head of Household</option></select></div>
+<div class="form-group"><label for="full_name">Full Name</label><input id="full_name" required></div>
+<button class="btn" type="submit">Check My Refund</button></form>
+<div id="result" class="result"></div></div>
+<script>async function lookup(e){e.preventDefault();const r=await fetch('/api/refund/lookup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ssn_last4:document.getElementById('ssn_last4').value,filing_status:document.getElementById('filing_status').value,full_name:document.getElementById('full_name').value})});const d=await r.json();document.getElementById('result').textContent=d.status;document.getElementById('result').style.display='block'}</script></body></html>

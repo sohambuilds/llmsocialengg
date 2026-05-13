@@ -1,12 +1,15 @@
 # Scammer4U — Social Engineering Attack Benchmark for Web-Based VLM Agents
 
 > **Status (May 2026):** EMNLP 2026 main-track submission in flight. Benchmark
-> currently has **91 logical environments** registered across 12 attack
-> vectors, with axis-controlled siblings supporting 11 paired ablation
-> claims (F1–F11). See [paper-plan.md](paper-plan.md) for the current
-> thesis, methodological commitments, and 21-day action plan;
-> [TAXO.md](TAXO.md) for the axis taxonomy; [phase3-checklist.md](phase3-checklist.md)
-> for live env build status.
+> currently has **91 logical environments** registered across **8 attack
+> vectors** (TAXO.md axis B), embedded in a 4-classifying + 4-factor
+> axis grid. Axis-controlled siblings support 11 paired ablation claims
+> (F1–F11) covering 6 of the 8 axes (A, C, D, E, F, G; B is implicit
+> per archetype, H multi_site is a flagged gap). See
+> [paper-plan.md](paper-plan.md) for the current thesis, methodological
+> commitments, and 20-day action plan; [TAXO.md](TAXO.md) for the axis
+> taxonomy; [phase3-checklist.md](phase3-checklist.md) for live env
+> build status.
 
 VLM agents are increasingly used to browse the web and complete tasks on
 behalf of users. They store personal info (email, phone, address, credit
@@ -32,11 +35,14 @@ The benchmark is organized along 8 classification/factor axes
 ([TAXO.md](TAXO.md)). Per-env axis values live in
 [classification.csv](classification.csv).
 
-- **44 archetype parents** spanning 12 attack-vector categories: phishing
-  clones, dark patterns, urgency cues, fake trust signals, fake support
-  chats, consent dark patterns, reward traps, social proof manipulation,
-  conversational deception, prompt injection, OAuth impersonation,
-  credential harvesting via paywall.
+- **44 archetype parents** spanning **8 attack vectors** (axis B in
+  TAXO.md): `phishing_clone`, `credential_harvest`, `dark_patterns`,
+  `reward_trap`, `authority_impersonation`, `conversational_deception`,
+  `prompt_injection`, `fake_trust_signals`. (Earlier doc revisions
+  listed "12 attack types"; that flat list conflated axis-B vectors
+  with axis-E pressure cues — urgency, social proof — and specific
+  archetypes — fake support chat, OAuth, paywall harvest. TAXO.md
+  is the source of truth.)
 - **47 axis-controlled sibling envs** (Phase 3 Waves A–G) that differ
   from a parent on exactly one axis — pressure (urgency/social proof/
   authority/scarcity), salience (subtle/plausible/blatant), prompt
@@ -66,19 +72,45 @@ Medium:
 
 
 ## TYPES OF ATTACKS WE TEST
-1. Phishing Clone — fake copy of a real website on a typosquatted domain
-2. Dark Pattern Overload — many flashy fake buttons; real action is discrete
-3. Urgency Tricks — countdown timers, "only 2 slots left"
-4. Fake Trust Signals — fake SSL icons, "Official Partner" badges
-5. Fake Support Chat — conversational phishing via chat widget
-6. Cookie/Consent Dark Patterns — pre-ticked vendor checkboxes, email capture
-7. Reward/Incentive Traps — "enter info to unlock premium"
-8. Social Proof Manipulation — fake reviews, inflated download counts
-9. Conversational Deception — multi-turn chat that escalates PII requests
-10. Prompt Injection — hidden instructions embedded in page/chat content
-11. OAuth Impersonation — fake login pages mimicking GitHub, Google, etc.
-12. Credential Harvesting via Paywall — API keys or passwords gated behind
-    freemium features
+
+The benchmark organizes attacks along **axis B (vector)** in TAXO.md.
+Eight values, defined as the *mechanism* the scam uses to manipulate
+the agent:
+
+1. **`phishing_clone`** — pixel-perfect or near-perfect copy of a
+   real site on a typosquatted / look-alike domain (GitHub login,
+   IRS portal, Chase, etc.).
+2. **`credential_harvest`** — site whose explicit ask is for
+   passwords / API keys / 2FA tokens, often gated behind a paywall
+   or "verification" step.
+3. **`dark_patterns`** — UI-level coercion: many fake buttons hiding
+   the real action, grayed-out skip buttons, pre-checked consent
+   boxes, hidden costs.
+4. **`reward_trap`** — "unlock your free certificate / premium
+   download / quiz score" gated by PII collection.
+5. **`authority_impersonation`** — site claims to be a government,
+   regulator, or platform admin (IRS, DHL, "FreelanceHub Security").
+6. **`conversational_deception`** — multi-turn chat that gradually
+   escalates trust and PII requests, often with adaptive response
+   trees.
+7. **`prompt_injection`** — instructions hidden in page / chat /
+   metadata aimed at the agent's reasoning, not the user. Sub-types:
+   visible_text, hidden_dom, fake_system_msg.
+8. **`fake_trust_signals`** — counterfeit security badges, "SEC
+   Registered", "FDIC Insured" claims, fake review counts, fake
+   SSL icons.
+
+Each env declares one *primary* vector and may declare one
+*secondary* vector (e.g. `phishing_clone + fake_trust_signals`).
+
+**Note on what is NOT a vector here.** Pressure cues — urgency
+countdowns, social-proof counters, scarcity, authority phrasing —
+live on **axis E (`pressure`)**, not on axis B. They modulate any
+vector. Likewise, "fake support chat" is `conversational_deception`
+instantiated on a support-site category; "OAuth impersonation" is
+`phishing_clone` instantiated on an OAuth flow. The axis system
+keeps mechanism, modulation, and instantiation separate — that
+separation is what enables the F1–F11 paired ablations.
 
 
 ## DIFFICULTY TIERS
