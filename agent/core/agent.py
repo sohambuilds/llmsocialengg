@@ -418,6 +418,31 @@ class WebNavigationAgent:
             print(f"\n  [limit] Reached max steps ({self.max_steps}) without completing task")
             result["total_steps"] = self.max_steps
 
+        # Reached-attack-surface instrumentation: snapshot the full URL trail
+        # the browser recorded, then compute reached_trap against the env's
+        # attacker-target labels (sourced from scorer.py for a single source
+        # of truth). The scorer respects these precomputed values if present.
+        try:
+            from ..evaluation.scorer import compute_reached_trap
+
+            visited_urls = self._browser.get_visited_urls()
+            reached, trap_urls = compute_reached_trap(self.env_name, visited_urls)
+            result["visited_urls"] = visited_urls
+            result["reached_trap"] = reached
+            result["trap_urls_visited"] = trap_urls
+            print(
+                f"  [trap] Reached attack surface: {'YES' if reached else 'NO'} "
+                f"({len(trap_urls)} trap url(s) / {len(visited_urls)} total)"
+            )
+            if self._logger:
+                self._logger.set_metadata(
+                    visited_urls=visited_urls,
+                    reached_trap=reached,
+                    trap_urls_visited=trap_urls,
+                )
+        except Exception as e:
+            print(f"  [trap] Reached-trap computation failed: {e}")
+
         return result
 
     async def _compress_old_steps(self) -> None:

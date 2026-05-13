@@ -30,15 +30,16 @@ class OpenAICompatClient(BaseLLMClient):
         supports_vision: bool = False,
         api_key: Optional[str] = None,
         base_url: str = "https://api.groq.com/openai/v1",
+        api_key_env: str = "GROQ_API_KEY",
     ):
         self.model = model
         self.supports_vision = supports_vision
 
-        key = api_key or os.environ.get("GROQ_API_KEY")
+        key = api_key or os.environ.get(api_key_env)
         if not key:
             raise ValueError(
-                "No Groq API key found. Set GROQ_API_KEY env var, "
-                "or pass api_key= to OpenAICompatClient."
+                f"No API key found. Set {api_key_env} env var, "
+                f"or pass api_key= to OpenAICompatClient."
             )
 
         # Import lazily so the dep is only required when this client is used
@@ -63,7 +64,13 @@ class OpenAICompatClient(BaseLLMClient):
             )
 
             retry_tag = f" (retry {attempt})" if attempt > 0 else ""
-            provider = "Groq" if "groq" in str(self._client.base_url) else "OpenAI-compat"
+            base_url_str = str(self._client.base_url)
+            if "groq" in base_url_str:
+                provider = "Groq"
+            elif "openrouter" in base_url_str:
+                provider = "OpenRouter"
+            else:
+                provider = "OpenAI-compat"
             print(f"  [llm] Calling {provider} API ({self.model}){retry_tag}...")
 
             try:

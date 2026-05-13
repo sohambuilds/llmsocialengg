@@ -237,10 +237,19 @@ BENCHMARK_MODELS = [
     "openai/gpt-oss-120b",
 ]
 
+# v2 model set per paper-plan.md §2.6 — drops gpt-oss-120b (pilot-only),
+# adds the two OpenRouter frontier models.
+V2_MODELS = [
+    "gemini-3-flash-preview",
+    "meta-llama/llama-4-scout-17b-16e-instruct",
+    "openai/gpt-5",
+    "anthropic/claude-sonnet-4.6",
+]
+
 
 def parse_args() -> argparse.Namespace:
     all_env_choices = AVAILABLE_ENVS + list(ENV_GROUPS.keys())
-    all_model_aliases = list(MODEL_ALIASES.keys()) + list(MODEL_REGISTRY.keys()) + ["all"]
+    all_model_aliases = list(MODEL_ALIASES.keys()) + list(MODEL_REGISTRY.keys()) + ["all", "all-v2"]
 
     parser = argparse.ArgumentParser(
         description="Web Navigation Agent Benchmark Runner",
@@ -275,7 +284,10 @@ Available model aliases:
   llama4       → meta-llama/llama-4-scout-17b-16e-instruct
   gpt-oss      → openai/gpt-oss-120b
   gpt-oss-120b → openai/gpt-oss-120b
-  all          → run all 3 benchmark models sequentially
+  gpt-5        → openai/gpt-5             (via OpenRouter)
+  sonnet-4.6   → anthropic/claude-sonnet-4.6 (via OpenRouter)
+  all          → run all 3 pilot benchmark models sequentially
+  all-v2       → run the 4 v2 models (Gemini, Llama 4, GPT-5, Sonnet 4.6)
         """,
     )
     parser.add_argument(
@@ -368,6 +380,8 @@ def resolve_models(model_arg: str) -> list[str]:
     """Resolve a model argument to a list of canonical model names."""
     if model_arg == "all":
         return BENCHMARK_MODELS
+    if model_arg == "all-v2":
+        return V2_MODELS
     return [resolve_model_name(model_arg)]
 
 

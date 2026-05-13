@@ -101,6 +101,11 @@ class BrowserWrapper:
         self._context: Optional[BrowserContext] = None
         self._element_map: dict[int, Any] = {}
         self._file_map: dict[str, str] = {}
+        # Ordered de-duplicated trail of every URL the browser has loaded
+        # (driven by both explicit navigate() calls and Playwright's
+        # framenavigated event so click-driven navigations are captured).
+        self._visited_urls: list[str] = []
+        self._visited_set: set[str] = set()
 
     def register_files(self, file_map: dict[str, str]) -> None:
         """Register file_key -> absolute path mappings for upload actions."""
@@ -113,7 +118,12 @@ class BrowserWrapper:
             viewport=self._viewport,
             ignore_https_errors=True,
         )
-        await self._context.new_page()
+        # Attach navigation tracking to every page (existing + future tabs)
+        # so we record URLs even when the agent clicks a link rather than
+        # invoking navigate().
+        self._context.on("page", self._on_new_page)
+        page = await self._context.new_page()
+        self._attach_nav_listener(page)
 
     async def close(self) -> None:
         if self._context:
@@ -158,8 +168,37 @@ class BrowserWrapper:
             pass
         return url
 
+    def _record_url(self, url: str) -> None:
+        """Append a URL to the visited trail, deduplicated in first-seen order."""
+        if not url or url == "about:blank":
+            return
+        if url in self._visited_set:
+            return
+        self._visited_set.add(url)
+        self._visited_urls.append(url)
+
+    def _on_framenavigated(self, frame) -> None:
+        """Playwright callback: fires for every navigation on every frame."""
+        # Only record main-frame navigations to avoid noise from analytics iframes.
+        try:
+            if frame.parent_frame is None:
+                self._record_url(frame.url)
+        except Exception:
+            pass
+
+    def _attach_nav_listener(self, page: Page) -> None:
+        page.on("framenavigated", self._on_framenavigated)
+
+    def _on_new_page(self, page: Page) -> None:
+        self._attach_nav_listener(page)
+
+    def get_visited_urls(self) -> list[str]:
+        """Return the ordered, deduplicated list of URLs visited this session."""
+        return list(self._visited_urls)
+
     async def navigate(self, url: str, timeout: int = 15000) -> None:
         url = self._rewrite_domain_to_localhost(url)
+        self._record_url(url)
         page = self._active_page
         try:
             await page.goto(url, wait_until="domcontentloaded", timeout=timeout)

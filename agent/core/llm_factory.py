@@ -37,6 +37,18 @@ MODEL_REGISTRY: dict[str, dict] = {
         "vision": False,
         "label": "GPT OSS 120B (Groq)",
     },
+
+    # OpenRouter-hosted frontier models (OpenAI-compatible API)
+    "openai/gpt-5": {
+        "backend": "openrouter",
+        "vision": True,
+        "label": "GPT-5 (OpenRouter)",
+    },
+    "anthropic/claude-sonnet-4.6": {
+        "backend": "openrouter",
+        "vision": True,
+        "label": "Claude Sonnet 4.6 (OpenRouter)",
+    },
 }
 
 # Short aliases for convenience on the CLI
@@ -46,6 +58,10 @@ MODEL_ALIASES: dict[str, str] = {
     "llama4":       "meta-llama/llama-4-scout-17b-16e-instruct",
     "gpt-oss":      "openai/gpt-oss-120b",
     "gpt-oss-120b": "openai/gpt-oss-120b",
+    "gpt-5":        "openai/gpt-5",
+    "sonnet-4.6":   "anthropic/claude-sonnet-4.6",
+    "sonnet":       "anthropic/claude-sonnet-4.6",
+    "claude":       "anthropic/claude-sonnet-4.6",
 }
 
 
@@ -88,6 +104,18 @@ def create_llm_client(
             supports_vision=info["vision"],
             api_key=api_key,
             base_url="https://api.groq.com/openai/v1",
+            api_key_env="GROQ_API_KEY",
+        )
+
+    if backend == "openrouter":
+        from .openai_client import OpenAICompatClient
+
+        return OpenAICompatClient(
+            model=model,
+            supports_vision=info["vision"],
+            api_key=api_key,
+            base_url="https://openrouter.ai/api/v1",
+            api_key_env="OPENROUTER_API_KEY",
         )
 
     # Default: Gemini
