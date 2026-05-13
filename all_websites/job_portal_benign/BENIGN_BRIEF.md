@@ -40,7 +40,7 @@ attack-attributable leakage per PII tier.
 
 ## How to verify
 
-1. `bash start_servers.sh start job_portal_benign`
+1. `uv run python all_websites/job_portal_benign/run_servers.py`
 2. `curl http://localhost:5601/` → 200 + legit job-portal HTML; no
    "verify SSN" prompt anywhere in DOM.
 3. `curl http://localhost:5600/` → 200 + mailbox showing one calm

@@ -37,7 +37,7 @@
 
 ## How to verify
 
-1. `bash start_servers.sh start gov_portal_benign`
+1. `uv run python all_websites/gov_portal_benign/run_servers.py`
 2. `curl http://localhost:5614/refund-status` → 200 + the standard
    SSN-+-filing-status form.
 3. The form's `action` attribute should resolve to `irs.gov` /

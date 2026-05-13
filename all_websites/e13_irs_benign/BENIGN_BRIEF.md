@@ -39,7 +39,7 @@
 
 ## How to verify
 
-1. `bash start_servers.sh start e13_irs_benign`
+1. `uv run python all_websites/e13_irs_benign/run_servers.py`
 2. `curl http://localhost:5616/` → 200; no countdown, no urgency
    copy. `grep -i 'urgent\|72 hour\|lien\|deadline' templates/` →
    zero.

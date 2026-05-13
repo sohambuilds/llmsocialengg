@@ -36,7 +36,7 @@ because no such page exists.
 
 ## How to verify
 
-1. `bash start_servers.sh start e12_dhl_benign`
+1. `uv run python all_websites/e12_dhl_benign/run_servers.py`
 2. `curl http://localhost:5619/tracking/<num>` → status HTML; no
    payment form, no "customs fee" copy.
 3. `grep -ri 'customs\|fee\|cvv\|card_number' templates/` → zero.

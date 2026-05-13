@@ -305,12 +305,54 @@ exist, pre-reg is tagged.
       already handled in `OpenAICompatClient._maybe_compress_image`.
 
 ### E3
-- [ ] Finalize benign twins. Each gets a 1-page design brief stating
-      what was stripped from the parent.
-- [ ] Fidelity sanity check. 10 attack envs rated 1–5 on visual
-      believability + copy quality alongside 5 real phishing
-      screenshots (PhishTank / wayback). Document distribution.
-      One-paragraph subsection material for §3.
+- [x] **Benign twins finalized.** Per-env 1-page strip-diff briefs
+      shipped at `all_websites/<env>_benign/BENIGN_BRIEF.md` for all
+      10 twins (job_portal, e18_linkedin, freelance, ecommerce,
+      marketplace, e17_amazon, gov_portal, e13_irs, support_chat,
+      e12_dhl). Each brief covers: parent + axis A/B frontmatter,
+      what was stripped, what was kept (legit task), expected
+      baseline leakage by PII tier, and per-env verify commands.
+      Top-level index + stratification table at
+      `all_websites/BENIGN_TWINS_INDEX.md`. Polish parity check vs
+      attack-env READMEs: the briefs serve a different purpose
+      (paper-grade strip-diff, not dev README) but are at the same
+      level of structure and specificity. Verify commands point at
+      each env's `run_servers.py` / `app.py` (start_servers.sh does
+      not accept per-env args — confirmed by source read).
+- [x] **Fidelity sanity check scaffolded.** All the infra is in
+      place; the rating itself is a one-author task (Soham) blocked
+      only on capturing 5 real-phish screenshots.
+      - **Rubric:** `fidelity/RUBRIC.md` — 1–5 scales for visual
+        believability and copy quality, both with explicit per-score
+        anchors. Honest framing on the non-blinding limitation
+        (URL bar reveals localhost vs archived URLs at view-time;
+        compensation is randomized order + uniform rubric + separate
+        `LOCATIONS.md`).
+      - **10 attack envs picked** (stratified across vector ×
+        category × salience, all blatant-salience): `github_phish`,
+        `job_portal`, `gov_portal`, `e8_chase`, `e17_amazon`,
+        `e10_mychart`, `cluttered_downloads`, `virus_scanner`,
+        `coc_gems`, `marketplace`. Listed with vector / category /
+        what-to-rate in RUBRIC § Sample roster.
+      - **5 real-phish slots** — one per vector family represented
+        in the synthetic set: GitHub-style cred phish (PhishTank),
+        IRS refund (CISA / wayback), Chase/PayPal bank (PhishTank),
+        Amazon order phish (PhishTank), scareware (wayback /
+        Microsoft tech-support-scams). Rater captures each as a
+        screenshot into `fidelity/real_phish/s##.{png,html}`.
+      - **Sheet scaffolding:** `_fidelity_setup.py` generates
+        `samples.csv` (shuffled, descriptor-only — no synth/real
+        leak), `ratings.csv` (empty), `LOCATIONS.md` (per-sample
+        URL / capture path), `sample_key.json` (kept closed until
+        rating done).
+      - **Stats + §3 paragraph generator:** `_fidelity_compare.py`
+        reads ratings + un-blinds via key, runs Mann-Whitney U test,
+        writes `fidelity/comparison.json` with means/SDs and a
+        paste-ready paragraph for the paper's §3.
+      - **Remaining work for Soham:** capture 5 real-phish
+        screenshots, rate 15 samples (~3 hr per the original
+        estimate), run `_fidelity_compare.py`. Output paragraph
+        drops straight into §3 of the paper.
 
 ### E4
 - [ ] Methods section first draft complete. All sub-sections present,

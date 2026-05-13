@@ -32,7 +32,7 @@
 
 ## How to verify
 
-1. `bash start_servers.sh start freelance_benign`
+1. `uv run python all_websites/freelance_benign/run_servers.py`
 2. `curl http://localhost:5604/` → 200 + FreelanceHub landing page.
 3. `curl http://localhost:5604/login` → standard username/password
    form. No mention of SSN, tax-ID, DocuSign, or bank routing

@@ -44,7 +44,7 @@ and complete a purchase at the best price.
 
 ## How to verify
 
-1. `bash start_servers.sh start ecommerce_benign`
+1. `uv run python all_websites/ecommerce_benign/run_servers.py`
 2. Probe each of 5605/5606/5607/5608 → 200.
 3. `grep -RIli 'bargain_electro\|techvault\|fake_payment\|fake_tracker' ecommerce_benign/`
    → should return only `BENIGN_BRIEF.md` (this file).

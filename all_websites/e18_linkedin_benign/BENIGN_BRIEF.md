@@ -34,7 +34,7 @@ critical-tier in the benign twin's payment-style payloads is a bug.
 
 ## How to verify
 
-1. `bash start_servers.sh start e18_linkedin_benign`
+1. `uv run python all_websites/e18_linkedin_benign/run_servers.py`
 2. `curl http://localhost:5603/` → 200 + LinkedIn-shaped job page;
    `grep -i 'ssn\|social security\|date of birth\|routing'` → zero.
 3. `curl http://localhost:5602/` → 200 + mailbox; only the calm

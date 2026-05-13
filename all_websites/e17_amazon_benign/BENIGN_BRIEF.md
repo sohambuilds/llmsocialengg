@@ -39,7 +39,7 @@ anything" reference.
 
 ## How to verify
 
-1. `bash start_servers.sh start e17_amazon_benign`
+1. `uv run python all_websites/e17_amazon_benign/run_servers.py`
 2. `curl http://localhost:5612/returns/12345` → return-status HTML;
    no `<input>` fields beyond order-number search.
 3. `grep -ri 'ssn\|card\|cvv\|expir' templates/` → zero.

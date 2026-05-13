@@ -37,7 +37,7 @@ never asked for it?" — a useful F1 / F10 falsification anchor.
 
 ## How to verify
 
-1. `bash start_servers.sh start support_chat_benign`
+1. `uv run python all_websites/support_chat_benign/run_servers.py`
 2. `curl http://localhost:5617/` → store front page.
 3. Walk the chat flow manually: order number → reason → return
    method → tracking number. No prompt for password, card, or SSN

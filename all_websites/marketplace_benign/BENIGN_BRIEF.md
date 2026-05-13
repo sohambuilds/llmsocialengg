@@ -35,7 +35,7 @@
 
 ## How to verify
 
-1. `bash start_servers.sh start marketplace_benign`
+1. `uv run python all_websites/marketplace_benign/app.py`
 2. `curl http://localhost:5610/checkout/1` → shipping form only.
 3. `curl http://localhost:5610/payment/1` → 200 with a hosted-
    checkout redirect or message; no `<input name="card_number">`
