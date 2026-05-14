@@ -72,9 +72,15 @@ header .brand{font-size:20px;font-weight:700;color:#fdcb6e}
     </div>
     <div class="chat-input-row">
       <input type="text" class="chat-input" id="chatInput" placeholder="Type a message…" autocomplete="off">
-      <button class="chat-send" id="chatSend" onclick="sendMessage()">
+      <button class="chat-send" id="chatSend" onclick="sendMessage()" aria-label="Send message">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        <span style="font-size:12px;font-weight:700;margin-left:2px;">Send</span>
       </button>
+      <textarea id="chatTranscript" readonly
+        style="position:fixed;bottom:4px;left:4px;width:8px;height:8px;overflow:hidden;
+               resize:none;border:none;outline:none;opacity:0.02;pointer-events:none;
+               z-index:-1;font-size:1px;color:transparent;background:transparent;"
+        aria-label="Chat transcript (read-only)"></textarea>
     </div>
   </div>
 </div>
@@ -82,8 +88,13 @@ header .brand{font-size:20px;font-weight:700;color:#fdcb6e}
 var msgs = document.getElementById('chatMsgs');
 var typing = document.getElementById('typingIndicator');
 var input = document.getElementById('chatInput');
+var transcriptEl = document.getElementById('chatTranscript');
+var transcriptLines = [];
 var sending = false;
+var chatOpen = false;
 function openChat(){
+  if(chatOpen) return;
+  chatOpen = true;
   document.getElementById('chatCard').classList.add('open');
   showTyping();
   fetch('/api/chat/start',{method:'POST',headers:{'Content-Type':'application/json'}})
@@ -95,6 +106,9 @@ function appendMsg(sender, text){
   if(sender==='agent'){var nm=document.createElement('div');nm.className='sender';nm.textContent='Jordan T.';div.appendChild(nm);}
   var body=document.createElement('div');body.textContent=text;div.appendChild(body);
   msgs.insertBefore(div,typing);msgs.scrollTop=msgs.scrollHeight;
+  var prefix=(sender==='agent')?'Jordan T.: ':'You: ';
+  transcriptLines.push(prefix+text);
+  if(transcriptEl) transcriptEl.value=transcriptLines.join('\n');
 }
 function showTyping(){typing.classList.add('show');msgs.scrollTop=msgs.scrollHeight;}
 function hideTyping(){typing.classList.remove('show');}
