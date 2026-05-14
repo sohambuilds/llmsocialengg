@@ -314,24 +314,27 @@ Available environment groups:
   tier3      — 2 very hard environments
 
 Available model aliases:
-<<<<<<< HEAD
-  gemini       → gemini-3-flash-preview
-  llama-scout  → meta-llama/llama-4-scout-17b-16e-instruct
-  llama4       → meta-llama/llama-4-scout-17b-16e-instruct
-  gpt-oss      → openai/gpt-oss-120b
-  gpt-oss-120b → openai/gpt-oss-120b
-  gpt-5        → openai/gpt-5             (via OpenRouter)
-  sonnet-4.6   → anthropic/claude-sonnet-4.6 (via OpenRouter)
-  all          → run all 3 pilot benchmark models sequentially
-  all-v2       → run the 4 v2 models (Gemini, Llama 4, GPT-5, Sonnet 4.6)
-=======
   gemini       -> gemini-3-flash-preview
   llama-scout  -> meta-llama/llama-4-scout-17b-16e-instruct
   llama4       -> meta-llama/llama-4-scout-17b-16e-instruct
   gpt-oss      -> openai/gpt-oss-120b
   gpt-oss-120b -> openai/gpt-oss-120b
-  all          -> run all 3 benchmark models sequentially
->>>>>>> e732dfd0d9e4ab7b389852930e8b80c4c368d25e
+  gpt-5        -> openai/gpt-5             (via OpenRouter)
+  sonnet-4.6   -> anthropic/claude-sonnet-4.6 (via OpenRouter)
+  all          -> run all 3 pilot benchmark models sequentially
+  all-v2       -> run the 4 v2 models (Gemini, Llama 4, GPT-5, Sonnet 4.6)
+
+Conditions:
+  C0  baseline (default)
+  C1  generic privacy nudge
+  C2  phishing-aware checklist
+  C3  reflective trust judgment
+  all run C0, C1, C2, C3 in sequence (logs into per-condition subfolders)
+
+Output layout (when --output-dir or default agent/logs/ is used):
+  <output-dir>/<run-name>/<model>/<condition>/<env>_<model>_<UTC-ts>.json
+  <output-dir>/<run-name>/<model>/<condition>/<env>_<model>_<UTC-ts>.score.json
+  <output-dir>/<run-name>/aggregate_results.json
         """,
     )
     parser.add_argument(
@@ -385,9 +388,9 @@ Available model aliases:
         "--condition",
         type=str,
         default="C0",
-        choices=["C0", "C1", "C2", "C3"],
-        help="Mitigation condition: C0=baseline, C1=generic privacy nudge, "
-             "C2=phishing-aware checklist, C3=reflective trust judgment",
+        choices=["C0", "C1", "C2", "C3", "all"],
+        help="Mitigation condition. 'all' fans out across C0..C3 in one "
+             "invocation, each landing in its own per-condition subfolder.",
     )
     parser.add_argument(
         "--seed",
@@ -427,6 +430,21 @@ def resolve_models(model_arg: str) -> list[str]:
     if model_arg == "all-v2":
         return V2_MODELS
     return [resolve_model_name(model_arg)]
+
+
+ALL_CONDITIONS = ["C0", "C1", "C2", "C3"]
+
+
+def resolve_conditions(condition_arg: str) -> list[str]:
+    """Resolve a --condition argument to a list of condition labels."""
+    if condition_arg == "all":
+        return list(ALL_CONDITIONS)
+    return [condition_arg]
+
+
+def _safe_path_segment(s: str) -> str:
+    """Turn a model label / id into a filesystem-safe directory name."""
+    return s.replace(" ", "_").replace("/", "_").replace("\\", "_")
 
 
 async def run_single_env(
@@ -509,14 +527,18 @@ async def main() -> None:
 
     envs = resolve_envs(args.env)
     models = resolve_models(args.model)
+    conditions = resolve_conditions(args.condition)
     headless = not args.headed
 
-    # Build output directory
+    # Build output directory. Default to agent/logs/ so the
+    # <run_name>/<model>/<condition>/ structure always applies even when
+    # --output-dir is not given.
     run_name = args.run_name or datetime.now().strftime("run_%Y%m%d_%H%M%S")
-    base_output = Path(args.output_dir) if args.output_dir else None
+    base_output = Path(args.output_dir) if args.output_dir else (Path(__file__).parent / "logs")
 
     # -- Dry run -------------------------------------------------------
     if args.dry_run:
+        total_runs = len(models) * len(envs) * len(conditions)
         print(f"\n{'='*60}")
         print(f"  DRY RUN — {run_name}")
         print(f"{'='*60}")
@@ -527,64 +549,77 @@ async def main() -> None:
         print(f"  Environments ({len(envs)}):")
         for e in envs:
             print(f"    - {e}")
-        print(f"  Condition: {args.condition}")
+        print(f"  Conditions ({len(conditions)}): {', '.join(conditions)}")
         print(f"  Seed: {args.seed}")
-        print(f"  Total runs: {len(models) * len(envs)}")
+        print(f"  Total runs: {total_runs}")
         print(f"  Max steps: {args.max_steps}")
         print(f"  Headed: {args.headed}")
+        print(f"  Output layout:")
+        for m in models:
+            info = get_model_info(m)
+            model_short = info.get("label", m)
+            safe_model = _safe_path_segment(model_short)
+            for c in conditions:
+                print(f"    {base_output / run_name / safe_model / c}/")
         print(f"{'='*60}\n")
         return
 
     # -- Execute -------------------------------------------------------
-    total_runs = len(models) * len(envs)
+    total_runs = len(models) * len(envs) * len(conditions)
     run_idx = 0
     all_reports: list[dict] = []
 
     print(f"\n{'='*60}")
     print(f"  Benchmark Run: {run_name}")
-    print(f"  {len(models)} model(s) × {len(envs)} environment(s) = {total_runs} total runs")
+    print(
+        f"  {len(models)} model(s) × {len(envs)} env(s) × "
+        f"{len(conditions)} condition(s) = {total_runs} total runs"
+    )
+    print(f"  Output: {base_output / run_name}/")
     print(f"{'='*60}\n")
 
     for model in models:
         model_info = get_model_info(model)
         model_short = model_info.get("label", model)
+        safe_model = _safe_path_segment(model_short)
 
-        # Per-model output directory
-        if base_output:
-            output_dir = base_output / run_name / model_short.replace(" ", "_")
-        else:
-            output_dir = None
+        for condition in conditions:
+            # <base_output>/<run_name>/<model>/<condition>/
+            output_dir = base_output / run_name / safe_model / condition
+            output_dir.mkdir(parents=True, exist_ok=True)
 
-        for env_name in envs:
-            run_idx += 1
-            print(f"\n{'#'*60}")
-            print(f"  RUN {run_idx}/{total_runs}: {env_name} × {model_short} [{args.condition}]")
-            print(f"{'#'*60}")
+            for env_name in envs:
+                run_idx += 1
+                print(f"\n{'#'*60}")
+                print(f"  RUN {run_idx}/{total_runs}: {env_name} × {model_short} [{condition}]")
+                print(f"  -> {output_dir}/")
+                print(f"{'#'*60}")
 
-            try:
-                report = await run_single_env(
-                    env_name=env_name,
-                    model=model,
-                    max_steps=args.max_steps,
-                    headless=headless,
-                    api_key=args.api_key,
-                    output_dir=output_dir,
-                    condition=args.condition,
-                    seed=args.seed,
-                )
-                report["_run_name"] = run_name
-                all_reports.append(report)
-            except Exception as e:
-                print(f"\n  ERROR running {env_name} × {model_short}: {e}")
-                import traceback
-                traceback.print_exc()
-                all_reports.append({
-                    "env": env_name,
-                    "model": model,
-                    "model_label": model_short,
-                    "error": str(e),
-                    "_run_name": run_name,
-                })
+                try:
+                    report = await run_single_env(
+                        env_name=env_name,
+                        model=model,
+                        max_steps=args.max_steps,
+                        headless=headless,
+                        api_key=args.api_key,
+                        output_dir=output_dir,
+                        condition=condition,
+                        seed=args.seed,
+                    )
+                    report["_run_name"] = run_name
+                    all_reports.append(report)
+                except Exception as e:
+                    print(f"\n  ERROR running {env_name} × {model_short} [{condition}]: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    all_reports.append({
+                        "env": env_name,
+                        "model": model,
+                        "model_label": model_short,
+                        "condition": condition,
+                        "error": str(e),
+                        "_run_name": run_name,
+                    })
 
     # -- Aggregate results ---------------------------------------------
     if len(all_reports) > 1:
@@ -617,9 +652,10 @@ async def main() -> None:
             print(f"\n  WARNING: {unreliable_count} run(s) flagged as UNRELIABLE due to excessive parse failures")
         print(f"{'='*60}\n")
 
-    # Save aggregate report
+    # Save aggregate report at the run-name root, alongside the
+    # per-model/per-condition subfolders.
     if all_reports:
-        agg_dir = (base_output / run_name) if base_output else (Path("agent/logs") / run_name)
+        agg_dir = base_output / run_name
         agg_dir.mkdir(parents=True, exist_ok=True)
         agg_path = agg_dir / "aggregate_results.json"
         with open(agg_path, "w") as f:
