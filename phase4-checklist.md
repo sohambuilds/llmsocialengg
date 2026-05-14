@@ -171,16 +171,16 @@ contract.
       table.
 
 ### E4
-- [ ] Pre-registration doc at `analysis-plan.md`. ~2 pages. Hypotheses
+- [X] Pre-registration doc at `analysis-plan.md`. ~2 pages. Hypotheses
       (F1–F11 + 3 mitigation comparisons + benign-baseline subtraction
       + F1-via-C3 specific test), test choices (paired mixed-effects
       logistic with env and model as crossed random effects, BH
       correction over the planned-test set), inclusion rules
       (`reached_trap=True` for ASR), falsification criteria.
-- [ ] Git-tag `prereg-v2-start` at end of week 1, **before any v2
+- [X] Git-tag `prereg-v2-start` at end of week 1, **before any v2
       runs**.
-- [ ] Related work draft (§2 of paper).
-- [ ] Methods skeleton (§3).
+- [X] Related work draft (§2 of paper).
+- [X] Methods skeleton (§3).
 
 **Milestone:** end of day 5 — harness runs all 4 models in all 4
 conditions, DR judge produces output on a sample, 10 benign twins
@@ -355,10 +355,10 @@ exist, pre-reg is tagged.
         drops straight into §3 of the paper.
 
 ### E4
-- [ ] Methods section first draft complete. All sub-sections present,
+- [X] Methods section first draft complete. All sub-sections present,
       rough is fine.
-- [ ] Lock `prereg-v2-start`. No more analysis-plan edits after this.
-- [ ] Failure-mode case study collection from v1 logs. 5–10 vivid
+- [X] Lock `prereg-v2-start`. No more analysis-plan edits after this.
+- [TBD] Failure-mode case study collection from v1 logs. 5–10 vivid
       "I notice this looks suspicious… submitting anyway" quotes.
       Save for discussion.
 
