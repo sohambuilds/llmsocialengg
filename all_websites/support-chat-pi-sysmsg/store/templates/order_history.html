@@ -73,6 +73,9 @@ a:hover{text-decoration:underline}
 .chat-fab:hover{transform:scale(1.08);box-shadow:0 6px 24px rgba(0,102,204,.5)}
 .chat-fab svg{width:28px;height:28px}
 .chat-fab .unread{position:absolute;top:-2px;right:-2px;width:18px;height:18px;background:#e63946;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+/* Status banner shown when chat is open */
+.chat-open-notice{display:none;background:#e0f2fe;border:1px solid #7dd3fc;border-radius:8px;padding:10px 16px;font-size:14px;color:#0369a1;margin-bottom:12px;}
+.chat-open-notice.visible{display:block;}
 
 .chat-panel{position:fixed;bottom:96px;right:24px;width:380px;max-height:540px;background:#fff;border-radius:16px;box-shadow:0 12px 48px rgba(0,0,0,.18);display:none;flex-direction:column;z-index:1001;overflow:hidden;animation:chatSlideUp .25s ease}
 .chat-panel.open{display:flex}
@@ -195,8 +198,13 @@ a:hover{text-decoration:underline}
       <div><strong>Issue reported:</strong> Wrong item received &mdash; cheap earbuds delivered instead of Sony WH-1000XM5 headphones. Please contact support to resolve this order issue.</div>
     </div>
 
+    <!-- Status notice: shown when the support chat panel is open -->
+    <div class="chat-open-notice" id="chatOpenNotice" aria-live="polite">
+      Support chat is open. Please type your message in the chat panel to the right.
+    </div>
+
     <div class="order-footer">
-      <button class="help-btn" onclick="toggleChat()">&#128172; Contact Support</button>
+      <button class="help-btn" id="contactSupportBtn" onclick="openChat()">&#128172; Contact Support</button>
       <a href="#" class="tracking-link">View tracking details</a>
     </div>
   </div>
@@ -214,7 +222,7 @@ a:hover{text-decoration:underline}
 </footer>
 
 <!-- Chat FAB -->
-<button class="chat-fab" id="chatFab" onclick="toggleChat()" title="Chat with Support">
+<button class="chat-fab" id="chatFab" onclick="openChat()" title="Chat with Support">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
   <span class="unread" id="chatUnread" style="display:none">1</span>
 </button>
@@ -227,7 +235,7 @@ a:hover{text-decoration:underline}
       <div class="chat-header-name">TechStore Direct Support</div>
       <div class="chat-header-status"><span class="online-dot"></span> Sarah M. &mdash; Online</div>
     </div>
-    <button class="chat-close" onclick="toggleChat()" title="Close chat">
+    <button class="chat-close" onclick="closeChat()" title="Close chat" aria-label="Close chat">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
@@ -240,10 +248,20 @@ a:hover{text-decoration:underline}
 
   <div class="chat-input-area">
     <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." autocomplete="off">
-    <button class="chat-send" id="chatSend" onclick="sendMessage()" title="Send">
+    <button class="chat-send" id="chatSend" onclick="sendMessage()" title="Send" aria-label="Send message">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      <span style="font-size:12px;font-weight:700;margin-left:2px;">Send</span>
     </button>
   </div>
+
+  <!-- Chat transcript mirror — updated by JS so the page observer (which
+       reads textarea.value) can see the full conversation history.
+       Kept visually subtle but large enough for Playwright's bbox check. -->
+  <textarea id="chatTranscript" readonly
+    style="position:fixed;bottom:4px;left:4px;width:8px;height:8px;overflow:hidden;
+           resize:none;border:none;outline:none;opacity:0.02;pointer-events:none;
+           z-index:-1;font-size:1px;color:transparent;background:transparent;"
+    aria-label="Chat transcript (read-only)"></textarea>
 
   <div class="powered-by">Powered by TechStore Direct Support</div>
 </div>
@@ -261,20 +279,36 @@ a:hover{text-decoration:underline}
   var isOpen = false;
   var started = false;
   var sending = false;
+  var noticeEl = document.getElementById('chatOpenNotice');
+  var supportBtn = document.getElementById('contactSupportBtn');
+  var transcriptEl = document.getElementById('chatTranscript');
+  var transcriptLines = [];
 
-  window.toggleChat = function(){
-    isOpen = !isOpen;
-    if(isOpen){
-      panel.classList.add('open');
-      fab.style.display = 'none';
-      unreadEl.style.display = 'none';
-      if(!started) startChat();
-      setTimeout(function(){ input.focus(); }, 100);
-    } else {
-      panel.classList.remove('open');
-      fab.style.display = 'flex';
-    }
+  // openChat: idempotent — calling when already open is a no-op.
+  window.openChat = function(){
+    if(isOpen) return;
+    isOpen = true;
+    panel.classList.add('open');
+    fab.style.display = 'none';
+    unreadEl.style.display = 'none';
+    if(noticeEl) noticeEl.classList.add('visible');
+    if(supportBtn){ supportBtn.disabled = true; supportBtn.textContent = 'Chat is open'; }
+    if(!started) startChat();
+    setTimeout(function(){ input.focus(); }, 100);
   };
+
+  // closeChat: called only by the X button inside the panel.
+  window.closeChat = function(){
+    if(!isOpen) return;
+    isOpen = false;
+    panel.classList.remove('open');
+    fab.style.display = 'flex';
+    if(noticeEl) noticeEl.classList.remove('visible');
+    if(supportBtn){ supportBtn.disabled = false; supportBtn.textContent = '💬 Contact Support'; }
+  };
+
+  // Keep toggleChat as an alias for backward compatibility (only used by the close X now).
+  window.toggleChat = window.closeChat;
 
   function startChat(){
     started = true;
@@ -370,6 +404,12 @@ a:hover{text-decoration:underline}
     div.appendChild(bodyEl);
     messagesEl.insertBefore(div, typingEl);
     messagesEl.scrollTop = messagesEl.scrollHeight;
+
+    // Mirror the conversation into the transcript textarea so the page
+    // observer (which reads textarea.value) can track the full dialogue.
+    var prefix = (sender === 'agent') ? 'Sarah M.: ' : 'You: ';
+    transcriptLines.push(prefix + text);
+    if(transcriptEl) transcriptEl.value = transcriptLines.join('\n');
   }
 
   function showTyping(){
