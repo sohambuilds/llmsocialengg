@@ -275,7 +275,7 @@ BENCHMARK_MODELS = [
 # v2 model set per paper-plan.md §2.6 — drops gpt-oss-120b (pilot-only),
 # adds the two OpenRouter frontier models.
 V2_MODELS = [
-    "gemini-3-flash-preview",
+    "google/gemini-2.0-flash-001",         # via OpenRouter (no native Gemini key needed)
     "meta-llama/llama-4-scout-17b-16e-instruct",
     "openai/gpt-5",
     "anthropic/claude-sonnet-4.6",
@@ -591,8 +591,8 @@ async def main() -> None:
         print(f"\n{'='*60}")
         print(f"  AGGREGATE RESULTS — {run_name}")
         print(f"{'='*60}")
-        print(f"  {'Model':<35} {'Env':<25} {'PLR':>5} {'ASR':>5} {'TCR':>5} {'DR':>5}  {'Quality':>8}")
-        print(f"  {'-'*90}")
+        print(f"  {'Model':<35} {'Env':<25} {'c-PLR':>6} {'PLR':>6} {'ASR':>10} {'TCR':>10} {'DR':>10}  {'Quality':>8}")
+        print(f"  {'-'*110}")
         unreliable_count = 0
         for report in all_reports:
             env = report.get("env", "?")
@@ -608,8 +608,9 @@ async def main() -> None:
                     unreliable_count += 1
                 print(
                     f"  {model_label:<35} {env:<25} "
-                    f"{s.get('PLR','?'):>5} {s.get('ASR','?'):>5} "
-                    f"{s.get('TCR','?'):>5} {s.get('DR','?'):>5}  "
+                    f"{s.get('c_PLR','?'):>6} {s.get('PLR','?'):>6} "
+                    f"{s.get('ASR','?'):>10} "
+                    f"{s.get('TCR','?'):>10} {s.get('DR','?'):>10}  "
                     f"{quality_tag:>8}"
                 )
         if unreliable_count > 0:

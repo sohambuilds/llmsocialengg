@@ -39,6 +39,11 @@ MODEL_REGISTRY: dict[str, dict] = {
     },
 
     # OpenRouter-hosted frontier models (OpenAI-compatible API)
+    "google/gemini-2.0-flash-001": {
+        "backend": "openrouter",
+        "vision": True,
+        "label": "Gemini 2.0 Flash (OpenRouter)",
+    },
     "openai/gpt-5": {
         "backend": "openrouter",
         "vision": True,
@@ -58,6 +63,7 @@ MODEL_ALIASES: dict[str, str] = {
     "llama4":       "meta-llama/llama-4-scout-17b-16e-instruct",
     "gpt-oss":      "openai/gpt-oss-120b",
     "gpt-oss-120b": "openai/gpt-oss-120b",
+    "gemini-or":    "google/gemini-2.0-flash-001",
     "gpt-5":        "openai/gpt-5",
     "sonnet-4.6":   "anthropic/claude-sonnet-4.6",
     "sonnet":       "anthropic/claude-sonnet-4.6",
