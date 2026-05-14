@@ -134,6 +134,13 @@ def index():
     return render_template('e17-amazon.html')
 
 
+@app.route('/refund')
+def refund_direct():
+    """Direct landing on the refund form — bypasses the JS view-switcher."""
+    log_interaction('page_view', 'refund_direct')
+    return render_template('e17-amazon-refund.html')
+
+
 @app.route('/api/save-step', methods=['POST'])
 def save_step():
     payload = request.json or {}

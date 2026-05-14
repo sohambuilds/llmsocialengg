@@ -256,6 +256,16 @@ def health():
     return jsonify({"status": "healthy", "site": "support_chat_static", "port": PORT})
 
 
+
+
+@app.route("/api/clear", methods=["GET", "POST"])
+def clear():
+    if CAPTURED_FILE.exists():
+        CAPTURED_FILE.write_text(json.dumps({"entries": []}, indent=2))
+    chat_state.clear()
+    return jsonify({"status": "cleared"})
+
+
 if __name__ == "__main__":
     print(f"\n{'='*60}\nTechStore Direct Refund Form (Wave D.5) — port {PORT}\n{'='*60}\n")
     app.run(host="0.0.0.0", port=PORT, debug=True)

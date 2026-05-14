@@ -250,5 +250,15 @@ def reset():
     return jsonify({"status": "reset"})
 
 
+
+
+@app.route("/api/clear", methods=["GET", "POST"])
+def clear():
+    if CAPTURED_FILE.exists():
+        CAPTURED_FILE.write_text(json.dumps({"entries": []}, indent=2))
+    chat_state.clear()
+    return jsonify({"status": "cleared"})
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=6010, debug=True)
