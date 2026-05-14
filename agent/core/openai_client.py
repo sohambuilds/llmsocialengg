@@ -108,7 +108,7 @@ class OpenAICompatClient(BaseLLMClient):
                                 retry_after = float(ra)
                         except Exception:
                             retry_after = None
-                    wait_secs = retry_after if retry_after else min(15 * (2 ** attempt), 300)
+                    wait_secs = retry_after if retry_after else min(5 * (2 ** attempt), 120)
                     print(f"  [llm] Rate limited. Waiting {wait_secs:.0f}s before retry...")
                 else:
                     # Connection / server error: standard exponential backoff
