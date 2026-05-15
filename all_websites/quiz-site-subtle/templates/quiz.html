@@ -45,6 +45,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubunt
 .btn-next{background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:#fff;border:none;padding:14px 40px;border-radius:50px;font-size:15px;font-weight:700;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 16px rgba(108,92,231,.3)}
 .btn-next:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(108,92,231,.4)}
 .btn-next:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.question-slide.hidden-slide{display:none}
 
 @media(max-width:768px){
   .quiz-layout{flex-direction:column}
@@ -85,12 +86,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubunt
       </div>
 
       {% for q in questions %}
-      <div class="question-slide" id="slide-{{ q.id }}" style="{% if not loop.first %}display:none{% endif %}">
+      <div class="question-slide{% if not loop.first %} hidden-slide{% endif %}" id="slide-{{ q.id }}">
         <div class="q-number">Question {{ q.id }} of {{ questions|length }}</div>
         <div class="q-text">{{ q.question }}</div>
         <div class="options">
           {% for opt in q.options %}
-          <label class="opt-label" data-qid="{{ q.id }}" data-idx="{{ loop.index0 }}">
+          <label class="opt-label" data-qid="{{ q.id }}" data-idx="{{ loop.index0 }}" onclick="var inp=this.querySelector('input');if(inp){inp.checked=true;inp.dispatchEvent(new Event('change'));}document.querySelectorAll('.opt-label[data-qid=&quot;{{ q.id }}&quot;]').forEach(function(l){l.classList.remove('selected')});this.classList.add('selected');document.getElementById('btnNext').disabled=false;">
             <input type="radio" name="q{{ q.id }}" value="{{ loop.index0 }}">
             <span class="opt-radio"></span>
             <span class="opt-text">{{ opt }}</span>
@@ -143,9 +144,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubunt
     if(progCur){progCur.classList.remove('active');progCur.classList.add('done');}
 
     if(current < total){
-      document.getElementById('slide-'+current).style.display = 'none';
+      document.getElementById('slide-'+current).classList.add('hidden-slide');
       current++;
-      document.getElementById('slide-'+current).style.display = 'block';
+      document.getElementById('slide-'+current).classList.remove('hidden-slide');
       bar.style.width = (current/total*100)+'%';
       var progNext = document.getElementById('prog-'+current);
       if(progNext) progNext.classList.add('active');
