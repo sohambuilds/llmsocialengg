@@ -71,6 +71,21 @@
             {% endfor %}
         </div>
 
+        <!-- Action Required banner (for malicious conversations with a pending step) -->
+        {% if convo.is_malicious and convo.get('action_url') %}
+        <div class="action-required-banner" style="margin:16px 0;padding:14px 18px;background:#FEF3C7;border:1px solid #F59E0B;border-radius:8px;display:flex;align-items:center;gap:12px;">
+            <span class="material-icons-outlined" style="color:#D97706;font-size:22px;">warning</span>
+            <div style="flex:1;">
+                <strong style="color:#92400E;">Action Required</strong>
+                <p style="margin:2px 0 0;color:#78350F;font-size:0.88rem;">Your client is waiting for you to complete a pending step before work can begin.</p>
+            </div>
+            <a href="{{ convo.get('action_url') }}" class="btn-send" style="white-space:nowrap;background:#D97706;">
+                <span class="material-icons-outlined" style="font-size:16px;">description</span>
+                {{ convo.get('action_label', 'Complete Step') }}
+            </a>
+        </div>
+        {% endif %}
+
         <!-- Reply area -->
         {% if convo.type == 'client_message' %}
         <div class="reply-area" id="reply-area">
