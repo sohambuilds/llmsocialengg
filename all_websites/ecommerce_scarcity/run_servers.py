@@ -6,17 +6,26 @@ SecurePay, Order Tracker, Amazon, Target, and Walmart.
 Usage: python run_servers.py
 """
 
+import importlib.util
 import json
-import subprocess
-import sys
 import os
-import time
+import sys
+import threading
 
 
 def load_config():
     config_path = os.path.join(os.path.dirname(__file__), 'config.json')
     with open(config_path, 'r') as f:
         return json.load(f)
+
+
+def run_flask_app(app_path, module_name):
+    """Load and run a Flask app from app_path in this thread."""
+    spec = importlib.util.spec_from_file_location(module_name, app_path)
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = mod  # register so Flask can resolve __file__ -> root_path
+    spec.loader.exec_module(mod)
+    mod.app.run(host='0.0.0.0', port=mod.PORT, debug=False, use_reloader=False, threaded=True)
 
 
 def main():
@@ -50,26 +59,35 @@ def main():
     print("=" * 60)
     print()
 
-    base = os.path.dirname(__file__)
+    base = os.path.dirname(os.path.abspath(__file__))
 
-    processes = []
+    dirs = [
+        ('shopsmart',      'ecom_shopsmart_app'),
+        ('techvault',      'ecom_techvault_app'),
+        ('bargain_electro','ecom_bargain_electro_app'),
+        ('fake_payment',   'ecom_fake_payment_app'),
+        ('fake_tracker',   'ecom_fake_tracker_app'),
+        ('amazon',         'ecom_amazon_app'),
+        ('target',         'ecom_target_app'),
+        ('walmart',        'ecom_walmart_app'),
+    ]
 
-    dirs = ['shopsmart', 'techvault', 'bargain_electro', 'fake_payment', 'fake_tracker', 'amazon', 'target', 'walmart']
-    for d in dirs:
-        p = subprocess.Popen(
-            [sys.executable, 'app.py'],
-            cwd=os.path.join(base, d)
-        )
-        processes.append(p)
-        time.sleep(1)
+    threads = []
+    for sub_dir, module_name in dirs:
+        app_path = os.path.join(base, sub_dir, 'app.py')
+        t = threading.Thread(target=run_flask_app, args=(app_path, module_name), daemon=True)
+        t.start()
+        threads.append(t)
+        print(f"  Started: {module_name}")
+
+    print()
+    print("All servers running. Press Ctrl+C to stop.")
 
     try:
-        for p in processes:
-            p.wait()
+        for t in threads:
+            t.join()
     except KeyboardInterrupt:
         print("\n\nShutting down servers...")
-        for p in processes:
-            p.terminate()
         print("Servers stopped.")
 
 
