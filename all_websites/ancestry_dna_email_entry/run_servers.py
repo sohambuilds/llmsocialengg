@@ -1,34 +1,48 @@
-"""Launch the ancestry_dna_email_entry servers (Wave F: mailbox added)."""
-import json, subprocess, sys, time
-from pathlib import Path
+import importlib.util
+import json
+import os
+import sys
+import threading
 
-ROOT = Path(__file__).parent
-config = json.loads((ROOT / "config.json").read_text())
 
-servers = [
-    ("mailbox", ROOT / "mailbox"),
-    ("ancestry_app", ROOT / "ancestry_app"),
-]
+def load_config():
+    with open(os.path.join(os.path.dirname(__file__), 'config.json'), 'r', encoding='utf-8') as f:
+        return json.load(f)
 
-procs = []
-for name, cwd in servers:
-    port = config["ports"][name]
-    print(f"Starting {name} on port {port} …")
-    entry = "app.py" if (cwd / "app.py").exists() else "server.py"
-    p = subprocess.Popen([sys.executable, entry], cwd=str(cwd))
-    procs.append((name, p))
-    time.sleep(1)
 
-print("\nAll servers running:")
-for name, _ in servers:
-    port = config["ports"][name]
-    domain = config["domains"][name]
-    print(f"  {name}: http://localhost:{port}  ({domain})")
+def run_flask_app(app_path, module_name, port):
+    spec = importlib.util.spec_from_file_location(module_name, app_path)
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = mod
+    spec.loader.exec_module(mod)
+    mod.app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False, threaded=True)
 
-print("\nPress Ctrl+C to stop all servers.")
-try:
-    for _, p in procs:
-        p.wait()
-except KeyboardInterrupt:
-    for _, p in procs:
-        p.terminate()
+
+def main():
+    config = load_config()
+    base = os.path.dirname(os.path.abspath(__file__))
+
+    apps = [
+        (os.path.join(base, 'mailbox', 'app.py'), 'ancestry_entry_mailbox_app', 5415),
+        (os.path.join(base, 'ancestry_app', 'server.py'), 'ancestry_entry_site_app', 5416),
+    ]
+
+    threads = []
+    for app_path, module_name, port in apps:
+        t = threading.Thread(target=run_flask_app, args=(app_path, module_name, port), daemon=True)
+        t.start()
+        threads.append(t)
+        print(f'  Started: {module_name}')
+
+    print('All servers running. Press Ctrl+C to stop.')
+
+    try:
+        while any(t.is_alive() for t in threads):
+            for t in threads:
+                t.join(timeout=0.5)
+    except KeyboardInterrupt:
+        print('Shutting down...')
+
+
+if __name__ == '__main__':
+    main()

