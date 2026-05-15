@@ -106,6 +106,23 @@ class BrowserWrapper:
         # framenavigated event so click-driven navigations are captured).
         self._visited_urls: list[str] = []
         self._visited_set: set[str] = set()
+        # Cross-origin requests that escaped the localhost surface. Navigation
+        # requests to non-localhost hosts are aborted at the route layer;
+        # non-navigation requests (CSS/JS/fonts pulled from real CDNs) pass
+        # through but are still recorded for contamination accounting.
+        # Deduplicated first-seen by URL — the navigate() goto cascade and
+        # browser-driven retries can hit the same target multiple times.
+        self._egress_attempts: list[dict] = []
+        self._egress_seen: set[str] = set()
+        # Action source for egress attribution: set by execute_action() at the
+        # start of each action, cleared at the end. The route handler reads
+        # this so egress records can distinguish "model emitted a navigate()
+        # to an external URL" (model-driven verification attempt) from "agent
+        # clicked a footer social-icon" (UI fidelity decoration, accidental).
+        # None means the request fired outside any agent action — e.g. during
+        # the harness's initial navigate(start_url), or a page-initiated JS
+        # redirect after an action settled.
+        self._current_action_source: Optional[str] = None
 
     def register_files(self, file_map: dict[str, str]) -> None:
         """Register file_key -> absolute path mappings for upload actions."""
@@ -118,6 +135,10 @@ class BrowserWrapper:
             viewport=self._viewport,
             ignore_https_errors=True,
         )
+        # Block cross-origin navigations before anything else hits the wire.
+        # Registered on the context so it covers every page (existing + new
+        # tabs opened via target="_blank").
+        await self._context.route("**/*", self._egress_guard)
         # Attach navigation tracking to every page (existing + future tabs)
         # so we record URLs even when the agent clicks a link rather than
         # invoking navigate().
@@ -142,27 +163,38 @@ class BrowserWrapper:
 
     @staticmethod
     def _rewrite_domain_to_localhost(url: str) -> str:
-        """Rewrite domain-based URLs to localhost using the port from environments.yaml."""
+        """Rewrite domain-based URLs to localhost using the port from environments.yaml.
+
+        Tries the literal hostname first, then strips a leading "www." and
+        retries — so navigate("https://www.linkedin.com") routes to the same
+        twin as navigate("https://linkedin.com") when only the bare form is
+        registered in environments.yaml.
+        """
         try:
             parsed = urlparse(url)
-            hostname = parsed.hostname or ""
+            hostname = (parsed.hostname or "").lower()
             if hostname in ("localhost", "127.0.0.1") or not hostname:
                 return url
 
-            # Check if hostname:port matches a known domain (with explicit port)
-            if parsed.port and hostname in _DOMAIN_TO_PORT:
-                new = parsed._replace(netloc=f"localhost:{parsed.port}")
-                rewritten = urlunparse(new)
-                print(f"  [browser] Rewrote domain URL: {hostname}:{parsed.port} -> localhost:{parsed.port}")
-                return rewritten
+            candidates = [hostname]
+            if hostname.startswith("www.") and len(hostname) > 4:
+                candidates.append(hostname[4:])
 
-            # Check if hostname matches without port — use mapped port
-            if hostname in _DOMAIN_TO_PORT:
-                port = _DOMAIN_TO_PORT[hostname]
-                new = parsed._replace(netloc=f"localhost:{port}")
-                rewritten = urlunparse(new)
-                print(f"  [browser] Rewrote domain URL: {hostname} -> localhost:{port}")
-                return rewritten
+            for candidate in candidates:
+                # Check if candidate:port matches a known domain (explicit port)
+                if parsed.port and candidate in _DOMAIN_TO_PORT:
+                    new = parsed._replace(netloc=f"localhost:{parsed.port}")
+                    rewritten = urlunparse(new)
+                    print(f"  [browser] Rewrote domain URL: {hostname}:{parsed.port} -> localhost:{parsed.port}")
+                    return rewritten
+
+                # Check if candidate matches without port — use mapped port
+                if candidate in _DOMAIN_TO_PORT:
+                    port = _DOMAIN_TO_PORT[candidate]
+                    new = parsed._replace(netloc=f"localhost:{port}")
+                    rewritten = urlunparse(new)
+                    print(f"  [browser] Rewrote domain URL: {hostname} -> localhost:{port}")
+                    return rewritten
 
         except Exception:
             pass
@@ -195,6 +227,67 @@ class BrowserWrapper:
     def get_visited_urls(self) -> list[str]:
         """Return the ordered, deduplicated list of URLs visited this session."""
         return list(self._visited_urls)
+
+    async def _egress_guard(self, route) -> None:
+        """Block navigations to non-localhost hosts; log all non-localhost requests.
+
+        The eval surface is localhost-only. Real-internet navigations come from
+        hardcoded external anchors in templates, the rewriter missing a www-
+        prefixed domain, or the LLM emitting a literal external URL — all of
+        which contaminate session metrics. Navigation requests are aborted at
+        the Playwright route layer. Non-navigation requests (CSS/JS/fonts) pass
+        through so templates that pull from real CDNs still render; only the
+        request is recorded.
+        """
+        request = route.request
+        url = request.url
+        try:
+            hostname = (urlparse(url).hostname or "").lower()
+        except Exception:
+            hostname = ""
+
+        if hostname in ("localhost", "127.0.0.1", "0.0.0.0", ""):
+            await route.continue_()
+            return
+
+        is_nav = request.is_navigation_request()
+
+        # Log every distinct (URL, blocked-or-not) once. The navigate() goto
+        # cascade and browser-driven retries can hit the same target multiple
+        # times; first-seen-wins keeps the trail readable.
+        if url not in self._egress_seen:
+            self._egress_seen.add(url)
+            self._egress_attempts.append({
+                "url": url,
+                "hostname": hostname,
+                "method": request.method,
+                "resource_type": request.resource_type,
+                "is_navigation": is_nav,
+                "blocked": is_nav,
+                "action_source": self._current_action_source,
+            })
+            if is_nav:
+                src = self._current_action_source or "page"
+                print(f"  [browser] Blocked egress navigation ({src}): {url}")
+
+        # Routing decision is independent of dedup — every hit must be aborted
+        # or continued, or Playwright will hang the request.
+        if is_nav:
+            try:
+                await route.abort("blockedbyclient")
+            except Exception:
+                # Route may already be handled if the page tore down mid-request;
+                # the log entry above is still the source of truth.
+                pass
+        else:
+            try:
+                await route.continue_()
+            except Exception:
+                pass
+
+    def get_egress_attempts(self) -> list[dict]:
+        """Return non-localhost request records (navigations blocked, asset requests passed through)."""
+        return list(self._egress_attempts)
 
     async def navigate(self, url: str, timeout: int = 15000) -> None:
         url = self._rewrite_domain_to_localhost(url)
@@ -442,30 +535,37 @@ class BrowserWrapper:
         if not isinstance(action, AgentAction):
             raise TypeError(f"Expected AgentAction, got {type(action)}")
 
-        match action.action_type:
-            case "click":
-                await self.click_element(action.params["element_id"])
-            case "type":
-                await self.type_text(action.params["element_id"], action.params["text"])
-            case "select_option":
-                await self.select_option(action.params["element_id"], action.params["value"])
-            case "check":
-                await self.set_checked(action.params["element_id"], action.params["checked"])
-            case "upload_file":
-                await self.upload_file(action.params["element_id"], action.params["file_key"])
-            case "scroll":
-                await self.scroll(action.params["direction"], action.params["amount"])
-            case "navigate":
-                await self.navigate(action.params["url"])
-            case "go_back":
-                await self.go_back()
-            case "switch_tab":
-                await self.switch_tab(action.params["tab_index"])
-            case "close_tab":
-                await self.close_tab(action.params["tab_index"])
-            case "wait":
-                await asyncio.sleep(min(action.params["seconds"], 30))
-            case "screenshot" | "done":
-                pass
-            case _:
-                raise ValueError(f"Unknown action type: {action.action_type}")
+        # Tag any cross-origin requests fired during this action with the
+        # action's type, so the egress log can later separate hallucinated
+        # navigate() calls from click-through behaviour on footer anchors.
+        self._current_action_source = action.action_type
+        try:
+            match action.action_type:
+                case "click":
+                    await self.click_element(action.params["element_id"])
+                case "type":
+                    await self.type_text(action.params["element_id"], action.params["text"])
+                case "select_option":
+                    await self.select_option(action.params["element_id"], action.params["value"])
+                case "check":
+                    await self.set_checked(action.params["element_id"], action.params["checked"])
+                case "upload_file":
+                    await self.upload_file(action.params["element_id"], action.params["file_key"])
+                case "scroll":
+                    await self.scroll(action.params["direction"], action.params["amount"])
+                case "navigate":
+                    await self.navigate(action.params["url"])
+                case "go_back":
+                    await self.go_back()
+                case "switch_tab":
+                    await self.switch_tab(action.params["tab_index"])
+                case "close_tab":
+                    await self.close_tab(action.params["tab_index"])
+                case "wait":
+                    await asyncio.sleep(min(action.params["seconds"], 30))
+                case "screenshot" | "done":
+                    pass
+                case _:
+                    raise ValueError(f"Unknown action type: {action.action_type}")
+        finally:
+            self._current_action_source = None

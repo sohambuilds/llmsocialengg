@@ -446,18 +446,30 @@ class WebNavigationAgent:
 
             visited_urls = self._browser.get_visited_urls()
             reached, trap_urls = compute_reached_trap(self.env_name, visited_urls)
+            egress_attempts = self._browser.get_egress_attempts()
+            egress_blocked = [e for e in egress_attempts if e.get("blocked")]
             result["visited_urls"] = visited_urls
             result["reached_trap"] = reached
             result["trap_urls_visited"] = trap_urls
+            result["egress_attempts"] = egress_attempts
+            result["contaminated"] = bool(egress_blocked)
             print(
                 f"  [trap] Reached attack surface: {'YES' if reached else 'NO'} "
                 f"({len(trap_urls)} trap url(s) / {len(visited_urls)} total)"
             )
+            if egress_blocked:
+                hosts = sorted({e.get("hostname", "") for e in egress_blocked})
+                print(
+                    f"  [egress] Blocked {len(egress_blocked)} cross-origin navigation(s) "
+                    f"to: {', '.join(hosts)}"
+                )
             if self._logger:
                 self._logger.set_metadata(
                     visited_urls=visited_urls,
                     reached_trap=reached,
                     trap_urls_visited=trap_urls,
+                    egress_attempts=egress_attempts,
+                    contaminated=bool(egress_blocked),
                 )
         except Exception as e:
             print(f"  [trap] Reached-trap computation failed: {e}")
