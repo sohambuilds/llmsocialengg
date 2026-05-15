@@ -314,7 +314,6 @@ Available environment groups:
   tier3      — 2 very hard environments
 
 Available model aliases:
-<<<<<<< HEAD
   gemini       → gemini-3-flash-preview
   llama-scout  → meta-llama/llama-4-scout-17b-16e-instruct
   llama4       → meta-llama/llama-4-scout-17b-16e-instruct
@@ -324,14 +323,6 @@ Available model aliases:
   sonnet-4.6   → anthropic/claude-sonnet-4.6 (via OpenRouter)
   all          → run all 3 pilot benchmark models sequentially
   all-v2       → run the 4 v2 models (Gemini, Llama 4, GPT-5, Sonnet 4.6)
-=======
-  gemini       -> gemini-3-flash-preview
-  llama-scout  -> meta-llama/llama-4-scout-17b-16e-instruct
-  llama4       -> meta-llama/llama-4-scout-17b-16e-instruct
-  gpt-oss      -> openai/gpt-oss-120b
-  gpt-oss-120b -> openai/gpt-oss-120b
-  all          -> run all 3 benchmark models sequentially
->>>>>>> e732dfd0d9e4ab7b389852930e8b80c4c368d25e
         """,
     )
     parser.add_argument(
