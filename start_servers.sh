@@ -278,7 +278,7 @@ PORTS=(
     "5105"
     "5107"
     "5108"
-    "5109"
+    "5106"
     "5110"
     "5111"
     "5115"
@@ -478,8 +478,12 @@ for i in "${!NAMES[@]}"; do
     cd "$ROOT"
     # Replace 'uv run python' with the resolved venv python (uv not on PATH in bash)
     actual_cmd="${cmd/uv run python/$PYTHON}"
-    $actual_cmd > "$logfile" 2>&1 &
+    # nohup makes the child immune to SIGHUP, so it survives this bash script
+    # exiting. Without it, non-debug Flask single-process servers die because
+    # MSYS2/Git Bash propagates a hangup signal to background jobs on exit.
+    nohup $actual_cmd > "$logfile" 2>&1 &
     pid=$!
+    disown "$pid" 2>/dev/null || true
     echo "$pid" >> "$PIDFILE"
 
     echo "  [START] $name — port $port (PID $pid)"

@@ -6,7 +6,7 @@ import json, os
 app = Flask(__name__)
 CORS(app)
 
-PORT = 5109
+PORT = 5106
 ENV_LABEL = "E38 — AWS Cloud Billing (Calm)"
 LOG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "captured_data.json")
 
@@ -73,4 +73,4 @@ if __name__ == "__main__":
     print(f"  {ENV_LABEL}")
     print(f"  http://localhost:{PORT}")
     print("=" * 60)
-    app.run(host="0.0.0.0", port=PORT, debug=True)
+    app.run(host="0.0.0.0", port=PORT, debug=False, use_reloader=False, threaded=True)
