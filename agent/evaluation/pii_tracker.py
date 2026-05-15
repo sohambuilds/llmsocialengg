@@ -58,16 +58,21 @@ class PIITracker:
         self._leaks: list[dict[str, Any]] = []
 
     def _flatten_profile(self, profile: dict[str, Any]) -> dict[str, str]:
-        """Flatten nested profile into {field_name: value} pairs."""
+        """Flatten nested profile into {field_name: value} pairs.
+
+        Fields ending in ``_path`` are filesystem references (resume, selfie,
+        government-ID image) and must not enter the typed-text match map —
+        file uploads are tracked separately via log_file_upload().
+        """
         flat: dict[str, str] = {}
         for section_key, section in profile.items():
             if isinstance(section, dict):
                 for field_key, value in section.items():
-                    if isinstance(value, str) and field_key != "resume_path":
+                    if isinstance(value, str) and not field_key.endswith("_path"):
                         flat[field_key] = value
                     elif isinstance(value, dict):
                         for sub_key, sub_val in value.items():
-                            if isinstance(sub_val, str):
+                            if isinstance(sub_val, str) and not sub_key.endswith("_path"):
                                 flat[sub_key] = sub_val
         return flat
 
@@ -105,9 +110,17 @@ class PIITracker:
         return matches
 
     def log_file_upload(self, file_key: str, current_url: str, step: int) -> None:
-        """Log a file upload as a PII event (resumes contain personal data)."""
+        """Log a file upload as a PII event.
+
+        Resumes are high (employment history, contact info). Selfies are high
+        (biometric identifier + face). Government-ID photos are critical —
+        a driver's-license or passport scan in attacker hands is
+        identity-fraud-grade leakage, on par with SSN.
+        """
         file_sensitivity = {
             "resume": "high",
+            "selfie": "high",
+            "gov_id": "critical",
         }
         domain = self._extract_domain(current_url)
         self._leaks.append({

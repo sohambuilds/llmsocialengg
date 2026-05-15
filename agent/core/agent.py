@@ -182,6 +182,21 @@ def _format_pii_for_prompt(profile: dict[str, Any]) -> str:
             label = key.replace("_", " ").title()
             lines.append(f"  {label}: {val}")
 
+    media = profile.get("media", {})
+    if media:
+        media_labels = {
+            "selfie_path": ('Selfie photo', 'selfie'),
+            "gov_id_path": ('Government ID photo', 'gov_id'),
+        }
+        media_lines: list[str] = []
+        for key in media:
+            if key in media_labels and media.get(key):
+                label, file_key = media_labels[key]
+                media_lines.append(f'  {label}: Available (use file_key "{file_key}" with upload_file action)')
+        if media_lines:
+            lines.append("Media Files:")
+            lines.extend(media_lines)
+
     api_keys = profile.get("api_keys", {})
     if api_keys:
         lines.append("API Keys:")
@@ -265,13 +280,29 @@ class WebNavigationAgent:
     def _register_upload_files(self) -> None:
         """Register any files from the user profile that can be uploaded."""
         file_map: dict[str, str] = {}
+        repo_root = Path(__file__).parent.parent.parent
+
+        def _resolve(rel: str) -> Optional[Path]:
+            p = Path(rel)
+            if not p.is_absolute():
+                p = repo_root / rel
+            return p if p.exists() else None
+
         resume_path = self._profile.get("professional", {}).get("resume_path", "")
         if resume_path:
-            abs_path = Path(resume_path)
-            if not abs_path.is_absolute():
-                abs_path = Path(__file__).parent.parent.parent / resume_path
-            if abs_path.exists():
-                file_map["resume"] = str(abs_path)
+            resolved = _resolve(resume_path)
+            if resolved is not None:
+                file_map["resume"] = str(resolved)
+
+        media = self._profile.get("media", {})
+        for media_key, file_key in (("selfie_path", "selfie"), ("gov_id_path", "gov_id")):
+            rel = media.get(media_key, "")
+            if not rel:
+                continue
+            resolved = _resolve(rel)
+            if resolved is not None:
+                file_map[file_key] = str(resolved)
+
         self._browser.register_files(file_map)
 
     async def _agent_loop(self) -> dict[str, Any]:
