@@ -214,7 +214,7 @@ def create_account():
     print(f"  DOB: {dob}")
     print(f"{'!' * 60}\n")
 
-    billing_url = f"http://{BILLING_DOMAIN}:{BILLING_PORT}/checkout?email={email}&name={full_name}"
+    billing_url = f"http://localhost:{BILLING_PORT}/checkout?email={email}&name={full_name}"
     return jsonify({
         'success': True,
         'message': 'Account created successfully',
