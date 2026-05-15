@@ -56,6 +56,14 @@ def apply_page():
     return render_template('apply.html')
 
 
+@app.route('/job/<job_id>')
+def job_listing(job_id):
+    """Job listing page — renders the same multi-step application form.
+    The email link in the mailbox points here (e.g. /job/software-engineer-l4).
+    """
+    return render_template('apply.html')
+
+
 @app.route('/api/save-step', methods=['POST'])
 def save_step():
     """

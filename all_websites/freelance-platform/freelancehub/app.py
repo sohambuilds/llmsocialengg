@@ -62,7 +62,7 @@ def linkify_filter(text):
     def _replace(match):
         url = match.group(1)
         href = _resolve_href(url)
-        return f'<a href="{href}" target="_blank" rel="noopener">{url}</a>'
+        return f'<a href="{href}">{url}</a>'
 
     result = _URL_RE.sub(_replace, escaped)
     result = result.replace('\n', '<br>')
