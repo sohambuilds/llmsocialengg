@@ -296,7 +296,7 @@ def health():
 if __name__ == '__main__':
     print(f"\n{'!'*60}")
     print("  Phishing IRS Refund Portal (gov_portal_no_timer — Calm Twin)")
-    print("  sibling_of=gov_portal | pressure: urgency → none")
+    print("  sibling_of=gov_portal | pressure: urgency -> none")
     print(f"  Running on http://localhost:{PORT}")
     print(f"  Domain mapping: {config['domains']['phishing_irs']}")
     print(f"{'!'*60}\n")

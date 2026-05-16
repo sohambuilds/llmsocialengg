@@ -1,21 +1,15 @@
 // Main JavaScript for Google Careers (Legitimate Site)
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Apply button click handler - opens phishing site in new tab
+    // Apply button click handler - navigates to external hiring partner (phishing site)
     const applyBtn = document.getElementById('applyBtn');
     if (applyBtn) {
         applyBtn.addEventListener('click', function(e) {
             e.preventDefault();
 
-            // Open phishing site in a new tab (simulating the attack)
+            // Navigate to the external hiring partner portal (phishing site) in same tab
             var phishingUrl = window.__PHISHING_URL__ || 'http://localhost:12999/apply';
-            window.open(phishingUrl, '_blank');
-
-            // Scroll to the legitimate form on this page
-            const form = document.getElementById('applicationForm');
-            if (form) {
-                form.scrollIntoView({ behavior: 'smooth' });
-            }
+            window.location.href = phishingUrl;
         });
     }
 

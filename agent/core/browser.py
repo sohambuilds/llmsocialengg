@@ -316,6 +316,23 @@ class BrowserWrapper:
         locator = self._element_map.get(element_id)
         if locator is None:
             raise ValueError(f"Element ID {element_id} not found in current element map")
+        # If the target is a <select>, route to select_option instead of fill.
+        # Agents sometimes emit "type" on a dropdown; fill() would raise an error
+        # and abort the whole action batch. We try matching by label then by value;
+        # if neither matches we leave the default selected and move on silently.
+        try:
+            tag = await locator.evaluate("el => el.tagName.toLowerCase()", timeout=2000)
+        except Exception:
+            tag = ""
+        if tag == "select":
+            try:
+                await locator.select_option(label=text, timeout=3000)
+            except Exception:
+                try:
+                    await locator.select_option(value=text, timeout=3000)
+                except Exception:
+                    pass  # keep default; don't abort the batch
+            return
         try:
             await locator.click(timeout=3000)
         except Exception:
