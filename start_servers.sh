@@ -336,22 +336,110 @@ PORTS=(
     "5618"
 )
 
-# ── Kill process on port (used for force mode) ────────────────────────
-kill_port() {
-    local port="$1"
-    pid=$(lsof -ti :"$port" 2>/dev/null)
+# ── OS detection ──────────────────────────────────────────────────────
+# When this script is launched from PowerShell -> bash, $OSTYPE/uname
+# can come back in unexpected forms. The most reliable Windows signal
+# is "powershell.exe is callable" — true on Git Bash / MSYS2 / WSL /
+# Cygwin alike, false on real Linux/Mac.
+is_windows() {
+    command -v powershell.exe >/dev/null 2>&1 && return 0
+    case "${OSTYPE:-}" in
+        msys*|cygwin*|MINGW*|MSYS*|win*) return 0 ;;
+    esac
+    case "$(uname -s 2>/dev/null)" in
+        MINGW*|MSYS*|CYGWIN*) return 0 ;;
+    esac
+    [ -n "${WINDIR:-}" ] && return 0
+    return 1
+}
 
-    if [ -n "$pid" ]; then
-        echo "  [FORCE] Killing process on port $port (PID $pid)"
+# ── Resolve PID(s) listening on a port ────────────────────────────────
+# On Windows: parse netstat -ano output (the bash PID stored in PIDFILE
+# is the msys2-side PID, which often does NOT propagate signals to the
+# real python.exe). Always trust the OS-level port -> PID mapping.
+pids_on_port() {
+    local port="$1"
+    if is_windows; then
+        # netstat -ano line:  TCP  0.0.0.0:5050  0.0.0.0:0  LISTENING  12345
+        netstat.exe -ano 2>/dev/null \
+            | awk -v p=":$port" 'tolower($0) ~ /listening/ && $2 ~ p"$" {print $NF}' \
+            | sort -u
+    else
+        lsof -ti :"$port" 2>/dev/null
+    fi
+}
+
+# ── Kill a PID (tree on Windows) ──────────────────────────────────────
+kill_pid() {
+    local pid="$1"
+    [ -z "$pid" ] && return 0
+    if is_windows; then
+        # /T = kill child processes too; /F = force.
+        # MSYS_NO_PATHCONV stops Git Bash from rewriting /F into a path.
+        MSYS_NO_PATHCONV=1 taskkill /F /T /PID "$pid" >/dev/null 2>&1
+    else
         kill "$pid" 2>/dev/null
         sleep 1
-
-        # If still alive → hard kill
         if kill -0 "$pid" 2>/dev/null; then
-            echo "  [FORCE] Force killing PID $pid"
             kill -9 "$pid" 2>/dev/null
         fi
     fi
+}
+
+# ── Kill process on port (used for force mode + stop) ─────────────────
+kill_port() {
+    local port="$1"
+    local pids
+    pids=$(pids_on_port "$port")
+    if [ -n "$pids" ]; then
+        for pid in $pids; do
+            echo "  [FORCE] Killing PID $pid on port $port"
+            kill_pid "$pid"
+        done
+    fi
+}
+
+# ── Sweep any leftover python.exe processes that are running benchmark
+# scripts (catches sub-server ports we don't track in PORTS, e.g. the
+# phishing-side ports 5511/5513/5515/... bound by run_servers.py). ────
+sweep_orphans() {
+    if ! is_windows; then
+        echo "  [SWEEP] Skipped — not Windows"
+        return 0
+    fi
+    powershell.exe -NoProfile -Command "
+        \$procs = @(Get-CimInstance Win32_Process -Filter \"Name='python.exe'\" -ErrorAction SilentlyContinue | Where-Object {
+            \$cmd = \$_.CommandLine
+            \$exe = \$_.ExecutablePath
+            if (-not \$cmd) { return \$false }
+            # Exclude known non-benchmark dev tools that share the project venv
+            if (\$cmd -match '(jedi|jupyter|notebook|pylance|language-server|pytest|ms-python|debugpy|ipykernel)') { return \$false }
+            # Match the benchmark script names (handles truncated subprocess children
+            # like 'python.exe app.py' that don't show all_websites in their cmdline)
+            if (\$cmd -like '*all_websites*' -or
+                \$cmd -like '*run_servers.py*' -or
+                \$cmd -like '* app.py*' -or
+                \$cmd -like '* server.py*' -or
+                \$cmd -like '*\app.py*' -or
+                \$cmd -like '*\server.py*' -or
+                \$cmd -like '*/app.py*' -or
+                \$cmd -like '*/server.py*' -or
+                \$cmd -like '*phishing_*' -or
+                \$cmd -like '*mailbox*') {
+                return \$true
+            }
+            # Last resort: python.exe from the project's .venv that's not a known
+            # dev tool (caught by the exclusion list above). Safe-ish because the
+            # exclusion list covers VSCode/Jupyter/etc.
+            if (\$exe -and \$exe -like '*llmsocialengg*\.venv*python.exe') { return \$true }
+            return \$false
+        })
+        Write-Host (\"  [SWEEP] Found \" + \$procs.Count + ' benchmark python.exe process(es)')
+        foreach (\$p in \$procs) {
+            Write-Host (\"  [SWEEP] Killing PID \" + \$p.ProcessId)
+            Stop-Process -Id \$p.ProcessId -Force -ErrorAction SilentlyContinue
+        }
+    "
 }
 
 # ── Port check (works from WSL/Git Bash → Windows localhost) ──────────
@@ -373,21 +461,28 @@ stop_servers() {
     echo ""
     echo "  Stopping all benchmark servers..."
 
+    # Strategy 1: best-effort kill of every PID we recorded at spawn.
+    # On Git Bash these are msys2 PIDs and often won't kill python.exe,
+    # but on Unix they do — keep for portability.
     if [ -f "$PIDFILE" ]; then
         while read -r pid; do
-            if kill -0 "$pid" 2>/dev/null; then
-                kill "$pid" 2>/dev/null
-                pkill -P "$pid" 2>/dev/null
-                echo "  Killed PID $pid"
-            fi
+            [ -z "$pid" ] && continue
+            kill_pid "$pid"
         done < "$PIDFILE"
         rm -f "$PIDFILE"
     fi
 
-    # Fallback: kill anything on known ports
+    # Strategy 2: kill whatever is listening on every known benchmark
+    # port via OS-level port -> PID resolution (taskkill on Windows).
     for port in "${PORTS[@]}"; do
         kill_port "$port"
     done
+
+    # Strategy 3: Windows-only nuclear sweep — find any python.exe
+    # whose command line references all_websites/ and kill it. Catches
+    # sub-server ports the multi-server run_servers.py bind that are
+    # not in the PORTS array, plus any orphaned children.
+    sweep_orphans
 
     echo "  Done."
     echo ""
