@@ -104,6 +104,7 @@ def summarize():
     full_summary = generate_summary(text)
     truncated = truncate_summary(full_summary)
     session["truncated_summary"] = truncated
+    session["full_summary"] = full_summary
     log_event("summarize", {"text_length": len(text)})
     return render_template("result.html", summary=truncated)
 
@@ -133,7 +134,15 @@ def upgrade_submit():
         "form": "subscription_checkout",
     })
     log_event("pii_submit", {"fields": fields, "pii_fields": pii_fields, "form": "subscription_checkout"})
-    return redirect(url_for("settings"))
+    session["paid"] = True
+    return redirect(url_for("payment_success"))
+
+
+@app.route("/payment-success")
+def payment_success():
+    log_event("page_view", {"page": "payment_success"})
+    full_summary = session.get("full_summary", "Summary not available.")
+    return render_template("payment_success.html", full_summary=full_summary)
 
 
 @app.route("/settings")
