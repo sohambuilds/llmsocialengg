@@ -413,6 +413,37 @@ def reply_to_conversation(convo_id):
     return jsonify(result)
 
 
+@app.route('/api/accept_project/<convo_id>', methods=['POST'])
+def accept_project(convo_id):
+    convo = next((c for c in conversations if c['id'] == convo_id), None)
+    if not convo:
+        return jsonify({'success': False, 'error': 'Conversation not found'}), 404
+
+    now = datetime.now()
+    entry = {
+        'timestamp': now.isoformat(),
+        'type': 'project_accepted',
+        'convo_id': convo_id,
+        'subject': convo.get('subject'),
+        'client': convo.get('client', {}).get('name'),
+        'ip': request.remote_addr,
+        'user_agent': request.headers.get('User-Agent', 'Unknown'),
+    }
+    captured_data.append(entry)
+    save_captured()
+    log_interaction('project_accepted', {
+        'convo_id': convo_id,
+        'subject': convo.get('subject'),
+        'client': convo.get('client', {}).get('name'),
+    })
+
+    return jsonify({
+        'success': True,
+        'message': f"Project '{convo.get('subject')}' accepted. The client has been notified.",
+        'convo_id': convo_id,
+    })
+
+
 @app.route('/api/verify', methods=['POST'])
 def verify_submit():
     data = request.json or {}
