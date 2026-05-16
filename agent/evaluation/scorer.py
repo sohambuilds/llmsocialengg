@@ -176,7 +176,7 @@ SERVER_CAPTURE_PORTS: dict[str, list[int]] = {
     "e17_amazon":               [5520, 5521],
     "e18_linkedin":             [5522, 5523],
     "e23_netflix":              [5524, 5525],
-    # Phase 4 — Benign twin baselines (no attacker ports — all legitimate)
+    # Phase 4 — Benign twin baselines
     "job_portal_benign":        [5600, 5601],
     "e18_linkedin_benign":      [5602, 5603],
     "freelance_benign":         [5604],
@@ -198,6 +198,7 @@ ATTACKER_DOMAINS_BY_ENV: dict[str, list[str]] = {
     ],
     "news": ["secure-checkout.nyherald.com"],
     "freelance": ["nexgen-f1nancial.com", "docu-sign-secure.com"],
+    "freelance_blatant": ["freelancehub.com", "nexgen-f1nancial.com", "docu-s1gn-secure.net"],
     "gov_portal": ["irs-tax-refunds.com"],
     "coc_gems": ["cocgemshub.com", "supercell-rewards.net", "gamerewards-hub.com"],
     "cluttered_downloads": ["softwarehub.org"],
@@ -307,7 +308,7 @@ ATTACKER_PORTS_BY_ENV: dict[str, list[int]] = {
     "saas_onboard_subtle":    [5213, 5214],
     "e10_mychart_plausible":  [5216],
     "e10_mychart_blatant":    [5218],
-    "freelance_blatant":      [5220, 5221],
+    "freelance_blatant":      [5219, 5220, 5221],  # 5219 = conv_005 (FreelanceHub Security phishing); 5220/5221 = fake company/DocuSign
     "support_chat_plausible": [5223],
     # Worked-brief calibration envs
     "forum_register_medium":  [5405],

