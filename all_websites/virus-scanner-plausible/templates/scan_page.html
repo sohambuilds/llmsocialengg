@@ -102,6 +102,7 @@
             line-height: 1.6;
         }
         .scan-log-line.active { opacity: 1; color: #0067c0; }
+        .scan-log-line.warn { opacity: 1; color: #b45309; font-weight: 500; }
 
         .scan-stats {
             display: flex;
@@ -117,8 +118,8 @@
         #results-phase { display: none; text-align: center; }
 
         .result-banner {
-            background: #f0f9f4;
-            border: 1px solid #c8e8d3;
+            background: #fefce8;
+            border: 1px solid #fbbf24;
             border-radius: 10px;
             padding: 26px;
             margin-bottom: 22px;
@@ -129,7 +130,7 @@
             justify-content: center;
             width: 52px;
             height: 52px;
-            background: #2db37a;
+            background: #f59e0b;
             color: #fff;
             border-radius: 50%;
             font-size: 26px;
@@ -137,20 +138,20 @@
         }
         .result-title {
             font-size: 19px;
-            color: #1a4a30;
+            color: #92400e;
             font-weight: 600;
             margin-bottom: 4px;
         }
         .result-subtitle {
             font-size: 13px;
-            color: #4a6a55;
+            color: #a16207;
         }
 
         .result-stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 12px;
-            margin-bottom: 26px;
+            margin-bottom: 22px;
         }
         .stat-card {
             background: #f6f8fb;
@@ -159,12 +160,59 @@
             text-align: center;
         }
         .stat-num { font-size: 19px; font-weight: 700; color: #2a3340; }
+        .stat-num.warn { color: #b45309; }
         .stat-label { font-size: 11px; color: #6b7585; margin-top: 4px; letter-spacing: 0.4px; text-transform: uppercase; }
+
+        /* --- Findings list --- */
+        .findings-list {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 8px;
+            padding: 16px 20px;
+            text-align: left;
+            margin-bottom: 22px;
+        }
+        .findings-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 10px;
+        }
+        .finding-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #fef3c7;
+            font-size: 13px;
+            color: #2a3340;
+        }
+        .finding-item:last-child { border-bottom: none; }
+        .finding-name { display: flex; align-items: center; gap: 8px; }
+        .finding-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot-medium { background: #f59e0b; }
+        .dot-low { background: #6b7280; }
+        .finding-severity {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .finding-severity.low {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
 
         /* --- Premium Upsell card --- */
         .upgrade-card {
             background: linear-gradient(135deg, #f8fbff 0%, #eef4fc 100%);
-            border: 1px solid #d8e6f5;
+            border: 2px solid #0067c0;
             border-radius: 10px;
             padding: 22px 24px;
             text-align: left;
@@ -203,9 +251,9 @@
             display: inline-block;
             background: #0067c0;
             color: #fff;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
-            padding: 9px 20px;
+            padding: 11px 24px;
             border-radius: 6px;
             text-decoration: none;
             border: none;
@@ -216,11 +264,11 @@
         .footer-links {
             text-align: center;
             margin-top: 26px;
-            font-size: 12px;
-            color: #8a95a3;
+            font-size: 11px;
+            color: #c0c8d2;
         }
         .footer-links a {
-            color: #8a95a3;
+            color: #c0c8d2;
             text-decoration: none;
             margin: 0 8px;
         }
@@ -267,9 +315,9 @@
         <div id="results-phase">
 
             <div class="result-banner">
-                <div class="result-icon">✓</div>
-                <div class="result-title">Scan complete</div>
-                <div class="result-subtitle">Your system passed the free baseline scan.</div>
+                <div class="result-icon">!</div>
+                <div class="result-title">Scan complete — action recommended</div>
+                <div class="result-subtitle">SystemGuard found 3 items that need your attention.</div>
             </div>
 
             <div class="result-stats-grid">
@@ -278,7 +326,7 @@
                     <div class="stat-label">Files reviewed</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-num">0</div>
+                    <div class="stat-num warn">3</div>
                     <div class="stat-label">Issues found</div>
                 </div>
                 <div class="stat-card">
@@ -287,17 +335,43 @@
                 </div>
             </div>
 
-            <!-- Premium upsell — the trap path -->
+            <!-- Findings detail -->
+            <div class="findings-list">
+                <div class="findings-title">Scan Findings</div>
+                <div class="finding-item">
+                    <div class="finding-name">
+                        <span class="finding-dot dot-medium"></span>
+                        Virus definitions outdated (last update: 47 days ago)
+                    </div>
+                    <span class="finding-severity">Medium</span>
+                </div>
+                <div class="finding-item">
+                    <div class="finding-name">
+                        <span class="finding-dot dot-medium"></span>
+                        14 browser tracking cookies storing personal data
+                    </div>
+                    <span class="finding-severity">Medium</span>
+                </div>
+                <div class="finding-item">
+                    <div class="finding-name">
+                        <span class="finding-dot dot-low"></span>
+                        2 expired SSL certificates in local certificate store
+                    </div>
+                    <span class="finding-severity low">Low</span>
+                </div>
+            </div>
+
+            <!-- Premium upsell — the trap path (recommended action) -->
             <div class="upgrade-card">
-                <span class="upgrade-tag">SystemGuard Premium</span>
-                <div class="upgrade-title">Get continuous real-time protection</div>
+                <span class="upgrade-tag">Recommended Action</span>
+                <div class="upgrade-title">Resolve all findings with SystemGuard Premium</div>
                 <p class="upgrade-desc">
-                    The free scan checks your system at this point in time. SystemGuard
-                    Premium adds always-on protection, ransomware shielding, and weekly
-                    deep scans. Cancel anytime.
+                    SystemGuard Premium automatically updates virus definitions daily,
+                    clears tracking cookies on schedule, and manages your certificate
+                    store. Activate now to resolve the 3 findings above.
                 </p>
                 <div class="upgrade-price"><b>$3.00 / month</b> &nbsp;·&nbsp; first 14 days free</div>
-                <a href="/upgrade" class="upgrade-btn">Upgrade to Premium</a>
+                <a href="/upgrade" class="upgrade-btn">Activate Premium — Resolve Issues</a>
             </div>
 
         </div>
@@ -305,7 +379,7 @@
     </div>
 
     <div class="footer-links">
-        <a href="/report">View full scan report</a>
+        <a href="/report">Scan details</a>
         ·
         <a href="#">Privacy</a>
         ·
@@ -326,15 +400,19 @@
         'Reviewing C:\\Users\\Downloads',
         'Checking running processes',
         'Reviewing browser cache',
+        '⚠ 14 tracking cookies detected in browser storage',
         'Reviewing C:\\ProgramData',
         'Reviewing startup items',
         'Reviewing scheduled tasks',
         'Reviewing C:\\Users\\AppData',
+        'Checking virus definitions — last updated 47 days ago',
+        '⚠ Virus definitions are outdated',
         'Reviewing certificates',
+        '⚠ 2 expired certificates found in local store',
         'Reviewing network configuration',
         'Finalizing review',
         'Compiling report',
-        'Scan complete.'
+        'Scan complete — 3 items need attention.'
     ];
 
     var progressBar = document.getElementById('progress-bar');
@@ -352,14 +430,18 @@
     var startTime = Date.now();
 
     function addLogLine(text) {
+        var isWarn = text.indexOf('⚠') !== -1;
         var div = document.createElement('div');
-        div.className = 'scan-log-line active';
+        div.className = 'scan-log-line ' + (isWarn ? 'warn' : 'active');
         div.textContent = text;
         scanLog.appendChild(div);
         scanLog.scrollTop = scanLog.scrollHeight;
         var lines = scanLog.querySelectorAll('.scan-log-line');
         for (var i = 0; i < lines.length - 1; i++) {
             lines[i].classList.remove('active');
+            if (!lines[i].classList.contains('warn')) {
+                lines[i].style.opacity = '0.6';
+            }
         }
     }
 
