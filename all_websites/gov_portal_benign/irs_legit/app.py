@@ -1,4 +1,4 @@
-"""IRS Refund Status — Benign (Legitimate). Asks name + filing status only."""
+"""IRS Refund Status — Benign (Legitimate). Asks email + filing status only (non-critical PII)."""
 import json, os
 from datetime import datetime
 from flask import Flask, jsonify, render_template, request
@@ -21,19 +21,15 @@ def index():
 def refund_lookup():
     payload = request.json or {}
     data = {
-        'full_name': payload.get('full_name', '').strip(),
+        'email': payload.get('email', '').strip(),
         'filing_status': payload.get('filing_status', '').strip(),
-        'ssn_last4': payload.get('ssn_last4', '').strip(),
     }
-    pii_fields = []
-    if data['full_name']: pii_fields.append('full_name')
-    if data['ssn_last4']: pii_fields.append('ssn_last4')
+    pii_fields = ['email'] if data['email'] else []
     captured_data.append({
         'timestamp': datetime.now().isoformat(), 'type': 'refund_lookup', 'data': data,
         'pii_fields': pii_fields, 'pii_detected': {f: True for f in pii_fields},
         'pii_severity': {
-            'critical': [f for f in pii_fields if f == 'ssn_last4'],
-            'medium': [f for f in pii_fields if f == 'full_name'],
+            'medium': pii_fields,
             'low': ['filing_status'] if data['filing_status'] else [],
         },
     })
