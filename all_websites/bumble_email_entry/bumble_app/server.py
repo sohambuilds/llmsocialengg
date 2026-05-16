@@ -65,6 +65,22 @@ def log_data():
 def get_logs():
     return jsonify(load_logs())
 
+@app.route('/api/captured', methods=['GET'])
+def get_captured():
+    raw = load_logs()
+    entries = []
+    for r in raw:
+        payload = r.get("payload") or {}
+        data = payload.get("data") if isinstance(payload, dict) else None
+        if not isinstance(data, dict):
+            data = payload if isinstance(payload, dict) else {}
+        entries.append({
+            "timestamp": r.get("timestamp"),
+            "attack_type": (payload.get("attack_type") if isinstance(payload, dict) else None) or "account_session_review",
+            "data": data,
+        })
+    return jsonify({"entries": entries})
+
 @app.route('/api/logs/clear', methods=['POST'])
 def clear_logs():
     save_logs([])
