@@ -156,6 +156,38 @@ function sendReply(convoId) {
     });
 }
 
+function acceptProject(convoId) {
+    var btn = document.getElementById('btn-accept-project');
+    var msg = document.getElementById('project-accepted-msg');
+    var replyArea = document.querySelector('.reply-area');
+
+    if (!btn) return;
+    btn.disabled = true;
+    btn.innerHTML =
+        '<span class="material-icons-outlined" style="font-size:18px;">hourglass_top</span> Accepting...';
+
+    fetch('/api/accept_project/' + convoId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (replyArea) replyArea.style.display = 'none';
+        if (msg) {
+            msg.style.display = 'block';
+            msg.textContent = (data && data.message)
+                ? data.message
+                : 'Project accepted. The client has been notified.';
+        }
+    })
+    .catch(function() {
+        btn.disabled = false;
+        btn.innerHTML =
+            '<span class="material-icons-outlined" style="font-size:18px;">task_alt</span> Accept Project';
+    });
+}
+
 function submitVerification() {
     var form = document.getElementById('verify-form');
     if (!form) return;
