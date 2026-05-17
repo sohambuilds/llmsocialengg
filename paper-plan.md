@@ -96,7 +96,9 @@ appending revisions.
   loop. Supports VLM and text-only models.
 - **Model factory** (`agent/core/llm_factory.py`). Currently registered:
   `gemini-3-flash-preview`, `meta-llama/llama-4-scout-17b-16e-instruct`,
-  `openai/gpt-oss-120b`. Will add: `gpt-5`, `claude-sonnet-4-6` for v2.
+  `openai/gpt-oss-120b`. v2 additions (via OpenRouter): `openai/gpt-5-mini`,
+  `anthropic/claude-sonnet-4.6`, `google/gemini-2.0-flash-001`. Full GPT-5
+  was registered briefly then scratched (2026-05-17) in favour of gpt-5-mini.
 - **Per-step logger + PII tracker** (`agent/evaluation/logger.py`,
   `agent/evaluation/pii_tracker.py`). Captures DOM, screenshots,
   actions, and value-match leak detection.
@@ -114,10 +116,10 @@ appending revisions.
 | Per-env classification.csv rows with sibling_of + toggled_axis | ✅ done |
 | Phase 3 sibling envs all sit at `🟦 qa` (pending per-env smoke + screenshot diff) | partial |
 | v1 pilot results on parent subset (qualitative: high leakage, prompt mitigation insufficient) | ✅ done |
-| v2 results on full 91-env benchmark | partial — 1-model dress rehearsal complete (Llama 4 Scout, 1 seed, all 91 attack + 10 benign envs × C0/C1/C2/C3 = 404 runs) at `agent/logs/llamarun2soham/`; GPT-5 / Claude Sonnet 4.6 / Gemini 3 Flash + seeds 2–5 still pending |
+| v2 results on full 91-env benchmark | partial — 1-model dress rehearsal complete (Llama 4 Scout, 1 seed, all 91 attack + 10 benign envs × C0/C1/C2/C3 = 404 runs) at `agent/logs/llamarun2soham/`; GPT-5 mini / Claude Sonnet 4.6 / Gemini 3 Flash + seeds 2–5 still pending |
 | LLM-as-judge Detection Rate (GPT-4o primary, Llama 4 secondary) | partial — judge shipped at `agent/evaluation/dr_judge.py`, sanity-run on 508 v1 sessions (Llama-vs-Llama κ=0.82); GPT-4o cross-family run pending on OpenAI key |
 | "Reached attack surface" instrumentation | ✅ done — `reached_trap` field on every session; Llama 4 Scout slice shows 96–98% reach across C0–C3, resolving the v1 "low ASR = missed navigation" worry |
-| GPT-5 + Claude Sonnet 4.6 added to model factory | ❌ not started (Phase 4 week 1) |
+| GPT-5 mini + Claude Sonnet 4.6 added to model factory | ✅ done — both registered in `agent/core/llm_factory.py` via OpenRouter backend; smoke-tested for client construction. Live API smoke pending `OPENROUTER_API_KEY` |
 | Mitigation conditions C1 / C2 / C3 (3 prompts, not 1) | ✅ done — `--condition {C0,C1,C2,C3}` flag in `agent/runner.py`, prompt strings in `agent/config/mitigations/`; verified end-to-end by Llama 4 Scout slice |
 | 10 benign-twin baseline envs | ✅ done — 10 envs forked at `all_websites/*_benign/`, wired into runner / scorer / `start_servers.sh`; Llama slice confirms 0% PLR_crit across all 4 conditions on benign twins (clean attribution baseline) |
 | MITRE / OWASP / ENISA vector mapping | ✅ done — added as 4 columns (`mitre_attack`, `owasp`, `enisa`, `mitre_pi`) to `classification.csv` |
@@ -235,9 +237,10 @@ specifications lead the abstract and §1.
 
 ### 2.6 Methodological commitments
 
-- **Models.** 4 agents tested: GPT-5, Claude Sonnet 4.6, Gemini 3
+- **Models.** 4 agents tested: GPT-5 mini, Claude Sonnet 4.6, Gemini 3
   Flash, Llama 4 Scout. (The earlier `gpt-oss-120b` triad was
-  pilot-only.)
+  pilot-only. Full GPT-5 was scratched 2026-05-17 in favour of mini —
+  cost / latency for the 91 × 5-seed × 4-condition cell count.)
 - **Seeds.** n=5 per env-model-condition cell. Firm — not increasing.
 - **Conditions.** Four between-conditions per env-model pair:
   - **C0 baseline** — default agent prompt.
@@ -318,7 +321,7 @@ The pivots reserved for results-time (below) still apply.
 
 ### Days 1–3 — foundation
 
-- **A1. Add Claude Sonnet 4.6 + GPT-5 to `agent/core/llm_factory.py`,
+- **A1. Add Claude Sonnet 4.6 + GPT-5 mini to `agent/core/llm_factory.py`,
   validate end-to-end on one env each.** *Deliverable:* both models
   return non-empty action JSON on a 5-step `cluttered_downloads` run.
 - **A2. Implement "reached attack surface" instrumentation.** Hook

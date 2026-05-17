@@ -277,7 +277,7 @@ BENCHMARK_MODELS = [
 V2_MODELS = [
     "google/gemini-2.0-flash-001",         # via OpenRouter (no native Gemini key needed)
     "meta-llama/llama-4-scout-17b-16e-instruct",
-    "openai/gpt-5",
+    "openai/gpt-5-mini",                   # via OpenRouter (full GPT-5 scratched 2026-05-17)
     "anthropic/claude-sonnet-4.6",
 ]
 
@@ -314,26 +314,15 @@ Available environment groups:
   tier3      — 2 very hard environments
 
 Available model aliases:
-<<<<<<< HEAD
-  gemini       → gemini-3-flash-preview
-  llama-scout  → meta-llama/llama-4-scout-17b-16e-instruct
-  llama4       → meta-llama/llama-4-scout-17b-16e-instruct
-  gpt-oss      → openai/gpt-oss-120b
-  gpt-oss-120b → openai/gpt-oss-120b
-  gpt-5        → openai/gpt-5             (via OpenRouter)
-  sonnet-4.6   → anthropic/claude-sonnet-4.6 (via OpenRouter)
-  all          → run all 3 pilot benchmark models sequentially
-  all-v2       → run the 4 v2 models (Gemini, Llama 4, GPT-5, Sonnet 4.6)
-=======
   gemini       -> gemini-3-flash-preview
   llama-scout  -> meta-llama/llama-4-scout-17b-16e-instruct
   llama4       -> meta-llama/llama-4-scout-17b-16e-instruct
   gpt-oss      -> openai/gpt-oss-120b
   gpt-oss-120b -> openai/gpt-oss-120b
-  gpt-5        -> openai/gpt-5             (via OpenRouter)
+  gpt-5-mini   -> openai/gpt-5-mini       (via OpenRouter)
   sonnet-4.6   -> anthropic/claude-sonnet-4.6 (via OpenRouter)
   all          -> run all 3 pilot benchmark models sequentially
-  all-v2       -> run the 4 v2 models (Gemini, Llama 4, GPT-5, Sonnet 4.6)
+  all-v2       -> run the 4 v2 models (Gemini, Llama 4, GPT-5 mini, Sonnet 4.6)
 
 Conditions:
   C0  baseline (default)
@@ -346,7 +335,6 @@ Output layout (when --output-dir or default agent/logs/ is used):
   <output-dir>/<run-name>/<model>/<condition>/<env>_<model>_<UTC-ts>.json
   <output-dir>/<run-name>/<model>/<condition>/<env>_<model>_<UTC-ts>.score.json
   <output-dir>/<run-name>/aggregate_results.json
->>>>>>> c33408db5cc86de9428de0b6e12883e378e38cf5
         """,
     )
     parser.add_argument(

@@ -68,8 +68,14 @@ contract.
 ## Week 1 — Days 1–5: build the new pieces
 
 ### E1
-- [ ] Add GPT-5 + Claude Sonnet 4.6 to `agent/core/llm_factory.py`.
-      Smoke each on `cluttered_downloads` for 5 steps.
+- [x] Add GPT-5 mini + Claude Sonnet 4.6 to `agent/core/llm_factory.py`.
+      Both registered with backend=`openrouter`, vision=True. Aliases
+      `gpt-5-mini` and `sonnet`/`sonnet-4.6`/`claude` resolve. Client
+      construction smoke (no API call) passes. Live smoke on
+      `cluttered_downloads` × 5 steps deferred until `OPENROUTER_API_KEY`
+      is set on the Linux server. (Full GPT-5 was registered briefly
+      then scratched 2026-05-17 in favour of mini — cost / latency
+      tradeoff for the 91 × 5-seed × 4-condition cell count.)
 - [x] Reached-trap instrumentation. Scorer emits
       `metrics.reached_trap = {reached_trap: bool, trap_urls_visited:
       [...], urls_visited_count: int}` on every session. Verified
@@ -182,8 +188,13 @@ contract.
       logistic with env and model as crossed random effects, BH
       correction over the planned-test set), inclusion rules
       (`reached_trap=True` for ASR), falsification criteria.
-- [X] Git-tag `prereg-v2-start` at end of week 1, **before any v2
-      runs**.
+- [ ] Git-tag `prereg-v2-start` at end of week 1, **before any v2
+      runs**. *Status 2026-05-17: tag does NOT exist in repo yet
+      (`git tag --list` is empty). Apply with `git tag prereg-v2-start
+      <commit>` immediately before launching the gpt-5-mini sweep on
+      the Linux server. analysis-plan.md model list was updated from
+      "GPT-5" to "GPT-5 mini" today — this is pre-tag, so not a
+      deviation under §11.*
 - [X] Related work draft (§2 of paper).
 - [X] Methods skeleton (§3).
 

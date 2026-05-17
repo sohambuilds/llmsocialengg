@@ -44,10 +44,10 @@ MODEL_REGISTRY: dict[str, dict] = {
         "vision": True,
         "label": "Gemini 2.0 Flash (OpenRouter)",
     },
-    "openai/gpt-5": {
+    "openai/gpt-5-mini": {
         "backend": "openrouter",
         "vision": True,
-        "label": "GPT-5 (OpenRouter)",
+        "label": "GPT-5 mini (OpenRouter)",
     },
     "anthropic/claude-sonnet-4.6": {
         "backend": "openrouter",
@@ -64,7 +64,8 @@ MODEL_ALIASES: dict[str, str] = {
     "gpt-oss":      "openai/gpt-oss-120b",
     "gpt-oss-120b": "openai/gpt-oss-120b",
     "gemini-or":    "google/gemini-2.0-flash-001",
-    "gpt-5":        "openai/gpt-5",
+    "gpt-5-mini":   "openai/gpt-5-mini",
+    "gpt5-mini":    "openai/gpt-5-mini",
     "sonnet-4.6":   "anthropic/claude-sonnet-4.6",
     "sonnet":       "anthropic/claude-sonnet-4.6",
     "claude":       "anthropic/claude-sonnet-4.6",
