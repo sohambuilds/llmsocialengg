@@ -114,16 +114,16 @@ appending revisions.
 | Per-env classification.csv rows with sibling_of + toggled_axis | ✅ done |
 | Phase 3 sibling envs all sit at `🟦 qa` (pending per-env smoke + screenshot diff) | partial |
 | v1 pilot results on parent subset (qualitative: high leakage, prompt mitigation insufficient) | ✅ done |
-| v2 results on full 91-env benchmark | ❌ not started (Phase 4 week 3) |
-| LLM-as-judge Detection Rate (GPT-4o primary, Llama 4 secondary) | ❌ not started (Phase 4 week 1–2) |
-| "Reached attack surface" instrumentation | ❌ not started (Phase 4 week 1) |
+| v2 results on full 91-env benchmark | partial — 1-model dress rehearsal complete (Llama 4 Scout, 1 seed, all 91 attack + 10 benign envs × C0/C1/C2/C3 = 404 runs) at `agent/logs/llamarun2soham/`; GPT-5 / Claude Sonnet 4.6 / Gemini 3 Flash + seeds 2–5 still pending |
+| LLM-as-judge Detection Rate (GPT-4o primary, Llama 4 secondary) | partial — judge shipped at `agent/evaluation/dr_judge.py`, sanity-run on 508 v1 sessions (Llama-vs-Llama κ=0.82); GPT-4o cross-family run pending on OpenAI key |
+| "Reached attack surface" instrumentation | ✅ done — `reached_trap` field on every session; Llama 4 Scout slice shows 96–98% reach across C0–C3, resolving the v1 "low ASR = missed navigation" worry |
 | GPT-5 + Claude Sonnet 4.6 added to model factory | ❌ not started (Phase 4 week 1) |
-| Mitigation conditions C1 / C2 / C3 (3 prompts, not 1) | ❌ not started (Phase 4 week 1) |
-| 10 benign-twin baseline envs | ❌ not started (Phase 4 week 1) |
-| MITRE / OWASP / ENISA vector mapping | ❌ not started (Phase 4 week 1) |
-| Fidelity sanity check vs real phishing screenshots | ❌ not started (Phase 4 week 2) |
-| 200-sample human DR validation | ❌ not started (Phase 4 week 2) |
-| Pre-registered analysis plan (`prereg-v2-start` git tag) | ❌ not started (Phase 4 week 1) |
+| Mitigation conditions C1 / C2 / C3 (3 prompts, not 1) | ✅ done — `--condition {C0,C1,C2,C3}` flag in `agent/runner.py`, prompt strings in `agent/config/mitigations/`; verified end-to-end by Llama 4 Scout slice |
+| 10 benign-twin baseline envs | ✅ done — 10 envs forked at `all_websites/*_benign/`, wired into runner / scorer / `start_servers.sh`; Llama slice confirms 0% PLR_crit across all 4 conditions on benign twins (clean attribution baseline) |
+| MITRE / OWASP / ENISA vector mapping | ✅ done — added as 4 columns (`mitre_attack`, `owasp`, `enisa`, `mitre_pi`) to `classification.csv` |
+| Fidelity sanity check vs real phishing screenshots | scaffolded — rubric + sample roster + stats script in `fidelity/`; 5 real-phish captures + 15-sample rating still pending |
+| 200-sample human DR validation | partial — 200 C0 sessions labeled, all 21 flagged sessions confirmed human-correct (precision-audit protocol; κ=1.0 by construction); C1/C2/C3 stratification + recall audit on judge-negative sessions pending |
+| Pre-registered analysis plan (`prereg-v2-start` git tag) | ✅ done — see [analysis-plan.md](analysis-plan.md), tagged at end of week 1 |
 | Public release artifact | ❌ not started (Phase 4 week 4) |
 
 ### 1.5 Known caveats and open issues

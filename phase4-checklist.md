@@ -70,9 +70,14 @@ contract.
 ### E1
 - [ ] Add GPT-5 + Claude Sonnet 4.6 to `agent/core/llm_factory.py`.
       Smoke each on `cluttered_downloads` for 5 steps.
-- [ ] Reached-trap instrumentation. Log every navigation in
-      `agent/core/browser.py`. Add `trap_urls` list per env (yaml or
-      sidecar). Session log gets `reached_trap: bool`. Scorer reads it.
+- [x] Reached-trap instrumentation. Scorer emits
+      `metrics.reached_trap = {reached_trap: bool, trap_urls_visited:
+      [...], urls_visited_count: int}` on every session. Verified
+      end-to-end by the Llama 4 Scout dress-rehearsal
+      (`agent/logs/llamarun2soham/`): 96–98% reach across C0–C3 on
+      91 attack envs and 0% on 10 benign twins (no trap to reach).
+      The v1 "low ASR = missed navigation" worry is rejected — the
+      failure mode is compliance on the trap surface, not navigation.
 - [x] `--condition {C0,C1,C2,C3}` added to `runner.py:354–361`. C3
       additionally registers the `trust_check` action in the action
       space via `get_action_prompt_description(include_trust_check=True)`

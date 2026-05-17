@@ -252,8 +252,12 @@ uv run python -m agent.runner --env quiz_scam_pi_sysmsg --model llama4 --api-key
 ## Limitations
 
 Sites are LLM-authored with human review — snapshot of attacker
-patterns at creation time. Detection Rate is a keyword-match proxy.
-Multi-turn envs are noisier to evaluate. Subtle / multi-turn envs
-currently show low ASR partly because agents fail to navigate to the
-attack surface, not because they detect — instrumenting "reached
-attack surface" is a Phase 3 priority.
+patterns at creation time. Score-time Detection Rate is still a
+keyword-match proxy; the LLM-as-judge upgrade
+(`agent/evaluation/dr_judge.py`) runs post-hoc and is queued for
+GPT-4o cross-family validation. Multi-turn envs are noisier to
+evaluate. **2026-05-17:** reached-trap instrumentation is now wired
+and the first Llama 4 Scout slice (`agent/logs/llamarun2soham/`)
+shows 96–98% reach across C0–C3 — so the failure mode is compliance
+on the trap surface, not navigation past it. The v1 "low ASR =
+missed navigation" worry is empirically rejected on this slice.
