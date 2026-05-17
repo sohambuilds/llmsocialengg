@@ -48,6 +48,10 @@ MODEL_REGISTRY: dict[str, dict] = {
         "backend": "openrouter",
         "vision": True,
         "label": "GPT-5 mini (OpenRouter)",
+        # GPT-5 family supports a reasoning effort knob. "low" cuts latency
+        # ~3-5x vs the medium default with minimal quality loss for our
+        # action-selection use case. Bump to "medium" if quality regresses.
+        "reasoning_effort": "low",
     },
     "anthropic/claude-sonnet-4.6": {
         "backend": "openrouter",
@@ -123,6 +127,7 @@ def create_llm_client(
             api_key=api_key,
             base_url="https://openrouter.ai/api/v1",
             api_key_env="OPENROUTER_API_KEY",
+            reasoning_effort=info.get("reasoning_effort"),
         )
 
     # Default: Gemini

@@ -31,9 +31,15 @@ class OpenAICompatClient(BaseLLMClient):
         api_key: Optional[str] = None,
         base_url: str = "https://api.groq.com/openai/v1",
         api_key_env: str = "GROQ_API_KEY",
+        reasoning_effort: Optional[str] = None,
     ):
         self.model = model
         self.supports_vision = supports_vision
+        # OpenAI reasoning-family models (gpt-5, gpt-5-mini, o-series) accept a
+        # reasoning_effort hint. "low" cuts latency and cost dramatically with
+        # minimal quality loss for action-selection tasks like ours. Set per
+        # model in llm_factory MODEL_REGISTRY; None = don't send the param.
+        self.reasoning_effort = reasoning_effort
 
         key = api_key or os.environ.get(api_key_env)
         if not key:
@@ -74,11 +80,21 @@ class OpenAICompatClient(BaseLLMClient):
             print(f"  [llm] Calling {provider} API ({self.model}){retry_tag}...")
 
             try:
+                extra_body: dict[str, Any] = {}
+                if self.reasoning_effort:
+                    # OpenRouter passes this through to OpenAI's reasoning-aware
+                    # endpoint; OpenAI accepts both 'reasoning_effort' (newer)
+                    # and 'reasoning': {'effort': ...} (older). Sending both
+                    # keeps us compatible across upstream provider versions.
+                    extra_body["reasoning_effort"] = self.reasoning_effort
+                    extra_body["reasoning"] = {"effort": self.reasoning_effort}
+
                 response = await self._client.chat.completions.create(
                     model=self.model,
                     messages=chat_messages,
                     temperature=0.2,
                     max_tokens=4096,
+                    extra_body=extra_body or None,
                 )
                 response_text = response.choices[0].message.content
                 print(f"  [llm] Response received")
@@ -153,11 +169,16 @@ class OpenAICompatClient(BaseLLMClient):
         temperature: float = 0.1,
     ) -> str:
         try:
+            extra_body: dict[str, Any] = {}
+            if self.reasoning_effort:
+                extra_body["reasoning_effort"] = self.reasoning_effort
+                extra_body["reasoning"] = {"effort": self.reasoning_effort}
             response = await self._client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=temperature,
                 max_tokens=max_tokens,
+                extra_body=extra_body or None,
             )
             return response.choices[0].message.content or "No summary generated."
         except Exception:
