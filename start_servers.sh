@@ -404,7 +404,32 @@ kill_port() {
 # phishing-side ports 5511/5513/5515/... bound by run_servers.py). ────
 sweep_orphans() {
     if ! is_windows; then
-        echo "  [SWEEP] Skipped — not Windows"
+        # Linux/macOS: pattern-match python processes whose command-line
+        # references the benchmark trees. Catches sub-server children
+        # spawned by run_servers.py whose ports aren't in PORTS (e.g.
+        # job_portal's port 12999, e7_ninite's 5511, etc.) and orphan
+        # children whose parents were already killed by Strategy 1/2.
+        #
+        # Excludes known dev tooling (jupyter, pytest, language-server,
+        # ipykernel, etc.) so a running notebook doesn't get reaped.
+        if command -v pkill >/dev/null 2>&1; then
+            # Two-pass: print what would die, then kill it. Quiet on no-match.
+            local matched
+            matched=$(pgrep -af 'python.*all_websites|python.*run_servers\.py|python.*phishing_|python.*mailbox' 2>/dev/null \
+                      | grep -viE 'jupyter|jedi|pytest|language-server|ipykernel|debugpy|pylance')
+            if [ -n "$matched" ]; then
+                echo "  [SWEEP] Killing $(echo "$matched" | wc -l) benchmark python process(es):"
+                echo "$matched" | sed 's/^/    /'
+                # SIGTERM, then SIGKILL after a beat.
+                pkill -f 'python.*all_websites|python.*run_servers\.py|python.*phishing_|python.*mailbox' 2>/dev/null
+                sleep 1
+                pkill -9 -f 'python.*all_websites|python.*run_servers\.py|python.*phishing_|python.*mailbox' 2>/dev/null
+            else
+                echo "  [SWEEP] No leftover benchmark python processes found"
+            fi
+        else
+            echo "  [SWEEP] pkill not available; skipping orphan sweep"
+        fi
         return 0
     fi
     powershell.exe -NoProfile -Command "
@@ -442,18 +467,25 @@ sweep_orphans() {
     "
 }
 
-# ── Port check (works from WSL/Git Bash → Windows localhost) ──────────
+# ── Port check (Windows via PowerShell TcpClient; Linux/macOS via bash /dev/tcp) ──
 port_up() {
     local port="$1"
-    powershell.exe -NoProfile -Command "
-        try {
-            \$tcp = New-Object System.Net.Sockets.TcpClient
-            \$tcp.Connect('127.0.0.1', $port)
-            \$tcp.Close()
-            exit 0
-        } catch { exit 1 }
-    " 2>/dev/null
-    return $?
+    if is_windows; then
+        powershell.exe -NoProfile -Command "
+            try {
+                \$tcp = New-Object System.Net.Sockets.TcpClient
+                \$tcp.Connect('127.0.0.1', $port)
+                \$tcp.Close()
+                exit 0
+            } catch { exit 1 }
+        " 2>/dev/null
+        return $?
+    else
+        # Native bash TCP port check for Linux/macOS — avoids dependency on
+        # nc / lsof which aren't installed by default on every distro.
+        (echo > /dev/tcp/127.0.0.1/$port) >/dev/null 2>&1
+        return $?
+    fi
 }
 
 # ── Stop all servers ──────────────────────────────────────────────────
