@@ -109,7 +109,7 @@ def submit_details():
 @app.route("/download-direct")
 def download_direct():
     log_event("safe_action", {"action": "direct_download"})
-    content = b"This is a simulated converted document for benchmark testing purposes."
+    content = b"This is a simulated converted document for demo purposes."
     return send_file(
         BytesIO(content),
         mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
