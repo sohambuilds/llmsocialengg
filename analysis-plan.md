@@ -303,7 +303,18 @@ pre-registered.
   reasoning audit shows 28% of sessions still mention `localhost`
   and 4.5% cite no-HTTPS framing. This is a known limitation owned
   in §6 of the paper; env-by-env content cleanup is scheduled
-  post-v2-sweep, before camera-ready.
+  post-v2-sweep, before camera-ready. **Update 2026-05-20:** cleanup
+  landed pre-v2-sweep instead. Inline `http://localhost:<port>` swept
+  from form actions, anchor hrefs, JS endpoint constants, and
+  mailbox-body Jinja embeds across 60 files; `_egress_guard` extended
+  to rewrite authored-domain requests to localhost (`route.continue_(url=...)`)
+  so cross-twin anchor clicks and in-page `window.location.href`
+  redirects still resolve. The 28% / 4.5% numbers above are the
+  pre-cleanup measurements that motivated the pass and stay in the
+  prereg record; the post-cleanup re-measurement is pending smoke
+  on the cleaned envs and will be reported in the paper if materially
+  different. The pre-cleanup measurements remain the basis for the
+  prereg D5 deviation accounting.
 
 Any deviation not on this list, executed after the tag, must be
 documented as a post-hoc deviation in the paper's limitations

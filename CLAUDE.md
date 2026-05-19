@@ -344,14 +344,31 @@ behaviour as before, different surface. Fix landed in
 now forces `scheme="https"` (the agent never navigates to that URL
 — browser still uses plain-http localhost via the reverse rewrite).
 
-**Residual env-content leakage (deferred, env-by-env).** Even with
-URL bar masked, many env templates still render `http://localhost:<port>`
-strings inside the page (form `action=` attributes, footer links,
-mailbox-embed URLs). The post-fix reasoning audit shows 28% of
-sessions still mention `localhost` in agent reasoning and 4.5%
-still cite a "no HTTPS / plain http" framing. Per project decision
-2026-05-19: this is acknowledged as a known leak; not blocking, will
-be cleaned up env-by-env after the v2 sweep.
+**Residual env-content leakage — cleanup landed 2026-05-20.** The
+templates' inline `http://localhost:<port>` strings were swept
+env-by-env per `scripts/audit_env_leakage.py`: 60 file edits across
+8 mailbox `replace()` Jinja embeds, 9 explicit `<a href>` / `window.open`
+sites (crypto-platform variants, news paywall, saas billing), 8
+shopsmart product listings, 18 ecommerce checkout `fetch()` /
+`window.location.href` redirects, 7 ADP/AWS/Booking `LOG_ENDPOINT`
+constants, 2 saas pi step_5 redirects, plus 10 visible "Benchmark"
+footer/header strings (virus-scanner ×3, e17-amazon ×3,
+summary-website-subtle, quiz-site ×2, file-converter download body).
+Fix shape: agent-visible URLs now use the authored typosquat domain
+(e.g. `http://ancestrydna-results.com:5416/`) with visible anchor
+text port-stripped; same-origin endpoints (`LOG_ENDPOINT`, post-onboarding
+redirects) became relative paths. To make cross-twin anchor clicks
+and in-page `window.location.href` redirects resolve without leaving
+the eval surface, [browser.py](agent/core/browser.py)'s `_egress_guard`
+now rewrites known authored-domain http requests to localhost via
+`route.continue_(url=...)`, mirroring what agent-driven `navigate()`
+already did. Audit flagged-file count 141 → 88; the remaining 88 are
+out-of-scope per the cleanup spec — server-side `app.py` docstrings,
+startup banners, `benchmark-*` CSS class names — that the audit
+script's noise filter doesn't catch. The pre-cleanup `28% localhost /
+4.5% plain-http` reasoning-audit numbers (measured on
+`gpt5mini_v2_finalfinal`) are pending re-measurement on a post-cleanup
+smoke before the v2 sweep.
 
 **Re-run dataset.** `agent/logs/v2/gpt5mini_v2_finalfinal/` is the
 post-fix slice (gpt-5-mini, 1 seed, parallel_runner layout). The

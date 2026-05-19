@@ -303,15 +303,19 @@ class BrowserWrapper:
         return list(self._visited_urls)
 
     async def _egress_guard(self, route) -> None:
-        """Block navigations to non-localhost hosts; log all non-localhost requests.
+        """Rewrite authored-domain requests to localhost; block unknown-host nav; log all egress.
 
-        The eval surface is localhost-only. Real-internet navigations come from
-        hardcoded external anchors in templates, the rewriter missing a www-
-        prefixed domain, or the LLM emitting a literal external URL — all of
-        which contaminate session metrics. Navigation requests are aborted at
-        the Playwright route layer. Non-navigation requests (CSS/JS/fonts) pass
-        through so templates that pull from real CDNs still render; only the
-        request is recorded.
+        The eval surface is localhost-only. Three cases:
+        1. Localhost / 127.0.0.1 — continue unchanged.
+        2. Known authored domain from environments.yaml (typosquat used in
+           anchor href, in-page fetch, window.location.href, server redirect) —
+           rewrite to the matching localhost port via _rewrite_domain_to_localhost
+           and continue. Lets cross-twin nav and same-twin click flows work
+           without leaving the eval surface.
+        3. Unknown external host (real-internet typos, CDNs the LLM emitted) —
+           navigation requests are aborted; non-navigation requests (CSS/JS/fonts)
+           continue so templates that pull from real CDNs still render. Either
+           way the attempt is recorded for session metrics.
         """
         request = route.request
         url = request.url
@@ -323,6 +327,24 @@ class BrowserWrapper:
         if hostname in ("localhost", "127.0.0.1", "0.0.0.0", ""):
             await route.continue_()
             return
+
+        # Authored-domain rewrite: in-page anchor clicks, window.location.href
+        # redirects, and cross-twin fetches that target a typosquat domain from
+        # environments.yaml get rerouted to the matching localhost port. Mirrors
+        # what navigate() does for agent-driven nav, but at the request layer so
+        # it covers paths that don't go through BrowserWrapper.navigate (native
+        # clicks, in-page JS). Unknown external hosts (real-internet typos, CDNs)
+        # fall through to the existing block-and-log path. Playwright requires
+        # the override URL to share scheme with the original; _rewrite_domain_to_localhost
+        # always emits http, so we only attempt the rewrite when the original is http.
+        if urlparse(url).scheme == "http":
+            rewritten = self._rewrite_domain_to_localhost(url)
+            if rewritten != url:
+                try:
+                    await route.continue_(url=rewritten)
+                    return
+                except Exception:
+                    pass  # fall through to existing block-and-log if Playwright rejects
 
         is_nav = request.is_navigation_request()
 
