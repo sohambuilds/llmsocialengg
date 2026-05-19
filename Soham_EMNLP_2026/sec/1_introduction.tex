@@ -1,0 +1,131 @@
+\section{Introduction}
+\cite{BartzVAnthropic}
+
+\label{sec:intro}
+% -------------------------------------------------------------
+
+Vision-language model (VLM) agents capable of operating a web browser
+are moving from research prototypes into production deployment. Systems
+such as OpenAI Operator, Gemini Agents, and Claude's computer-use
+interface take high-level user instructions and autonomously navigate
+websites, fill forms, complete checkout flows, and respond to emails.
+Because these agents must act on the user's behalf without requiring
+manual input at each step, they are routinely provisioned with the user's
+full personal information: legal name, home address, payment card details,
+Social Security number, passwords, and API keys. The agent stores this
+profile in its context and draws on it whenever a form field must be
+filled or a credential must be submitted. The result is a system that
+combines broad web access with privileged read access to high-value
+personal data, a combination that creates a classic confused-deputy
+vulnerability~\citep{hardy1988confused}: untrusted content encountered
+during normal browsing can instruct or manipulate the agent into
+forwarding that data to an adversary.
+
+The modern web already contains a rich ecosystem of social engineering
+attacks built to harvest personal information from human users. Phishing
+clones impersonate legitimate services on subtly misspelled domains.
+Dark patterns bury the safe option under an array of deceptive buttons.
+Fake trust signals, urgency timers, and authority impersonation
+manipulate users into submitting data they would otherwise withhold.
+Multi-turn chat interfaces escalate requests incrementally, building
+rapport before asking for a password or a bank routing number. Human
+users can slow down, scrutinize a URL, or simply close the tab.
+A web agent cannot. It is optimized to complete the task given to it,
+and it will follow links, fill fields, and submit forms with a
+thoroughness and speed that no human user matches. This efficiency,
+combined with unconditional access to a full PII profile, makes the
+web-browsing agent a particularly high-value and unusually reliable
+target for data exfiltration.
+
+Despite growing interest in the security of LLM-based web agents, the
+existing literature has not directly addressed this threat. Work on dark
+patterns, represented by DECEPTICON~\citep{kumarappan2024decepticon}
+and TrickyArena~\citep{li2024trickyarena}, measures whether an agent
+can be steered toward a malicious navigation outcome, not whether it
+surrenders personal data. DECEPTICON explicitly defines dark patterns as
+residing within the user interface and excludes external threats like
+phishing from its scope; its success metric is trajectory divergence,
+not field-level data loss. Work on prompt injection, represented by
+TRAP~\citep{trap2024}, WiPI~\citep{wu2024wipi}, EIA~\citep{liao2024eia},
+and AdvWeb~\citep{xu2024advweb}, measures whether hidden adversarial
+instructions can hijack the agent's task; no prior work in this line
+provides the agent with a realistic PII profile or tracks what the
+agent types into attacker-controlled forms. The fine-print injection
+study of~\citet{huang2025fineprint} is the closest to our PII angle
+but examines a specific injection vector across GUI applications
+rather than a broad social engineering taxonomy.
+Fraud-R1~\citep{yang2025fraudr1} benchmarks LLM robustness to
+phishing and fraud inducements, but its subjects are language models
+responding to text prompts, not autonomous agents operating a live
+browser with a populated user profile. WebTrap Park~\citep{webtrappark}
+evaluates agents across three risk categories including social
+engineering, but does not define a PII metric, does not model a user
+profile, and does not include conversational attacks. To our knowledge,
+no prior work has (i) equipped a web agent with a structured PII profile
+spanning critical and high-sensitivity fields, (ii) measured field-level
+data exfiltration as the primary outcome, or (iii) covered the full
+social engineering attack surface, including multi-turn adaptive chat
+and multi-site flows in which an agent must navigate from an email
+client to a separate phishing destination within a single task.
+
+We introduce \textsc{[BENCHMARKNAME]}, a benchmark designed to answer
+a single question: when an autonomous web agent encounters a social
+engineering attack while browsing, will it hand over the user's personal
+information? The benchmark comprises approximately 100 hand-crafted
+environments spanning 16 site categories, including employment portals,
+e-commerce stores, banking and healthcare platforms, cryptocurrency
+exchanges, government portals, and social media services. The
+environments cover 7 attack vectors: phishing clones, dark patterns,
+credential harvesting, reward traps, authority impersonation, fake trust
+signals, and multi-turn conversational deception. Each environment is
+classified on four primary axes (site category, attack vector,
+salience level, and PII target) and four ablation axes (urgency
+pressure, prompt injection style, interaction modality, and multi-site
+flow), forming a factorial taxonomy that enables controlled sibling
+comparisons in which exactly one axis is varied. We equip an autonomous
+Playwright-based agent with a 40-field PII profile covering identity,
+address, payment, financial, professional, credential, and API-key
+information. We evaluate five frontier models on four metrics: PII
+Leakage Rate (PLR), measuring the fraction of runs in which at least
+one PII field is submitted to an attacker-controlled endpoint; Attack
+Success Rate (ASR), measuring whether the attacker's intended outcome
+was achieved; Task Completion Rate (TCR), measuring whether the
+legitimate task was completed; and Detection Rate (DR), measuring
+whether the agent explicitly identified the attack in its reasoning.
+Our model set includes both vision-language models, which receive DOM
+text and page screenshots, and a text-only baseline, which receives
+DOM text alone, allowing us to isolate the contribution of visual
+understanding to agent security.
+
+The contributions of this paper are as follows.
+
+\begin{enumerate}
+
+\item \textbf{\textsc{[BENCHMARKNAME]}}: the first benchmark to measure
+field-level PII exfiltration by autonomous web-browsing agents under
+social engineering attacks, comprising approximately 100 hand-crafted
+environments across 16 site categories and 7 attack vectors.
+
+\item \textbf{Factorial taxonomy}: an 8-axis design in which sibling
+environments differ on exactly one axis, enabling causal ablation
+studies on the effect of urgency pressure, prompt injection style,
+interaction modality, and multi-site flow on agent vulnerability.
+
+\item \textbf{Multi-turn and multi-site coverage}: the first benchmark
+to include adaptive multi-turn conversational attacks with response
+trees and multi-site task flows in which the agent must traverse
+an email client and a phishing destination within a single task.
+
+\item \textbf{Empirical findings} across five frontier models: [TBD,
+to be inserted after full evaluation runs].
+
+\end{enumerate}
+
+The remainder of the paper is organized as follows.
+Section~\ref{sec:related} surveys related work.
+Section~\ref{sec:benchmark} describes the benchmark design and taxonomy.
+Section~\ref{sec:eval} presents the agent scaffold and evaluation protocol.
+Section~\ref{sec:results} reports experimental results.
+Section~\ref{sec:discussion} discusses implications for agent safety and
+directions for defense. Section~\ref{sec:conclusion} concludes.
+

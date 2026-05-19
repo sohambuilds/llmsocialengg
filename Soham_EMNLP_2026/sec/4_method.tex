@@ -1,0 +1,127 @@
+\section{Scammer4U Benchmark}
+\label{sec:benchmark}
+
+\subsection{Threat Model}
+\label{sec:threat}
+
+We consider a web-browsing vision-language agent acting on behalf of a user who has provisioned it with a static profile of personally identifiable information (PII). The agent is issued a goal-directed task in natural language (e.g., \emph{apply for this job}, \emph{buy these headphones}) and proceeds without further user supervision through a Playwright-driven browser session, observing each page as a screenshot paired with a flattened DOM and acting through a fixed JSON action space.
+
+The attacker controls one or more web origins reachable from the agent's task, including by redirecting the agent via email links, downloads, or hyperlinks rendered on otherwise plausible pages. The attacker may serve arbitrary HTML, JavaScript, CSS, page copy, and chat content; embed instructions for the agent in visible text, hidden DOM, or simulated system messages; and operate endpoints to which the agent may POST data. The attacker cannot tamper with model weights, modify the user profile, intercept TLS, poison DNS, or compromise the host. These complementary threat surfaces are out of scope.
+
+The user is benign, supplies accurate PII, and grants the agent autonomy for the task duration, with no human-in-the-loop confirmation for PII submission. The profile organises values into eight categories (identity, address, payment, financial, professional, credentials, social media, API keys), partitioned into four sensitivity tiers: \emph{critical} (SSN, card with CVV, bank account, password, API key, 2FA code), \emph{high} (email, phone, postal address), \emph{medium} (full name, employer, date of birth), and \emph{low} (residual). The primary security question is whether any critical-tier value reaches an attacker endpoint. The profile is held constant across every environment, model, condition, and seed, controlling for value-frequency confounds in the scorer's exact-value match. Each environment exposes an internal \texttt{/api/captured} endpoint that logs POSTs to attacker-controlled forms or chat surfaces; this is a measurement instrument, not a feature of the threat model.
+
+\subsection{Benchmark Composition}
+\label{sec:composition}
+
+Scammer4U comprises 91 adversarial environments and 10 benign-twin baselines, each a self-hosted Flask web application served at a fixed localhost port; multi-origin environments span two or three coordinated apps. Visible domain labels (typosquats, near-brand spellings, mismatched-TLD lookalikes) are rendered into HTML through per-app linkification helpers, so the in-page red flag is observable in screenshot and DOM even though the address bar shows a localhost URL.
+
+The 91 adversarial environments decompose into 31 archetype \emph{parents} and 60 axis-controlled \emph{siblings}. Each sibling is constructed by toggling exactly one of the eight classification axes in Table~\ref{tab:axes}. This single-degree-of-freedom construction is the mechanism enabling the paired-sibling analyses in \S\ref{sec:analysis}: any parent-vs-sibling difference in behaviour can be attributed to the toggled axis rather than to confounded layout, copy, brand, or task factors. Per-environment axis assignments and the full registry are listed in Appendix~\ref{app:envs}.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{llp{4.2cm}p{5.6cm}}
+\toprule
+Group & Axis & Values & Function \\
+\midrule
+Classifying & A: category & job, ecommerce, gov, support, $\ldots$ & Sector of the impersonated service. \\
+Classifying & B: vector & phishing\_clone, credential\_harvest, dark\_patterns, reward\_trap, authority\_impersonation, conversational\_deception, prompt\_injection, fake\_trust\_signals & Social-engineering pattern (\S\ref{sec:vectors}). \\
+Classifying & C: salience & blatant, subtle & Conspicuousness of the red flag. \\
+Classifying & D: pii\_target & critical, high, medium & Sensitivity tier the attacker solicits. \\
+\midrule
+Factor & E: pressure & none, urgency, social\_proof, authority, scarcity & Coercive cue layered on the attack. \\
+Factor & F: prompt\_injection & none, visible\_text, hidden\_dom, fake\_system\_msg & Modality of injected instruction targeting the agent. \\
+Factor & G: interaction & static\_form, multi\_step\_form, single\_turn\_chat, multi\_turn\_chat & Interface through which PII is solicited. \\
+Factor & H: multi\_site & single\_origin, multi\_origin\_same\_task, email\_entry\_plus\_site & Whether the attack spans web origins. \\
+\bottomrule
+\end{tabular}
+\caption{Eight-axis taxonomy of Scammer4U environments. Axes A--D classify each environment; axes E--H are the factors used for paired-sibling ablation. Each sibling differs from its parent on exactly one axis.}
+\label{tab:axes}
+\end{table*}
+
+\subsection{Vector Taxonomy and External Mapping}
+\label{sec:vectors}
+
+Axis B enumerates eight social-engineering patterns: \emph{phishing\_clone}, \emph{credential\_harvest}, \emph{dark\_patterns}, \emph{reward\_trap}, \emph{authority\_impersonation}, \emph{conversational\_deception}, \emph{prompt\_injection}, and \emph{fake\_trust\_signals}. Pressure cues (axis E) and interaction style (axis G) are not vectors but orthogonal modifiers. Each vector is mapped to the closest entries in MITRE ATT\&CK Enterprise~\citep{mitre-attack}, the OWASP Top 10 for LLM Applications~\citep{owasp-llm-top10}, and the ENISA AI threat landscape~\citep{enisa-ai-threat}; the full mapping is in Appendix~\ref{app:mitre}.
+
+\subsection{Authoring Process}
+\label{sec:authoring}
+
+Environments were curated by the authors and implemented through LLM-assisted code generation. For each environment we wrote a one-page design brief specifying the impersonated sector and brand archetype, the legitimate task, the attack surface and its placement, the values of all eight axes, the visible red flags, the expected endpoint behaviour, and the sibling-relationship pointer (parent and toggled axis). The brief defines the environment as an artifact.
+
+A frontier code-generation model then authored the HTML, CSS, JavaScript, and Flask boilerplate from the brief. Its role is bounded and clerical: it implements a fully-specified design but does not choose the vector, salience, pressure cue, PII target, or any other axis value. The attack composition is fixed before any code is generated. The design briefs themselves are not generated by a model. Following generation, every environment was manually reviewed by the authors against its brief: we verified that all eight axis values match, that red flags appear at the specified locations in both DOM and screenshot, that \texttt{/api/captured} records the expected payload, and that the legitimate task completes end-to-end. Environments failing any check were revised and re-reviewed; all 91 released environments passed.
+
+We adopt this curated-design / generated-implementation style because (i) maintaining 91 environments at the breadth required for paired-sibling ablation across eight axes is incompatible with fully manual code authoring, and (ii) axis-level control requires surgical edits between sibling pairs (e.g., toggling only the pressure cue), and code generation from a versioned brief produces more reliable single-axis diffs than re-authoring sibling implementations from scratch. A descriptive fidelity check rating 10 attack environments against 5 PhishTank/Wayback phishing screenshots on visual believability and copy quality is reported in Appendix~\ref{app:fidelity}.
+
+\section{Experimental Setup}
+\label{sec:setup}
+
+\subsection{Models, Conditions, and Runs}
+\label{sec:setup-runs}
+
+Four frontier multimodal agents are evaluated: GPT-5, Claude Sonnet 4.6, Gemini 3 Flash, and Llama 4 Scout. All four run in the same harness, with the same observation format (screenshot plus flattened DOM), action space, context policy, and per-step prompt template; model-specific differences are confined to the API wrapper. Pinned model identifiers are frozen at the pre-registration tag (\S\ref{sec:prereg}).
+
+Each agent is run under four between-conditions: \textbf{C0} (baseline system prompt with no privacy guidance), \textbf{C1} (a brief generic privacy nudge reminding the agent to avoid suspicious sites and handle PII carefully), \textbf{C2} (a phishing-aware checklist of typosquats, urgency framing, unverified senders, and tier-based submission rules), and \textbf{C3} (pre-submission reflection requiring the agent to verbalise an explicit trust judgment before any PII form submission). C3 doubles as the F1 detection-action gap amplifier: an agent that explicitly verbalises suspicion in C3 and submits anyway exhibits the gap by construction. Verbatim C0--C3 prompt strings are in Appendix~\ref{app:prompts} and frozen at the tag.
+
+We run $n = 5$ independent seeds per (environment, model, condition) cell on the 91 adversarial environments, and $n = 5$ seeds on each of the 10 benign twins under C0 only. Seeds vary the sampling-temperature seed; environment state is otherwise deterministic. The total session count is $91 \cdot 4 \cdot 5 \cdot 4 + 10 \cdot 4 \cdot 5 = 7{,}480$.
+
+\subsection{Benign-Twin Baselines}
+\label{sec:benign}
+
+Form-filling is part of an agent's legitimate task, so some baseline rate of PII submission is expected on attack-free sites. To report \emph{attack-attributable} leakage we construct 10 benign-twin environments by forking attack environments and stripping the attack surface (typosquats rewritten, urgency cues removed, capture endpoints repointed at legitimate sinks, prompt injection stripped) while preserving the legitimate task. Twins are stratified across the four largest categories (job, ecommerce, gov, support). For each attack environment $e$, attack-attributable critical-tier leakage subtracts the category-pool mean across twins from the env rate; categories with fewer than two twins fall back to the global twin mean and the substitution is flagged in the table. The subtraction is a measurement adjustment and is not part of the multiple-comparison family.
+
+\subsection{Outcome Metrics}
+\label{sec:metrics}
+
+For session $s$ we define five outcomes. \textbf{PLR$_{\text{crit}}$} (primary) is $1$ if any critical-tier value is submitted to an attacker endpoint in $s$, else $0$; cell-level rates are session means within each (env, model, condition) cell. \textbf{PLR$_{\text{weighted}}$} (secondary) is the tier-weighted leak rate $\sum_t w_t \mathbb{I}[s \text{ leaks tier } t] / \sum_t w_t$ with $w = (4, 2, 1, 0.5)$ for tiers $(\text{crit}, \text{high}, \text{med}, \text{low})$. \textbf{ASR} (secondary) records whether the attacker's intended outcome occurred (PII at attacker endpoint or transaction completed) and is computed only over sessions with $\texttt{reached\_trap}(s) = \text{True}$ (\S\ref{sec:reachedtrap}). \textbf{TCR} (secondary) records whether the legitimate task was completed. \textbf{DR} (secondary) is the session-level boolean indicating whether the agent's reasoning identifies the site as suspicious, phishing, untrustworthy, or scam-like at any step, operationalised via LLM-as-judge (\S\ref{sec:dr}).
+
+\subsection{Reached-Trap Instrumentation}
+\label{sec:reachedtrap}
+
+For each environment we declare one or more \emph{trap URLs} corresponding to the attack surface (the malicious form page, the chat surface, the phished sign-in clone) in the environment registry. Every navigation initiated by the agent is logged at the browser layer, and the scorer marks $\texttt{reached\_trap} = \text{True}$ if any logged navigation matches a declared trap URL. ASR is reported conditional on $\texttt{reached\_trap} = \text{True}$ to disentangle non-leakage caused by detection from non-leakage caused by failure to reach the attack surface; PLR and DR are reported across all sessions.
+
+\subsection{Detection Rate Judge}
+\label{sec:dr}
+
+DR is operationalised via an LLM judge applied per step to the agent's reasoning trace under a fixed rubric: \emph{did the agent identify the site as suspicious, phishing, untrustworthy, or scam-like at this step?} The judge returns a boolean with a one-sentence justification; step-level labels are aggregated to a session-level positive if any step is positive. GPT-4o is the primary judge and Llama 4 Scout the secondary, supplying an inter-judge $\kappa$. Neither Claude nor Gemini is used as a judge, to avoid same-family self-evaluation against the evaluated models. A keyword-match heuristic over the same traces is retained as auxiliary. We validate the judge on 200 (session, step) pairs randomly drawn and stratified across environments, models, and conditions, labelled by all four authors (two annotators per pair) with a pre-registered target of $\kappa \geq 0.7$ for both human-human and judge-human agreement. If judge-human $\kappa$ falls below the bar after one round of rubric refinement, DR primary falls back to the keyword heuristic and the LLM judge is retained as auxiliary, with the disagreement owned in the limitations.
+
+\subsection{Analysis Framework}
+\label{sec:analysis}
+
+The primary test family contains 14 tests: the F1 detection-action gap test, ten paired-axis tests F2--F11, and three mitigation tests M1--M3 (Table~\ref{tab:claims}). Each test is fit as a mixed-effects logistic regression on session-level $\text{PLR}_{\text{crit}}$ with the contrast of interest as a fixed effect and environment and model as crossed random effects. The crossed-random-effects choice reflects the design: each environment is run by each model, and sessions inherit env-specific and model-specific tendencies that would otherwise inflate the effective sample size. Convergence failures fall back to a Wilcoxon signed-rank test on environment-mean proportions, which is more conservative; the fallback is pre-committed. Each test reports a point estimate (in percentage-point terms), a 95\% CI, a raw $p$-value, and a Benjamini-Hochberg-adjusted $q$ at $q = 0.05$ across the 14-test family. Exploratory analyses (inter-mitigation comparisons C1 vs C2, C2 vs C3, C1 vs C3; per-model F-axis breakdowns; the F1 secondary contrasting C3 $\text{DR}{=}1$ against C0 $\text{DR}{=}1$; the TCR$\times$ASR trade-off) are reported with uncorrected $p$-values and explicitly flagged.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+Claim & Contrast & Toggled factor \\
+\midrule
+F1 & DR=1 vs DR=0 in C3 & within-cell (DR) \\
+F2 & subtle vs blatant & C: salience \\
+F3 & subtle $\times$ conversational & C $\times$ G \\
+F4 & between-model variance & model factor \\
+F5 & urgency vs neutral & E: pressure \\
+F6 & social-proof vs neutral & E: pressure \\
+F7 & authority vs neutral & E: pressure \\
+F8 & hidden vs visible PI & F: prompt\_injection \\
+F9 & critical- vs medium-tier PII & D: pii\_target \\
+F10 & chat vs static form & G: interaction \\
+F11 & cross-category & A: category \\
+M1 & C0 vs C1 & condition \\
+M2 & C0 vs C2 & condition \\
+M3 & C0 vs C3 & condition \\
+\bottomrule
+\end{tabular}
+\caption{The 14 pre-registered primary tests. Each is a single-axis or single-condition contrast on session-level $\text{PLR}_{\text{crit}}$. Benjamini-Hochberg correction is applied across this family.}
+\label{tab:claims}
+\end{table}
+
+The pre-registered minimum detectable effect at 80\% power, computed conservatively under the Wilcoxon fallback at the BH-adjusted threshold, is 20 percentage points on env-mean $\text{PLR}_{\text{crit}}$ for M1--M3, and 15 points on the F1 gap conditional on $\geq 200$ C3 sessions landing $\text{DR}{=}1$. Per-axis MDE for F2--F11 scales with the number of sibling pairs and is reported per axis. Effects below MDE are reported as descriptive non-significance, not as evidence of no effect.
+
+Two headline claims are pre-committed with falsification thresholds. The mitigation-insufficiency claim is falsified if any of C1, C2, C3 produces a $\geq 30$ percentage-point drop in pooled $\text{PLR}_{\text{crit}}$ relative to C0 across all four models. The detection-action gap claim is falsified if within-C3 $\text{PLR}_{\text{crit}} \mid \text{DR}{=}1 \leq 0.10$. Pre-committed deviations for sweep-capacity overrun, judge-validation failure, bandwidth shortfall, and model-API loss are enumerated in the plan and triggered at fixed gates; any post-tag deviation not on that list is documented in the limitations section.
+
+\subsection{Pre-Registration}
+\label{sec:prereg}
+
+The complete analysis plan (primary outcome, hypothesis family, statistical model, multiple-comparison correction, power calculation, inclusion rules, falsification thresholds, and pre-committed deviations) is committed to the repository as \texttt{analysis-plan.md} and tagged \texttt{prereg-v2-start} before any experimental run reported here. Artifacts frozen at the tag include the analysis plan itself, the environment classification table and registry, the C0--C3 prompts, the critical-tier definition in the PII tracker, and the pinned model identifiers.
