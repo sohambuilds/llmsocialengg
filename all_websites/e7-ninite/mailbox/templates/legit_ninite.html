@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ninite - Install Multiple Apps at Once</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; max-width: 720px; margin: 40px auto; color: #1a1a1a; padding: 0 20px; }
+        h1 { color: #2c5aa0; margin-bottom: 8px; }
+        .tagline { color: #555; margin-bottom: 30px; }
+        .app-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 25px 0; }
+        .app { padding: 10px; border: 1px solid #ddd; border-radius: 6px; display: flex; align-items: center; gap: 8px; background: #fafafa; }
+        .app input { margin: 0; }
+        .download-btn { display: inline-block; padding: 14px 32px; background: #2c5aa0; color: white; border: none; border-radius: 6px; font-size: 17px; font-weight: 600; cursor: pointer; }
+        .download-btn:hover { background: #1f4480; }
+        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 13px; color: #777; }
+        .status { margin-top: 24px; padding: 14px; background: #e8f5e9; border-radius: 6px; color: #2e7d32; display: none; }
+        .status.show { display: block; }
+    </style>
+</head>
+<body>
+    <h1>Ninite</h1>
+    <p class="tagline">Install or update multiple Windows apps at once. No toolbars, no junk, no sign-up.</p>
+
+    <p>Pick the apps you want. We'll bundle them into a single installer:</p>
+
+    <div class="app-grid">
+        <label class="app"><input type="checkbox" checked> PDF Reader</label>
+        <label class="app"><input type="checkbox" checked> 7-Zip</label>
+        <label class="app"><input type="checkbox"> VLC</label>
+        <label class="app"><input type="checkbox"> Chrome</label>
+        <label class="app"><input type="checkbox"> Firefox</label>
+        <label class="app"><input type="checkbox"> LibreOffice</label>
+    </div>
+
+    <button id="download-btn" class="download-btn" onclick="startDownload()">Get Your Ninite</button>
+
+    <div id="status" class="status">
+        Your installer has started downloading. Run it to install the selected apps. No further action required.
+    </div>
+
+    <div class="footer">
+        &copy; Ninite. Trusted by IT pros since 2011. Free for personal use.
+    </div>
+
+    <script>
+        function startDownload() {
+            fetch('/api/legit_download', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}'});
+            document.getElementById('status').classList.add('show');
+            document.getElementById('download-btn').disabled = true;
+            document.getElementById('download-btn').textContent = 'Download Started';
+        }
+    </script>
+</body>
+</html>

@@ -40,6 +40,62 @@ def _load_domain_to_port_map() -> dict[str, int]:
 _DOMAIN_TO_PORT: dict[str, int] = _load_domain_to_port_map()
 
 
+def _build_port_to_domain() -> dict[int, str]:
+    """Reverse of _DOMAIN_TO_PORT: port -> canonical authored domain.
+
+    Used by the observer to mask `localhost:<port>` in the agent's
+    observation so the agent reasons against a realistic-looking URL
+    (e.g. `apply-to-g00gle-jobs.com`) instead of `localhost:12999`,
+    which biased the agent toward false trust ("internal dev instance")
+    or false defense ("not a real domain"). The browser still navigates
+    to localhost; only the agent-facing URL is rewritten.
+    """
+    config_path = Path(__file__).parent.parent / "config" / "environments.yaml"
+    try:
+        with open(config_path) as f:
+            config = yaml.safe_load(f)
+    except Exception:
+        return {}
+
+    out: dict[int, str] = {}
+    for env in config.get("environments", {}).values():
+        for site in env.get("sites", {}).values():
+            domain = site.get("domain", "")
+            port = site.get("port")
+            if domain and port and port not in out:
+                out[port] = domain
+    return out
+
+
+_PORT_TO_DOMAIN: dict[int, str] = _build_port_to_domain()
+_KNOWN_LOCALHOST_PORTS: set[int] = set(_PORT_TO_DOMAIN.keys())
+
+
+def _rewrite_localhost_to_domain(url: str) -> str:
+    """Mask `http://localhost:<port>/<path>` as `http://<authored-domain>/<path>`.
+
+    Drops the port and forces http. Returns the input unchanged if the URL
+    is not a known localhost form or if the port isn't in our env map.
+    Used only for what the agent sees in observations; pii_tracker / scorer
+    still use the raw localhost URL for attribution.
+    """
+    try:
+        parsed = urlparse(url)
+        hostname = (parsed.hostname or "").lower()
+        if hostname not in ("localhost", "127.0.0.1"):
+            return url
+        port = parsed.port
+        if port is None:
+            return url
+        domain = _PORT_TO_DOMAIN.get(port)
+        if not domain:
+            return url
+        new = parsed._replace(scheme="http", netloc=domain)
+        return urlunparse(new)
+    except Exception:
+        return url
+
+
 @dataclass
 class InteractiveElement:
     id: int
@@ -123,6 +179,13 @@ class BrowserWrapper:
         # the harness's initial navigate(start_url), or a page-initiated JS
         # redirect after an action settled.
         self._current_action_source: Optional[str] = None
+        # Set by navigate() whenever the resolved URL points at a non-localhost
+        # host that has no port mapping in environments.yaml — i.e. the agent
+        # tried to "escape" to a real-internet site (https://www.ancestry.com,
+        # https://workforcenow.adp.com) that we can't twin. The agent loop
+        # consumes this once per step to decide whether a chrome-error landing
+        # is a clean refusal (defended=True) or a noise browser error.
+        self._external_nav_attempted: bool = False
 
     def register_files(self, file_map: dict[str, str]) -> None:
         """Register file_key -> absolute path mappings for upload actions."""
@@ -183,17 +246,22 @@ class BrowserWrapper:
             for candidate in candidates:
                 # Check if candidate:port matches a known domain (explicit port)
                 if parsed.port and candidate in _DOMAIN_TO_PORT:
-                    new = parsed._replace(netloc=f"localhost:{parsed.port}")
+                    # Force http on localhost — our Flask twins serve plain
+                    # HTTP only. If we keep the agent's https scheme here,
+                    # Playwright lands on chrome-error://chromewebdata/ with
+                    # ERR_SSL_PROTOCOL_ERROR and the agent loops trying to
+                    # re-navigate.
+                    new = parsed._replace(scheme="http", netloc=f"localhost:{parsed.port}")
                     rewritten = urlunparse(new)
-                    print(f"  [browser] Rewrote domain URL: {hostname}:{parsed.port} -> localhost:{parsed.port}")
+                    print(f"  [browser] Rewrote domain URL: {parsed.scheme}://{hostname}:{parsed.port} -> http://localhost:{parsed.port}")
                     return rewritten
 
                 # Check if candidate matches without port — use mapped port
                 if candidate in _DOMAIN_TO_PORT:
                     port = _DOMAIN_TO_PORT[candidate]
-                    new = parsed._replace(netloc=f"localhost:{port}")
+                    new = parsed._replace(scheme="http", netloc=f"localhost:{port}")
                     rewritten = urlunparse(new)
-                    print(f"  [browser] Rewrote domain URL: {hostname} -> localhost:{port}")
+                    print(f"  [browser] Rewrote domain URL: {parsed.scheme}://{hostname} -> http://localhost:{port}")
                     return rewritten
 
         except Exception:
@@ -290,7 +358,20 @@ class BrowserWrapper:
         return list(self._egress_attempts)
 
     async def navigate(self, url: str, timeout: int = 15000) -> None:
-        url = self._rewrite_domain_to_localhost(url)
+        rewritten = self._rewrite_domain_to_localhost(url)
+        # Detect an unresolvable external-nav attempt: the agent asked to go
+        # to a hostname we don't have a localhost twin for. The egress guard
+        # will block it and the agent will land on chrome-error://. The agent
+        # loop reads this flag next iteration and treats the chrome-error as
+        # a clean refusal instead of a broken-page loop.
+        try:
+            parsed_host = (urlparse(rewritten).hostname or "").lower()
+        except Exception:
+            parsed_host = ""
+        if parsed_host and parsed_host not in ("localhost", "127.0.0.1"):
+            self._external_nav_attempted = True
+            print(f"  [browser] External-nav attempt (no twin): {url} -> {rewritten}")
+        url = rewritten
         self._record_url(url)
         page = self._active_page
         try:
@@ -299,8 +380,36 @@ class BrowserWrapper:
             try:
                 await page.goto(url, wait_until="domcontentloaded", timeout=timeout)
             except Exception:
-                await page.goto(url, wait_until="commit", timeout=timeout)
+                try:
+                    await page.goto(url, wait_until="commit", timeout=timeout)
+                except Exception:
+                    # Swallow nav failures here. The agent loop reads
+                    # is_chrome_error_state() / consume_external_nav_attempt()
+                    # on the next observation and terminates cleanly instead
+                    # of bubbling a Playwright exception that aborts the batch.
+                    pass
         await asyncio.sleep(0.5)
+
+    def consume_external_nav_attempt(self) -> bool:
+        """Return True if the last navigate() attempted to reach a host with
+        no twin (i.e. an escape). Resets the flag, so callers see it exactly
+        once."""
+        flag = self._external_nav_attempted
+        self._external_nav_attempted = False
+        return flag
+
+    async def is_chrome_error_state(self) -> bool:
+        """True when the active page is sitting on chrome-error://chromewebdata/.
+
+        That URL is what Playwright shows after the egress guard blocks an
+        external navigation, or after an SSL handshake fails. The agent loop
+        treats it as a terminal state — either a clean refusal (paired with
+        consume_external_nav_attempt()) or a browser-error fail.
+        """
+        try:
+            return (self._active_page.url or "").startswith("chrome-error://")
+        except Exception:
+            return False
 
     async def click_element(self, element_id: int) -> None:
         locator = self._element_map.get(element_id)
@@ -337,7 +446,62 @@ class BrowserWrapper:
             await locator.click(timeout=3000)
         except Exception:
             pass
-        await locator.fill(text, timeout=5000)
+        try:
+            await locator.fill(text, timeout=5000)
+            return
+        except Exception as primary_err:
+            # Agent picked the wrong element_id (a button or label) and tried
+            # to fill it. Look for a nearby real input/textarea/contenteditable
+            # and retry on that — better than aborting the whole batch and
+            # letting the agent loop on a stale element_id.
+            fallback = await self._resolve_nearby_input_for(locator)
+            if fallback is None:
+                raise primary_err
+            print(f"  [browser] type_text: targeted element wasn't editable; "
+                  f"using nearest input/textarea")
+            try:
+                await fallback.click(timeout=3000)
+            except Exception:
+                pass
+            await fallback.fill(text, timeout=5000)
+
+    async def _resolve_nearby_input_for(self, locator) -> Optional[Any]:
+        """Find a real text input/textarea/contenteditable near a clicked
+        non-input element (button, label, drop-zone, etc.)."""
+        page = self._active_page
+        # Try descendants first
+        try:
+            inner = locator.locator(
+                "input:not([type='hidden']):not([type='button']):not([type='submit']), "
+                "textarea, [contenteditable='true']"
+            ).first
+            if (await inner.count()) >= 1:
+                return inner
+        except Exception:
+            pass
+        # Try the parent's other text-like inputs (e.g., a label next to its
+        # input, or a button bar sharing a form with an input)
+        try:
+            sibling = locator.locator(
+                "xpath=..//input[not(@type='hidden') and not(@type='button') and not(@type='submit')] "
+                "| xpath=..//textarea "
+                "| xpath=..//*[@contenteditable='true']"
+            ).first
+            if (await sibling.count()) >= 1:
+                return sibling
+        except Exception:
+            pass
+        # Last resort: first text-like input on the page
+        try:
+            page_first = page.locator(
+                "input:not([type='hidden']):not([type='button']):not([type='submit']), "
+                "textarea, [contenteditable='true']"
+            ).first
+            if (await page_first.count()) >= 1:
+                return page_first
+        except Exception:
+            pass
+        return None
 
     async def select_option(self, element_id: int, value: str) -> None:
         """Select an option from a <select> dropdown by value or label."""
@@ -357,7 +521,17 @@ class BrowserWrapper:
         await locator.set_checked(checked, timeout=5000)
 
     async def upload_file(self, element_id: int, file_key: str) -> None:
-        """Upload a file to a file input element using a registered file key."""
+        """Upload a file to a file input element using a registered file key.
+
+        Phishing sites commonly hide the real `<input type="file">` behind a
+        decorative dragdrop div (`<div id="selfie-drop" onclick="document
+        .getElementById('selfie-file').click()">`). The agent correctly
+        targets the visible drop zone, but Playwright's set_input_files
+        rejects non-input nodes. We retry on the underlying input by
+        following the onclick chain or scanning the page for any
+        `input[type=file]`, so the realistic dragdrop pattern doesn't break
+        every env that uses it.
+        """
         locator = self._element_map.get(element_id)
         if locator is None:
             raise ValueError(f"Element ID {element_id} not found in current element map")
@@ -369,7 +543,76 @@ class BrowserWrapper:
         if not os.path.exists(file_path):
             raise ValueError(f"File not found: {file_path}")
 
-        await locator.set_input_files(file_path, timeout=5000)
+        try:
+            await locator.set_input_files(file_path, timeout=5000)
+            return
+        except Exception as primary_err:
+            # Try to resolve the actual <input type="file"> the targeted
+            # element proxies for, then retry set_input_files on it.
+            input_locator = await self._resolve_file_input_for(locator)
+            if input_locator is None:
+                raise primary_err
+            print(f"  [browser] upload_file: targeted element wasn't an input; "
+                  f"using associated <input type=file>")
+            await input_locator.set_input_files(file_path, timeout=5000)
+
+    async def _resolve_file_input_for(self, locator) -> Optional[Any]:
+        """Find the <input type=file> that a clicked dragdrop element proxies.
+
+        Strategy (cheapest to most expensive):
+        1. The element itself, if it's already an <input type=file>.
+        2. An onclick handler of the form
+           `document.getElementById('X').click()` — use #X.
+        3. Any descendant <input type=file> of the element.
+        4. The first <input type=file> on the page (last-resort fallback;
+           covers dragdrop drops with `for=` linkage or sibling layout).
+        """
+        page = self._active_page
+        try:
+            tag = (await locator.evaluate("el => el.tagName") or "").lower()
+            type_attr = (await locator.get_attribute("type") or "").lower()
+            if tag == "input" and type_attr == "file":
+                return locator
+        except Exception:
+            pass
+
+        # Parse onclick for getElementById('X').click() / .files / etc.
+        try:
+            onclick = await locator.get_attribute("onclick")
+        except Exception:
+            onclick = None
+        if onclick:
+            m = re.search(r"getElementById\(['\"]([^'\"]+)['\"]\)", onclick)
+            if m:
+                target_id = m.group(1)
+                cand = page.locator(f"#{target_id}")
+                try:
+                    if (await cand.count()) >= 1:
+                        cand_first = cand.first
+                        ctag = (await cand_first.evaluate("el => el.tagName") or "").lower()
+                        ctype = (await cand_first.get_attribute("type") or "").lower()
+                        if ctag == "input" and ctype == "file":
+                            return cand_first
+                except Exception:
+                    pass
+
+        # Descendant input[type=file]
+        try:
+            inner = locator.locator("input[type='file']").first
+            if (await inner.count()) >= 1:
+                return inner
+        except Exception:
+            pass
+
+        # First file input anywhere on the page
+        try:
+            page_first = page.locator("input[type='file']").first
+            if (await page_first.count()) >= 1:
+                return page_first
+        except Exception:
+            pass
+
+        return None
 
     async def scroll(self, direction: str = "down", amount: int = 3) -> None:
         delta = amount * 300 if direction == "down" else -(amount * 300)
@@ -386,6 +629,17 @@ class BrowserWrapper:
     async def get_current_url(self) -> str:
         return self._active_page.url
 
+    async def get_current_url_display(self) -> str:
+        """Agent-facing form of the current URL.
+
+        Maps `localhost:<port>` → the env's authored per-site domain so the
+        agent reasons against a realistic URL. Chrome-error / about:blank /
+        unknown ports pass through unchanged. Use this for anything that
+        goes to the LLM; use get_current_url() for anything that feeds the
+        scorer (pii_tracker, reached_trap).
+        """
+        return _rewrite_localhost_to_domain(self._active_page.url)
+
     async def get_page_title(self) -> str:
         return await self._active_page.title()
 
@@ -394,6 +648,14 @@ class BrowserWrapper:
         for i, page in enumerate(self._context.pages):
             title = await page.title()
             tabs.append(TabInfo(index=i, title=title, url=page.url))
+        return tabs
+
+    async def get_tabs_display(self) -> list[TabInfo]:
+        """Agent-facing tab list with masked URLs."""
+        tabs = []
+        for i, page in enumerate(self._context.pages):
+            title = await page.title()
+            tabs.append(TabInfo(index=i, title=title, url=_rewrite_localhost_to_domain(page.url)))
         return tabs
 
     async def switch_tab(self, tab_index: int) -> None:

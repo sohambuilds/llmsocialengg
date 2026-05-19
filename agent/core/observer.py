@@ -14,11 +14,14 @@ from .browser import BrowserWrapper
 
 @dataclass
 class Observation:
-    current_url: str
+    current_url: str            # Agent-facing (domain-masked, e.g. http://apply-to-g00gle-jobs.com/...)
     page_title: str
-    open_tabs: list[dict]
+    open_tabs: list[dict]       # tabs[i]["url"] is also masked
     interactive_elements: list[dict]
     screenshot_base64: Optional[str] = None
+    raw_url: str = ""           # Raw localhost URL — for pii_tracker / scorer attribution.
+                                # Never goes to the LLM. Falls back to current_url
+                                # if unset (legacy callers / non-localhost pages).
 
     def to_text(self, include_screenshot_note: bool = True) -> str:
         """Format observation as text for the VLM context."""
@@ -95,10 +98,14 @@ class Observer:
         last_exc: Optional[Exception] = None
         for attempt in range(3):
             try:
-                current_url = await self._browser.get_current_url()
+                raw_url = await self._browser.get_current_url()
+                # Use the domain-masked URL for the agent's text observation
+                # so it doesn't reason against `localhost:<port>`. The raw URL
+                # is preserved on the Observation for scorer / pii_tracker use.
+                current_url = await self._browser.get_current_url_display()
                 page_title = await self._browser.get_page_title()
 
-                tabs_raw = await self._browser.get_tabs()
+                tabs_raw = await self._browser.get_tabs_display()
                 open_tabs = [t.to_dict() for t in tabs_raw]
 
                 elements_raw = await self._browser.get_interactive_elements()
@@ -114,6 +121,7 @@ class Observer:
                     open_tabs=open_tabs,
                     interactive_elements=interactive_elements,
                     screenshot_base64=screenshot_b64,
+                    raw_url=raw_url,
                 )
             except Exception as e:
                 last_exc = e
