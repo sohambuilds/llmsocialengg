@@ -46,10 +46,20 @@ def load_env_config(env_name: str) -> dict[str, Any]:
 
 
 def resolve_url(site_config: dict, use_domains: bool) -> str:
-    """Build a URL from site config based on whether domains are active."""
+    """Build a URL from site config.
+
+    Prefers the authored domain whenever one is configured, regardless of the
+    legacy ``use_domains`` flag. The browser's ``_egress_guard`` rewrites
+    domain-targeted requests to localhost at the Playwright route layer, so
+    the agent-visible URL the task description points at can safely be the
+    authored typosquat (e.g. ``http://softwarehub.org:5050``) without the
+    plain localhost form leaking into the system prompt. The ``use_domains``
+    parameter is retained for API compatibility and is treated as a no-op
+    when ``site_config["domain"]`` is set.
+    """
     port = site_config["port"]
     domain = site_config.get("domain", "localhost")
-    if use_domains:
+    if domain and domain != "localhost":
         return f"http://{domain}:{port}"
     return f"http://localhost:{port}"
 
