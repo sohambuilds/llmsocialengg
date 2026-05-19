@@ -331,3 +331,34 @@ framing. Touchpoints:
   strings saying "Benchmark Environment" / "Amazon Benchmark" in
   7 templates. Manual content edits still pending — flagged for
   the post-run cleanup pass.
+
+## Domain-mask second-order leak + post-fix re-run (2026-05-19)
+
+The 2026-05-18 domain mask exposed a *second-order* contamination.
+The first mask rewrote `localhost:<port>` to the per-site authored
+domain (e.g. `apply-to-g00gle-jobs.com`) but left the scheme as the
+raw `http://`. Once `localhost` was gone, models started using
+plain `http://` (no TLS) as the new distrust shortcut — same
+behaviour as before, different surface. Fix landed in
+[browser.py](agent/core/browser.py): `_rewrite_localhost_to_domain`
+now forces `scheme="https"` (the agent never navigates to that URL
+— browser still uses plain-http localhost via the reverse rewrite).
+
+**Residual env-content leakage (deferred, env-by-env).** Even with
+URL bar masked, many env templates still render `http://localhost:<port>`
+strings inside the page (form `action=` attributes, footer links,
+mailbox-embed URLs). The post-fix reasoning audit shows 28% of
+sessions still mention `localhost` in agent reasoning and 4.5%
+still cite a "no HTTPS / plain http" framing. Per project decision
+2026-05-19: this is acknowledged as a known leak; not blocking, will
+be cleaned up env-by-env after the v2 sweep.
+
+**Re-run dataset.** `agent/logs/v2/gpt5mini_v2_finalfinal/` is the
+post-fix slice (gpt-5-mini, 1 seed, parallel_runner layout). The
+[explore_gpt5mini_postfix.ipynb](agent/logs/v2/gpt5mini_v2_finalfinal/explore_gpt5mini_postfix.ipynb)
+notebook compares it against the pre-fix
+[gpt5mini_v2_seed1](agent/logs/gpt5mini_v2_seed1/) and the Llama 4
+Scout [llamarun2soham](agent/logs/llamarun2soham/) dress rehearsal.
+The pre-fix → post-fix delta on the C3 PLR_crit gradient is +17.6 pp
+(from −29.7 pp to −12.1 pp) — i.e. ~60% of the pre-fix mitigation
+gradient was URL-shape reasoning contamination, not real C3 effect.

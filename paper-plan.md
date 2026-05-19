@@ -175,44 +175,77 @@ the *apparatus* — the section-3 methodology — not the headline
 contribution. The contributions are the *findings* derived through
 that apparatus.
 
-### 2.2 Working thesis (subject to v2 data)
+### 2.2 Working thesis (post-fix gpt-5-mini + Llama 4 Scout data, 2026-05-19)
 
-> *State-of-the-art web-browsing agents leak personally identifiable
-> information to social-engineering websites at high rates. We show
-> that prompt-level mitigation does not meaningfully reduce leakage,
-> and that leakage patterns are systematically driven by site
-> salience, attacker pressure cues, and prompt-injection presence.
-> We release Scammer4U, a 91-environment axis-controlled benchmark
-> supporting paired ablation of these factors.*
+> *Frontier web-browsing agents leak personally identifiable information
+> to social-engineering websites at high rates (76–88% baseline PLR_crit).
+> Prompt-level mitigation does not meaningfully reduce leakage — neither
+> a 3-line privacy nudge, an 8-line phishing-aware checklist, nor a
+> forced pre-submission reflection brings leakage below 55% on either
+> of two models tested, and on the less-responsive model the strongest
+> mitigation moves the needle by only 3 pp. **The strongest predictor
+> of defense is organic detection: when an agent independently flags
+> an attack pattern in its reasoning trace, it defends ~83% of the
+> time. But organic detection is rare (≤20% of sessions at baseline),
+> and forced-reflection prompts inflate stated detection without
+> translating to action.** Leakage patterns are driven by salience
+> (plausible attacks leak more than blatant) and vector type
+> (perceptual deception like fake trust signals resists prompting
+> entirely; propositional deception like authority impersonation
+> responds). We release Scammer4U, a 91-environment axis-controlled
+> benchmark supporting paired ablation of these factors.*
 
-The thesis is anchored on what the v1 pilot already established
-(high leakage, prompt mitigation insufficient). F1–F11 become
-explanatory structure that *characterizes* leakage; they are not
-load-bearing for the central claim. If v2 produces a strong "F1
-detection-action gap" signal (agent identifies the site as
-suspicious yet still leaks), that finding gets promoted to a
-co-headline; if F1 is weak the paper is unaffected.
+The thesis is anchored on two model slices to date: Llama 4 Scout
+dress rehearsal (1 seed, 91 attack + 10 benign envs × 4 conditions)
+and gpt-5-mini post-fix (1 seed, same scope). The mitigation-gradient
+finding is robust across both models. F1 (detection-action) has been
+sharpened: the gap is **strongest at C0**, where keyword DR isn't
+contaminated by the reflection prompt's seeded vocabulary.
 
 ### 2.3 Contributions, in order
 
-1. **Detection–action gap (conditional on F1 landing in v2).** Even
-   when explicitly prompted to verbalize a trust judgment before any
-   PII submission, frontier agents that *correctly identify* a site
-   as suspicious still leak PII at high rates. This is the headline
-   if v2 confirms the v1 signal; otherwise it demotes to §4.
-2. **Mitigation gradient.** Three mitigation prompts of increasing
-   strength (generic privacy nudge → phishing-aware checklist →
-   pre-submission reflection) tested across 4 frontier agents.
-   Comparison reveals which kinds of prompt-level intervention work
-   and which fail.
-3. **Characterization of leakage.** Pooled-across-models analysis
-   of which attack factors most amplify leakage: salience, pressure
-   type, prompt-injection presence, interaction modality. Backed by
-   axis-controlled paired siblings (F1–F11).
+1. **Detection–action gap, anchored at baseline.** When the agent
+   organically detects an attack in its reasoning trace at C0 (no
+   mitigation prompting), it leaks critical PII in only ~17% of
+   sessions vs ~90% when it doesn't detect — a 74-pp gap. Stated
+   detection drops to a ~22-pp gap under C3 (forced reflection)
+   because C3 inflates the DR-positive pool with verbalization-only
+   false positives that don't translate to action. **The paper's F1
+   contribution is the C0 measurement, not the C3 amplifier.** This
+   inverts the original prereg intuition that C3 would amplify the
+   gap; the data shows C3 *muddies* it.
+2. **Mitigation gradient is insufficient across model tiers.** Three
+   mitigation prompts of increasing strength (generic nudge → phishing
+   checklist → reflection) tested. **C2 (checklist) outperforms C3
+   (reflection)** on the cleaner data — the explicit rules-based
+   prompt is more action-effective than the metacognitive reflection
+   prompt. Cross-model: Llama 4 Scout shows essentially no response
+   to any condition (−3.3 pp at C3); gpt-5-mini shows a modest
+   ~12 pp response. Both clear the 30-pp falsification bar from
+   [analysis-plan §10](analysis-plan.md) by wide margins, so the
+   prereg-falsification "mitigation insufficient" headline holds.
+3. **Characterization of leakage.** Pooled-across-models analysis of
+   which attack factors most amplify leakage. Robust cross-model
+   findings: (a) salience is the dominant axis (plausible leaks more
+   than blatant by ~20 pp), (b) pressure-axis effect is null on both
+   models (countdown / urgency / authority cues alone don't move
+   leakage), (c) `fake_trust_signals` and `reward_trap` vectors and
+   the crypto / social_media / education categories are pinned at
+   100% across all conditions on both models — model-independent
+   C3-resistant clusters.
 4. **Methodological artifact.** Scammer4U benchmark and harness,
    publicly released. 91 attack envs + 10 benign-twin baselines.
    Axis-controlled siblings enable post-hoc ablation studies the
-   community can extend.
+   community can extend. **Methodological transparency:** the paper
+   reports a measurement-validity finding — early data on gpt-5-mini
+   showed apparent mitigation gradients up to −30 pp, but
+   investigation revealed agents were reasoning about sandbox-URL
+   shape (`localhost`, plain `http://`) as security signals rather
+   than the attack patterns themselves. Domain-masking the agent's
+   observation reduced the apparent gradient by ~60% to the true
+   ~12 pp value. We report only the post-mask measurements; the
+   contaminated measurements appear in a methodology-validation
+   appendix.
 
 ### 2.4 Positioning vs. existing work
 

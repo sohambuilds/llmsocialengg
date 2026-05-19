@@ -287,6 +287,23 @@ pre-registered.
   becomes unavailable mid-sweep, that model's cells are reported
   as missing data; the primary family is re-run on the available
   3 models; the change is documented in limitations.
+- **D5. Observation-URL contamination correction (2026-05-19).**
+  Initial gpt-5-mini run showed agents using `localhost:<port>` and
+  plain `http://` in the agent-visible URL as security signals,
+  contaminating both PLR and DR measurements. Domain masking
+  (`localhost:<port>` → authored per-site domain) plus `https://`
+  scheme coercion were applied to the observer; the v2 sweep uses
+  the post-fix harness for all four models. Pre-fix gpt-5-mini run
+  is preserved at `agent/logs/gpt5mini_v2_seed1/` for contamination
+  accounting (Δ(C3-C0) PLR_crit moved from −29.7 pp pre-fix to
+  −12.1 pp post-fix; ~60% of the apparent pre-fix gradient was URL
+  reasoning, not C3 effect). **Residual env-content leakage** — many
+  templates still render `http://localhost:<port>` in form action
+  attributes, footer links, and embedded mailbox URLs; post-mask
+  reasoning audit shows 28% of sessions still mention `localhost`
+  and 4.5% cite no-HTTPS framing. This is a known limitation owned
+  in §6 of the paper; env-by-env content cleanup is scheduled
+  post-v2-sweep, before camera-ready.
 
 Any deviation not on this list, executed after the tag, must be
 documented as a post-hoc deviation in the paper's limitations

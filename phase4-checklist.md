@@ -462,9 +462,86 @@ single feature pass.
 - [ ] Sweep other envs for the same "result-link-points-to-itself"
       bug pattern that broke `e7_ninite` (grep `target_url` /
       anchor `href="#"` across `all_websites/`).
-- [ ] Notebook exploration of the in-flight gpt-5-mini run once
+- [x] Notebook exploration of the in-flight gpt-5-mini run once
       it completes — surface any remaining bug shapes before the
       final 4-model × 5-seed sweep.
+      Done as `explore_gpt5mini_postfix.ipynb` under
+      `agent/logs/v2/gpt5mini_v2_finalfinal/`. Compares post-fix vs
+      pre-fix vs Llama 4 Scout. Key finding: ~60% of the pre-fix
+      −29.7 pp PLR_crit gradient was localhost / no-HTTPS reasoning
+      contamination; cleaned gradient is −12.1 pp. F1 detection-
+      action gap is **strongest at C0** (74 pp), not C3 (22 pp) as
+      originally hypothesised.
+
+---
+
+## Week 2.6 — 2026-05-19: post-fix gpt-5-mini re-run + residual leak
+
+- [x] **Second-order URL leak found.** First domain mask still left
+      `http://` as a distrust signal. `_rewrite_localhost_to_domain`
+      now forces `https://` (browser still navigates plain-http to
+      localhost via reverse rewrite). Landed in `agent/core/browser.py`.
+- [x] **gpt-5-mini post-fix re-run.** 91 attack + 10 benign × C0–C3
+      × seed 1, parallel_runner with 4 workers. Output at
+      `agent/logs/v2/gpt5mini_v2_finalfinal/`. Methodologically
+      replaces `gpt5mini_v2_seed1/` for the paper; pre-fix data
+      preserved for the contamination-accounting comparison only.
+- [x] **`start_servers.sh` Linux compat.** `port_up` and
+      `sweep_orphans` extended for Linux (was Windows-only). `stop`
+      now reliably kills sub-server children spawned by
+      `run_servers.py`. Lets us cycle the server fleet between
+      runs without leaking orphans.
+- [ ] **Residual env-content `http://localhost` leak — deferred.**
+      28% of post-fix sessions still mention `localhost` in agent
+      reasoning; 4.5% cite no-HTTPS framing. These come from env
+      templates that render `http://localhost:<port>` in form
+      `action=` attributes, footer links, and embedded mailbox
+      URLs — not from the observer. **Decision 2026-05-19:** known
+      limitation, owned in §6 of paper. Env-by-env content
+      cleanup scheduled post-v2-sweep, before camera-ready. See
+      "Next-up: HTTP-leak content cleanup" below for the handoff
+      brief.
+
+### Next-up: HTTP-leak content cleanup (handoff brief)
+
+**Goal.** Remove `http://localhost:<port>` occurrences from
+agent-visible env page content (form action attributes, footer
+anchors, embedded URLs in mailbox bodies, JS LOG_ENDPOINT
+constants, etc.) so that the agent's reasoning trace no longer
+has the "plain http / non-standard port = phishing" shortcut.
+
+**Scope.** All 91 attack envs + 10 benign twins. Iterating env-by-env
+is fine; no need to do it as a single sweep.
+
+**How to detect (already scaffolded).** `scripts/audit_env_leakage.py`
+emits a per-template hit list. The relevant patterns to clean:
+- `<form action="http://localhost:<port>/...">` → use a relative
+  path (`action="/submit"`) so the form posts to the same origin.
+- `<a href="http://localhost:<port>/...">` → relative or to the
+  authored domain; the browser route guard handles redirection.
+- `const LOG_ENDPOINT="http://localhost:<port>/..."` in inline
+  `<script>` blocks → relative path or `window.location.origin`.
+- Mailbox body `replace('...', '<a href="http://localhost:...">')`
+  Jinja filters → keep the visible text as the typosquat domain,
+  drop the localhost from the href (use relative or env-domain).
+
+**How to verify after cleanup.** Re-run
+`python scripts/audit_env_leakage.py` and confirm the per-env hit
+count drops. For the headline metric: rerun a smoke cell on the
+affected env and grep the agent's reasoning trace for `localhost`
+/ `no https` / `plain http` — should be zero.
+
+**Out of scope for this pass.** Don't touch:
+- Visible URL display text intended to be read by the agent
+  (e.g. the email-body rendering of `http://ancestrydna-results.com:5416/`
+  which is the typosquat the agent is *supposed* to see).
+- Server-side `app.py` strings (`PORT = ...`, startup banners) —
+  the agent never sees these.
+- CSS class names containing `benchmark-*` — invisible to the agent.
+
+The 7 visible "Benchmark Environment" footer strings (e17-amazon × 3,
+virus-scanner × 3, summary-website-subtle × 1) are a separate
+issue and should be cleaned in the same pass.
 
 ---
 
