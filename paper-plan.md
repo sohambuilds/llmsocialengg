@@ -107,7 +107,10 @@ appending revisions.
   authored per-site domain instead of `localhost:<port>`), a
   chrome-error / external-nav clean-refusal path, a 5-step stasis
   loop detector, and dragdrop fallbacks for `upload_file` / `fill`.
-  See CLAUDE.md "Harness hardening" for the operational summary.
+  A 2026-05-19 follow-up forces the masked URL to `https://` so
+  the scheme isn't itself a distrust shortcut (real phishing clones
+  all run behind Let's Encrypt). See CLAUDE.md "Harness hardening"
+  for the operational summary.
 - **Model factory** (`agent/core/llm_factory.py`). Currently registered:
   `gemini-3-flash-preview`, `meta-llama/llama-4-scout-17b-16e-instruct`,
   `openai/gpt-oss-120b`. v2 additions (via OpenRouter): `openai/gpt-5-mini`,
@@ -140,7 +143,7 @@ appending revisions.
 | Fidelity sanity check vs real phishing screenshots | scaffolded — rubric + sample roster + stats script in `fidelity/`; 5 real-phish captures + 15-sample rating still pending |
 | 200-sample human DR validation | partial — 200 C0 sessions labeled, all 21 flagged sessions confirmed human-correct (precision-audit protocol; κ=1.0 by construction); C1/C2/C3 stratification + recall audit on judge-negative sessions pending |
 | Pre-registered analysis plan (`prereg-v2-start` git tag) | ✅ done — see [analysis-plan.md](analysis-plan.md), tagged at end of week 1 |
-| Harness hardening (2026-05-18) | ✅ done — domain masking, chrome-error / external-nav clean-refusal path, SSL scheme fix, upload_file / fill dragdrop fallback, 5-step stasis loop detector, scorer `defended` flag + new TCR labels (REFUSED / LOOPING / BROWSER_ERROR), `e7_ninite` legit-path repair. Surfaced by gpt-5-mini smoke-run logs that showed multi-step loops + false-trust-on-localhost reasoning. See CLAUDE.md "Harness hardening" for the full list. |
+| Harness hardening (2026-05-18, +2026-05-19) | ✅ done — domain masking, chrome-error / external-nav clean-refusal path, SSL scheme fix, upload_file / fill dragdrop fallback, 5-step stasis loop detector, scorer `defended` flag + new TCR labels (REFUSED / LOOPING / BROWSER_ERROR), `e7_ninite` legit-path repair. **2026-05-19 follow-up:** masked URL scheme forced to `https://` (was `http://`) after first v2 attempt showed `http://` on typo-squat acting as a distrust shortcut. Surfaced by gpt-5-mini smoke-run logs that showed multi-step loops + false-trust-on-localhost reasoning. See CLAUDE.md "Harness hardening" for the full list. |
 | Public release artifact | ❌ not started (Phase 4 week 4) |
 
 ### 1.5 Known caveats and open issues

@@ -72,12 +72,18 @@ _KNOWN_LOCALHOST_PORTS: set[int] = set(_PORT_TO_DOMAIN.keys())
 
 
 def _rewrite_localhost_to_domain(url: str) -> str:
-    """Mask `http://localhost:<port>/<path>` as `http://<authored-domain>/<path>`.
+    """Mask `http://localhost:<port>/<path>` as `https://<authored-domain>/<path>`.
 
-    Drops the port and forces http. Returns the input unchanged if the URL
-    is not a known localhost form or if the port isn't in our env map.
-    Used only for what the agent sees in observations; pii_tracker / scorer
-    still use the raw localhost URL for attribution.
+    Drops the port and forces https. The scheme is intentionally https (not the
+    raw http we actually serve on localhost) because in the real world every
+    phishing clone runs behind Let's Encrypt — a typo-squat served over plain
+    http would itself be a giveaway, and we saw models exploit `http://` as a
+    distrust shortcut the same way they previously exploited `localhost`. The
+    browser still navigates to plain-http localhost; `_rewrite_domain_to_localhost`
+    coerces any scheme back to http before Playwright sees it. Returns the input
+    unchanged if the URL is not a known localhost form or if the port isn't in
+    our env map. Used only for what the agent sees in observations; pii_tracker /
+    scorer still use the raw localhost URL for attribution.
     """
     try:
         parsed = urlparse(url)
@@ -90,7 +96,7 @@ def _rewrite_localhost_to_domain(url: str) -> str:
         domain = _PORT_TO_DOMAIN.get(port)
         if not domain:
             return url
-        new = parsed._replace(scheme="http", netloc=domain)
+        new = parsed._replace(scheme="https", netloc=domain)
         return urlunparse(new)
     except Exception:
         return url

@@ -398,6 +398,18 @@ single feature pass.
       scorer attribution. Per-site domains stay distinct between
       legit and phishing siblings so the F2 (salience) axis isn't
       flattened.
+- [x] **Masked-URL scheme = https (2026-05-19 follow-up).** The
+      domain-masked URL is now emitted as `https://<domain>` rather
+      than `http://<domain>`. First v2 attempt (gpt-5-mini) showed
+      `http://` on a typo-squat being used as a distrust shortcut
+      the same way raw `localhost` had been pre-05-18 — real-world
+      phishing clones all serve over Let's Encrypt, so plain-http
+      on a real-looking domain was an artifact of our twin, not
+      the threat model. One-line change in
+      `_rewrite_localhost_to_domain` (`scheme="https"`); browser
+      navigation still uses plain-http localhost via
+      `_rewrite_domain_to_localhost` scheme coercion. Stopped the
+      in-flight v2 run and restarted fresh after the flip.
 - [x] **SSL scheme on rewrite.** `_rewrite_domain_to_localhost`
       forces `http://` on the rewritten URL — fixes the
       `https://workforcenow.adp.com` → `https://localhost:5500/`

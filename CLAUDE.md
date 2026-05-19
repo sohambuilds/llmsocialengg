@@ -93,6 +93,17 @@ red-flag stays in the page text without needing a hosts-file edit.
 Flip `use_domains: true` in `agent/config/environments.yaml` (plus
 hosts entries) to push the typosquat into the address bar instead.
 
+What the **agent** sees in observations is masked further: the
+observer rewrites `http://localhost:<port>` to
+`https://<authored-domain>` (see `_rewrite_localhost_to_domain` in
+`agent/core/browser.py`). Two reasons: (1) raw `localhost` was a
+trust shortcut, (2) `http://` on a real-looking typo-squat was a
+distrust shortcut (every real phishing clone runs behind Let's
+Encrypt). The actual Playwright navigation still uses plain-http
+localhost; `_rewrite_domain_to_localhost` coerces any `https`
+back to `http` before navigation, and `Observation.raw_url`
+preserves the localhost form for pii_tracker / scorer attribution.
+
 ## User profile (PII the agent carries)
 
 `agent/config/user_profile.json` — categories: `identity`, `address`,
@@ -276,7 +287,12 @@ framing. Touchpoints:
   raw localhost URL is preserved on `Observation.raw_url` for
   pii_tracker / scorer attribution (port-based matching stays
   intact). Reverse map built from `environments.yaml` `domain:`
-  fields via `browser._PORT_TO_DOMAIN`.
+  fields via `browser._PORT_TO_DOMAIN`. **2026-05-19 follow-up:**
+  the masked URL is also forced to `https://` (was `http://`).
+  Plain-http on a typo-squat was itself acting as a distrust
+  shortcut the same way `localhost` did — real phishing clones
+  all run behind Let's Encrypt. Browser navigation still uses
+  plain-http localhost; the scheme flip is observation-side only.
 - **External-nav clean refusal.** When the agent navigates to a
   host with no localhost twin, the egress guard blocks it and the
   page lands on `chrome-error://`. The agent loop now catches that
