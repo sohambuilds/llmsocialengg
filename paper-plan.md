@@ -133,7 +133,7 @@ appending revisions.
 | Per-env classification.csv rows with sibling_of + toggled_axis | ✅ done |
 | Phase 3 sibling envs all sit at `🟦 qa` (pending per-env smoke + screenshot diff) | partial |
 | v1 pilot results on parent subset (qualitative: high leakage, prompt mitigation insufficient) | ✅ done |
-| v2 results on full 91-env benchmark | partial — 1-model dress rehearsal complete (Llama 4 Scout, 1 seed, all 91 attack + 10 benign envs × C0/C1/C2/C3 = 404 runs) at `agent/logs/llamarun2soham/`; GPT-5 mini / Claude Sonnet 4.6 / Gemini 3 Flash + seeds 2–5 still pending |
+| v2 results on full 101-env benchmark | partial — three slices complete on 1 seed each: Llama 4 Scout dress rehearsal at `agent/logs/llamarun2soham/` (404 runs, pre-cleanup); gpt-5-mini post-fix at `agent/logs/v2/gpt5mini_v2_finalfinal/` (404 runs, post observer-mask but pre env-content/task-string cleanup); gpt-5-mini post-task-fix pilot at `agent/logs/v2/gpt5mini_v3_taskfix/` (40 cells, 10 envs × 4 conditions, post-everything). Full post-cleanup gpt-5-mini seed-1 (`gpt5mini_v3_seed1_full`, 404 runs) kicked off 2026-05-21; Claude Sonnet 4.6 / Gemini 3 Flash + seeds 2–5 still pending. |
 | LLM-as-judge Detection Rate (GPT-4o primary, Llama 4 secondary) | partial — judge shipped at `agent/evaluation/dr_judge.py`, sanity-run on 508 v1 sessions (Llama-vs-Llama κ=0.82); GPT-4o cross-family run pending on OpenAI key |
 | "Reached attack surface" instrumentation | ✅ done — `reached_trap` field on every session; Llama 4 Scout slice shows 96–98% reach across C0–C3, resolving the v1 "low ASR = missed navigation" worry |
 | GPT-5 mini + Claude Sonnet 4.6 added to model factory | ✅ done — both registered in `agent/core/llm_factory.py` via OpenRouter backend; smoke-tested for client construction. Live API smoke pending `OPENROUTER_API_KEY` |
@@ -143,7 +143,7 @@ appending revisions.
 | Fidelity sanity check vs real phishing screenshots | scaffolded — rubric + sample roster + stats script in `fidelity/`; 5 real-phish captures + 15-sample rating still pending |
 | 200-sample human DR validation | partial — 200 C0 sessions labeled, all 21 flagged sessions confirmed human-correct (precision-audit protocol; κ=1.0 by construction); C1/C2/C3 stratification + recall audit on judge-negative sessions pending |
 | Pre-registered analysis plan (`prereg-v2-start` git tag) | ✅ done — see [analysis-plan.md](analysis-plan.md), tagged at end of week 1 |
-| Harness hardening (2026-05-18, +2026-05-19) | ✅ done — domain masking, chrome-error / external-nav clean-refusal path, SSL scheme fix, upload_file / fill dragdrop fallback, 5-step stasis loop detector, scorer `defended` flag + new TCR labels (REFUSED / LOOPING / BROWSER_ERROR), `e7_ninite` legit-path repair. **2026-05-19 follow-up:** masked URL scheme forced to `https://` (was `http://`) after first v2 attempt showed `http://` on typo-squat acting as a distrust shortcut. Surfaced by gpt-5-mini smoke-run logs that showed multi-step loops + false-trust-on-localhost reasoning. See CLAUDE.md "Harness hardening" for the full list. |
+| Harness hardening (2026-05-18 → 2026-05-21) | ✅ done — domain masking, chrome-error / external-nav clean-refusal path, SSL scheme fix, upload_file / fill dragdrop fallback, 5-step stasis loop detector, scorer `defended` flag + new TCR labels (REFUSED / LOOPING / BROWSER_ERROR), `e7_ninite` legit-path repair. **2026-05-19 follow-up:** masked URL scheme forced to `https://`. **2026-05-20 follow-up:** env-content cleanup (60 files: 8 mailbox `replace()` envs, 9 explicit `<a href>` sites, 8 shopsmart listings, 18 ecommerce checkouts, 7 ADP/AWS/Booking `LOG_ENDPOINT` constants, 2 saas pi `step_5` redirects, 10 visible "Benchmark" footer/header strings) + `_egress_guard` extended to rewrite authored-domain http requests to localhost at the Playwright request layer. **2026-05-21 follow-up:** `resolve_url` fixed so the task description's start URL uses the authored typosquat domain instead of `http://localhost:<port>`; pre-fix the task string was the dominant contamination source (57.5% of v3 pilot sessions cited localhost/port in reasoning); post-fix that drops to 27.5% and `localhost` itself to 0%. **Same-day scorer expansion:** `defended` flag broadened to credit safe-path task completions (TCR=COMPLETED + reached_trap=False + no critical leak) in addition to chrome-error refusals; new `defense_via` field distinguishes `refusal` (pre-expansion behaviour) from `safe_completion`. Motivated by the v3_seed1_full audit showing 35/69 non-reach attack sessions were effective safe-path defenses that the strict definition was missing. See CLAUDE.md "Harness hardening" + "Domain-mask second-order leak" for the full list. |
 | Public release artifact | ❌ not started (Phase 4 week 4) |
 
 ### 1.5 Known caveats and open issues
@@ -158,11 +158,17 @@ appending revisions.
   LLM-judge runs as a post-hoc pass over session logs.
 - **Inert cruft dirs.** 4 nested-parent directory copies inside
   siblings (see §1.1). Non-blocking but worth a `rm -rf` pass.
-- **Agent-visible "Benchmark" string leakage.** 7 templates contain
-  visible footer/copy text mentioning "Benchmark" / "Benchmark
-  Environment" (e17-amazon × 3, virus-scanner × 3, summary-website-subtle).
-  Enumerated by `scripts/audit_env_leakage.py`. Manual content
-  cleanup pending before the final v2 sweep.
+- **Agent-visible "Benchmark" string leakage.** ✅ cleaned 2026-05-20.
+  All 10 flagged strings rewritten: 3 virus-scanner footers ("…— All
+  Rights Reserved"), 3 e17-amazon footers ("…© 1996–2026, Amazon.com,
+  Inc. or its affiliates"), 1 summary-website-subtle sentence
+  ("academic and research users"), 2 quiz-site "Global Benchmark"
+  headers ("Global Ranking"), and 1 file-converter download-body
+  string ("for demo purposes"). Audit script's residual flagged-file
+  count is 88 (down from 141) — remaining hits are out-of-scope
+  per spec (CSS class names, server-side `app.py` docstrings,
+  startup banners) and require an audit-script noise-filter tighten,
+  not env edits.
 
 ---
 

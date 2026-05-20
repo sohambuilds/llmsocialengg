@@ -3,7 +3,7 @@ from pathlib import Path
 from collections import Counter, defaultdict
 
 rows = []
-for f in sorted(glob.glob('agent/logs/v2/gpt5mini_v3/*/GPT-5_mini_*/C*/seed_1/*.score.json')):
+for f in sorted(glob.glob('agent/logs/v2/gpt5mini_v3_taskfix/*/GPT-5_mini_*/C*/seed_1/*.score.json')):
     p = Path(f)
     env = p.parts[-5]
     cond = p.parts[-3]

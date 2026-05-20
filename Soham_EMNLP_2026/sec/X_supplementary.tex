@@ -1,4 +1,65 @@
+% NOTE: Appendix content is staged for the camera-ready window once seeds
+% 1--5 complete and the analysis pipeline emits its final tables. Each
+% subsection below carries a label referenced from the main text; the
+% body is either a one-paragraph stub or a "pending" marker. The intent
+% is that every cross-reference in the main text resolves and a reviewer
+% reading the appendices sees the planned scope explicitly, rather than
+% encountering unresolved \ref? warnings.
+
 \newpage
-\section{Appendix A: Additional Results}
+\appendix
 
+\section{Pinned Model Identifiers}
+\label{app:models}
 
+For reproducibility, the four evaluated models are pinned at the provider versions and sampling parameters frozen at the \texttt{prereg-v2-start} git tag. Pinned values: GPT-5 (\texttt{openai/gpt-5-mini} via OpenRouter, default temperature, top-$p = 1.0$); Claude Sonnet 4.6 (\texttt{anthropic/claude-sonnet-4.6} via OpenRouter); Gemini 3 Flash (\texttt{google/gemini-2.0-flash-001} via OpenRouter); Llama 4 Scout (\texttt{meta-llama/llama-4-scout-17b-16e-instruct} via Groq). Per-cell API call counts, observed costs, and the dry-run cost-bounded replication mode are documented in the project README.
+
+\section{Authoring Model and Authoring Process}
+\label{app:authoring}
+
+Environments were implemented by \textsc{[AUTHORINGMODEL]} (specify provider, version string, and access date) from human-written design briefs. The authoring model is distinct from each of the four evaluated models in \S\ref{sec:setup-runs}: no agent in the evaluation panel is graded on implementations it itself authored. The model is held constant across all 91 environments, controlling for authoring-style variation as a within-design constant rather than a between-environment confound. Briefs (one page per environment) specify the impersonated sector and brand archetype, the legitimate task, the attack surface and its placement, the values of all eight classifying-and-factor axes, the visible red flags, the expected endpoint behaviour, and the sibling-relationship pointer (parent and toggled axis). Briefs are human-written; the model is given no latitude over the experimental factor it would otherwise be evaluated on.
+
+\section{Environment Registry}
+\label{app:envs}
+
+The full registry of 91 adversarial environments and 10 benign twins, with per-environment axis assignments and sibling-parent pointers, is reproduced from \texttt{classification.csv} in the project repository. Each row carries the environment's keys on axes A--H (\S\ref{sec:composition}), the parent environment when applicable, and the single axis toggled relative to the parent. The total 91-environment count decomposes as 31 archetype parents and 60 axis-controlled siblings.
+
+\section{MITRE / OWASP / ENISA Vector Mapping}
+\label{app:mitre}
+
+Each of the eight axis-B vectors in \S\ref{sec:vectors} is mapped to the closest entries in three published threat taxonomies. The mapping is descriptive and is not part of the pre-registered hypothesis family; it is included to defang the ``why these eight?'' reviewer concern and to allow practitioners to cross-reference the benchmark's coverage against vocabularies they already use.
+
+\section{C0--C3 Mitigation Prompts}
+\label{app:prompts}
+
+The verbatim text of the four condition prompts (C0 baseline, C1 generic privacy nudge, C2 phishing-aware checklist, C3 pre-submission reflection) is reproduced from the frozen artifacts at \texttt{agent/config/mitigations/}. The C3 prompt invokes the trust-check action defined in the action space; C0--C2 do not.
+
+\section{Per-Model and Per-Axis Breakdowns}
+\label{app:per-model}
+
+Per-model breakdowns of the F2--F11 axis tests and the F4 between-model variance test are reported here at the cell level for each (env, model, condition) combination. The headline pooled results in \S\ref{sec:results} aggregate across models; this appendix surfaces cells where the cross-model variance is large enough to affect the qualitative reading.
+
+\section{PII Value-Match Precision and Recall}
+\label{app:matcher}
+
+The value-match procedure in \S\ref{sec:metrics} is evaluated against the same 200 (session, step) pairs used to validate the DR judge. Precision is the fraction of matcher-positive submissions that are correctly identified as containing a stored profile value by a human annotator; recall is the fraction of human-positive submissions that the matcher catches. Pending full sweep; we report both metrics with 95\% CIs and discuss the dominant failure modes (substring leaks, paraphrases, multi-field splits).
+
+\section{DR Judge Sensitivity}
+\label{app:dr-sensitivity}
+
+All DR-conditioned primary tests are repeated under the secondary judge (Llama 4 Scout) to assess robustness to judge identity and to test for OpenAI-family leniency on GPT-5 traces. Reported here: (i) inter-judge $\kappa$ overall and stratified by evaluated model; (ii) the F1 detection--action gap re-computed on Llama-Scout labels; (iii) any primary-test qualitative flip between the two label sets is flagged in bold.
+
+\section{Post-Tag Deviations}
+\label{app:deviations}
+
+Two post-tag harness changes are applied between \texttt{prereg-v2-start} and the runs reported in \S\ref{sec:results}: the observer-side domain mask and \texttt{https}-coercion (commit SHA pending), and the request-layer egress-guard rewrite together with the content-level localhost sweep and the task-description start-URL fix (commit SHA pending). Both are declared as deviations in \texttt{analysis-plan.md} \S 11 (D5). Neither change touches the primary outcome definition, the analysis pipeline, the prompt strings, or the environment registry; both remove a known measurement artefact rather than alter the experimental design.
+
+\section{URL-Shape Contamination Accounting}
+\label{app:contamination}
+
+The pre-cleanup gpt-5-mini slice (1 seed, \texttt{agent/logs/gpt5mini\_v2\_seed1/}) and the post-cleanup slice (\texttt{agent/logs/gpt5mini\_v3\_taskfix/} forward) are reported side by side. Reasoning-trace mention rates for ``localhost'', ``non-standard port'', and ``plain http'' are reported pre and post fix; the C3 pooled $\Delta\text{PLR}_{\text{crit}}$ is decomposed into a URL-shape component and a true-C3 component as in \S\ref{sec:results-validation}. Decomposition method: the URL-shape component is bounded by the difference between the matched pre-fix and post-fix gradients on cells where the only changed surface is the contamination source.
+
+\section{Fidelity Sanity Check}
+\label{app:fidelity}
+
+Ten attack environments are rated alongside five real phishing screenshots from PhishTank and Wayback by all four authors on a 1--5 scale for visual believability and copy quality. Inter-rater agreement and category-stratified means are reported here; the goal is descriptive bound on the visual-fidelity gap, not a target distribution.

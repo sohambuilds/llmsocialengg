@@ -20,7 +20,7 @@ sessions_with_any_hit = 0
 total_sessions = 0
 example_hits = defaultdict(list)
 
-for f in sorted(glob.glob('agent/logs/v2/gpt5mini_v3/*/GPT-5_mini_*/C*/seed_1/*.json')):
+for f in sorted(glob.glob('agent/logs/v2/gpt5mini_v3_taskfix/*/GPT-5_mini_*/C*/seed_1/*.json')):
     if '.score.' in f or 'meta.json' in f:
         continue
     p = Path(f)
