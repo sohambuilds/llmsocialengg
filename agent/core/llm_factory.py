@@ -20,11 +20,6 @@ MODEL_REGISTRY: dict[str, dict] = {
         "vision": True,
         "label": "Gemini 3 Flash Preview",
     },
-    "gemini-2.0-flash": {
-        "backend": "gemini",
-        "vision": True,
-        "label": "Gemini 2.0 Flash",
-    },
 
     # Groq-hosted models (OpenAI-compatible API)
     "meta-llama/llama-4-scout-17b-16e-instruct": {
@@ -39,11 +34,6 @@ MODEL_REGISTRY: dict[str, dict] = {
     },
 
     # OpenRouter-hosted frontier models (OpenAI-compatible API)
-    "google/gemini-2.0-flash-001": {
-        "backend": "openrouter",
-        "vision": True,
-        "label": "Gemini 2.0 Flash (OpenRouter)",
-    },
     "openai/gpt-5-mini": {
         "backend": "openrouter",
         "vision": True,
@@ -58,16 +48,25 @@ MODEL_REGISTRY: dict[str, dict] = {
         "vision": True,
         "label": "Claude Sonnet 4.6 (OpenRouter)",
     },
+    "google/gemini-3-flash-preview": {
+        "backend": "openrouter",
+        "vision": True,
+        "label": "Gemini 3 Flash Preview (OpenRouter)",
+        "reasoning_effort": "low",
+    },
 }
 
 # Short aliases for convenience on the CLI
 MODEL_ALIASES: dict[str, str] = {
-    "gemini":       "gemini-3-flash-preview",
+    "gemini":       "google/gemini-3-flash-preview",
+    "gemini-native": "gemini-3-flash-preview",
+    "gemini-3":     "google/gemini-3-flash-preview",
+    "gemini3":      "google/gemini-3-flash-preview",
+    "gemini-3-or":  "google/gemini-3-flash-preview",
     "llama-scout":  "meta-llama/llama-4-scout-17b-16e-instruct",
     "llama4":       "meta-llama/llama-4-scout-17b-16e-instruct",
     "gpt-oss":      "openai/gpt-oss-120b",
     "gpt-oss-120b": "openai/gpt-oss-120b",
-    "gemini-or":    "google/gemini-2.0-flash-001",
     "gpt-5-mini":   "openai/gpt-5-mini",
     "gpt5-mini":    "openai/gpt-5-mini",
     "sonnet-4.6":   "anthropic/claude-sonnet-4.6",

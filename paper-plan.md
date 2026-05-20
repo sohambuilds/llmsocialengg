@@ -112,9 +112,9 @@ appending revisions.
   all run behind Let's Encrypt). See CLAUDE.md "Harness hardening"
   for the operational summary.
 - **Model factory** (`agent/core/llm_factory.py`). Currently registered:
-  `gemini-3-flash-preview`, `meta-llama/llama-4-scout-17b-16e-instruct`,
+  `gemini-3-flash-preview` (native Gemini SDK), `meta-llama/llama-4-scout-17b-16e-instruct`,
   `openai/gpt-oss-120b`. v2 additions (via OpenRouter): `openai/gpt-5-mini`,
-  `anthropic/claude-sonnet-4.6`, `google/gemini-2.0-flash-001`. Full GPT-5
+  `anthropic/claude-sonnet-4.6`, `google/gemini-3-flash-preview`. Full GPT-5
   was registered briefly then scratched (2026-05-17) in favour of gpt-5-mini.
 - **Per-step logger + PII tracker** (`agent/evaluation/logger.py`,
   `agent/evaluation/pii_tracker.py`). Captures DOM, screenshots,

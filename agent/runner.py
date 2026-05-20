@@ -275,7 +275,7 @@ BENCHMARK_MODELS = [
 # v2 model set per paper-plan.md §2.6 — drops gpt-oss-120b (pilot-only),
 # adds the two OpenRouter frontier models.
 V2_MODELS = [
-    "google/gemini-2.0-flash-001",         # via OpenRouter (no native Gemini key needed)
+    "google/gemini-3-flash-preview",       # via OpenRouter
     "meta-llama/llama-4-scout-17b-16e-instruct",
     "openai/gpt-5-mini",                   # via OpenRouter (full GPT-5 scratched 2026-05-17)
     "anthropic/claude-sonnet-4.6",
@@ -314,15 +314,17 @@ Available environment groups:
   tier3      — 2 very hard environments
 
 Available model aliases:
-  gemini       -> gemini-3-flash-preview
-  llama-scout  -> meta-llama/llama-4-scout-17b-16e-instruct
-  llama4       -> meta-llama/llama-4-scout-17b-16e-instruct
-  gpt-oss      -> openai/gpt-oss-120b
-  gpt-oss-120b -> openai/gpt-oss-120b
-  gpt-5-mini   -> openai/gpt-5-mini       (via OpenRouter)
-  sonnet-4.6   -> anthropic/claude-sonnet-4.6 (via OpenRouter)
-  all          -> run all 3 pilot benchmark models sequentially
-  all-v2       -> run the 4 v2 models (Gemini, Llama 4, GPT-5 mini, Sonnet 4.6)
+  gemini        -> google/gemini-3-flash-preview (via OpenRouter)
+  gemini-3      -> google/gemini-3-flash-preview (via OpenRouter)
+  gemini-native -> gemini-3-flash-preview        (via native Gemini SDK)
+  llama-scout   -> meta-llama/llama-4-scout-17b-16e-instruct
+  llama4        -> meta-llama/llama-4-scout-17b-16e-instruct
+  gpt-oss       -> openai/gpt-oss-120b
+  gpt-oss-120b  -> openai/gpt-oss-120b
+  gpt-5-mini    -> openai/gpt-5-mini       (via OpenRouter)
+  sonnet-4.6    -> anthropic/claude-sonnet-4.6 (via OpenRouter)
+  all           -> run all 3 pilot benchmark models sequentially
+  all-v2        -> run the 4 v2 models (Gemini 3 Flash, Llama 4, GPT-5 mini, Sonnet 4.6)
 
 Conditions:
   C0  baseline (default)
