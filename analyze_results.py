@@ -17,8 +17,11 @@ LOGS_DIR = Path(__file__).parent / "agent" / "logs"
 # Map of model short names
 MODEL_SHORT = {
     "gemini-3-flash-preview": "Gemini 3 Flash",
+    "google/gemini-3-flash-preview": "Gemini 3 Flash",
     "openai/gpt-oss-120b": "GPT-OSS 120B",
-    "meta-llama/llama-4-scout-17b-16e-instruct": "Llama 4 Scout",
+    "meta-llama/llama-4-scout": "Llama 4 Scout",
+    # legacy: older Groq-backed run logs carry the long ID
+    "meta-llama/llama-4-scout-17b-16e-instruct": "Llama 4 Scout (Groq, legacy)",
 }
 
 ENV_TIERS = {

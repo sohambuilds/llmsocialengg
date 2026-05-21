@@ -21,12 +21,7 @@ MODEL_REGISTRY: dict[str, dict] = {
         "label": "Gemini 3 Flash Preview",
     },
 
-    # Groq-hosted models (OpenAI-compatible API)
-    "meta-llama/llama-4-scout-17b-16e-instruct": {
-        "backend": "groq",
-        "vision": True,
-        "label": "Llama 4 Scout 17B (Groq)",
-    },
+    # Groq-hosted models (OpenAI-compatible API) — legacy pilot only
     "openai/gpt-oss-120b": {
         "backend": "groq",
         "vision": False,
@@ -34,6 +29,11 @@ MODEL_REGISTRY: dict[str, dict] = {
     },
 
     # OpenRouter-hosted frontier models (OpenAI-compatible API)
+    "meta-llama/llama-4-scout": {
+        "backend": "openrouter",
+        "vision": True,
+        "label": "Llama 4 Scout (OpenRouter)",
+    },
     "openai/gpt-5-mini": {
         "backend": "openrouter",
         "vision": True,
@@ -63,8 +63,9 @@ MODEL_ALIASES: dict[str, str] = {
     "gemini-3":     "google/gemini-3-flash-preview",
     "gemini3":      "google/gemini-3-flash-preview",
     "gemini-3-or":  "google/gemini-3-flash-preview",
-    "llama-scout":  "meta-llama/llama-4-scout-17b-16e-instruct",
-    "llama4":       "meta-llama/llama-4-scout-17b-16e-instruct",
+    "llama-scout":  "meta-llama/llama-4-scout",
+    "llama4":       "meta-llama/llama-4-scout",
+    "llama-4":      "meta-llama/llama-4-scout",
     "gpt-oss":      "openai/gpt-oss-120b",
     "gpt-oss-120b": "openai/gpt-oss-120b",
     "gpt-5-mini":   "openai/gpt-5-mini",

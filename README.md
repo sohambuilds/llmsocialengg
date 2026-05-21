@@ -999,11 +999,13 @@ Three Models Under Test:
   text-only baseline measuring how much visual understanding helps.
 
 Model Aliases (CLI shorthand):
-  gemini       → gemini-3-flash-preview
-  llama-scout  → meta-llama/llama-4-scout-17b-16e-instruct
-  llama4       → meta-llama/llama-4-scout-17b-16e-instruct
-  gpt-oss      → openai/gpt-oss-120b
-  gpt-oss-120b → openai/gpt-oss-120b
+  gemini        → google/gemini-3-flash-preview (OpenRouter)
+  gemini-native → gemini-3-flash-preview        (native Gemini SDK)
+  llama-scout   → meta-llama/llama-4-scout      (OpenRouter)
+  llama4        → meta-llama/llama-4-scout      (OpenRouter)
+  gpt-5-mini    → openai/gpt-5-mini             (OpenRouter)
+  sonnet        → anthropic/claude-sonnet-4.6   (OpenRouter)
+  gpt-oss       → openai/gpt-oss-120b           (Groq, legacy)
 
 Benchmark Subset (10 environments, 3 × 10 = 30 total runs):
 

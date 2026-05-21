@@ -78,7 +78,7 @@ class DRJudge:
     def __init__(
         self,
         primary_model: str = "gpt-4o",
-        secondary_model: str = "meta-llama/llama-4-scout-17b-16e-instruct",
+        secondary_model: str = "meta-llama/llama-4-scout",
         gpt4o_api_key: Optional[str] = None,
         groq_api_key: Optional[str] = None,
     ):

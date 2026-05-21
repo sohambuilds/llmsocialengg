@@ -133,7 +133,7 @@ appending revisions.
 | Per-env classification.csv rows with sibling_of + toggled_axis | ✅ done |
 | Phase 3 sibling envs all sit at `🟦 qa` (pending per-env smoke + screenshot diff) | partial |
 | v1 pilot results on parent subset (qualitative: high leakage, prompt mitigation insufficient) | ✅ done |
-| v2 results on full 101-env benchmark | partial — three slices complete on 1 seed each: Llama 4 Scout dress rehearsal at `agent/logs/llamarun2soham/` (404 runs, pre-cleanup); gpt-5-mini post-fix at `agent/logs/v2/gpt5mini_v2_finalfinal/` (404 runs, post observer-mask but pre env-content/task-string cleanup); gpt-5-mini post-task-fix pilot at `agent/logs/v2/gpt5mini_v3_taskfix/` (40 cells, 10 envs × 4 conditions, post-everything). Full post-cleanup gpt-5-mini seed-1 (`gpt5mini_v3_seed1_full`, 404 runs) kicked off 2026-05-21; Claude Sonnet 4.6 / Gemini 3 Flash + seeds 2–5 still pending. |
+| v2 results on full 101-env benchmark | partial — clean reference slices in: **Gemini 3 Flash 5-seed full sweep** at `agent/logs/v2/gemini3_v3_seeds1to5_full/` (2,020 sessions, post-everything, reliable=1.0 across all cells, seed-to-seed std ≤2.5 pp); **gpt-5-mini seed-1 full sweep** at `agent/logs/v2/gpt5mini_v3_seed1_full/` (404 sessions, post-everything). Pre-fix slices retained for contamination accounting: `gpt5mini_v3_taskfix` (40-cell pilot), `gpt5mini_v2_finalfinal`, `gpt5mini_v2_seed1`, `llamarun2soham` (Llama 4 Scout dress rehearsal, Groq backend, **pre-everything**). **Still pending:** Llama 4 Scout re-run on OpenRouter (post-fix harness, 5 seeds); Claude Sonnet 4.6 (5 seeds); gpt-5-mini seeds 2–5; Gemini 3 Flash benign-twin attribution audit. |
 | LLM-as-judge Detection Rate (GPT-4o primary, Llama 4 secondary) | partial — judge shipped at `agent/evaluation/dr_judge.py`, sanity-run on 508 v1 sessions (Llama-vs-Llama κ=0.82); GPT-4o cross-family run pending on OpenAI key |
 | "Reached attack surface" instrumentation | ✅ done — `reached_trap` field on every session; Llama 4 Scout slice shows 96–98% reach across C0–C3, resolving the v1 "low ASR = missed navigation" worry |
 | GPT-5 mini + Claude Sonnet 4.6 added to model factory | ✅ done — both registered in `agent/core/llm_factory.py` via OpenRouter backend; smoke-tested for client construction. Live API smoke pending `OPENROUTER_API_KEY` |
@@ -207,6 +207,36 @@ and gpt-5-mini post-fix (1 seed, same scope). The mitigation-gradient
 finding is robust across both models. F1 (detection-action) has been
 sharpened: the gap is **strongest at C0**, where keyword DR isn't
 contaminated by the reflection prompt's seeded vocabulary.
+
+**Status update 2026-05-22 — thesis under review pending Llama re-run.**
+Two clean post-fix full-sweep slices have now landed: Gemini 3 Flash
+(5 seeds × 101 envs × 4 conditions) and gpt-5-mini (1 seed × 101 envs
+× 4 conditions). Both cross the 30-pp falsification bar from
+[analysis-plan §10](analysis-plan.md):
+
+| Slice | C0 PLR_crit | C3 PLR_crit | Δ(C3−C0) |
+|---|---|---|---|
+| Gemini 3 Flash (5 seeds) | 0.862 | 0.303 | **−55.8 pp** |
+| gpt-5-mini (1 seed) | 0.582 | 0.264 | **−31.9 pp** |
+| Llama 4 Scout (pre-fix, 1 seed) | 0.824 | 0.802 | −2.2 pp |
+
+Only the Llama pre-fix slice still supports the original headline.
+Per §3 results-time pivots, the active candidates are *"mitigation
+actually works"* (with model heterogeneity) and *"cross-model
+variance is large → lead with per-model breakdown."* Both branches
+require the Llama 4 Scout post-fix OpenRouter re-run to land before
+the thesis is rewritten — the current Llama number is from the
+pre-everything-fix dress rehearsal (Groq backend, contaminated
+URL-shape reasoning) and is not directly comparable to the two
+post-fix slices. The cross-model comparison notebook is at
+[agent/logs/v2/compare_gemini_gpt5_llama.ipynb](agent/logs/v2/compare_gemini_gpt5_llama.ipynb).
+
+A second open item: the gpt-5-mini full-sweep gradient (−31.9 pp)
+exceeds the v3_taskfix 10-env pilot's −12.1 pp by ~20 pp on what is
+nominally the same harness. Leading suspects are env mix (40 → 91
+envs activating different vector clusters) and the 2026-05-21 D5
+`defended` expansion reshuffling defense-vs-leak attribution.
+Reconcile before quoting either number externally.
 
 ### 2.3 Contributions, in order
 

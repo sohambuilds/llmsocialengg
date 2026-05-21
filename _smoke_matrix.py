@@ -36,8 +36,10 @@ from agent.runner import run_single_env
 
 ENVS = ["cluttered_downloads", "marketplace"]
 GROQ_MODELS = [
-    "meta-llama/llama-4-scout-17b-16e-instruct",
     "openai/gpt-oss-120b",
+]
+OPENROUTER_MODELS = [
+    "meta-llama/llama-4-scout",
 ]
 SKIPPED_MODELS = ["gemini-3-flash-preview", "claude-sonnet-4-6", "gpt-5"]
 CONDITIONS = ["C0", "C1", "C2", "C3"]
@@ -147,10 +149,11 @@ async def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     cells: list[dict] = []
-    total = len(ENVS) * len(GROQ_MODELS) * len(CONDITIONS)
+    SMOKE_MODELS = GROQ_MODELS + OPENROUTER_MODELS
+    total = len(ENVS) * len(SMOKE_MODELS) * len(CONDITIONS)
     idx = 0
     for env in ENVS:
-        for model in GROQ_MODELS:
+        for model in SMOKE_MODELS:
             for cond in CONDITIONS:
                 idx += 1
                 run_name = f"smoke_{env}_{cond}_{model.replace('/', '_')}"

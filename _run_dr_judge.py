@@ -25,21 +25,24 @@ print(f"Found {len(log_files)} existing log files")
 
 # Run DR judge on these
 async def main():
-    groq_key = os.environ.get("GROQ_API_KEY") or os.environ.get("API_KEY")
-    if not groq_key:
-        print("ERROR: Set GROQ_API_KEY environment variable")
+    api_key = (
+        os.environ.get("OPENROUTER_API_KEY")
+        or os.environ.get("API_KEY")
+    )
+    if not api_key:
+        print("ERROR: Set OPENROUTER_API_KEY environment variable")
         return
-    
+
     judge = DRJudge(
-        primary_model="meta-llama/llama-4-scout-17b-16e-instruct",
+        primary_model="meta-llama/llama-4-scout",
         secondary_model=None,
-        groq_api_key=groq_key
+        groq_api_key=api_key,  # kwarg name is legacy; value is just the api key
     )
     results = await judge.judge_session_batch(log_files, run_secondary=False)
     
     # Save results
     output = {
-        "primary_judge": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "primary_judge": "meta-llama/llama-4-scout",
         "num_sessions": len(results),
         "sessions": results
     }

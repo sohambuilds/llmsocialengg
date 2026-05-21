@@ -58,8 +58,10 @@ agent/                       — evaluator harness (Playwright + LLM loop)
   core/agent.py              — observe→think→act loop
   core/{browser,observer}.py — Playwright wrapper, screenshot+DOM
   core/{base_client,llm_client,openai_client,llm_factory}.py
-                             — model backends (Gemini, Groq-hosted Llama4
-                               Scout VLM, Groq-hosted GPT-OSS 120B text)
+                             — model backends (native Gemini SDK + OpenRouter
+                               for Gemini 3 Flash / Llama 4 Scout / GPT-5 mini /
+                               Claude Sonnet 4.6; Groq retained for GPT-OSS 120B
+                               legacy pilot only)
   core/{action_space,context_manager}.py
                              — JSON action schema, sliding-window memory
   config/environments.yaml   — env registry (ports, domains, task strings)
@@ -133,12 +135,17 @@ Env groups in the runner: `benchmark`, `tier1`, `tier2`, `tier3`,
 running explicit pair-lists for ablation studies over the legacy
 tier groups.)
 
-Model aliases: `gemini` → gemini-3-flash-preview, `llama-scout`/`llama4`
-→ meta-llama/llama-4-scout-17b-16e-instruct, `gpt-oss` →
-openai/gpt-oss-120b. `--model all` runs all three.
+Model aliases: `gemini` → `google/gemini-3-flash-preview` (OpenRouter),
+`llama-scout`/`llama4` → `meta-llama/llama-4-scout` (OpenRouter),
+`gpt-5-mini` → `openai/gpt-5-mini` (OpenRouter),
+`sonnet` → `anthropic/claude-sonnet-4.6` (OpenRouter),
+`gemini-native` → `gemini-3-flash-preview` (native SDK),
+`gpt-oss` → `openai/gpt-oss-120b` (Groq, legacy pilot).
+`--model all-v2` runs the four v2 models in sequence.
 
-API keys: `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) for Gemini;
-`GROQ_API_KEY` for Llama 4 Scout and GPT-OSS 120B.
+API keys: `OPENROUTER_API_KEY` for the four v2 models; `GEMINI_API_KEY`
+(or `GOOGLE_API_KEY`) only for the `gemini-native` fallback path;
+`GROQ_API_KEY` only for the legacy `gpt-oss` pilot.
 
 Output: `agent/logs/<run-name>/aggregate_results.json` plus per-model
 session logs and `.score.json` files.
@@ -403,14 +410,34 @@ reasoning. Pre-fix `28% localhost / 4.5% plain-http` numbers on
 `gpt5mini_v2_finalfinal` are now historical and superseded by the
 v3_taskfix scan.
 
-**Run-id taxonomy as of 2026-05-21.** Five gpt-5-mini slices exist;
-the differences are which fixes were live:
+**Run-id taxonomy as of 2026-05-22.** Reference slices that exist; the
+differences are which fixes were live:
 - `agent/logs/gpt5mini_v2_seed1/` — pre-observer-mask. Contaminated by URL bar localhost reasoning. Preserved for contamination accounting only.
 - `agent/logs/v2/gpt5mini_v2_finalfinal/` — post-observer-mask, pre env-content + pre task-string fix. Prior reference for 28%/4.5% mention rates.
-- `agent/logs/llamarun2soham/` — Llama 4 Scout dress rehearsal, pre everything. 404 runs.
+- `agent/logs/llamarun2soham/` — Llama 4 Scout dress rehearsal, **pre everything + Groq backend**. 404 runs. Superseded once the OpenRouter Llama 4 Scout re-run lands; preserved for back-compat with the pre-fix comparison notebooks.
 - `agent/logs/v2/gpt5mini_v3/` — post env-content cleanup, pre task-string fix. 40-cell pilot. **Do not use as a baseline** — superseded by v3_taskfix.
 - `agent/logs/v2/gpt5mini_v3_taskfix/` — post-everything. 40-cell pilot. Confirms the task-string fix works. The baseline for comparing the full sweep against.
-- `agent/logs/v2/gpt5mini_v3_seed1_full/` — full 101-env × 4-condition × 1-seed run kicked off 2026-05-21. The clean reference slice for the paper.
+- `agent/logs/v2/gpt5mini_v3_seed1_full/` — full 101-env × 4-condition × 1-seed run, kicked off 2026-05-21. The clean reference slice for gpt-5-mini.
+- `agent/logs/v2/gemini3_v3_seeds1to5_full/` — Gemini 3 Flash Preview (OpenRouter), **5 seeds × 101 envs × 4 conditions = 2,020 sessions**, landed 2026-05-22. First multi-seed slice; reliable=1.0 across all cells; seed-to-seed std ≤2.5 pp at every condition.
+
+**Headline read on the two clean full-sweep slices (compare notebook at
+[agent/logs/v2/compare_gemini_gpt5_llama.ipynb](agent/logs/v2/compare_gemini_gpt5_llama.ipynb)):**
+
+| Slice | C0 PLR_crit | C3 PLR_crit | Δ(C3−C0) |
+|---|---|---|---|
+| gemini3_v3_seeds1to5_full | 0.862 | 0.303 | **−55.8 pp** |
+| gpt5mini_v3_seed1_full | 0.582 | 0.264 | **−31.9 pp** |
+| llamarun2soham (pre-fix) | 0.824 | 0.802 | −2.2 pp |
+
+Both clean slices cross the 30-pp falsification bar from
+[analysis-plan §10](analysis-plan.md), so paper-plan §2.2's
+"prompt-mitigation insufficient" headline is **under active review**
+pending the Llama 4 Scout post-fix OpenRouter re-run. The full-sweep
+gpt-5-mini gradient (−31.9 pp) also exceeds the v3_taskfix pilot's
+−12.1 pp by ~20 pp, so the pilot → full-sweep delta on the same
+model needs reconciling before any number leaves the room — leading
+suspects are env mix (40 → 91 envs) and the 2026-05-21 D5 `defended`
+expansion shifting which sessions count as defense vs. leak.
 
 **Re-run dataset.** `agent/logs/v2/gpt5mini_v2_finalfinal/` is the
 post-fix slice (gpt-5-mini, 1 seed, parallel_runner layout). The
