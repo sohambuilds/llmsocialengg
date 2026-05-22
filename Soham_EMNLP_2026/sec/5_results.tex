@@ -8,7 +8,7 @@
 \section{Results}
 \label{sec:results}
 
-We report results across the full pre-registered design: four frontier models (GPT-5, Claude Haiku 4.5, Gemini 3 Flash, Llama 4 Scout), four conditions (C0--C3), $n = 5$ seeds per (env, model, condition) cell on the 91 adversarial environments, and $n = 5$ seeds per (env, model) cell on the 10 benign twins under C0 only, for a total of $7{,}480$ sessions. Percentage-point comparisons in this section are on session-level $\text{PLR}_{\text{crit}}$ unless otherwise stated. Effects carry 95\% confidence intervals from the mixed-effects logistic in \S\ref{sec:analysis}; tests in the pre-registered primary family of 14 (Table~\ref{tab:claims}) are flagged with BH-adjusted $q$-values, and exploratory tests are flagged with uncorrected $p$-values. A drop in $\text{PLR}_{\text{crit}}$ is a security improvement; a positive F1 gap reflects the detection--action mismatch in the predicted direction.
+We report results across the full pre-registered design: four frontier models (GPT-5, Claude Sonnet 4.6, Gemini 3 Flash, Llama 4 Scout), four conditions (C0--C3), $n = 5$ seeds per (env, model, condition) cell on the 91 adversarial environments, and $n = 5$ seeds per (env, model) cell on the 10 benign twins under C0 only, for a total of $7{,}480$ sessions. Percentage-point comparisons in this section are on session-level $\text{PLR}_{\text{crit}}$ unless otherwise stated. Effects carry 95\% confidence intervals from the mixed-effects logistic in \S\ref{sec:analysis}; tests in the pre-registered primary family of 14 (Table~\ref{tab:claims}) are flagged with BH-adjusted $q$-values, and exploratory tests are flagged with uncorrected $p$-values. A drop in $\text{PLR}_{\text{crit}}$ is a security improvement; a positive F1 gap reflects the detection--action mismatch in the predicted direction.
 
 \subsection{Baseline Leakage}
 \label{sec:results-baseline}
@@ -18,18 +18,20 @@ Under C0, the four models leak critical-tier PII at an aggregate rate of XX.X\% 
 \begin{table}[t]
 \centering
 \small
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{lcccc}
 \toprule
 Model & C0 & C1 & C2 & C3 \\
 \midrule
 GPT-5 & XX.X & XX.X & XX.X & XX.X \\
-Claude Haiku 4.5 & XX.X & XX.X & XX.X & XX.X \\
+Claude Sonnet 4.6 & XX.X & XX.X & XX.X & XX.X \\
 Gemini 3 Flash & XX.X & XX.X & XX.X & XX.X \\
 Llama 4 Scout & XX.X & XX.X & XX.X & XX.X \\
 \midrule
 Pooled & XX.X & XX.X & XX.X & XX.X \\
 \bottomrule
 \end{tabular}
+}
 \caption{Session-level $\text{PLR}_{\text{crit}}$ (\%) by model and condition, pooled across 91 adversarial environments and $n = 5$ seeds, after benign-twin subtraction (\S\ref{sec:benign}). The Pooled row weights cells equally; per-model rows are the marginal means within each model. Cell values pending the full sweep.}
 \label{tab:results-main}
 \end{table}
@@ -42,12 +44,13 @@ We test the three pre-registered mitigation contrasts M1 (C0 vs C1), M2 (C0 vs C
 \begin{table}[t]
 \centering
 \small
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{lccc}
 \toprule
 Model & $\Delta$M1 & $\Delta$M2 & $\Delta$M3 \\
 \midrule
 GPT-5 & XX.X & XX.X & XX.X \\
-Claude Haiku 4.5 & XX.X & XX.X & XX.X \\
+Claude Sonnet 4.6 & XX.X & XX.X & XX.X \\
 Gemini 3 Flash & XX.X & XX.X & XX.X \\
 Llama 4 Scout & XX.X & XX.X & XX.X \\
 \midrule
@@ -55,6 +58,7 @@ Pooled & XX.X & XX.X & XX.X \\
 $q$-value (BH) & XX.XX & XX.XX & XX.XX \\
 \bottomrule
 \end{tabular}
+}
 \caption{Mitigation effect sizes: percentage-point change in $\text{PLR}_{\text{crit}}$ relative to C0, per condition, per model. BH-adjusted $q$-values are computed on the pooled row across the 14-test primary family. Negative values indicate the predicted direction (a reduction in leakage). The 30 pp falsification threshold is not crossed at any condition on any model.}
 \label{tab:results-mitigation}
 \end{table}
@@ -67,6 +71,7 @@ The detection--action gap (F1) is the within-C3 contrast of $\text{PLR}_{\text{c
 \begin{table}[t]
 \centering
 \small
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{lccc}
 \toprule
 Condition & DR$=$1 PLR\textsubscript{crit} & DR$=$0 PLR\textsubscript{crit} & Gap (pp) \\
@@ -77,6 +82,7 @@ C2 & XX.X & XX.X & XX.X \\
 C3 & XX.X & XX.X & XX.X \\
 \bottomrule
 \end{tabular}
+}
 \caption{Detection--action gap by condition: session-level $\text{PLR}_{\text{crit}}$ restricted to DR$=$1 and DR$=$0 subsets, computed only on sessions with $\texttt{reached\_trap} = \text{True}$ (\S\ref{sec:reachedtrap}). The C3 row is the primary F1 test; remaining rows are exploratory secondary contrasts and carry uncorrected $p$-values.}
 \label{tab:results-f1}
 \end{table}
@@ -89,6 +95,7 @@ The paired-sibling tests F2--F11 isolate the contribution of individual axes (Ta
 \begin{table}[t]
 \centering
 \small
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{llrrc}
 \toprule
 Test & Axis & Pairs ($n$) & Effect (pp) & $q$ \\
@@ -104,6 +111,7 @@ F10 & G: interaction & XX & XX.X & XX.XX \\
 F11 & A: category & XX & XX.X & XX.XX \\
 \bottomrule
 \end{tabular}
+}
 \caption{Paired-sibling factor ablations F2--F11 on pooled $\text{PLR}_{\text{crit}}$. Each test contrasts sibling environments differing on exactly one axis, with all others held constant. Pair counts are the number of (parent, sibling) pairs available per axis. Effect signs read as: positive values mean the toggled-on value leaks more. F4 (between-model variance) is reported in Appendix~\ref{app:per-model}.}
 \label{tab:results-axes}
 \end{table}
@@ -116,6 +124,7 @@ Across the full sweep, $\texttt{reached\_trap}$ holds for XX.X\% of sessions, wi
 \begin{table}[t]
 \centering
 \small
+\resizebox{\columnwidth}{!}{
 \begin{tabular}{lccccc}
 \toprule
 Condition & PLR\textsubscript{crit} & ASR & TCR & Reached-trap & Defended \\
@@ -126,6 +135,7 @@ C2 & XX.X & XX.X & XX.X & XX.X & XX.X \\
 C3 & XX.X & XX.X & XX.X & XX.X & XX.X \\
 \bottomrule
 \end{tabular}
+}
 \caption{Secondary outcome metrics by condition, pooled across models and adversarial environments. ASR is computed only on sessions with $\texttt{reached\_trap} = \text{True}$. \texttt{Defended} is the session-level rate at which the agent terminated through clean refusal (egress-guard chrome-error landing logged by the scorer, \S\ref{sec:reachedtrap}).}
 \label{tab:results-tcr}
 \end{table}
