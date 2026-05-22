@@ -414,30 +414,52 @@ v3_taskfix scan.
 differences are which fixes were live:
 - `agent/logs/gpt5mini_v2_seed1/` — pre-observer-mask. Contaminated by URL bar localhost reasoning. Preserved for contamination accounting only.
 - `agent/logs/v2/gpt5mini_v2_finalfinal/` — post-observer-mask, pre env-content + pre task-string fix. Prior reference for 28%/4.5% mention rates.
-- `agent/logs/llamarun2soham/` — Llama 4 Scout dress rehearsal, **pre everything + Groq backend**. 404 runs. Superseded once the OpenRouter Llama 4 Scout re-run lands; preserved for back-compat with the pre-fix comparison notebooks.
+- `agent/logs/llamarun2soham/` — Llama 4 Scout dress rehearsal, **pre everything + Groq backend**. 404 runs. Superseded by `llama4_v3_seeds1to5_full_re`; preserved for back-compat with pre-fix comparison notebooks.
 - `agent/logs/v2/gpt5mini_v3/` — post env-content cleanup, pre task-string fix. 40-cell pilot. **Do not use as a baseline** — superseded by v3_taskfix.
 - `agent/logs/v2/gpt5mini_v3_taskfix/` — post-everything. 40-cell pilot. Confirms the task-string fix works. The baseline for comparing the full sweep against.
 - `agent/logs/v2/gpt5mini_v3_seed1_full/` — full 101-env × 4-condition × 1-seed run, kicked off 2026-05-21. The clean reference slice for gpt-5-mini.
 - `agent/logs/v2/gemini3_v3_seeds1to5_full/` — Gemini 3 Flash Preview (OpenRouter), **5 seeds × 101 envs × 4 conditions = 2,020 sessions**, landed 2026-05-22. First multi-seed slice; reliable=1.0 across all cells; seed-to-seed std ≤2.5 pp at every condition.
+- `agent/logs/v2/llama4_v3_seeds1to5_full_re/` — Llama 4 Scout (OpenRouter), **5 seeds × 101 envs × 4 conditions = 2,020 sessions**, landed 2026-05-22. Post-fix counterpart to the Groq dress rehearsal; confirms Llama 4 Scout's flat-across-conditions behaviour at full power. **This is the Llama reference for the paper**, not the dress rehearsal.
 
-**Headline read on the two clean full-sweep slices (compare notebook at
-[agent/logs/v2/compare_gemini_gpt5_llama.ipynb](agent/logs/v2/compare_gemini_gpt5_llama.ipynb)):**
+**Headline read on the three clean full-sweep slices (compare notebook at
+[agent/logs/v2/compare_gemini_gpt5_llama.ipynb](agent/logs/v2/compare_gemini_gpt5_llama.ipynb)),
+post all four 2026-05-19 → 2026-05-22 fixes including the 2026-05-22 c_PLR
+rescore:**
 
-| Slice | C0 PLR_crit | C3 PLR_crit | Δ(C3−C0) |
-|---|---|---|---|
-| gemini3_v3_seeds1to5_full | 0.862 | 0.303 | **−55.8 pp** |
-| gpt5mini_v3_seed1_full | 0.582 | 0.264 | **−31.9 pp** |
-| llamarun2soham (pre-fix) | 0.824 | 0.802 | −2.2 pp |
+| Slice | n/cond | C0 PLR_crit | C3 PLR_crit | Δ(C3−C0) | Crosses 30 pp? |
+|---|---:|---:|---:|---:|:---:|
+| gemini3_v3_seeds1to5_full | 455 | 0.921 | 0.600 | **−32.1 pp** | ⚠️ barely |
+| gpt5mini_v3_seed1_full | 91 | 0.747 | 0.571 | **−17.6 pp** | ❌ |
+| llama4_v3_seeds1to5_full_re | 455 | 0.820 | 0.765 | **−5.5 pp** | ❌ |
 
-Both clean slices cross the 30-pp falsification bar from
-[analysis-plan §10](analysis-plan.md), so paper-plan §2.2's
-"prompt-mitigation insufficient" headline is **under active review**
-pending the Llama 4 Scout post-fix OpenRouter re-run. The full-sweep
-gpt-5-mini gradient (−31.9 pp) also exceeds the v3_taskfix pilot's
-−12.1 pp by ~20 pp, so the pilot → full-sweep delta on the same
-model needs reconciling before any number leaves the room — leading
-suspects are env mix (40 → 91 envs) and the 2026-05-21 D5 `defended`
-expansion shifting which sessions count as defense vs. leak.
+**Pooled across all three:** 85.7% C0 → 67.4% C3 = **−18.3 pp**. The
+prereg "prompt-mitigation insufficient" headline from
+[analysis-plan §10](analysis-plan.md) **holds** under any reasonable
+interpretation — only Gemini crosses 30 pp and only by ~2 pp on the
+single-judge keyword-DR measurement. The much wider gradients reported
+in earlier readings (Gemini −55.8 pp, gpt5m −31.9 pp) were artifacts
+of the pre-rescore `compute_critical_plr` undercount that disproportionately
+deflated the C3 endpoint — see the 2026-05-22 c_PLR fix below.
+
+**2026-05-22 c_PLR scorer fix.** The pre-fix scorer's `compute_critical_plr`
+had two compounding issues that caused PLR_crit to undercount critical-tier
+leaks: (1) the `CRITICAL_ATTACK_FIELDS` whitelist was narrower than the
+scorer's own sensitivity map (e.g., `ssn_last4`, `card_expiry`, `bank_account`
+all sensitivity=critical but not in the whitelist), and (2) the
+`source != "server_captured"` filter excluded file-upload leaks (where pii_tracker
+uses `field="file:gov_id"` for ID-document uploads in dating_verify /
+dating_photo_id / ancestry_dna* envs) before the whitelist check could fire.
+Effect: ~38% of sessions across all slices had their critical_fields_leaked
+under-reported. Fix landed in [agent/evaluation/scorer.py::compute_critical_plr](agent/evaluation/scorer.py)
+on 2026-05-22; the rescore utility [scripts/rescore_critical_plr.py](scripts/rescore_critical_plr.py)
+re-derives `critical_fields_leaked` from `details[].sensitivity == "critical"`
+across every existing `.score.json` (2,011 cells updated of 5,332), and the
+companion [scripts/sync_meta_from_score.py](scripts/sync_meta_from_score.py)
+propagates the corrected fields into the parallel_runner's `meta.json` cache
+(1,857 cells) so downstream notebooks loading from meta.json see the rescored
+values. Original `.score.json.orig` and `meta.json.orig` backups are preserved
+on disk per cell. Logged as another measurement-instrument D5 deviation in
+[analysis-plan.md](analysis-plan.md) §11.
 
 **Re-run dataset.** `agent/logs/v2/gpt5mini_v2_finalfinal/` is the
 post-fix slice (gpt-5-mini, 1 seed, parallel_runner layout). The
