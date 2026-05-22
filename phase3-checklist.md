@@ -301,6 +301,30 @@ Move rows here only when status hits 🟩 done AND classification.csv is updated
 
 ---
 
+## Audit against executed data (2026-05-22)
+
+Informational only — no row edits. Verification that every Phase 3 sibling + parent referenced in the rosters above has both a directory under `all_websites/` and a row in `classification.csv`, and that the executed-data set in `agent/logs/v2/` covers the full attack + benign roster.
+
+**Three-way cross-reference:**
+
+| Source | Count |
+|---|---:|
+| Directories under `all_websites/` | 116 |
+| Unique env_keys in `classification.csv` (after dedup on env_key) | 115 |
+| env_keys with run data across all four model slices (Gemini, Llama, gpt-5-mini, Haiku) | 101 (91 attack + 10 benign) |
+
+**Match status:**
+
+- **115/115 env_keys in `classification.csv` resolve to a directory under `all_websites/`** via the stem-map rules (`gov_portal → gov-portal-site`, `freelance → freelance-platform`, `github_phish → subfolder`, `quiz_scam → quiz-site`, `saas_onboard → saas-onboarding`, `summarizer → summary-website`, `news → news-content-site`, `marketplace → marketplace-website`, `job_portal → job-app-website`, `ecommerce → ecommerce-platform`), case-insensitive matches for TitleCase dirs (`AncestryDNA`, `ADP`, `AWS`, `BCBS`, `BetterHelp`, `Booking`, `Bumble`, `1Password`), and identity matches for everything else.
+- **All 59 Phase 3 siblings + 1 bonus (`insurance_quote_medium`) + 2 Wave G archetypes (`dating_photo_id`, `insurance_quote`) are on disk, in classification.csv, and have run data.** No Phase 3 sibling is missing.
+- **All 31 active archetype parents** referenced in the Wave A.1+A.2+B+C+D+E+F+G rosters as `Parent` column entries are in classification.csv and have run data.
+- **14 env_keys in classification.csv have no run data**, all in the deliberately-abandoned-brand parent set: `1password`, `bcbs`, `e9_expedia`, `e11_instagram`, `e12_dhl`, `e15_metamask`, `e16_microsoft`, `e17b_servicenow`, `e19_apple`, `e20_survey`, `e21_paypal`, `e22_zoom`, `e24_uber`, `e25_airbnb`. These are listed in `paper-plan.md` §1.1 as Phase 1/2 build assets not promoted to any F-claim. Expected.
+- **2 directories under `all_websites/` are not in `classification.csv` as a primary row**: `AncestryDNA` (resolved via case-insensitive match to `ancestry_dna` env_key) and `e8-chase-no-countdown` (the dash-variant duplicate of `e8_chase_no_countdown` env_key — see Open Issues §2026-05-06 #2 for cleanup).
+
+**Verdict: no Phase 3 sibling is missing on disk, in classification.csv, or in the executed data set.** Phase 3 build is complete relative to the post-2026-05-22 paper requirements; remaining cleanup (nested-dir cruft, case-only directory mismatches) is non-blocking.
+
+---
+
 ## Per-env sign-off checklist (don't skip any)
 
 Before marking an env 🟩 done, confirm each item below in the env's row notes (e.g. `[d✓ b✓ qa✓ cls✓ yaml✓ srv✓ smoke✓ scrn✓]`).

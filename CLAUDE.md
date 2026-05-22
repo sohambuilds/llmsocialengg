@@ -417,29 +417,34 @@ differences are which fixes were live:
 - `agent/logs/llamarun2soham/` — Llama 4 Scout dress rehearsal, **pre everything + Groq backend**. 404 runs. Superseded by `llama4_v3_seeds1to5_full_re`; preserved for back-compat with pre-fix comparison notebooks.
 - `agent/logs/v2/gpt5mini_v3/` — post env-content cleanup, pre task-string fix. 40-cell pilot. **Do not use as a baseline** — superseded by v3_taskfix.
 - `agent/logs/v2/gpt5mini_v3_taskfix/` — post-everything. 40-cell pilot. Confirms the task-string fix works. The baseline for comparing the full sweep against.
-- `agent/logs/v2/gpt5mini_v3_seed1_full/` — full 101-env × 4-condition × 1-seed run, kicked off 2026-05-21. The clean reference slice for gpt-5-mini.
-- `agent/logs/v2/gemini3_v3_seeds1to5_full/` — Gemini 3 Flash Preview (OpenRouter), **5 seeds × 101 envs × 4 conditions = 2,020 sessions**, landed 2026-05-22. First multi-seed slice; reliable=1.0 across all cells; seed-to-seed std ≤2.5 pp at every condition.
-- `agent/logs/v2/llama4_v3_seeds1to5_full_re/` — Llama 4 Scout (OpenRouter), **5 seeds × 101 envs × 4 conditions = 2,020 sessions**, landed 2026-05-22. Post-fix counterpart to the Groq dress rehearsal; confirms Llama 4 Scout's flat-across-conditions behaviour at full power. **This is the Llama reference for the paper**, not the dress rehearsal.
+- `agent/logs/v2/gpt5mini_v3_seed1_full/` — full 101-env × 4-condition × **1-seed** run. Clean reference slice for gpt-5-mini. **Seeds 2–5 in progress.**
+- `agent/logs/v2/gemini3_v3_seeds1to5_full/` — Gemini 3 Flash Preview (OpenRouter), **5 seeds × 101 envs × 4 conditions = 2,020 sessions**, landed 2026-05-22. reliable=1.0 across all cells; seed-to-seed std ≤2.5 pp at every condition.
+- `agent/logs/v2/llama4_v3_seeds1to5_full_re/` — Llama 4 Scout (OpenRouter), **5 seeds × 101 envs × 4 conditions = 2,020 sessions**, landed 2026-05-22. Post-fix counterpart to the Groq dress rehearsal. **This is the Llama reference for the paper**, not the dress rehearsal.
+- `agent/logs/v2/haiku_v3_seed1_full/` — Claude Haiku 4.5 (OpenRouter), **1 seed × 101 envs × 4 conditions = 404 sessions**, landed 2026-05-22. Anthropic-slot model (swapped from Sonnet 4.6 pre-data, see analysis-plan §11 D6). **Seeds 2–5 in progress.**
 
-**Headline read on the three clean full-sweep slices (compare notebook at
-[agent/logs/v2/compare_gemini_gpt5_llama.ipynb](agent/logs/v2/compare_gemini_gpt5_llama.ipynb)),
-post all four 2026-05-19 → 2026-05-22 fixes including the 2026-05-22 c_PLR
-rescore:**
+## Notebook-driven findings as of 2026-05-22
 
-| Slice | n/cond | C0 PLR_crit | C3 PLR_crit | Δ(C3−C0) | Crosses 30 pp? |
-|---|---:|---:|---:|---:|:---:|
-| gemini3_v3_seeds1to5_full | 455 | 0.921 | 0.600 | **−32.1 pp** | ⚠️ barely |
-| gpt5mini_v3_seed1_full | 91 | 0.747 | 0.571 | **−17.6 pp** | ❌ |
-| llama4_v3_seeds1to5_full_re | 455 | 0.820 | 0.765 | **−5.5 pp** | ❌ |
+`agent/logs/v2/paper_tables.ipynb` is the source of truth for every number that goes in the paper. After the 2026-05-22 c_PLR rescore, the AME-scaling correction (§11 D8), and the suffix-detector fix:
 
-**Pooled across all three:** 85.7% C0 → 67.4% C3 = **−18.3 pp**. The
-prereg "prompt-mitigation insufficient" headline from
-[analysis-plan §10](analysis-plan.md) **holds** under any reasonable
-interpretation — only Gemini crosses 30 pp and only by ~2 pp on the
-single-judge keyword-DR measurement. The much wider gradients reported
-in earlier readings (Gemini −55.8 pp, gpt5m −31.9 pp) were artifacts
-of the pre-rescore `compute_critical_plr` undercount that disproportionately
-deflated the C3 endpoint — see the 2026-05-22 c_PLR fix below.
+**Loaded data.** 4,790 retained sessions across the four model slices after BROWSER_ERROR exclusion (58 dropped, 1.2%). reliable=1.0 across every cell. 91 attack envs + 10 benign twins, all with complete data coverage.
+
+**Headline numbers (per-model PLR_crit, attack envs only):**
+
+| Model | n_seeds | C0 | C1 | C2 | C3 | ΔM3 (C3−C0) | Crosses §10 −30 pp? |
+|---|---:|---:|---:|---:|---:|---:|:---:|
+| GPT-5 mini | 1 | 75.6% | 65.6% | 60.0% | 57.8% | **−17.8 pp** | ❌ |
+| Claude Haiku 4.5 | 1 | 53.8% | 35.6% | 17.8% | 23.1% | **−30.8 pp** | ✅ (also ΔM2 = −36.1 pp) |
+| Gemini 3 Flash | 5 | 93.1% | 81.8% | 68.5% | 60.7% | **−32.4 pp** | ✅ |
+| Llama 4 Scout | 5 | 82.3% | 83.8% | 81.4% | 77.4% | **−4.9 pp** | ❌ |
+| **Pooled** | — | **83.9%** | **77.4%** | **69.0%** | **64.2%** | **−19.7 pp** | ❌ (pooled does NOT cross) |
+
+**Falsification verdict.** Pooled ΔM3 = −19.7 pp does NOT cross the §10 −30 pp threshold. But three model-condition cells cross it individually (Haiku ΔM2, Haiku ΔM3, Gemini ΔM3). This is the textbook paper-plan §3 "Cross-model variance is large → lead with per-model breakdown" pivot. The paper's framing should be **per-model heterogeneity**, not a soft-pedalled pooled-headline-holds.
+
+**F1 detection–action gap (paper's strongest finding).** At C0 (no contamination from C3 reflection vocabulary), pooled across all four models: 88.8% PLR if DR=0 vs 34.3% PLR if DR=1 — a **54.5 pp gap**. GLMM q < 0.001 after BH. n(C3 DR=1) = 551, well past the §8 power-guard threshold (200), so F1 stays in the primary family. F1 is the un-killable paper finding.
+
+**BH-corrected primary family (§7-adjusted to 8 tests).** After the §7 power gate on suffix-named canonical sibling pairs, the inference-bearing family is {F1, F2, F5, F8, F10, M1, M2, M3}. M1/M2/M3 + F1 all q < 0.001 (significant). F2/F5/F8/F10 all fail BH (none reach significance at q=0.05). Underpowered descriptive-only: F6 (2 pairs), F7 (2 pairs), F9 (5 pairs), H (5 pairs). No canonical pairs: F11. See analysis-plan §11 D7.
+
+**AME-scaling correction (§11 D8).** Earlier notebook drafts reported `β_pp = β_logit × p̄(1−p̄) × 100` to project the GLMM coefficient onto a percentage-point scale. That linearisation breaks for the large effects in M2/M3 (|β_logit| ≈ 2) and inflated the apparent pooled ΔM3 to −44.7 pp. **Corrected reporting:** GLMM cell now emits `β_logit`, odds ratio (e^β), and Wald p-value; the probability-scale effect size is reported as `emp_delta_pp` = raw cell-mean ΔPLR_crit. The §10 falsification threshold is in empirical probability units → compare against `emp_delta_pp`, not the GLMM β. Numbers in the table above are `emp_delta_pp`.
 
 **2026-05-22 c_PLR scorer fix.** The pre-fix scorer's `compute_critical_plr`
 had two compounding issues that caused PLR_crit to undercount critical-tier

@@ -400,6 +400,67 @@ pre-registered.
   API-loss rule now refers to Haiku 4.5. No Claude data exists
   under the Sonnet 4.6 label, so no measurements move.
 
+- **D7. BH family size reduced 14 → 8 tests (2026-05-22).** The §4
+  primary family lists 14 tests (F1, F2–F11, M1–M3). After §7
+  power-gate evaluation on suffix-named canonical sibling pairs in
+  `classification.csv` (detected by env-name suffix convention, then
+  cross-checked against the classification.csv axis values for
+  single-axis-toggle integrity):
+  - **Inference-bearing (≥6 pairs):** F1 (no pair count required —
+    a within-condition DR×PLR test), F2 (salience, 12 pairs), F5
+    (pressure urgency↔none, 10 pairs), F8 (prompt_injection, 8
+    pairs, secondary-axis drift acknowledged per Phase 3 design
+    notes), F10 (interaction, 6 pairs, drift acknowledged), M1, M2,
+    M3 (no pair count required — pooled condition-level comparisons).
+  - **Descriptive only (<6 canonical pairs per §7):** F3 (composite
+    C×G — characterization via §11 Tab 9c×9g cross-tab), F4 (model
+    factor — between-model comparison, not a paired test), F6
+    (social_proof Δ, 2 pairs), F7 (authority Δ, 2 pairs), F9
+    (pii_target, 5 pairs), F11 (category — no naming convention,
+    0 paired pairs since category is the primary classifier), H
+    (multi_site, 5 pairs).
+  - **Strict-no-drift sidecar:** F8-strict and F10-strict restricted
+    to drift-free pairs are both empty (all suffix-named F8/F10
+    pairs carry classification.csv axis drift per Phase 3 design
+    notes). Reported as a §6 limitation in the paper, not hidden.
+
+  BH at q=0.05 is applied across the 8 inference-bearing tests;
+  per-test threshold relaxes from 0.0036 (14-test) to 0.0063
+  (8-test). This is a §7-prescribed power adjustment (the ≥6-pair
+  threshold is locked in §7 *before* p-values are observed), not a
+  post-hoc deviation. Supplementary appendix may also report the
+  14-test BH q-values for the four primary-family tests that
+  produced non-NaN p-values, as a robustness sidecar.
+
+- **D8. AME-scaling correction in mixed-effects logistic reporting
+  (2026-05-22).** Initial `paper_tables.ipynb` Cell 32 reported a
+  GLMM β in percentage-point units via the linear AME approximation
+  `β_pp = β_logit · p̄(1−p̄) · 100`. For the large effect sizes
+  observed in M2/M3 (β_logit ≈ −2.0), this linearisation overstates
+  the marginal effect on the probability scale (e.g. raw cell-mean
+  ΔM3 = −19.7 pp vs AME-scaled β_pp = −44.7 pp). The linearisation
+  is valid for |β_logit| << 1; it breaks down for the magnitudes
+  observed here. **Corrected reporting:** GLMM cell now emits
+  `β_logit` (model coefficient on the logit scale), odds ratio
+  (`e^β`) with 95% CI, and Wald p-value derived from the
+  variational-Bayes posterior. The probability-scale effect size is
+  reported separately as `emp_delta_pp` = raw cell-mean ΔPLR_crit
+  from the descriptive table. The §10 falsification threshold
+  (−30 pp) is in empirical probability units and is therefore
+  compared against `emp_delta_pp`, NOT against the (deprecated)
+  AME-scaled β. Under the corrected reporting:
+  - Pooled ΔM3 = −19.7 pp (empirical) → does NOT cross the −30 pp
+    pooled threshold per §10.
+  - Per-model ΔM2/ΔM3 cross threshold for Claude Haiku 4.5 (ΔM2 =
+    −36.1 pp, ΔM3 = −30.8 pp) and Gemini 3 Flash (ΔM3 = −32.4 pp).
+
+  The corrected `emp_delta_pp` is what the paper-plan §2.2 thesis
+  blockquote and §2.3 contributions quote. The AME-scaled β_pp
+  appears nowhere in the paper. This is a measurement-instrument
+  correction — no session's PII trail or scorer output changed,
+  only the post-hoc projection of the GLMM β onto the probability
+  scale.
+
 Any deviation not on this list, executed after the tag, must be
 documented as a post-hoc deviation in the paper's limitations
 section.

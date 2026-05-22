@@ -136,7 +136,7 @@ appending revisions.
 | Per-env classification.csv rows with sibling_of + toggled_axis | ✅ done |
 | Phase 3 sibling envs all sit at `🟦 qa` (pending per-env smoke + screenshot diff) | partial |
 | v1 pilot results on parent subset (qualitative: high leakage, prompt mitigation insufficient) | ✅ done |
-| v2 results on full 101-env benchmark | partial — three clean reference slices post all 2026-05-19→05-22 fixes: **Gemini 3 Flash 5-seed full sweep** at `agent/logs/v2/gemini3_v3_seeds1to5_full/` (2,020 sessions, reliable=1.0, seed-to-seed std ≤2.5 pp); **gpt-5-mini seed-1 full sweep** at `agent/logs/v2/gpt5mini_v3_seed1_full/` (404 sessions); **Llama 4 Scout 5-seed full sweep on OpenRouter** at `agent/logs/v2/llama4_v3_seeds1to5_full_re/` (2,020 sessions, landed 2026-05-22). Post-rescore PLR_crit gradients: Gemini Δ(C3-C0) = -32.1 pp (just crosses 30 pp threshold), gpt-5-mini -17.6 pp, Llama -5.5 pp; pooled across all three = -18.3 pp. Prereg "mitigation insufficient" thesis holds under pooled interpretation. Pre-fix slices retained for contamination accounting: `gpt5mini_v3_taskfix` (40-cell pilot), `gpt5mini_v2_finalfinal`, `gpt5mini_v2_seed1`, `llamarun2soham` (Groq dress rehearsal, pre-everything). **Still pending:** Claude Haiku 4.5 (kicked off 2026-05-22 — swapped in for Sonnet 4.6 same day pre-data, see analysis-plan §11 D6); gpt-5-mini seeds 2–5; Gemini 3 Flash benign-twin attribution audit. |
+| v2 results on full 101-env benchmark | partial — four clean reference slices post all 2026-05-19→05-22 fixes (including the c_PLR rescore and AME-scaling correction): **Gemini 3 Flash 5-seed** (`gemini3_v3_seeds1to5_full/`, 2,020 sessions, reliable=1.0, seed-to-seed std ≤2.5 pp); **Llama 4 Scout 5-seed** (`llama4_v3_seeds1to5_full_re/`, 2,020 sessions); **gpt-5-mini 1-seed** (`gpt5mini_v3_seed1_full/`, 404 sessions); **Claude Haiku 4.5 1-seed** (`haiku_v3_seed1_full/`, 404 sessions). Per-model ΔM3 (empirical): Gemini -32.4 pp, Haiku -30.8 pp, gpt-5-mini -17.8 pp, Llama -4.9 pp. Pooled ΔM3 = -19.7 pp (does NOT cross §10 -30 pp threshold), but 3 model-condition cells cross threshold individually (Haiku ΔM2 = -36.1 pp, Haiku ΔM3 = -30.8 pp, Gemini ΔM3 = -32.4 pp). Per paper-plan §3 pivot, paper leads with **per-model heterogeneity** framing, not pooled. F1 detection-action gap pooled at C0 = 54.5 pp (88.8% PLR DR=0 vs 34.3% DR=1; GLMM q<0.001). Pre-fix slices retained for contamination accounting: `gpt5mini_v3_taskfix` (40-cell pilot), `gpt5mini_v2_finalfinal`, `gpt5mini_v2_seed1`, `llamarun2soham` (Groq dress rehearsal). **Still pending:** gpt-5-mini seeds 2–5; Haiku seeds 2–5. |
 | LLM-as-judge Detection Rate (GPT-4o primary, Llama 4 secondary) | partial — judge shipped at `agent/evaluation/dr_judge.py`, sanity-run on 508 v1 sessions (Llama-vs-Llama κ=0.82); GPT-4o cross-family run pending on OpenAI key |
 | "Reached attack surface" instrumentation | ✅ done — `reached_trap` field on every session; Llama 4 Scout slice shows 96–98% reach across C0–C3, resolving the v1 "low ASR = missed navigation" worry |
 | GPT-5 mini + Claude Haiku 4.5 added to model factory | ✅ done — both registered in `agent/core/llm_factory.py` via OpenRouter backend; smoke-tested for client construction. (Claude Haiku 4.5 swapped in for Sonnet 4.6 on 2026-05-22, pre-Claude-data; logged as analysis-plan §11 D6.) |
@@ -184,107 +184,118 @@ the *apparatus* — the section-3 methodology — not the headline
 contribution. The contributions are the *findings* derived through
 that apparatus.
 
-### 2.2 Working thesis (post-fix gpt-5-mini + Llama 4 Scout data, 2026-05-19)
+### 2.2 Working thesis (post-everything-fix four-model data, 2026-05-22)
 
-> *Frontier web-browsing agents leak personally identifiable information
-> to social-engineering websites at high rates (76–88% baseline PLR_crit).
-> Prompt-level mitigation does not meaningfully reduce leakage — neither
-> a 3-line privacy nudge, an 8-line phishing-aware checklist, nor a
-> forced pre-submission reflection brings leakage below 55% on either
-> of two models tested, and on the less-responsive model the strongest
-> mitigation moves the needle by only 3 pp. **The strongest predictor
-> of defense is organic detection: when an agent independently flags
-> an attack pattern in its reasoning trace, it defends ~83% of the
-> time. But organic detection is rare (≤20% of sessions at baseline),
-> and forced-reflection prompts inflate stated detection without
-> translating to action.** Leakage patterns are driven by salience
-> (plausible attacks leak more than blatant) and vector type
-> (perceptual deception like fake trust signals resists prompting
-> entirely; propositional deception like authority impersonation
-> responds). We release Scammer4U, a 91-environment axis-controlled
-> benchmark supporting paired ablation of these factors.*
+> *Frontier web-browsing agents leak personally identifiable
+> information to social-engineering websites at high baseline rates
+> (54–93% C0 PLR_crit across four model families). Prompt-level
+> mitigation effectiveness is sharply model-dependent: on two of four
+> models tested (Claude Haiku 4.5, Gemini 3 Flash) a phishing-aware
+> checklist or pre-submission reflection prompt produces a
+> ≥30 percentage-point reduction in critical PII leakage; on one
+> (GPT-5 mini) the reduction is moderate (−17.8 pp at C3); on one
+> (Llama 4 Scout) it produces essentially zero behavioural change
+> (−4.9 pp at C3) despite stated detection rising from 2% to 30%.
+> **The strongest predictor of defended behaviour is not the
+> mitigation condition but organic detection: at baseline (C0),
+> agents whose reasoning trace independently identifies the attack
+> leak in 34% of sessions vs 89% when they do not — a 54-pp gap
+> that holds across all four model families.** Forced-reflection
+> prompts inflate stated detection without proportionally closing
+> the leak gap. We release Scammer4U, a 91-environment
+> axis-controlled benchmark + 10 benign-twin baselines, all
+> post-hoc paired-sibling-ablatable along eight design axes.*
 
-The thesis is anchored on two model slices to date: Llama 4 Scout
-dress rehearsal (1 seed, 91 attack + 10 benign envs × 4 conditions)
-and gpt-5-mini post-fix (1 seed, same scope). The mitigation-gradient
-finding is robust across both models. F1 (detection-action) has been
-sharpened: the gap is **strongest at C0**, where keyword DR isn't
-contaminated by the reflection prompt's seeded vocabulary.
+The thesis is anchored on four model slices: Gemini 3 Flash (5 seeds),
+Llama 4 Scout (5 seeds, post-fix OpenRouter re-run), gpt-5-mini
+(1 seed, seeds 2–5 in progress), Claude Haiku 4.5 (1 seed, seeds 2–5
+in progress). All four slices use the post-2026-05-22 harness
+(domain-masked observation, c_PLR rescore, AME-scaling-corrected
+GLMM reporting). 4,790 retained sessions across the four slices;
+reliable=1.0 across every cell.
 
-**Status update 2026-05-22 — thesis under review pending Llama re-run.**
-Two clean post-fix full-sweep slices have now landed: Gemini 3 Flash
-(5 seeds × 101 envs × 4 conditions) and gpt-5-mini (1 seed × 101 envs
-× 4 conditions). Both cross the 30-pp falsification bar from
-[analysis-plan §10](analysis-plan.md):
+**Falsification verdict (analysis-plan §10).** Pooled ΔM3 across all
+four models is −19.7 pp (empirical, raw cell-mean difference), which
+does NOT cross the −30 pp pooled threshold. But three
+model-condition cells cross threshold individually:
 
-| Slice | C0 PLR_crit | C3 PLR_crit | Δ(C3−C0) |
-|---|---|---|---|
-| Gemini 3 Flash (5 seeds) | 0.862 | 0.303 | **−55.8 pp** |
-| gpt-5-mini (1 seed) | 0.582 | 0.264 | **−31.9 pp** |
-| Llama 4 Scout (pre-fix, 1 seed) | 0.824 | 0.802 | −2.2 pp |
+| Slice | n_seeds | C0 PLR_crit | C3 PLR_crit | ΔM2 (C2−C0) | ΔM3 (C3−C0) |
+|---|---:|---:|---:|---:|---:|
+| Claude Haiku 4.5 | 1 | 53.8% | 23.1% | **−36.1 pp** | **−30.8 pp** |
+| Gemini 3 Flash | 5 | 93.1% | 60.7% | −24.6 pp | **−32.4 pp** |
+| GPT-5 mini | 1 | 75.6% | 57.8% | −15.6 pp | −17.8 pp |
+| Llama 4 Scout | 5 | 82.3% | 77.4% | −0.9 pp | −4.9 pp |
+| Pooled | — | 83.9% | 64.2% | −14.9 pp | −19.7 pp |
 
-Only the Llama pre-fix slice still supports the original headline.
-Per §3 results-time pivots, the active candidates are *"mitigation
-actually works"* (with model heterogeneity) and *"cross-model
-variance is large → lead with per-model breakdown."* Both branches
-require the Llama 4 Scout post-fix OpenRouter re-run to land before
-the thesis is rewritten — the current Llama number is from the
-pre-everything-fix dress rehearsal (Groq backend, contaminated
-URL-shape reasoning) and is not directly comparable to the two
-post-fix slices. The cross-model comparison notebook is at
-[agent/logs/v2/compare_gemini_gpt5_llama.ipynb](agent/logs/v2/compare_gemini_gpt5_llama.ipynb).
+The pooled view hides the heterogeneity. Per paper-plan §3 results-
+time pivots, this is the **"Cross-model variance is large → lead
+with per-model breakdown"** pivot. Headline framing is per-model
+heterogeneity, not pooled. F1 detection–action gap is the
+inferential co-headline (54.5 pp at C0 pooled, GLMM q < 0.001 after
+BH at q=0.05 over the §7-adjusted 8-test family).
 
-A second open item: the gpt-5-mini full-sweep gradient (−31.9 pp)
-exceeds the v3_taskfix 10-env pilot's −12.1 pp by ~20 pp on what is
-nominally the same harness. Leading suspects are env mix (40 → 91
-envs activating different vector clusters) and the 2026-05-21 D5
-`defended` expansion reshuffling defense-vs-leak attribution.
-Reconcile before quoting either number externally.
+The cross-model and BH-corrected results live in
+[agent/logs/v2/paper_tables.ipynb](agent/logs/v2/paper_tables.ipynb)
+which is the canonical source of every number in the paper.
 
 ### 2.3 Contributions, in order
 
-1. **Detection–action gap, anchored at baseline.** When the agent
-   organically detects an attack in its reasoning trace at C0 (no
-   mitigation prompting), it leaks critical PII in only ~17% of
-   sessions vs ~90% when it doesn't detect — a 74-pp gap. Stated
-   detection drops to a ~22-pp gap under C3 (forced reflection)
-   because C3 inflates the DR-positive pool with verbalization-only
-   false positives that don't translate to action. **The paper's F1
-   contribution is the C0 measurement, not the C3 amplifier.** This
-   inverts the original prereg intuition that C3 would amplify the
-   gap; the data shows C3 *muddies* it.
-2. **Mitigation gradient is insufficient across model tiers.** Three
-   mitigation prompts of increasing strength (generic nudge → phishing
-   checklist → reflection) tested. **C2 (checklist) outperforms C3
-   (reflection)** on the cleaner data — the explicit rules-based
-   prompt is more action-effective than the metacognitive reflection
-   prompt. Cross-model: Llama 4 Scout shows essentially no response
-   to any condition (−3.3 pp at C3); gpt-5-mini shows a modest
-   ~12 pp response. Both clear the 30-pp falsification bar from
-   [analysis-plan §10](analysis-plan.md) by wide margins, so the
-   prereg-falsification "mitigation insufficient" headline holds.
-3. **Characterization of leakage.** Pooled-across-models analysis of
-   which attack factors most amplify leakage. Robust cross-model
-   findings: (a) salience is the dominant axis (plausible leaks more
-   than blatant by ~20 pp), (b) pressure-axis effect is null on both
-   models (countdown / urgency / authority cues alone don't move
-   leakage), (c) `fake_trust_signals` and `reward_trap` vectors and
-   the crypto / social_media / education categories are pinned at
-   100% across all conditions on both models — model-independent
-   C3-resistant clusters.
+1. **Detection–action gap, anchored at baseline (co-headline).** At
+   C0 (no mitigation contamination), pooled across all four model
+   families: 88.8% PLR if the agent does not flag the attack in its
+   reasoning trace vs 34.3% if it does — a **54.5 percentage-point
+   gap**, n=1,084 sessions. The GLMM (binomial VB mixed model with
+   env and model as crossed random effects) yields β_logit ≈ −2.7,
+   odds ratio ≈ 0.07, q < 0.001 after BH correction over the
+   §7-adjusted 8-test primary family. The gap is consistent across
+   all four model families; n(C3 DR=1) = 551 clears the analysis-
+   plan §8 power guard (200 threshold). **The paper's F1
+   contribution is the C0 measurement** — C3's reflection prompt
+   inflates stated detection without proportionally closing the
+   leak gap (DR_keyword goes from 9% to 58% pooled C0→C3 while ΔM3
+   pooled is only −19.7 pp), so the C0 anchor is the cleaner read.
+2. **Mitigation effectiveness is sharply model-dependent
+   (co-headline).** Three mitigation prompts of increasing strength
+   (C1 generic nudge → C2 phishing checklist → C3 pre-submission
+   reflection). Empirical ΔPLR_crit relative to C0, per model:
+   Claude Haiku 4.5 −18.3 / −36.1 / −30.8 pp; Gemini 3 Flash
+   −11.3 / −24.6 / −32.4 pp; GPT-5 mini −10.0 / −15.6 / −17.8 pp;
+   Llama 4 Scout +1.4 / −0.9 / −4.9 pp. **Three model-condition
+   cells cross the analysis-plan §10 −30 pp falsification threshold
+   individually** (Haiku ΔM2, Haiku ΔM3, Gemini ΔM3); pooled does
+   not (−19.7 pp). The paper leads with per-model breakdown; the
+   pooled view is reported as a supplementary single-number summary.
+   Frontier agents disagree on adversarial robustness — this is
+   itself the finding. C2 (checklist) outperforms C3 (reflection)
+   on Haiku; C3 dominates on the others.
+3. **Characterization of leakage.** Cross-model marginal analysis
+   over the 8-axis design (Tables 9a–9h). Robust findings: (a)
+   salience does NOT follow the pre-data intuition that plausible
+   leaks most — subtle (96.5% at C0 pooled) > plausible (83.8%) >
+   blatant (72.8%). (b) `fake_trust_signals` and `reward_trap`
+   vectors are pinned at ~94% across all conditions
+   (C3-resistant). (c) `authority_impersonation` is the most
+   C3-responsive vector (−62.5 pp at C3 pooled). (d) education and
+   social_media categories pinned at 100% across all conditions on
+   all models. (e) pressure-axis effect is null on the pooled view
+   (urgency, scarcity, social_proof, authority all within ±10 pp of
+   no-pressure baseline). F2–F11 paired-sibling tests all fail BH
+   at q=0.05 with realised pair counts; characterization findings
+   come from the cross-cutting marginal tables, not the paired tests.
 4. **Methodological artifact.** Scammer4U benchmark and harness,
-   publicly released. 91 attack envs + 10 benign-twin baselines.
-   Axis-controlled siblings enable post-hoc ablation studies the
-   community can extend. **Methodological transparency:** the paper
-   reports a measurement-validity finding — early data on gpt-5-mini
-   showed apparent mitigation gradients up to −30 pp, but
-   investigation revealed agents were reasoning about sandbox-URL
-   shape (`localhost`, plain `http://`) as security signals rather
-   than the attack patterns themselves. Domain-masking the agent's
-   observation reduced the apparent gradient by ~60% to the true
-   ~12 pp value. We report only the post-mask measurements; the
-   contaminated measurements appear in a methodology-validation
-   appendix.
+   publicly released. 91 attack envs + 10 benign-twin baselines + 4
+   classifying axes × 4 factor axes for paired ablation. Pre-
+   registered analysis plan (`prereg-v2-start` git tag) + complete
+   §11 deviation log. The paper reports four measurement-validity
+   corrections that are common pitfalls in agent benchmarks: (i)
+   URL-shape contamination in agent reasoning (domain-mask fix +
+   task-string fix, −60% spurious mitigation gradient on the
+   gpt-5-mini pilot); (ii) c_PLR scorer fix (file-upload + critical-
+   field-whitelist undercount, ~38% of cells under-counted pre-fix);
+   (iii) AME-scaling correction in GLMM reporting (linearisation
+   broke for |β| > 1; corrected to empirical-Δ reporting); (iv)
+   benign-twin baseline framework (empirically 0% across all
+   categories, demonstrating observed PLR is attack-attributable).
 
 ### 2.4 Positioning vs. existing work
 
