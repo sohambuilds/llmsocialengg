@@ -43,10 +43,10 @@ MODEL_REGISTRY: dict[str, dict] = {
         # action-selection use case. Bump to "medium" if quality regresses.
         "reasoning_effort": "low",
     },
-    "anthropic/claude-sonnet-4.6": {
+    "anthropic/claude-haiku-4.5": {
         "backend": "openrouter",
         "vision": True,
-        "label": "Claude Sonnet 4.6 (OpenRouter)",
+        "label": "Claude Haiku 4.5 (OpenRouter)",
     },
     "google/gemini-3-flash-preview": {
         "backend": "openrouter",
@@ -70,9 +70,10 @@ MODEL_ALIASES: dict[str, str] = {
     "gpt-oss-120b": "openai/gpt-oss-120b",
     "gpt-5-mini":   "openai/gpt-5-mini",
     "gpt5-mini":    "openai/gpt-5-mini",
-    "sonnet-4.6":   "anthropic/claude-sonnet-4.6",
-    "sonnet":       "anthropic/claude-sonnet-4.6",
-    "claude":       "anthropic/claude-sonnet-4.6",
+    "haiku":        "anthropic/claude-haiku-4.5",
+    "haiku-4.5":    "anthropic/claude-haiku-4.5",
+    "claude":       "anthropic/claude-haiku-4.5",
+    "claude-haiku": "anthropic/claude-haiku-4.5",
 }
 
 

@@ -278,7 +278,7 @@ V2_MODELS = [
     "google/gemini-3-flash-preview",       # via OpenRouter
     "meta-llama/llama-4-scout",            # via OpenRouter
     "openai/gpt-5-mini",                   # via OpenRouter (full GPT-5 scratched 2026-05-17)
-    "anthropic/claude-sonnet-4.6",         # via OpenRouter
+    "anthropic/claude-haiku-4.5",          # via OpenRouter
 ]
 
 
@@ -322,9 +322,10 @@ Available model aliases:
   gpt-oss       -> openai/gpt-oss-120b           (Groq, legacy pilot)
   gpt-oss-120b  -> openai/gpt-oss-120b           (Groq, legacy pilot)
   gpt-5-mini    -> openai/gpt-5-mini             (via OpenRouter)
-  sonnet-4.6    -> anthropic/claude-sonnet-4.6   (via OpenRouter)
+  haiku         -> anthropic/claude-haiku-4.5    (via OpenRouter)
+  claude        -> anthropic/claude-haiku-4.5    (via OpenRouter)
   all           -> run all 3 pilot benchmark models sequentially
-  all-v2        -> run the 4 v2 models (Gemini 3 Flash, Llama 4 Scout, GPT-5 mini, Sonnet 4.6)
+  all-v2        -> run the 4 v2 models (Gemini 3 Flash, Llama 4 Scout, GPT-5 mini, Claude Haiku 4.5)
 
 Conditions:
   C0  baseline (default)

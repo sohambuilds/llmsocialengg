@@ -21,10 +21,12 @@ of the stats terms used here is at the bottom (§14).
 - **Data:** the v2 sweep — 91 attack envs × 4 models × 5 seeds × 4
   conditions (C0/C1/C2/C3) + 10 benign-twin envs × 4 models × 5
   seeds × C0 only. Total ≈7,480 sessions.
-- **Models:** GPT-5 mini, Claude Sonnet 4.6, Gemini 3 Flash, Llama 4
+- **Models:** GPT-5 mini, Claude Haiku 4.5, Gemini 3 Flash, Llama 4
   Scout. (GPT-5 full was registered then scratched 2026-05-17 before
   any v2 data collection; substitution made pre-tag and is therefore
-  not a deviation under §11.)
+  not a deviation under §11. Claude Sonnet 4.6 was the prereg-time
+  Anthropic pick; swapped to Haiku 4.5 on 2026-05-22 before any Claude
+  data was collected — logged as §11 D6.)
 - **Conditions:** C0 = no mitigation, C1 = generic privacy nudge,
   C2 = phishing-aware checklist, C3 = pre-submission reflection.
   Final prompt strings live in `agent/config/mitigations/` and are
@@ -294,7 +296,7 @@ pre-registered.
 - **D3. Bandwidth shortfall.** If 4-person execution cannot keep up
   at end of week 2, drop C1 and C2. Primary family becomes 11
   tests (F1, F2–F11, M3). C1 and C2 are not reported.
-- **D4. Model API access lost.** If GPT-5 mini or Claude Sonnet 4.6
+- **D4. Model API access lost.** If GPT-5 mini or Claude Haiku 4.5
   becomes unavailable mid-sweep, that model's cells are reported
   as missing data; the primary family is re-run on the available
   3 models; the change is documented in limitations.
@@ -382,6 +384,21 @@ pre-registered.
   critical leaks were predominantly leaks the agent committed at
   every condition including C3); the pre-rescore numbers in any
   earlier readings of the data are superseded.
+
+- **D6. Anthropic-slot model swap (2026-05-22).** The prereg-time
+  Anthropic pick was Claude Sonnet 4.6 (§1). On 2026-05-22, **before
+  any Claude data was collected** for the v2 sweep, the Anthropic
+  slot was swapped to Claude Haiku 4.5
+  (`anthropic/claude-haiku-4.5` via OpenRouter) for cost and latency
+  reasons on the 91 × 4-condition × 5-seed cell count. This is
+  analogous to the GPT-5 → mini swap recorded in §1: a pre-data
+  substitution within the same provider's frontier family.
+  Frozen v2 model versions in `agent/core/llm_factory.py` are
+  updated to reflect the swap. All `Claude Sonnet 4.6` mentions in
+  this document, paper-plan.md, and the v2 status table are
+  superseded by `Claude Haiku 4.5` on the same dates; D4's
+  API-loss rule now refers to Haiku 4.5. No Claude data exists
+  under the Sonnet 4.6 label, so no measurements move.
 
 Any deviation not on this list, executed after the tag, must be
 documented as a post-hoc deviation in the paper's limitations

@@ -1004,7 +1004,8 @@ Model Aliases (CLI shorthand):
   llama-scout   → meta-llama/llama-4-scout      (OpenRouter)
   llama4        → meta-llama/llama-4-scout      (OpenRouter)
   gpt-5-mini    → openai/gpt-5-mini             (OpenRouter)
-  sonnet        → anthropic/claude-sonnet-4.6   (OpenRouter)
+  claude        → anthropic/claude-haiku-4.5    (OpenRouter)
+  haiku         → anthropic/claude-haiku-4.5    (OpenRouter)
   gpt-oss       → openai/gpt-oss-120b           (Groq, legacy)
 
 Benchmark Subset (10 environments, 3 × 10 = 30 total runs):

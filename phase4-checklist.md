@@ -68,14 +68,17 @@ contract.
 ## Week 1 — Days 1–5: build the new pieces
 
 ### E1
-- [x] Add GPT-5 mini + Claude Sonnet 4.6 to `agent/core/llm_factory.py`.
+- [x] Add GPT-5 mini + Claude Haiku 4.5 to `agent/core/llm_factory.py`.
       Both registered with backend=`openrouter`, vision=True. Aliases
-      `gpt-5-mini` and `sonnet`/`sonnet-4.6`/`claude` resolve. Client
+      `gpt-5-mini` and `claude`/`haiku`/`haiku-4.5` resolve. Client
       construction smoke (no API call) passes. Live smoke on
       `cluttered_downloads` × 5 steps deferred until `OPENROUTER_API_KEY`
       is set on the Linux server. (Full GPT-5 was registered briefly
       then scratched 2026-05-17 in favour of mini — cost / latency
-      tradeoff for the 91 × 5-seed × 4-condition cell count.)
+      tradeoff for the 91 × 5-seed × 4-condition cell count. The
+      Anthropic slot was Sonnet 4.6 at prereg time and swapped to
+      Haiku 4.5 on 2026-05-22, pre-Claude-data — see analysis-plan
+      §11 D6.)
 - [x] Reached-trap instrumentation. Scorer emits
       `metrics.reached_trap = {reached_trap: bool, trap_urls_visited:
       [...], urls_visited_count: int}` on every session. Verified

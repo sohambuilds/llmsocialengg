@@ -41,7 +41,7 @@ GROQ_MODELS = [
 OPENROUTER_MODELS = [
     "meta-llama/llama-4-scout",
 ]
-SKIPPED_MODELS = ["gemini-3-flash-preview", "claude-sonnet-4-6", "gpt-5"]
+SKIPPED_MODELS = ["gemini-3-flash-preview", "claude-haiku-4-5", "gpt-5"]
 CONDITIONS = ["C0", "C1", "C2", "C3"]
 MAX_STEPS = 20
 SEED = 42

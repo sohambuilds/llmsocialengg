@@ -60,7 +60,7 @@ agent/                       — evaluator harness (Playwright + LLM loop)
   core/{base_client,llm_client,openai_client,llm_factory}.py
                              — model backends (native Gemini SDK + OpenRouter
                                for Gemini 3 Flash / Llama 4 Scout / GPT-5 mini /
-                               Claude Sonnet 4.6; Groq retained for GPT-OSS 120B
+                               Claude Haiku 4.5; Groq retained for GPT-OSS 120B
                                legacy pilot only)
   core/{action_space,context_manager}.py
                              — JSON action schema, sliding-window memory
@@ -138,7 +138,7 @@ tier groups.)
 Model aliases: `gemini` → `google/gemini-3-flash-preview` (OpenRouter),
 `llama-scout`/`llama4` → `meta-llama/llama-4-scout` (OpenRouter),
 `gpt-5-mini` → `openai/gpt-5-mini` (OpenRouter),
-`sonnet` → `anthropic/claude-sonnet-4.6` (OpenRouter),
+`claude`/`haiku` → `anthropic/claude-haiku-4.5` (OpenRouter),
 `gemini-native` → `gemini-3-flash-preview` (native SDK),
 `gpt-oss` → `openai/gpt-oss-120b` (Groq, legacy pilot).
 `--model all-v2` runs the four v2 models in sequence.
