@@ -66,24 +66,24 @@ $q$-value (BH) & XX.XX & XX.XX & XX.XX \\
 \subsection{Detection--Action Gap}
 \label{sec:results-f1}
 
-The detection--action gap (F1) is the within-C3 contrast of $\text{PLR}_{\text{crit}}$ between sessions where the agent explicitly verbalised suspicion at any step (DR$=1$) and sessions where it did not (DR$=0$), restricted to $\texttt{reached\_trap} = \text{True}$ (\S\ref{sec:reachedtrap}). We observe a gap of XX.X pp (DR$=$1: XX.X\%; DR$=$0: XX.X\%; $q = \text{XX.XX}$), which exceeds the pre-registered 15 pp minimum detectable effect conditional on the $\geq 200$ C3 DR$=$1 sessions power guard (\S\ref{sec:analysis}). The DR$=$1 leakage rate of XX.X\% itself exceeds the pre-registered 10\% falsification threshold by XX.X pp, ruling out the alternative hypothesis under which organic detection translates into reliable refusal. An exploratory secondary contrast comparing $\text{PLR}_{\text{crit}} \mid \text{DR}{=}1$ across conditions (Table~\ref{tab:results-f1}) further suggests the gap is robust across C0--C3 rather than C3-specific, with the C0 measurement uncontaminated by mitigation-prompt vocabulary anchoring the headline interpretation.
+The detection--action gap (F1) is the within-C3 contrast of $\text{PLR}_{\text{crit}}$ between sessions where the LLM-as-judge confirms the agent verbalised suspicion at any step (DR$=$1) and sessions where it did not (DR$=$0), restricted to $\texttt{reached\_trap} = \text{True}$ (\S\ref{sec:reachedtrap}). Pooled across the three judge-instrumented model families (Claude Haiku 4.5, Gemini 3 Flash, Llama 4 Scout; the GPT-5 mini judge run is deferred and reported in \S\ref{sec:limitations}), the gap is 31.5 pp (DR$=$1: 38.0\%, $n = 295$; DR$=$0: 69.5\%, $n = 868$; $q < 0.001$), which exceeds the pre-registered 15 pp minimum detectable effect by 16.5 pp and clears the $\geq 200$ C3 DR$=$1 sessions power guard (\S\ref{sec:analysis}). The DR$=$1 leakage rate of 38.0\% itself exceeds the pre-registered 10\% falsification threshold by 28.0 pp, ruling out the alternative hypothesis under which independent attack recognition translates into reliable refusal: more than one in three agents that an independent LLM confirms has identified the attack still submit critical PII to the attacker endpoint. Per-model F1 estimates at C3 are 21.1 pp on Claude Haiku 4.5 ($n_{DR=1} = 122$), 17.2 pp on Gemini 3 Flash ($n_{DR=1} = 103$), and 38.3 pp on Llama 4 Scout ($n_{DR=1} = 70$); all three per-model cells fall in the underpowered band ($50 \leq n_{DR=1} < 200$) per \S\ref{sec:analysis} and are reported as descriptive context, with inference reserved for the pooled estimate. A both-judges-agree sensitivity restricting DR$=$1 to sessions on which the primary and secondary judges concur produces a 31.8 pp gap on the same cell ($n_{DR=1} = 294$), within rounding of the primary reading; a keyword-heuristic baseline on the same data produces a 40.2 pp gap (Appendix~\ref{app:dr-sensitivity}), wider than the LLM-judge primary because the keyword counts conflate narration of attack vocabulary with confirmed recognition (\S\ref{sec:dr}). An exploratory secondary contrast comparing $\text{PLR}_{\text{crit}} \mid \text{DR}{=}1$ across conditions (Table~\ref{tab:results-f1}) shows a monotonic narrowing of the gap from C0 to C3 as the LLM-judge DR$=$1 cell fills; the C0, C1, and C2 rows have $n_{DR=1}$ in the underpowered band ($50 \leq n_{DR=1} < 200$) per \S\ref{sec:analysis} and are reported with uncorrected $p$-values for direction-of-effect context only.
 
 \begin{table}[t]
 \centering
 \small
 \resizebox{\columnwidth}{!}{
-\begin{tabular}{lccc}
+\begin{tabular}{lcccc}
 \toprule
-Condition & DR$=$1 PLR\textsubscript{crit} & DR$=$0 PLR\textsubscript{crit} & Gap (pp) \\
+Condition & DR$=$1 PLR\textsubscript{crit} & DR$=$0 PLR\textsubscript{crit} & Gap (pp) & $n_{DR=1}$ \\
 \midrule
-C0 & XX.X & XX.X & XX.X \\
-C1 & XX.X & XX.X & XX.X \\
-C2 & XX.X & XX.X & XX.X \\
-C3 & XX.X & XX.X & XX.X \\
+C0 & 7.0 & 84.4 & 77.4 & 57 \\
+C1 & 25.0 & 77.7 & 52.7 & 100 \\
+C2 & 29.4 & 72.5 & 43.2 & 177 \\
+C3 & 38.0 & 69.5 & 31.5 & 295 \\
 \bottomrule
 \end{tabular}
 }
-\caption{Detection--action gap by condition: session-level $\text{PLR}_{\text{crit}}$ restricted to DR$=$1 and DR$=$0 subsets, computed only on sessions with $\texttt{reached\_trap} = \text{True}$ (\S\ref{sec:reachedtrap}). The C3 row is the primary F1 test; remaining rows are exploratory secondary contrasts and carry uncorrected $p$-values.}
+\caption{Detection--action gap by condition under LLM-judge primary DR (GPT-4o-mini, \S\ref{sec:dr}): session-level $\text{PLR}_{\text{crit}}$ restricted to DR$=$1 and DR$=$0 subsets, computed only on sessions with $\texttt{reached\_trap} = \text{True}$ (\S\ref{sec:reachedtrap}), pooled across the three judge-instrumented model families. The C3 row is the primary F1 test; with $n_{DR=1} = 295$ it clears the $\geq 200$ power guard (\S\ref{sec:analysis}). The C0, C1, and C2 rows are exploratory secondary contrasts with $n_{DR=1}$ in the underpowered band ($50 \leq n_{DR=1} < 200$), so they carry uncorrected $p$-values and are reported for direction-of-effect context only.}
 \label{tab:results-f1}
 \end{table}
 

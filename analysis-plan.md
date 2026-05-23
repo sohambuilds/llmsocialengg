@@ -232,6 +232,11 @@ publish only what the conservative computation justifies.
     (paper-plan.md §2.3 Contribution #2).
   - If `n(C3 sessions with DR=1) < 50`, F1 is reported as
     descriptive only — point estimate, no inference.
+  - **Resolution under LLM-judge DR (§11 D9):** at the pooled-of-3
+    level (Haiku + Gemini + Llama, n_DR1 = 295), F1 stays in the
+    primary family. At the per-model level all three are
+    descriptive-with-CI (n_DR1 ∈ [70, 122]). F1 is reported as a
+    pooled-only inference claim under LLM-judge.
 
 ## 9. Benign-baseline adjustment
 
@@ -461,6 +466,62 @@ pre-registered.
   only the post-hoc projection of the GLMM β onto the probability
   scale.
 
+- **D9. LLM-judge DR landing + F1 anchor confirmation (2026-05-23).**
+  The cross-family LLM-judge DR run (`openai/gpt-4o-mini` primary,
+  `meta-llama/llama-4-scout` secondary) completed for the three
+  judge-instrumented models — Claude Haiku 4.5, Gemini 3 Flash,
+  Llama 4 Scout — across the full 2,020-session pool per model
+  (5 seeds × 4 conditions × 101 envs). Secondary judge ran on the
+  full pool, not just the κ sample subsets. Results in
+  `agent/logs/v2/<model>_dr_judge/dr_summary_full.json`. GPT-5 mini
+  has no judge run; its F1 cell is reported under keyword DR only,
+  pending the seeds-2–5 sweep and a judge follow-up. Per §4 the
+  primary form of F1 is already C3-only (`within C3, DR=1 vs DR=0,
+  reached_trap=True`); the LLM-judge DR substitution into that
+  cell is a §4-prescribed substitution, not a deviation. What IS
+  logged here is the bookkeeping:
+
+  1. The paper-plan §2.3 #1 framing earlier drafted F1 at C0
+     (54.5 pp pooled keyword) because keyword DR at C3 was
+     contaminated by the reflection-prompt's vocabulary. Under
+     LLM-judge that contamination disappears (judge filters
+     suspicion-flavored narration). C3 becomes both well-powered
+     and cleanly interpretable; C0 LLM-judge collapses to n_DR1 =
+     64 (< 200, §8 underpowered). The paper-plan #1 anchor returns
+     to the §4 prereg form (C3) and C0 LLM-judge is reported as a
+     sensitivity result.
+  2. Pooled-of-3 F1 at C3 under LLM-judge primary: gap 31.5 pp,
+     n_DR1 = 295 — clears the §8 200-threshold for primary-family
+     status.
+  3. Per-model F1 at C3 under LLM-judge: Haiku 21.1 pp / n_DR1
+     122; Gemini 17.2 pp / 103; Llama 38.3 pp / 70 — all in
+     [50, 200), so per-model F1 is **descriptive-with-CI only**
+     under §8. F1 is a pooled-only inference claim under LLM-judge.
+  4. Both-judges-agree sensitivity at C3: gap 31.8 pp, n_DR1 = 294
+     — within rounding of primary-only. Inter-judge κ on full pool
+     (session-level): Haiku 0.41, Gemini 0.39, Llama 0.44. Higher
+     than the sample-subset κ (0.30 / 0.34 / 0.38) cited in earlier
+     pre-data drafts because the sample subset was targeted-ambiguous.
+  5. D2 (DR judge fails human validation, κ < 0.7) does NOT fire:
+     §4 specifies κ vs *human* labels; the human-labelled subset
+     remains future work for §11 limitations. The inter-judge κ
+     reported here is between two LLM judges and is the basis for
+     the both-agree sensitivity, not the §D2 trigger.
+  6. The §10 falsification criterion for F1
+     (within-C3 PLR_crit | DR=1 ≤ 0.10) is NOT crossed under either
+     keyword or LLM-judge DR. Under LLM-judge primary at C3:
+     PLR_DR1 = 38.0% pooled.
+
+  Recompute notebook: `agent/logs/v2/dr_judge_f1.ipynb` (CLI mirror:
+  `agent/logs/v2/dr_judge_f1.py`). The notebook also surfaces a
+  measurement note for the paper's methodology section: keyword DR
+  conflates narrators with true detectors. At C3 reach=1, the
+  keyword-DR=1 cell partitions into 279 true detectors (PLR 34.8 pp)
+  and 448 narrators (PLR 53.1 pp). When LLM-judge moves the narrators
+  into DR=0, both PLR_DR1 and PLR_DR0 fall, but PLR_DR0 falls more,
+  which is why the apparent gap narrows from 40.2 → 31.5 pp despite
+  both endpoints becoming more honest.
+
 Any deviation not on this list, executed after the tag, must be
 documented as a post-hoc deviation in the paper's limitations
 section.
@@ -479,7 +540,9 @@ no falsification criteria.
 - F1 secondary (C3 DR=1 vs C0 DR=1).
 - TCR × ASR trade-off curves.
 - Reached-trap-conditional ASR.
-- Judge-vs-keyword DR sensitivity.
+- Judge-vs-keyword DR sensitivity is reported in-line with F1
+  (see §11 D9) rather than as a separate section, because the F1
+  anchor decision depends on it.
 
 ## 13. Tag and lock
 

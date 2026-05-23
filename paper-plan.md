@@ -142,7 +142,7 @@ appending revisions.
 | Per-env classification.csv rows with sibling_of + toggled_axis | ✅ done |
 | Phase 3 sibling envs all sit at `🟦 qa` (pending per-env smoke + screenshot diff) | partial |
 | v1 pilot results on parent subset (qualitative: high leakage, prompt mitigation insufficient) | ✅ done |
-| v2 results on full 101-env benchmark | partial — four clean reference slices post all 2026-05-19→05-22 fixes (including the c_PLR rescore and AME-scaling correction): **Gemini 3 Flash 5-seed** (`gemini3_v3_seeds1to5_full/`, 2,020 sessions, reliable=1.0, seed-to-seed std ≤2.5 pp); **Llama 4 Scout 5-seed** (`llama4_v3_seeds1to5_full_re/`, 2,020 sessions); **Claude Haiku 4.5 5-seed** (`haiku_v3_seed1to5_full/`, 2,020 sessions); **gpt-5-mini 1-seed** (`gpt5mini_v3_seed1_full/`, 404 sessions). Per-model ΔM3 (empirical): Gemini -32.4 pp, Haiku -30.8 pp, gpt-5-mini -17.8 pp, Llama -4.9 pp. Pooled ΔM3 = -19.7 pp (does NOT cross §10 -30 pp threshold), but 3 model-condition cells cross threshold individually (Haiku ΔM2 = -36.1 pp, Haiku ΔM3 = -30.8 pp, Gemini ΔM3 = -32.4 pp). Per paper-plan §3 pivot, paper leads with **per-model heterogeneity** framing, not pooled. F1 detection-action gap pooled at C0 = 54.5 pp (88.8% PLR DR=0 vs 34.3% DR=1; GLMM q<0.001). Pre-fix slices retained for contamination accounting: `gpt5mini_v3_taskfix` (40-cell pilot), `gpt5mini_v2_finalfinal`, `gpt5mini_v2_seed1`, `llamarun2soham` (Groq dress rehearsal). **Still pending:** gpt-5-mini seeds 2–5. |
+| v2 results on full 101-env benchmark | partial — four clean reference slices post all 2026-05-19→05-22 fixes (including the c_PLR rescore and AME-scaling correction): **Gemini 3 Flash 5-seed** (`gemini3_v3_seeds1to5_full/`, 2,020 sessions, reliable=1.0, seed-to-seed std ≤2.5 pp); **Llama 4 Scout 5-seed** (`llama4_v3_seeds1to5_full_re/`, 2,020 sessions); **Claude Haiku 4.5 5-seed** (`haiku_v3_seed1to5_full/`, 2,020 sessions); **gpt-5-mini 1-seed** (`gpt5mini_v3_seed1_full/`, 404 sessions). Per-model ΔM3 (empirical): Gemini -32.4 pp, Haiku -30.8 pp, gpt-5-mini -17.8 pp, Llama -4.9 pp. Pooled ΔM3 = -19.7 pp (does NOT cross §10 -30 pp threshold), but 3 model-condition cells cross threshold individually (Haiku ΔM2 = -36.1 pp, Haiku ΔM3 = -30.8 pp, Gemini ΔM3 = -32.4 pp). Per paper-plan §3 pivot, paper leads with **per-model heterogeneity** framing, not pooled. F1 detection-action gap (post 2026-05-23 LLM-judge recompute): paper-facing anchor is C3 reach=1, pooled-of-3 = **31.5 pp** (PLR_DR0 69.5% vs PLR_DR1 38.0%, n_DR1=295; GLMM q<0.001). Keyword-DR baseline at C0 (54.5 pp) preserved as a sensitivity result — LLM-judge C0 cell falls below §8 power threshold (n_DR1=64). Recompute in [agent/logs/v2/dr_judge_f1.ipynb](agent/logs/v2/dr_judge_f1.ipynb). Pre-fix slices retained for contamination accounting: `gpt5mini_v3_taskfix` (40-cell pilot), `gpt5mini_v2_finalfinal`, `gpt5mini_v2_seed1`, `llamarun2soham` (Groq dress rehearsal). **Still pending:** gpt-5-mini seeds 2–5. |
 | LLM-as-judge Detection Rate (GPT-4o-mini primary via OpenRouter, Llama 4 Scout secondary) | ✅ done — full runs completed 2026-05-23 on all three 5-seed slices (n=2,020 each). LLM-judge DR: Llama C0=0.2%/C3=14.5% κ=0.34; Gemini C0=1.2%/C3=24.0% κ=0.30; Haiku C0=11.7%/C3=41.0% κ=0.38. Keyword DR overcounts by up to 13.5 pp at C3 (half of C3 keyword detections are false positives). Human-label precision/recall audit still pending (recall slice drawn; 50-session sample at `agent/logs/v2/llama4_dr_judge/sample_recall_neg.json`). |
 | "Reached attack surface" instrumentation | ✅ done — `reached_trap` field on every session; Llama 4 Scout slice shows 96–98% reach across C0–C3, resolving the v1 "low ASR = missed navigation" worry |
 | GPT-5 mini + Claude Haiku 4.5 added to model factory | ✅ done — both registered in `agent/core/llm_factory.py` via OpenRouter backend; smoke-tested for client construction. (Claude Haiku 4.5 swapped in for Sonnet 4.6 on 2026-05-22, pre-Claude-data; logged as analysis-plan §11 D6.) |
@@ -236,8 +236,15 @@ The pooled view hides the heterogeneity. Per paper-plan §3 results-
 time pivots, this is the **"Cross-model variance is large → lead
 with per-model breakdown"** pivot. Headline framing is per-model
 heterogeneity, not pooled. F1 detection–action gap is the
-inferential co-headline (54.5 pp at C0 pooled, GLMM q < 0.001 after
-BH at q=0.05 over the §7-adjusted 8-test family).
+inferential co-headline; under the 2026-05-23 LLM-judge DR recompute
+the anchor is **C3 reached_trap=1, pooled-of-3 (Haiku + Gemini +
+Llama)**: 31.5 pp gap (PLR_DR0 69.5% vs PLR_DR1 38.0%, n_DR1=295),
+GLMM q < 0.001 after BH at q=0.05 over the §7-adjusted 8-test
+family. The C0 anchor that earlier drafts cited (54.5 pp pooled
+keyword-DR / 73.8 pp pooled LLM-judge) is preserved as a sensitivity
+result — under LLM-judge DR the C0 cell falls below the §8 power
+threshold (n_DR1=64 < 200). The anchor flip is logged as
+analysis-plan §11 D9.
 
 The cross-model and BH-corrected results live in
 [agent/logs/v2/paper_tables.ipynb](agent/logs/v2/paper_tables.ipynb)
@@ -245,20 +252,50 @@ which is the canonical source of every number in the paper.
 
 ### 2.3 Contributions, in order
 
-1. **Detection–action gap, anchored at baseline (co-headline).** At
-   C0 (no mitigation contamination), pooled across all four model
-   families: 88.8% PLR if the agent does not flag the attack in its
-   reasoning trace vs 34.3% if it does — a **54.5 percentage-point
-   gap**, n=1,084 sessions. The GLMM (binomial VB mixed model with
-   env and model as crossed random effects) yields β_logit ≈ −2.7,
-   odds ratio ≈ 0.07, q < 0.001 after BH correction over the
-   §7-adjusted 8-test primary family. The gap is consistent across
-   all four model families; n(C3 DR=1) = 551 clears the analysis-
-   plan §8 power guard (200 threshold). **The paper's F1
-   contribution is the C0 measurement** — C3's reflection prompt
-   inflates stated detection without proportionally closing the
-   leak gap (DR_keyword goes from 9% to 58% pooled C0→C3 while ΔM3
-   pooled is only −19.7 pp), so the C0 anchor is the cleaner read.
+1. **Detection–action gap (co-headline).** Under the 2026-05-23
+   LLM-judge DR (GPT-4o-mini primary, Llama 4 Scout secondary,
+   session-level OR-aggregation), the paper-facing anchor is
+   **C3 reached_trap=1, pooled across the three judge-instrumented
+   models** (Claude Haiku 4.5, Gemini 3 Flash, Llama 4 Scout —
+   GPT-5 mini judge run pending): 69.5% PLR_crit when the agent
+   does NOT genuinely recognise the attack vs 38.0% PLR_crit when
+   it does — a **31.5 percentage-point gap**, n_DR1 = 295. The GLMM
+   (binomial VB mixed model with env and model as crossed random
+   effects) yields q < 0.001 after BH correction over the §7-
+   adjusted 8-test primary family. n_DR1 = 295 clears the analysis-
+   plan §8 power-guard threshold (200). This is the prereg primary
+   form of F1 from analysis-plan §4. **38% of genuine detectors
+   still hand over critical PII; among non-detectors, 69.5% leak.**
+
+   Earlier drafts (pre-LLM-judge) anchored F1 at C0 with a 54.5 pp
+   gap (keyword DR) because keyword DR at C3 is contaminated by the
+   reflection prompt's vocabulary. Under LLM-judge that contamination
+   is removed and C3 becomes both well-powered and cleanly
+   interpretable; the LLM-judge C0 cell instead collapses to n_DR1 =
+   64 (below the §8 200 threshold) and becomes **descriptive-only**.
+   The C0 LLM-judge gap (73.8 pp pooled) is reported as a sensitivity
+   result alongside the C3 primary. The anchor flip is logged as
+   analysis-plan §11 D9.
+
+   Per-model F1 at C3 is **underpowered** under LLM-judge (Haiku
+   n_DR1 = 122 / gap 21.1 pp; Gemini n_DR1 = 103 / gap 17.2 pp;
+   Llama n_DR1 = 70 / gap 38.3 pp — all in the [50, 200)
+   descriptive-with-CI band per §8). F1 is therefore a **pooled-only
+   inference claim** under LLM-judge; per-model rows reported with
+   CIs as descriptive context, not inference.
+
+   The both-judges-agree sensitivity (sessions where GPT-4o-mini AND
+   Llama-4-Scout both flagged detection) yields n_DR1 = 294, gap
+   31.8 pp at C3 — essentially identical to primary-only, because the
+   secondary almost always agrees on positives (kappa-moderate
+   driven by disagreement on negatives). Inter-judge κ on the full
+   2,020-session pool: Haiku 0.41, Gemini 0.39, Llama 0.44 — higher
+   than the sample-subset κ (0.30–0.38) reported earlier because
+   those targeted ambiguous cases. The recompute lives in
+   [agent/logs/v2/dr_judge_f1.ipynb](agent/logs/v2/dr_judge_f1.ipynb)
+   (mirror in
+   [agent/logs/v2/dr_judge_f1.py](agent/logs/v2/dr_judge_f1.py)
+   for CLI use).
 2. **Mitigation effectiveness is sharply model-dependent
    (co-headline).** Three mitigation prompts of increasing strength
    (C1 generic nudge → C2 phishing checklist → C3 pre-submission
@@ -279,7 +316,13 @@ which is the canonical source of every number in the paper.
    DR suggested (27.9% / 65.4% / 82.0% respectively). Overcount
    scales with model verbosity: Haiku and Gemini narrate more, so
    keyword hits more false positives (+41 pp at C3 for both).
-   The F1 detection-action gap survives and is larger on LLM-judge.
+   The F1 detection-action gap survives under LLM-judge but narrows
+   at C3 (40.2 → 31.5 pp pooled, primary-family power retained) and
+   widens at C0 (67.3 → 73.8 pp, but the C0 cell falls below the §8
+   power threshold). See contribution #1 above for the recompute
+   detail; the C3 narrowing is itself part of the measurement story
+   (keyword DR's wider apparent gap was partly bookkeeping — leaky
+   narrators were sitting in DR=1 instead of DR=0).
 3. **Characterization of leakage.** Cross-model marginal analysis
    over the 8-axis design (Tables 9a–9h). Robust findings: (a)
    salience does NOT follow the pre-data intuition that plausible

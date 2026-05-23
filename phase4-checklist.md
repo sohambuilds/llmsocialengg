@@ -558,13 +558,22 @@ issue and should be cleaned in the same pass.
       condition or cut to highest-leakage subset.
 
 ### E2
-- [ ] Day 13–14: DR judge over all 7,480 logs. Half-day at high
-      parallelism.
+- [x] Day 13–14: DR judge over all logs. **Done 2026-05-23** —
+      LLM-judge (`openai/gpt-4o-mini` primary, `meta-llama/llama-4-scout`
+      secondary) ran on 6,060 sessions total (5 seeds × 4 cond × 101
+      envs × 3 judge-instrumented models). Outputs in
+      `agent/logs/v2/<model>_dr_judge/dr_summary_full.json`. GPT-5 mini
+      judge run deferred until its seeds 2–5 land.
 - [ ] Day 14–15: F1–F11 hypothesis tests per pre-reg.
 - [ ] Mitigation comparisons: C1 vs C0, C2 vs C0, C3 vs C0.
-- [ ] **F1 detection–action gap test:** among C3 runs where the
-      agent verbalized suspicion (DR=1), leakage rate? Compare to
-      DR=0 within C3, and to baseline DR-conditional leakage in C0.
+- [x] **F1 detection–action gap test** — recomputed 2026-05-23 under
+      LLM-judge DR (analysis-plan §11 D9). Anchor: C3 reach=1,
+      pooled-of-3 models, gap **31.5 pp** (n_DR1 = 295,
+      primary-family). C0 sensitivity: 73.8 pp (n_DR1 = 64,
+      underpowered). Per-model F1 at C3 all descriptive-with-CI (n_DR1
+      ∈ [70, 122]). Recompute notebook:
+      [agent/logs/v2/dr_judge_f1.ipynb](agent/logs/v2/dr_judge_f1.ipynb).
+      Remaining for §4 prereg deliverable: GLMM fit + Wald p / BH-q.
 - [ ] Benign-baseline subtraction. Per PII tier, baseline leakage
       from twins, subtracted from attack envs.
 - [ ] Output `paper/results.json` with every test stat, effect size,
@@ -594,6 +603,12 @@ has been retired.
       - Mitigation gradient interesting → mitigation gets §4
         prominence.
       - Cross-model gap large → model-wise framing.
+      - **Landed 2026-05-23 (post-LLM-judge):** Cross-model variance
+        large + F1 surviving at C3 pooled-of-3 → paper leads with
+        per-model heterogeneity (paper-plan §3 pivot) and F1 at C3
+        as the inferential co-headline. Methodology gains a
+        keyword-vs-LLM-judge DR contrast paragraph since the
+        ~38 pp overcount IS part of the F1 story.
 - [ ] Update `paper-plan.md` §2.2 with the landed thesis. One
       sentence, written today, doesn't change after.
 
