@@ -45,7 +45,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
-from agent.evaluation.dr_judge import DRJudge, compute_kappa, _SKIP_NAMES, _SKIP_SUFFIXES  # noqa: E402 -- after sys.path
+from agent.evaluation.dr_judge import DRJudge, compute_kappa, _SKIP_NAMES, _SKIP_SUFFIXES, _SKIP_DIRS  # noqa: E402 -- after sys.path
 
 
 def _load_manifest_paths(manifest_path: Path) -> tuple[list[Path], str]:
@@ -64,6 +64,7 @@ def _discover_session_files(run_dir: Path) -> list[Path]:
         if p.name not in _SKIP_NAMES
         and not any(p.name.endswith(s) for s in _SKIP_SUFFIXES)
         and "_score" not in p.name
+        and not any(part in _SKIP_DIRS for part in p.parts)
     )
 
 
