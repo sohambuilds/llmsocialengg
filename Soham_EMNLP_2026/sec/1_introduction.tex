@@ -13,12 +13,18 @@ payment card details, government identifiers, account credentials, and
 API keys. The agent stores this profile in its context and draws on
 it whenever a form field must be filled or a credential must be
 submitted. The result is a system that combines broad web access with
-privileged read access to high-value personal data, a combination that
-realises a classic \emph{confused-deputy} vulnerability
+privileged read access to high-value personal data, a configuration
+that realises a \emph{semantic} variant of the classic
+\emph{confused-deputy} vulnerability
 [CITE: hardy1988confused, and modern confused-deputy framings for LLM
-agents]: untrusted content encountered during normal browsing can
-instruct or manipulate the agent into forwarding that data to an
-adversary. The modern web already contains a mature social-engineering
+agents]: the structural fault arises from mixing privileged user
+context with unprivileged web inputs in a single decision loop, but
+the mechanism of exploitation is entirely semantic, leveraging
+multi-turn conversational social engineering to bypass the model's
+behavioural safety constraints rather than escalating any traditional
+privilege boundary. Untrusted content encountered during normal
+browsing can instruct or manipulate the agent into forwarding that
+data to an adversary. The modern web already contains a mature social-engineering
 ecosystem (phishing clones on subtly misspelled domains, dark
 patterns that bury the safe option, fake trust signals, urgency
 timers, authority impersonation, multi-turn conversational
@@ -65,7 +71,13 @@ formal understanding of whether a web agent, provisioned with a
 structured personal identity profile and operating an explicitly
 attacker-controlled site, will actively execute the final
 state-changing \emph{submission} of sensitive data when
-systematically social-engineered. To our knowledge, no published
+systematically social-engineered. Quantifying this terminal
+field-level behaviour is critical: early-trajectory anomalies such
+as deceptive link clicks or layout divergence are observable to
+low-cost runtime execution-layer guardrails, but a completed
+form-level POST payload represents an absolute, unrecoverable data
+breach that can only be prevented by the cognitive refusal strategy
+of the model itself. To our knowledge, no published
 benchmark combines (i) attacker-controlled websites that explicitly
 social-engineer the agent, (ii) a populated PII profile spanning
 critical, high, and medium sensitivity tiers, (iii) field-level
@@ -169,7 +181,11 @@ GPT-5 mini and Claude Haiku~4.5:
 
   \item \textbf{Characterisation findings invert a prior
   intuition.} Subtle attacks leak \emph{more} than blatant ones
-  (96.5\% vs.\ 72.8\% PLR\textsubscript{crit} at C0, pooled);
+  (96.5\% vs.\ 72.8\% PLR\textsubscript{crit} at C0, pooled). We
+  hypothesise that blatant adversarial indicators actively trip
+  standard model alignment guardrails via heavy keyword detection,
+  whereas subtle semantic manipulations successfully navigate beneath
+  these safety filters.
   \texttt{fake\_trust\_signals} and \texttt{reward\_trap} vectors
   are pinned at $\sim$94\% across all mitigation conditions;
   \texttt{authority\_impersonation} is the most C3-responsive
@@ -218,7 +234,7 @@ The remainder of the paper is organised as follows.
 Section~\ref{sec:related} surveys related work.
 Section~\ref{sec:benchmark} describes the benchmark, the 8-axis
 taxonomy, and the agent scaffold.
-Section~\ref{sec:eval} presents the evaluation protocol,
+Section~\ref{sec:setup} presents the evaluation protocol,
 mitigation conditions, the LLM-as-judge detection-rate variable,
 and the pre-registered statistical framework.
 Section~\ref{sec:results} reports per-model and pooled results
