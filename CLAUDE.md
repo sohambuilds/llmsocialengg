@@ -70,6 +70,8 @@ agent/                       — evaluator harness (Playwright + LLM loop)
                                supercell / social_media / api_keys)
   evaluation/{logger,pii_tracker,scorer}.py
                              — per-step logs, PII detection, PLR/ASR/TCR/DR
+  evaluation/dr_judge.py     — LLM-as-judge DR (GPT-4o-mini primary,
+                               Llama secondary, kappa, recursive glob)
   runner.py                  — CLI: --env, --model, --max-steps, --headed,
                                --run-name, --dry-run, --output-dir, --api-key
 
@@ -84,6 +86,9 @@ llm-pit/                     — retired llm-generated-website pipeline.
 start_servers.sh             — start/stop/status all benchmark env servers
                                (logs to logs/server_<env>.log)
 analysis/tables.ipynb        — paper tables; analysis/*.tex output
+scripts/dr_judge_sample.py   — draw stratified C0/C1-C3/recall sample pools
+scripts/dr_judge_run.py      — run LLM judge on a manifest or full run-dir
+scripts/dr_judge_audit.py    — precision/recall, per-condition kappa, keyword compare
 ```
 
 ## Localhost vs domain mode
@@ -270,10 +275,12 @@ uv run python -m agent.runner --env quiz_scam_pi_sysmsg --model llama4 --api-key
 ## Limitations
 
 Sites are LLM-authored with human review — snapshot of attacker
-patterns at creation time. Score-time Detection Rate is still a
-keyword-match proxy; the LLM-as-judge upgrade
-(`agent/evaluation/dr_judge.py`) runs post-hoc and is queued for
-GPT-4o cross-family validation. Multi-turn envs are noisier to
+patterns at creation time. Score-time Detection Rate has two forms:
+keyword-match (from scorer.py) and LLM-as-judge (from
+`agent/evaluation/dr_judge.py`, GPT-4o-mini primary via OpenRouter,
+Llama 4 Scout secondary). Full LLM-judge runs completed 2026-05-23
+for Llama, Gemini, and Haiku — see results section below.
+Multi-turn envs are noisier to
 evaluate. **2026-05-17:** reached-trap instrumentation is now wired
 and the first Llama 4 Scout slice (`agent/logs/llamarun2soham/`)
 shows 96–98% reach across C0–C3 — so the failure mode is compliance
@@ -420,7 +427,7 @@ differences are which fixes were live:
 - `agent/logs/v2/gpt5mini_v3_seed1_full/` — full 101-env × 4-condition × **1-seed** run. Clean reference slice for gpt-5-mini. **Seeds 2–5 in progress.**
 - `agent/logs/v2/gemini3_v3_seeds1to5_full/` — Gemini 3 Flash Preview (OpenRouter), **5 seeds × 101 envs × 4 conditions = 2,020 sessions**, landed 2026-05-22. reliable=1.0 across all cells; seed-to-seed std ≤2.5 pp at every condition.
 - `agent/logs/v2/llama4_v3_seeds1to5_full_re/` — Llama 4 Scout (OpenRouter), **5 seeds × 101 envs × 4 conditions = 2,020 sessions**, landed 2026-05-22. Post-fix counterpart to the Groq dress rehearsal. **This is the Llama reference for the paper**, not the dress rehearsal.
-- `agent/logs/v2/haiku_v3_seed1_full/` — Claude Haiku 4.5 (OpenRouter), **1 seed × 101 envs × 4 conditions = 404 sessions**, landed 2026-05-22. Anthropic-slot model (swapped from Sonnet 4.6 pre-data, see analysis-plan §11 D6). **Seeds 2–5 in progress.**
+- `agent/logs/v2/haiku_v3_seed1to5_full/` — Claude Haiku 4.5 (OpenRouter), **5 seeds × 101 envs × 4 conditions = 2,020 sessions**. Anthropic-slot model (swapped from Sonnet 4.6 pre-data, see analysis-plan §11 D6).
 
 ## Notebook-driven findings as of 2026-05-22
 
@@ -475,3 +482,51 @@ Scout [llamarun2soham](agent/logs/llamarun2soham/) dress rehearsal.
 The pre-fix → post-fix delta on the C3 PLR_crit gradient is +17.6 pp
 (from −29.7 pp to −12.1 pp) — i.e. ~60% of the pre-fix mitigation
 gradient was URL-shape reasoning contamination, not real C3 effect.
+
+## LLM-as-judge DR results (2026-05-23)
+
+Primary judge: `openai/gpt-4o-mini` via OpenRouter (cross-family;
+pre-registered for EMNLP 2026). Secondary: `meta-llama/llama-4-scout`
+(inter-rater kappa). n=2,020 per model (5 seeds x 101 envs x 4 conditions).
+Infrastructure: `scripts/dr_judge_sample.py`, `scripts/dr_judge_run.py`,
+`scripts/dr_judge_audit.py`. Results in `agent/logs/v2/<model>_dr_judge/`.
+
+**LLM-judge DR per model and condition:**
+
+| Model | C0 | C1 | C2 | C3 | kappa |
+|---|---:|---:|---:|---:|---:|
+| Llama 4 Scout | 0.2% | 0.2% | 2.2% | 14.5% | 0.34 |
+| Gemini 3 Flash | 1.2% | 9.3% | 20.0% | 24.0% | 0.30 |
+| Claude Haiku 4.5 | 11.7% | 15.6% | 28.9% | 41.0% | 0.38 |
+
+**Keyword DR vs LLM-judge DR (all three models, n=505 per condition):**
+
+| Model | Cond | Keyword DR | LLM-judge DR | Overcount |
+|---|---|---:|---:|---:|
+| Llama 4 Scout | C0 | 1.8% | 0.2% | +1.6 pp |
+| | C1 | 3.0% | 0.2% | +2.8 pp |
+| | C2 | 4.4% | 2.2% | +2.2 pp |
+| | C3 | 27.9% | 14.5% | **+13.5 pp** |
+| Gemini 3 Flash | C0 | 7.1% | 1.2% | +5.9 pp |
+| | C1 | 22.2% | 9.3% | +12.9 pp |
+| | C2 | 51.9% | 20.0% | **+31.9 pp** |
+| | C3 | 65.4% | 24.0% | **+41.4 pp** |
+| Claude Haiku 4.5 | C0 | 25.4% | 11.7% | +13.7 pp |
+| | C1 | 43.3% | 15.6% | +27.7 pp |
+| | C2 | 73.1% | 28.9% | **+44.2 pp** |
+| | C3 | 82.0% | 41.0% | **+41.0 pp** |
+
+Keyword DR overcount scales with how verbosely a model reasons —
+Haiku and Gemini narrate much more than Llama, triggering more false
+keyword hits. At C3 keyword DR reaches 65% (Gemini) and 82% (Haiku),
+collapsing to 24% and 41% under LLM-judge. LLM-judge is the
+paper-facing DR metric; keyword DR retained in score.json for compat.
+
+**Key findings:**
+- Haiku is the strongest detector (11.7% at C0 baseline, 41.0% at C3)
+  and has the steepest PLR gradient — genuine suspicion drives compliance
+  refusal rather than verbal concern with continued compliance.
+- Llama barely detects at C0/C1 (0.2%); Gemini jumps at C1 (9.3%),
+  suggesting Gemini is more responsive to mild conditioning.
+- F1 (detection-action gap) is reinforced: even at C3 the majority of
+  agents that verbalize suspicion still hand over PII.

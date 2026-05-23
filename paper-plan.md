@@ -124,6 +124,12 @@ appending revisions.
   actions, and value-match leak detection.
 - **Scorer** (`agent/evaluation/scorer.py`). Post-run aggregation of
   PLR/ASR/TCR/DR.
+- **LLM-as-judge DR** (`agent/evaluation/dr_judge.py`). Post-hoc
+  step-level detection judge. Primary: `openai/gpt-4o-mini` via
+  OpenRouter. Secondary: `meta-llama/llama-4-scout` (inter-judge κ).
+  Sampling + runner + audit scripts in `scripts/dr_judge_*.py`.
+  Full runs completed 2026-05-23 for Llama, Gemini, Haiku (n=2,020
+  each). Results in `agent/logs/v2/<model>_dr_judge/dr_results_full.json`.
 - **Server launcher** (`start_servers.sh`). Starts/stops/status for all
   91 envs.
 
@@ -136,8 +142,8 @@ appending revisions.
 | Per-env classification.csv rows with sibling_of + toggled_axis | ✅ done |
 | Phase 3 sibling envs all sit at `🟦 qa` (pending per-env smoke + screenshot diff) | partial |
 | v1 pilot results on parent subset (qualitative: high leakage, prompt mitigation insufficient) | ✅ done |
-| v2 results on full 101-env benchmark | partial — four clean reference slices post all 2026-05-19→05-22 fixes (including the c_PLR rescore and AME-scaling correction): **Gemini 3 Flash 5-seed** (`gemini3_v3_seeds1to5_full/`, 2,020 sessions, reliable=1.0, seed-to-seed std ≤2.5 pp); **Llama 4 Scout 5-seed** (`llama4_v3_seeds1to5_full_re/`, 2,020 sessions); **gpt-5-mini 1-seed** (`gpt5mini_v3_seed1_full/`, 404 sessions); **Claude Haiku 4.5 1-seed** (`haiku_v3_seed1_full/`, 404 sessions). Per-model ΔM3 (empirical): Gemini -32.4 pp, Haiku -30.8 pp, gpt-5-mini -17.8 pp, Llama -4.9 pp. Pooled ΔM3 = -19.7 pp (does NOT cross §10 -30 pp threshold), but 3 model-condition cells cross threshold individually (Haiku ΔM2 = -36.1 pp, Haiku ΔM3 = -30.8 pp, Gemini ΔM3 = -32.4 pp). Per paper-plan §3 pivot, paper leads with **per-model heterogeneity** framing, not pooled. F1 detection-action gap pooled at C0 = 54.5 pp (88.8% PLR DR=0 vs 34.3% DR=1; GLMM q<0.001). Pre-fix slices retained for contamination accounting: `gpt5mini_v3_taskfix` (40-cell pilot), `gpt5mini_v2_finalfinal`, `gpt5mini_v2_seed1`, `llamarun2soham` (Groq dress rehearsal). **Still pending:** gpt-5-mini seeds 2–5; Haiku seeds 2–5. |
-| LLM-as-judge Detection Rate (GPT-4o primary, Llama 4 secondary) | partial — judge shipped at `agent/evaluation/dr_judge.py`, sanity-run on 508 v1 sessions (Llama-vs-Llama κ=0.82); GPT-4o cross-family run pending on OpenAI key |
+| v2 results on full 101-env benchmark | partial — four clean reference slices post all 2026-05-19→05-22 fixes (including the c_PLR rescore and AME-scaling correction): **Gemini 3 Flash 5-seed** (`gemini3_v3_seeds1to5_full/`, 2,020 sessions, reliable=1.0, seed-to-seed std ≤2.5 pp); **Llama 4 Scout 5-seed** (`llama4_v3_seeds1to5_full_re/`, 2,020 sessions); **Claude Haiku 4.5 5-seed** (`haiku_v3_seed1to5_full/`, 2,020 sessions); **gpt-5-mini 1-seed** (`gpt5mini_v3_seed1_full/`, 404 sessions). Per-model ΔM3 (empirical): Gemini -32.4 pp, Haiku -30.8 pp, gpt-5-mini -17.8 pp, Llama -4.9 pp. Pooled ΔM3 = -19.7 pp (does NOT cross §10 -30 pp threshold), but 3 model-condition cells cross threshold individually (Haiku ΔM2 = -36.1 pp, Haiku ΔM3 = -30.8 pp, Gemini ΔM3 = -32.4 pp). Per paper-plan §3 pivot, paper leads with **per-model heterogeneity** framing, not pooled. F1 detection-action gap pooled at C0 = 54.5 pp (88.8% PLR DR=0 vs 34.3% DR=1; GLMM q<0.001). Pre-fix slices retained for contamination accounting: `gpt5mini_v3_taskfix` (40-cell pilot), `gpt5mini_v2_finalfinal`, `gpt5mini_v2_seed1`, `llamarun2soham` (Groq dress rehearsal). **Still pending:** gpt-5-mini seeds 2–5. |
+| LLM-as-judge Detection Rate (GPT-4o-mini primary via OpenRouter, Llama 4 Scout secondary) | ✅ done — full runs completed 2026-05-23 on all three 5-seed slices (n=2,020 each). LLM-judge DR: Llama C0=0.2%/C3=14.5% κ=0.34; Gemini C0=1.2%/C3=24.0% κ=0.30; Haiku C0=11.7%/C3=41.0% κ=0.38. Keyword DR overcounts by up to 13.5 pp at C3 (half of C3 keyword detections are false positives). Human-label precision/recall audit still pending (recall slice drawn; 50-session sample at `agent/logs/v2/llama4_dr_judge/sample_recall_neg.json`). |
 | "Reached attack surface" instrumentation | ✅ done — `reached_trap` field on every session; Llama 4 Scout slice shows 96–98% reach across C0–C3, resolving the v1 "low ASR = missed navigation" worry |
 | GPT-5 mini + Claude Haiku 4.5 added to model factory | ✅ done — both registered in `agent/core/llm_factory.py` via OpenRouter backend; smoke-tested for client construction. (Claude Haiku 4.5 swapped in for Sonnet 4.6 on 2026-05-22, pre-Claude-data; logged as analysis-plan §11 D6.) |
 | Mitigation conditions C1 / C2 / C3 (3 prompts, not 1) | ✅ done — `--condition {C0,C1,C2,C3}` flag in `agent/runner.py`, prompt strings in `agent/config/mitigations/`; verified end-to-end by Llama 4 Scout slice |
@@ -155,10 +161,10 @@ appending revisions.
   collapse of an 8-store multi-app parent + doubly-nested
   `templates/templates/` and `static/static/`). Logged in
   `phase3-checklist.md` open issues; another team member is fixing.
-- **Detection Rate** — LLM-as-judge shipped (`agent/evaluation/dr_judge.py`,
-  Llama-vs-Llama κ=0.82). GPT-4o cross-family validation still
-  pending on OpenAI key. Score-time DR remains keyword-match;
-  LLM-judge runs as a post-hoc pass over session logs.
+- **Human DR validation** — 50-session recall audit slice drawn
+  (`sample_recall_neg.json`); human labeling pending. LLM-judge
+  precision/recall vs human labels not yet computed. κ targets
+  (≥0.7 judge-vs-human) unverified until labels are in.
 - **Inert cruft dirs.** 4 nested-parent directory copies inside
   siblings (see §1.1). Non-blocking but worth a `rm -rf` pass.
 - **Agent-visible "Benchmark" string leakage.** ✅ cleaned 2026-05-20.
@@ -207,9 +213,8 @@ that apparatus.
 > post-hoc paired-sibling-ablatable along eight design axes.*
 
 The thesis is anchored on four model slices: Gemini 3 Flash (5 seeds),
-Llama 4 Scout (5 seeds, post-fix OpenRouter re-run), gpt-5-mini
-(1 seed, seeds 2–5 in progress), Claude Haiku 4.5 (1 seed, seeds 2–5
-in progress). All four slices use the post-2026-05-22 harness
+Llama 4 Scout (5 seeds, post-fix OpenRouter re-run), Claude Haiku 4.5
+(5 seeds), gpt-5-mini (1 seed, seeds 2–5 in progress). All four slices use the post-2026-05-22 harness
 (domain-masked observation, c_PLR rescore, AME-scaling-corrected
 GLMM reporting). 4,790 retained sessions across the four slices;
 reliable=1.0 across every cell.
@@ -268,6 +273,13 @@ which is the canonical source of every number in the paper.
    Frontier agents disagree on adversarial robustness — this is
    itself the finding. C2 (checklist) outperforms C3 (reflection)
    on Haiku; C3 dominates on the others.
+   *LLM-judge DR update (2026-05-23):* conditioning raises genuine
+   verbalized suspicion from near-zero to 14.5% (Llama), 24.0%
+   (Gemini), 41.0% (Haiku) at C3 — substantially lower than keyword
+   DR suggested (27.9% / 65.4% / 82.0% respectively). Overcount
+   scales with model verbosity: Haiku and Gemini narrate more, so
+   keyword hits more false positives (+41 pp at C3 for both).
+   The F1 detection-action gap survives and is larger on LLM-judge.
 3. **Characterization of leakage.** Cross-model marginal analysis
    over the 8-axis design (Tables 9a–9h). Robust findings: (a)
    salience does NOT follow the pre-data intuition that plausible
@@ -373,12 +385,14 @@ specifications lead the abstract and §1.
   tables. Effect sizes with CIs reported alongside p-values.
   Benjamini–Hochberg correction over the planned-test family
   (F1–F11 + 3 mitigation comparisons + benign-baseline subtraction).
-- **Detection Rate.** LLM-as-judge with **GPT-4o as primary
-  evaluator** (avoids Claude-judging-Claude conflict) and Llama 4
-  Scout as secondary judge for inter-judge κ. Validated against a
-  200-sample human-labelled set, all 4 team members labelling 50
-  each. Targets: human-vs-human κ ≥ 0.7, judge-vs-human κ ≥ 0.7.
-  Keyword DR retained as auxiliary.
+- **Detection Rate.** LLM-as-judge with **`openai/gpt-4o-mini` via
+  OpenRouter as primary evaluator** (cross-family; avoids
+  Claude/Gemini/Llama-judging-themselves conflict) and Llama 4 Scout
+  as secondary judge for inter-judge κ. Full runs done 2026-05-23:
+  Llama κ=0.34, Gemini κ=0.30, Haiku κ=0.38 (all "fair to moderate").
+  Human-label validation pending: 50-session recall slice drawn;
+  targets remain judge-vs-human κ ≥ 0.7. Keyword DR retained in
+  score.json as auxiliary (overcounts by up to 13.5 pp at C3).
 - **Reached-attack-surface gating.** ASR is reported conditioned on
   whether the agent navigated to the trap surface in each run.
 - **MITRE / OWASP / ENISA mapping.** Each of the 8 attack vectors
