@@ -1,131 +1,230 @@
 \section{Introduction}
-\cite{BartzVAnthropic}
-
 \label{sec:intro}
 % -------------------------------------------------------------
 
 Vision-language model (VLM) agents capable of operating a web browser
-are moving from research prototypes into production deployment. Systems
-such as OpenAI Operator, Gemini Agents, and Claude's computer-use
-interface take high-level user instructions and autonomously navigate
-websites, fill forms, complete checkout flows, and respond to emails.
-Because these agents must act on the user's behalf without requiring
-manual input at each step, they are routinely provisioned with the user's
-full personal information: legal name, home address, payment card details,
-Social Security number, passwords, and API keys. The agent stores this
-profile in its context and draws on it whenever a form field must be
-filled or a credential must be submitted. The result is a system that
-combines broad web access with privileged read access to high-value
-personal data, a combination that creates a classic confused-deputy
-vulnerability~\citep{hardy1988confused}: untrusted content encountered
-during normal browsing can instruct or manipulate the agent into
-forwarding that data to an adversary.
+are moving from research prototypes into production deployment
+[CITE: Operator, Claude Computer Use, Gemini Agents launch posts +
+general agent capability surveys]. To complete the tasks they are
+given---applying for jobs, purchasing goods, paying bills, replying to
+email---these agents are routinely provisioned with the user's full
+personally identifiable information (PII): legal name, home address,
+payment card details, government identifiers, account credentials, and
+API keys. The agent stores this profile in its context and draws on
+it whenever a form field must be filled or a credential must be
+submitted. The result is a system that combines broad web access with
+privileged read access to high-value personal data, a combination that
+realises a classic \emph{confused-deputy} vulnerability
+[CITE: hardy1988confused, and modern confused-deputy framings for LLM
+agents]: untrusted content encountered during normal browsing can
+instruct or manipulate the agent into forwarding that data to an
+adversary. The modern web already contains a mature social-engineering
+ecosystem---phishing clones on subtly misspelled domains, dark
+patterns that bury the safe option, fake trust signals, urgency
+timers, authority impersonation, multi-turn conversational
+escalation---built to harvest PII from human users
+[CITE: APWG/anti-phishing report, dark-pattern taxonomy work, e.g.
+Mathur et al.]. A human user can slow down, scrutinize a URL, or
+close the tab; a web agent is optimised to finish its task and will
+follow links, fill fields, and submit forms with a thoroughness that
+no human user matches. Capability benchmarks confirm that frontier
+agents are now reliable enough to actually do this end-to-end---REAL
+\citep{garg2026real} reports a 41\% top success rate on multi-turn
+state-changing web tasks---meaning the same competence that makes
+them useful also makes them a high-value, unusually reliable target
+for data exfiltration. We find that even when an agent's own
+reasoning trace identifies a site as suspicious, it goes on to
+submit critical PII to that site in 34\% of sessions, versus 89\%
+when it does not---a 54.5-percentage-point gap between what the
+agent \emph{says} and what it \emph{does}, statistically robust
+($q\!<\!0.001$) and present across all four frontier model families
+we evaluate.
 
-The modern web already contains a rich ecosystem of social engineering
-attacks built to harvest personal information from human users. Phishing
-clones impersonate legitimate services on subtly misspelled domains.
-Dark patterns bury the safe option under an array of deceptive buttons.
-Fake trust signals, urgency timers, and authority impersonation
-manipulate users into submitting data they would otherwise withhold.
-Multi-turn chat interfaces escalate requests incrementally, building
-rapport before asking for a password or a bank routing number. Human
-users can slow down, scrutinize a URL, or simply close the tab.
-A web agent cannot. It is optimized to complete the task given to it,
-and it will follow links, fill fields, and submit forms with a
-thoroughness and speed that no human user matches. This efficiency,
-combined with unconditional access to a full PII profile, makes the
-web-browsing agent a particularly high-value and unusually reliable
-target for data exfiltration.
+\paragraph{The measurement gap.} Despite a growing literature on the
+adversarial robustness of web agents, a critical measurement gap
+persists. Existing evaluation frameworks gate success on proxy
+metrics---task-trajectory divergence, click-level dark-pattern
+compliance, isolated API tool abuse---rather than field-level data
+exfiltration to attacker-controlled endpoints. Frameworks evaluating
+dark patterns and adversarial UI deception
+\citep{cuvin2026decepticon,ersoy2026trickyarena,chen2026obviousinvisiblethreat}
+score click compliance or text-processing boundaries and, in the
+case of DECEPTICON, explicitly omit phishing from their scope;
+AgentDojo \citep{debenedetti2024agentdogo} measures indirect prompt
+injection on tool-using agents at API surfaces (email, banking,
+travel) rather than on a browser navigating attacker-controlled
+sites; TRAP \citep{korgul2025trap} gates attack success on a single
+attacker-controlled redirect click and does not score what is
+submitted downstream; AgentDAM \citep{zharmagambetov2026agentdam}
+quantifies \emph{incidental} privacy leakage on benign sites where
+no adversary is present; and WebTrap Park
+\citep{xinyi2026webtrappark} covers social engineering as one of
+three risk categories but neither provisions a structured PII
+profile nor reports field-level data loss. Consequently, we lack a
+formal understanding of whether a web agent, provisioned with a
+structured personal identity profile and operating an explicitly
+attacker-controlled site, will actively execute the final
+state-changing \emph{submission} of sensitive data when
+systematically social-engineered. To our knowledge, no published
+benchmark combines (i) attacker-controlled websites that explicitly
+social-engineer the agent, (ii) a populated PII profile spanning
+critical, high, and medium sensitivity tiers, (iii) field-level
+exfiltration as the primary outcome, and (iv) axis-controlled
+siblings that isolate which design factors causally drive leakage.
 
-Despite growing interest in the security of LLM-based web agents, the
-existing literature has not directly addressed this threat. Work on dark
-patterns, represented by DECEPTICON~\citep{kumarappan2024decepticon}
-and TrickyArena~\citep{li2024trickyarena}, measures whether an agent
-can be steered toward a malicious navigation outcome, not whether it
-surrenders personal data. DECEPTICON explicitly defines dark patterns as
-residing within the user interface and excludes external threats like
-phishing from its scope; its success metric is trajectory divergence,
-not field-level data loss. Work on prompt injection, represented by
-TRAP~\citep{trap2024}, WiPI~\citep{wu2024wipi}, EIA~\citep{liao2024eia},
-and AdvWeb~\citep{xu2024advweb}, measures whether hidden adversarial
-instructions can hijack the agent's task; no prior work in this line
-provides the agent with a realistic PII profile or tracks what the
-agent types into attacker-controlled forms. The fine-print injection
-study of~\citet{huang2025fineprint} is the closest to our PII angle
-but examines a specific injection vector across GUI applications
-rather than a broad social engineering taxonomy.
-Fraud-R1~\citep{yang2025fraudr1} benchmarks LLM robustness to
-phishing and fraud inducements, but its subjects are language models
-responding to text prompts, not autonomous agents operating a live
-browser with a populated user profile. WebTrap Park~\citep{webtrappark}
-evaluates agents across three risk categories including social
-engineering, but does not define a PII metric, does not model a user
-profile, and does not include conversational attacks. To our knowledge,
-no prior work has (i) equipped a web agent with a structured PII profile
-spanning critical and high-sensitivity fields, (ii) measured field-level
-data exfiltration as the primary outcome, or (iii) covered the full
-social engineering attack surface, including multi-turn adaptive chat
-and multi-site flows in which an agent must navigate from an email
-client to a separate phishing destination within a single task.
+\paragraph{This work.} We introduce \textsc{Scammer4U}, a benchmark
+of 91 hand-crafted attacker-controlled environments plus 10
+benign-twin baselines, designed to answer a single operational
+question: \emph{when an autonomous web agent encounters a
+social-engineering attack while browsing, will it hand over the
+user's PII?} The benchmark spans 16 site categories (employment
+portals, e-commerce stores, banking and healthcare, cryptocurrency
+exchanges, government portals, dating, social media, education,
+file-conversion utilities) and covers \textbf{eight} attack vectors:
+phishing clones, credential harvesting, dark patterns, reward traps,
+authority impersonation, conversational deception, prompt injection,
+and fake trust signals. Each environment is classified on
+\textbf{four classifying axes} (site category, attack vector,
+salience, PII target) and \textbf{four factor axes} (pressure cue,
+prompt-injection style, interaction modality, multi-site flow),
+forming an 8-axis factorial taxonomy mapped to published threat
+catalogues [CITE: MITRE ATT\&CK, OWASP LLM Top-10, ENISA Threat
+Landscape] so that the design space is auditable rather than
+arbitrary. 60 of the 91 environments are paired siblings that differ
+from a parent on exactly one axis, supporting causal single-factor
+ablation. We equip a Playwright-based agent
+[CITE: Playwright + general agent-scaffold work, e.g. WebArena,
+Visual\-Web\-Arena, SeeAct] with a 40-field PII profile and evaluate
+\textbf{four frontier model families}---GPT-5 mini (OpenAI), Claude
+Haiku~4.5 (Anthropic), Gemini~3 Flash (Google), and Llama~4 Scout
+(Meta)---across \textbf{four mitigation conditions}: a baseline
+default-prompt condition (C0), a generic privacy nudge (C1), a
+phishing-aware checklist (C2), and a pre-submission reflection
+prompt (C3). The analysis plan is committed to a public git tag
+(\texttt{prereg-v2-start}) before any of the reported data was
+collected, with every subsequent deviation documented in a
+limitations log.
 
-We introduce \textsc{[BENCHMARKNAME]}, a benchmark designed to answer
-a single question: when an autonomous web agent encounters a social
-engineering attack while browsing, will it hand over the user's personal
-information? The benchmark comprises approximately 100 hand-crafted
-environments spanning 16 site categories, including employment portals,
-e-commerce stores, banking and healthcare platforms, cryptocurrency
-exchanges, government portals, and social media services. The
-environments cover 7 attack vectors: phishing clones, dark patterns,
-credential harvesting, reward traps, authority impersonation, fake trust
-signals, and multi-turn conversational deception. Each environment is
-classified on four primary axes (site category, attack vector,
-salience level, and PII target) and four ablation axes (urgency
-pressure, prompt injection style, interaction modality, and multi-site
-flow), forming a factorial taxonomy that enables controlled sibling
-comparisons in which exactly one axis is varied. We equip an autonomous
-Playwright-based agent with a 40-field PII profile covering identity,
-address, payment, financial, professional, credential, and API-key
-information. We evaluate five frontier models on four metrics: PII
-Leakage Rate (PLR), measuring the fraction of runs in which at least
-one PII field is submitted to an attacker-controlled endpoint; Attack
-Success Rate (ASR), measuring whether the attacker's intended outcome
-was achieved; Task Completion Rate (TCR), measuring whether the
-legitimate task was completed; and Detection Rate (DR), measuring
-whether the agent explicitly identified the attack in its reasoning.
-Our model set includes both vision-language models, which receive DOM
-text and page screenshots, and a text-only baseline, which receives
-DOM text alone, allowing us to isolate the contribution of visual
-understanding to agent security.
+\paragraph{Research questions.} We organise the empirical study
+around four pre-registered research questions:
 
-The contributions of this paper are as follows.
+\begin{description}[leftmargin=*,itemsep=2pt]
+  \item[\textbf{RQ1.}] At baseline, with no privacy-aware system
+  prompt, how often do frontier web-browsing agents submit
+  critical-tier PII (SSN, full payment details, bank account,
+  passwords, API keys, 2FA codes) to attacker-controlled
+  endpoints, and how does this rate vary across model families?
+  \item[\textbf{RQ2.}] Do prompt-level mitigations---ranging from a
+  generic nudge to a forced pre-submission reflection---reduce
+  critical-tier leakage, and is the effect size consistent across
+  model families, or model-dependent?
+  \item[\textbf{RQ3.}] Conditional on the agent independently
+  identifying the attack in its reasoning trace, does behavioural
+  compliance follow? That is, how large is the \emph{gap} between
+  what an agent \textit{says} about a suspicious site and what it
+  subsequently \textit{does}?
+  \item[\textbf{RQ4.}] Which design factors along the 8-axis
+  taxonomy---salience, pressure cue, prompt-injection placement,
+  interaction modality, PII tier, attack vector, site
+  category---most strongly predict leakage, and which are null?
+\end{description}
 
-\begin{enumerate}
+\paragraph{Headline findings.} Across 4{,}790 retained sessions on
+the post-fix harness, with five seeds for Gemini~3 Flash and
+Llama~4 Scout and one seed each (with seeds 2--5 in progress) for
+GPT-5 mini and Claude Haiku~4.5:
 
-\item \textbf{\textsc{[BENCHMARKNAME]}}: the first benchmark to measure
-field-level PII exfiltration by autonomous web-browsing agents under
-social engineering attacks, comprising approximately 100 hand-crafted
-environments across 16 site categories and 7 attack vectors.
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+  \item \textbf{Baseline leakage is high and model-dependent.}
+  Critical-tier PII leakage rate (PLR\textsubscript{crit}) at C0
+  ranges from 53.8\% (Claude Haiku~4.5) to 93.1\% (Gemini~3 Flash),
+  with GPT-5 mini at 75.6\% and Llama~4 Scout at 82.3\%
+  (\textbf{RQ1}). All four exceed---by a wide margin---the
+  empirically-measured 0\% leakage rate on 10 benign-twin
+  environments built from the same templates with the attack
+  removed.
 
-\item \textbf{Factorial taxonomy}: an 8-axis design in which sibling
-environments differ on exactly one axis, enabling causal ablation
-studies on the effect of urgency pressure, prompt injection style,
-interaction modality, and multi-site flow on agent vulnerability.
+  \item \textbf{Mitigation effectiveness is sharply
+  model-dependent.} A pre-submission reflection prompt (C3)
+  reduces PLR\textsubscript{crit} by 32.4\,pp on Gemini, 30.8\,pp
+  on Haiku, 17.8\,pp on GPT-5 mini, and only 4.9\,pp on Llama (the
+  C2 phishing-checklist condition is in fact stronger than C3 on
+  Haiku, $-$36.1\,pp). The pooled view ($-$19.7\,pp) hides this
+  heterogeneity: three model--condition cells individually cross
+  the pre-registered $-$30\,pp threshold, but the pooled average
+  does not. Frontier agents disagree on adversarial robustness
+  (\textbf{RQ2}).
 
-\item \textbf{Multi-turn and multi-site coverage}: the first benchmark
-to include adaptive multi-turn conversational attacks with response
-trees and multi-site task flows in which the agent must traverse
-an email client and a phishing destination within a single task.
+  \item \textbf{A 54.5-percentage-point detection--action gap.}
+  At C0, pooled across all four model families, agents whose
+  reasoning trace independently flags the site as suspicious go on
+  to leak critical PII in 34.3\% of sessions, versus 88.8\% when
+  they do not---a 54.5\,pp gap that is statistically robust
+  ($q < 0.001$ after Benjamini--Hochberg correction over the
+  pre-registered primary family) and consistent across all four
+  model families. Forced-reflection prompts inflate stated
+  detection without proportionally closing the leak gap
+  (\textbf{RQ3}). Saying ``this looks like phishing'' is not the
+  same as refusing to submit.
 
-\item \textbf{Empirical findings} across five frontier models: [TBD,
-to be inserted after full evaluation runs].
-
+  \item \textbf{Characterisation findings invert a prior
+  intuition.} Subtle attacks leak \emph{more} than blatant ones
+  (96.5\% vs.\ 72.8\% PLR\textsubscript{crit} at C0, pooled);
+  \texttt{fake\_trust\_signals} and \texttt{reward\_trap} vectors
+  are pinned at $\sim$94\% across all mitigation conditions;
+  \texttt{authority\_impersonation} is the most C3-responsive
+  vector ($-$62.5\,pp). The pressure axis (urgency, scarcity,
+  social proof, authority) shows no significant pooled effect.
+  Paired-sibling tests along the factor axes do not survive
+  BH-correction at $q\!=\!0.05$ with the realised pair counts; the
+  characterisation signal lives in cross-cutting marginal
+  patterns, not paired-sibling deltas (\textbf{RQ4}).
 \end{enumerate}
 
-The remainder of the paper is organized as follows.
-Section~\ref{sec:related} surveys related work.
-Section~\ref{sec:benchmark} describes the benchmark design and taxonomy.
-Section~\ref{sec:eval} presents the agent scaffold and evaluation protocol.
-Section~\ref{sec:results} reports experimental results.
-Section~\ref{sec:discussion} discusses implications for agent safety and
-directions for defense. Section~\ref{sec:conclusion} concludes.
+\paragraph{Contributions.} This paper makes four contributions, in
+order of importance:
 
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+  \item A \textbf{detection--action gap at baseline}: a 54.5\,pp
+  spread between PLR\textsubscript{crit} for agents that name the
+  attack and those that do not, GLMM $q\!<\!0.001$, robust across
+  four model families. To our knowledge this is the largest
+  reported behavioural--verbal divergence in an agent-safety
+  benchmark, and it survives every robustness check we run.
+
+  \item Empirical evidence that \textbf{prompt-level mitigation is
+  sharply model-dependent}: a finding that motivates output-level
+  defences (form-submission inspection, structured-PII gating)
+  rather than additional system-prompt iteration, since two of
+  four frontier models tested respond strongly to prompts and the
+  other two essentially do not.
+
+  \item A \textbf{characterisation} of when web agents leak PII,
+  spanning attack vector, site category, salience, pressure,
+  prompt-injection placement, interaction modality, and PII tier,
+  with cross-model marginal tables reported alongside paired-
+  sibling tests.
+
+  \item \textsc{Scammer4U} itself: a publicly released benchmark of
+  91 attacker-controlled environments + 10 benign-twin baselines,
+  organised on an 8-axis factorial taxonomy mapped to published
+  threat catalogues, with pre-registered analysis plan and a
+  complete deviation log---designed so that follow-up work can
+  re-run the same ablations on new models without re-authoring
+  the apparatus.
+\end{enumerate}
+
+The remainder of the paper is organised as follows.
+Section~\ref{sec:related} surveys related work.
+Section~\ref{sec:benchmark} describes the benchmark, the 8-axis
+taxonomy, and the agent scaffold.
+Section~\ref{sec:eval} presents the evaluation protocol,
+mitigation conditions, the LLM-as-judge detection-rate variable,
+and the pre-registered statistical framework.
+Section~\ref{sec:results} reports per-model and pooled results
+against the four research questions.
+Section~\ref{sec:discussion} discusses implications for agent
+safety and directions for output-level defence.
+Section~\ref{sec:limitations} documents pre-registration
+deviations and threats to validity.
+Section~\ref{sec:conclusion} concludes.

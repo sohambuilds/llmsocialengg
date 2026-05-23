@@ -8,7 +8,7 @@
 \section{Results}
 \label{sec:results}
 
-We report results across the full pre-registered design: four frontier models (GPT-5, Claude Sonnet 4.6, Gemini 3 Flash, Llama 4 Scout), four conditions (C0--C3), $n = 5$ seeds per (env, model, condition) cell on the 91 adversarial environments, and $n = 5$ seeds per (env, model) cell on the 10 benign twins under C0 only, for a total of $7{,}480$ sessions. Percentage-point comparisons in this section are on session-level $\text{PLR}_{\text{crit}}$ unless otherwise stated. Effects carry 95\% confidence intervals from the mixed-effects logistic in \S\ref{sec:analysis}; tests in the pre-registered primary family of 14 (Table~\ref{tab:claims}) are flagged with BH-adjusted $q$-values, and exploratory tests are flagged with uncorrected $p$-values. A drop in $\text{PLR}_{\text{crit}}$ is a security improvement; a positive F1 gap reflects the detection--action mismatch in the predicted direction.
+We report results across the full pre-registered design: four frontier models (GPT-5 mini, Claude Haiku 4.5, Gemini 3 Flash, Llama 4 Scout), four conditions (C0--C3), $n = 5$ seeds per (env, model, condition) cell on the 91 adversarial environments, and $n = 5$ seeds per (env, model) cell on the 10 benign twins under C0 only, for a total of $7{,}480$ sessions. Percentage-point comparisons in this section are on session-level $\text{PLR}_{\text{crit}}$ unless otherwise stated. Effects carry 95\% confidence intervals from the mixed-effects logistic in \S\ref{sec:analysis}; tests in the pre-registered primary family of 14 (Table~\ref{tab:claims}) are flagged with BH-adjusted $q$-values, and exploratory tests are flagged with uncorrected $p$-values. A drop in $\text{PLR}_{\text{crit}}$ is a security improvement; a positive F1 gap reflects the detection--action mismatch in the predicted direction.
 
 \subsection{Baseline Leakage}
 \label{sec:results-baseline}
@@ -23,8 +23,8 @@ Under C0, the four models leak critical-tier PII at an aggregate rate of XX.X\% 
 \toprule
 Model & C0 & C1 & C2 & C3 \\
 \midrule
-GPT-5 & XX.X & XX.X & XX.X & XX.X \\
-Claude Sonnet 4.6 & XX.X & XX.X & XX.X & XX.X \\
+GPT-5 mini & XX.X & XX.X & XX.X & XX.X \\
+Claude Haiku 4.5 & XX.X & XX.X & XX.X & XX.X \\
 Gemini 3 Flash & XX.X & XX.X & XX.X & XX.X \\
 Llama 4 Scout & XX.X & XX.X & XX.X & XX.X \\
 \midrule
@@ -49,8 +49,8 @@ We test the three pre-registered mitigation contrasts M1 (C0 vs C1), M2 (C0 vs C
 \toprule
 Model & $\Delta$M1 & $\Delta$M2 & $\Delta$M3 \\
 \midrule
-GPT-5 & XX.X & XX.X & XX.X \\
-Claude Sonnet 4.6 & XX.X & XX.X & XX.X \\
+GPT-5 mini & XX.X & XX.X & XX.X \\
+Claude Haiku 4.5 & XX.X & XX.X & XX.X \\
 Gemini 3 Flash & XX.X & XX.X & XX.X \\
 Llama 4 Scout & XX.X & XX.X & XX.X \\
 \midrule
@@ -150,6 +150,6 @@ C3 & XX.X & XX.X & XX.X & XX.X & XX.X \\
 \subsection{Methodological Validation: URL-Shape Contamination}
 \label{sec:results-validation}
 
-An early version of the harness left the localhost sandbox visible in agent observations through three surfaces: the raw \texttt{http://localhost:N} URL in the address bar, the same string rendered inline inside page templates (form action attributes, anchor hrefs, JavaScript endpoint constants, and mailbox-body embedded URLs), and the start URL substituted into the agent's task description before the first observation. All three functioned as model-side trust shortcuts: in pre-fix GPT-5 reasoning traces under C3, the strings ``localhost'' and ``non-standard port'' appear as cited suspicion signals in XX.X\% and XX.X\% of sessions respectively, an artefact that would inflate the apparent C3 effect.
+An early version of the harness left the localhost sandbox visible in agent observations through three surfaces: the raw \texttt{http://localhost:N} URL in the address bar, the same string rendered inline inside page templates (form action attributes, anchor hrefs, JavaScript endpoint constants, and mailbox-body embedded URLs), and the start URL substituted into the agent's task description before the first observation. All three functioned as model-side trust shortcuts: in pre-fix GPT-5 mini reasoning traces under C3, the strings ``localhost'' and ``non-standard port'' appear as cited suspicion signals in XX.X\% and XX.X\% of sessions respectively, an artefact that would inflate the apparent C3 effect.
 
-The surface was identified by a deliberate audit pass rather than discovered post-hoc: we ran (i) a content-level grep over every templated environment for the eleven leakage strings enumerated in \texttt{scripts/audit\_env\_leakage.py}, (ii) a reasoning-trace scan of the pre-fix slice for the same strings to confirm the agent was citing them, (iii) a cross-cell check that observer-side, content-side, and task-side surfaces were each contributing, (iv) an inter-judge $\kappa$ stratification (\S\ref{sec:dr}) to rule out judge-side contamination, and (v) an audit of the benign-twin subtraction to confirm the artefact did not differentially affect attack versus benign cells. The localhost surface was the only one to surface measurable contamination; the four remaining checks returned negative. After domain masking at the observer (\S\ref{sec:metrics}), a content-level sweep removing inline localhost strings across XX environment templates, an extension of the browser's request-layer rewriter to in-page navigation requests, and a fix to the task description's start URL, the C3 pooled $\Delta\text{PLR}_{\text{crit}}$ on GPT-5 (1 seed) moved from $-$XX.X pp pre-mask to $-$XX.X pp post-mask, of which approximately $-$XX.X pp is attributable to URL-shape contamination and $-$XX.X pp to the true C3 signal. All results in the rest of this paper are reported on the post-cleanup harness; the pre-cleanup measurements are preserved for contamination accounting in Appendix~\ref{app:contamination}, and the git SHA of each surface-fix commit is pinned alongside the prereg deviations (\S\ref{sec:prereg}).
+The surface was identified by a deliberate audit pass rather than discovered post-hoc: we ran (i) a content-level grep over every templated environment for the eleven leakage strings enumerated in \texttt{scripts/audit\_env\_leakage.py}, (ii) a reasoning-trace scan of the pre-fix slice for the same strings to confirm the agent was citing them, (iii) a cross-cell check that observer-side, content-side, and task-side surfaces were each contributing, (iv) an inter-judge $\kappa$ stratification (\S\ref{sec:dr}) to rule out judge-side contamination, and (v) an audit of the benign-twin subtraction to confirm the artefact did not differentially affect attack versus benign cells. The localhost surface was the only one to surface measurable contamination; the four remaining checks returned negative. After domain masking at the observer (\S\ref{sec:metrics}), a content-level sweep removing inline localhost strings across XX environment templates, an extension of the browser's request-layer rewriter to in-page navigation requests, and a fix to the task description's start URL, the C3 pooled $\Delta\text{PLR}_{\text{crit}}$ on GPT-5 mini (1 seed) moved from $-$XX.X pp pre-mask to $-$XX.X pp post-mask, of which approximately $-$XX.X pp is attributable to URL-shape contamination and $-$XX.X pp to the true C3 signal. All results in the rest of this paper are reported on the post-cleanup harness; the pre-cleanup measurements are preserved for contamination accounting in Appendix~\ref{app:contamination}, and the git SHA of each surface-fix commit is pinned alongside the prereg deviations (\S\ref{sec:prereg}).
