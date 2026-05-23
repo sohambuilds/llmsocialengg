@@ -48,6 +48,12 @@ MODEL_REGISTRY: dict[str, dict] = {
         "vision": True,
         "label": "Claude Haiku 4.5 (OpenRouter)",
     },
+    # DR judge primary — OpenRouter avoids same-family grading
+    "openai/gpt-4o-mini": {
+        "backend": "openrouter",
+        "vision": True,
+        "label": "GPT-4o-mini (OpenRouter)",
+    },
     "google/gemini-3-flash-preview": {
         "backend": "openrouter",
         "vision": True,
@@ -74,6 +80,9 @@ MODEL_ALIASES: dict[str, str] = {
     "haiku-4.5":    "anthropic/claude-haiku-4.5",
     "claude":       "anthropic/claude-haiku-4.5",
     "claude-haiku": "anthropic/claude-haiku-4.5",
+    # DR judge aliases
+    "gpt-4o-mini":  "openai/gpt-4o-mini",
+    "gpt4o-mini":   "openai/gpt-4o-mini",
 }
 
 
