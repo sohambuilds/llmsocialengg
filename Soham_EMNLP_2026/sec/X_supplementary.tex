@@ -131,13 +131,128 @@ The both-judges-agree sensitivity at C3, restricting DR$=$1 to sessions on which
 % kappa < 0.7 after one rubric-refinement round, DR primary falls back to the
 % keyword heuristic per D2 and this sentence must change accordingly.
 
-\section{PhishTank/Wayback fidelity check}
+\section{Fidelity human review}
 \label{app:fidelity}
 
-We run a descriptive fidelity check comparing the templated environments against real-world phishing. The protocol takes a random sample of 20 Scammer4U adversarial environments and 20 real-world phishing captures (PhishTank and Wayback), presents the 40 screenshots in shuffled order to a panel of reviewers, and collects four ratings per screenshot: text fidelity (1--5), visual fidelity (1--5), likelihood of tricking an unprompted human (1--5), and a binary source-discrimination guess (benchmark vs real-world). We report (a) per-axis mean ratings with 95\% CIs for the benchmark and real-world subsets: \textbf{[TODO]}; (b) source-discrimination accuracy against the 50\% chance line: \textbf{[TODO]}; and (c) inter-rater agreement on each axis: \textbf{[TODO]}. A source-discrimination accuracy near chance indicates the templated envs are not readily distinguishable from real-world phishing, supporting the external-validity claim in \S\ref{sec:authoring}.
-% TODO before submit: insert (a) per-axis mean ratings + CIs, (b) source-
-% discrimination accuracy vs the 50pp chance line, (c) inter-rater agreement,
-% from the completed 20+20 fidelity panel.
+\paragraph{Sample and protocol.} $n=16$ reviewers (all computer-science background, ages $21$--$40$; self-reported phishing-security familiarity Low~$=7$, Medium~$=6$, High~$=3$) rated $40$ interleaved screenshots: $20$ Scammer4U environments and $20$ real captured-phishing pages drawn from PhishTank, the Wayback Machine, and curated security-blog reposts (manifest seed~$=42$). For each item, reviewers gave three $1$--$5$ Likert ratings (visual believability, copy quality, likelihood of fooling a user), a $3$-class source guess (\emph{Ours} / \emph{Real} / \emph{Not~sure}), and a confidence rating (Low / Medium / High). Total: $16 \times 40 = 640$ stim-judgments. Reviewers had no prior knowledge of the project or its taxonomy.
+
+\paragraph{Source-discrimination accuracy.} Reviewers commit to a side on most items but their guesses are essentially at chance. We report three Not-Sure framings (Table~\ref{tab:fidelity-accuracy}); $p$-values are exact-binomial against the $50\%$ chance line.
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{lll}
+\toprule
+Framing & Accuracy [95\% CI] & $p$ vs 50\% \\
+\midrule
+A. Strict (Not~Sure $=$ wrong) & $47.5\%~[43.7, 51.4]$ ($n=640$) & $0.22$ \\
+B. Excl.\ Not~Sure              & $54.0\%~[49.9, 58.1]$ ($n=563$) & $0.06$ \\
+C. Three-class                  & \multicolumn{2}{l}{correct $47.5\%$, wrong-commit $40.5\%$, not~sure $12.0\%$ ($n=640$)} \\
+\bottomrule
+\end{tabular}
+\caption{Reviewer source-discrimination accuracy under three Not-Sure framings. Both committed-guess framings have $95\%$ Wilson CIs that include the $50\%$ chance line.}
+\label{tab:fidelity-accuracy}
+\end{table}
+
+\paragraph{Wrong-direction confusion.} The full ground-truth $\times$ guess crosstab is in Table~\ref{tab:fidelity-crosstab}. The diagnostic row is the top one: when shown a Scammer4U environment, reviewers were marginally \emph{more} likely to label it as real phishing than as ours.
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{lrrr}
+\toprule
+GT $\rightarrow$ guess & Ours & Real & Not~sure \\
+\midrule
+Scammer4U env (ours)   & $43.1\%$ & $\mathbf{45.3\%}$ & $11.6\%$ \\
+Real captured phishing & $35.6\%$ & $51.9\%$ & $12.5\%$ \\
+\bottomrule
+\end{tabular}
+\caption{Row-normalised guess distribution per ground-truth source. Row $1$ shows the wrong-direction confusion: ours is more often labelled \emph{Real} than \emph{Ours}.}
+\label{tab:fidelity-crosstab}
+\end{table}
+
+\paragraph{Per-axis Likert: ours vs real.} Mann--Whitney $U$ on each $1$--$5$ rating, pooled over reviewers (Table~\ref{tab:fidelity-likert}). Per-axis cell sizes are $n=320$ ratings per source ($16$ reviewers $\times$ $20$ stimuli).
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{lcccc}
+\toprule
+Axis & Ours mean$\pm$SD & Real mean$\pm$SD & $\Delta$(o$-$r) & MW-$U$ $p$ \\
+\midrule
+Visual believability & $3.45\pm1.28$ & $2.80\pm1.53$ & $+0.65$ & $<10^{-4}$ \\
+Copy quality         & $3.45\pm1.23$ & $2.92\pm1.57$ & $+0.53$ & $<10^{-4}$ \\
+Would fool a user    & $3.51\pm1.17$ & $2.86\pm1.47$ & $+0.65$ & $<10^{-4}$ \\
+\bottomrule
+\end{tabular}
+\caption{Per-axis $1$--$5$ Likert ratings. Scammer4U environments are rated at-or-above real captures on every axis including likelihood-of-fooling. We discuss the contribution of real-side sample heterogeneity to the gap below.}
+\label{tab:fidelity-likert}
+\end{table}
+
+\paragraph{Stratification by familiarity.} Accuracy by self-reported phishing-security familiarity, excluding Not~Sure responses (Table~\ref{tab:fidelity-fam}). Cell sizes for the High tier ($n_{\text{rev}}=3$) are small and we caveat the inference accordingly --- but the point estimate sits exactly at chance and the CI is centred on $50\%$.
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{lrll}
+\toprule
+Familiarity & $n_{\text{rev}}$ & Accuracy [95\% CI] & $p$ vs 50\% \\
+\midrule
+Low    & $7$ & $56.3\%~[50.0, 62.3]$ ($n=247$) & $0.06$ \\
+Medium & $6$ & $53.7\%~[47.0, 60.2]$ ($n=216$) & $0.31$ \\
+High   & $3$ & $49.0\%~[39.4, 58.7]$ ($n=100$) & $0.92$ \\
+\bottomrule
+\end{tabular}
+\caption{Discrimination accuracy by reviewer familiarity (excl.\ Not~Sure). The High-familiarity sub-sample is exactly at chance.}
+\label{tab:fidelity-fam}
+\end{table}
+
+\paragraph{Confidence subset.} Restricting to ratings the reviewer marked High-confidence ($n=327$ committed): accuracy $54.1\%~[48.7, 59.5]$, $p$ vs 50\% $= 0.15$. On the strict view, High-confidence ratings split exactly $177$ correct vs $177$ wrong ($50.0\%$): reviewers who said they were sure were no better than reviewers who said they were guessing.
+
+\paragraph{Not-sure rate.} Reviewers were equally uncertain on both sides: $11.6\%$ Not~Sure on Scammer4U environments ($37/320$), $12.5\%$ on real captures ($40/320$); overall $12.0\%$. The symmetry is itself evidence that the templated envs are not visibly distinct from real captures.
+
+\paragraph{Inter-rater agreement.} Fleiss~$\kappa$ on the $3$-class source guess is $0.020$ --- statistically indistinguishable from no agreement. Krippendorff~$\alpha$-interval on the $1$--$5$ Likerts is $0.259$ (visual), $0.245$ (copy), $0.256$ (would-fool). Both are in the low-agreement band and consistent with a task in which the underlying discrimination is genuinely difficult: even though Table~\ref{tab:fidelity-likert} shows systematic mean differences in favour of ours, individual reviewers do not agree among themselves which items are which.
+
+\paragraph{Caveat on real-side sample heterogeneity.} The $20$ real captures span the realistic quality distribution of contemporary phishing pages, from polished brand clones (e.g.\ a Sumitomo Mitsui clone rated $4.50/5$ on visual) to crude near-spam (several captures rated $\leq 2.0$ on visual). Including the low-quality tail widens the Likert $\Delta$ in our favour and is part of why Scammer4U envs ``beat'' real on the means. The discrimination result (Table~\ref{tab:fidelity-accuracy}, the wrong-direction crosstab in Table~\ref{tab:fidelity-crosstab}, and the Fleiss~$\kappa \approx 0$ result above) does not depend on this asymmetry: reviewers cannot tell which items are which regardless of where on the quality axis they fall.
+
+\paragraph{Per-stimulus breakdown (top-5 each side).} Table~\ref{tab:fidelity-topstim} lists the five Scammer4U environments most often mistaken for real captures, and the five real captures most often mistaken for ours. The Oracle, Amazon, Chase, IRS, and Netflix clones --- well-known brand templates --- fool reviewers most often on the ours side; on the real side, the most-mistaken-for-ours captures all have low visual ratings ($1.7$--$2.7$) and are part of the heterogeneity caveat above. The full $40$-row per-stimulus table is released alongside the camera-ready artifact.
+
+\begin{table}[h]
+\centering\small
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{rllrrr}
+\toprule
+\# & GT & Stimulus & Acc.\ & Vis & Fool \\
+\midrule
+$25$ & ours & \texttt{e14\_oracle\_no\_timer} & $19\%$ & $3.94$ & $3.94$ \\
+$26$ & ours & \texttt{e17\_amazon}            & $27\%$ & $3.81$ & $3.88$ \\
+ $8$ & ours & \texttt{e8\_chase}              & $27\%$ & $3.88$ & $3.62$ \\
+$38$ & ours & \texttt{e13\_irs\_no\_timer}    & $36\%$ & $3.50$ & $3.44$ \\
+$37$ & ours & \texttt{e23\_netflix}           & $36\%$ & $3.38$ & $3.62$ \\
+\midrule
+ $7$ & real & \texttt{at\&t\_eb3b9414c9d4}    & $36\%$ & $1.94$ & $2.06$ \\
+$40$ & real & \texttt{other\_546d1e57efc1}    & $40\%$ & $2.31$ & $2.38$ \\
+$13$ & real & \texttt{paypalscam}             & $44\%$ & $2.69$ & $3.12$ \\
+$36$ & real & \texttt{other\_1076bb6838fb}    & $46\%$ & $1.69$ & $1.62$ \\
+$23$ & real & \texttt{other\_bc510e932e42}    & $47\%$ & $1.81$ & $1.75$ \\
+\bottomrule
+\end{tabular}
+}
+\caption{Top-$5$ most-mistaken stimuli on each side. Accuracy is the share of \emph{committed} reviewer guesses that named the correct source; Vis and Fool are mean $1$--$5$ Likerts across $16$ reviewers. The full per-stimulus table is released with the artifact.}
+\label{tab:fidelity-topstim}
+\end{table}
+
+\paragraph{Example stimuli.} Figure~\ref{fig:fidelity-examples} shows representative items from the review pool.
+
+\begin{figure}[t]
+\centering
+% --- TODO Soham: drop screenshot grid here ---
+% \includegraphics[width=\linewidth]{fig/fidelity_examples.pdf}
+\fbox{\begin{minipage}[c][9cm][c]{0.92\linewidth}\centering\itshape
+Screenshot grid placeholder.\\[2pt]
+Top row: Scammer4U environments most-mistaken-for-real (from Table~\ref{tab:fidelity-topstim}, top half).\\
+Bottom row: real captures most-mistaken-for-ours (from Table~\ref{tab:fidelity-topstim}, bottom half).\\[6pt]
+Per-stimulus accuracies labelled under each tile.
+\end{minipage}}
+\caption{Fidelity-review stimuli. Top: Scammer4U environments most often mis-identified as real captured phishing. Bottom: real captured-phishing pages most often mis-identified as Scammer4U. Per-stim accuracies and per-axis Likerts are in Table~\ref{tab:fidelity-topstim}.}
+\label{fig:fidelity-examples}
+\end{figure}
 
 \section{Per-environment registry}
 \label{app:envs}
