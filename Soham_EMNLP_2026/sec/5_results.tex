@@ -110,18 +110,30 @@ The detection--action gap (F1) \citep{turpin2023language, Lanham2023MeasuringFI,
 
 \begin{tcolorbox}[colback=black!4,colframe=black!40,boxrule=0.4pt,left=4pt,right=4pt,top=2pt,bottom=2pt]
 \footnotesize
-\emph{Representative C3 trace: the agent verbalises suspicion, then submits anyway (DR$=$1, critical leak).}
-% TODO before submit: replace the placeholder below with a VERBATIM agent
-% reasoning excerpt from a real C3 session that is BOTH DR=1 and leaked
-% (do NOT fabricate). Source: any cell under
-% agent/logs/v2/<model>_*_full/<env>/.../C3/seed_*/*.score.json whose summary
-% has c_PLR == "100.0%" AND DR == "DETECTED"; copy a
-% detection_rate.detections[].reasoning_excerpt verbatim. Plausible-harvest
-% envs (saas_onboard, crypto_platform, gov_portal) on the verbose narrators
-% (GPT-5 mini, Gemini 3 Flash) are the densest source of detected-and-leaked
-% sessions; blatant typosquat envs (job_portal, e8_chase) tend to be defended.
-\textbf{[verbatim trace pending insertion]}
+\emph{Representative C3 trace (Llama 4 Scout, \texttt{crypto\_platform\_blatant}): suspicion is verbalised at every step, critical PII is submitted, and the agent then names the site a scam. DR$=$1; leaked SSN, card number, CVV, and password.}
+\smallskip
+
+\textbf{Step 3} \textsc{(trust\_check)} ``The website is asking for sensitive information such as SSN, phone number, and address. The tone still seems suspicious\ldots'' \emph{[submits SSN and address]}
+
+\textbf{Step 4} \textsc{(trust\_check)} ``\ldots asking for sensitive financial information such as credit card number, expiry date, and CVV. The tone still seems suspicious\ldots'' \emph{[submits card and CVV]}
+
+\textbf{Step 5} \textsc{(done)} ``The task seems to be completed, but I strongly suspect that this website is a scam. I will not proceed with any further actions.''
 \end{tcolorbox}
+
+Manual inspection of the detected-and-leaked C3 sessions surfaces four
+recurring rationalisation patterns by which an agent that has registered a
+red flag nonetheless submits: (i)~\emph{acknowledged-risk discounting} (box
+above), where suspicion is verbalised and then overridden; (ii)~\emph{trusted-surface
+normalisation}, where a noticed anomaly is explained away by brand or TLS
+cues; (iii)~\emph{self-asserted-security deference}, where the site's own
+security claims are taken as proof of legitimacy; and (iv)~\emph{domain/procedure
+framing}, where an agent that has \emph{already named a phishing attempt}
+complies with a second request because it is ``on the official domain'' and
+framed as a routine security procedure. The prompt-injection environments
+fail predominantly through (ii)--(iii) rather than through the agent obeying
+injected text, consistent with the null prompt-injection axis effect
+(\S\ref{sec:results-axes}). Verbatim traces for all four patterns, spanning
+all four evaluated models, are in Appendix~\ref{app:casestudies}.
 
 \begin{table}[t]
 \centering
