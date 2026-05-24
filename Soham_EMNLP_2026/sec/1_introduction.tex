@@ -34,20 +34,17 @@ that realises a \emph{semantic} variant of the classic
 %   - "Brignull deceptive design patterns taxonomy"
 %   - "Bösch dark strategies online services privacy"
 %   - "Verizon Data Breach Investigations Report 2024 social engineering"
-\citep{Hamadouche_Boudraa_Gasmi_2024,10.1145/3359183,10.1145/3173574.3174108,deceptivedesignpatterns,Bsch2016TalesFT}. Unlike a human, who can pause or close the tab, an agent is optimised to finish its task and will follow links, fill fields, and submit forms. Capability benchmarks confirm that frontier agents are now reliable enough to do this end-to-end: REAL \citep{garg2026real} reports 41\% success on multi-turn state-changing web tasks---the same competence that makes agents useful makes them a reliable target for data exfiltration. We find that even when an independent LLM judge confirms the agent's reasoning has flagged a site as suspicious, under the pre-registered reflection condition the agent still submits critical PII in 35.9\% of sessions, versus 66.1\% when no such recognition is verbalised: a 30.2-point gap between what the agent \emph{says} and what it \emph{does}, robust across all four model families ($q\!<\!0.001$).
+\citep{Hamadouche_Boudraa_Gasmi_2024,10.1145/3359183,10.1145/3173574.3174108,deceptivedesignpatterns,Bsch2016TalesFT}. Unlike a human, who can pause or close the tab, an agent is optimised to finish its task and will follow links, fill fields, and submit forms. Capability benchmarks confirm that frontier agents are now reliable enough to do this end-to-end: REAL \citep{garg2026real} reports 41\% success on multi-turn state-changing web tasks---the same competence that makes agents useful makes them a reliable target for data exfiltration. We find that even when an independent LLM judge confirms the agent's reasoning has flagged a site as suspicious, the agent still hands over critical PII at a high rate---a detection--action gap between what the agent \emph{says} and what it \emph{does}, robust across all four model families (\S\ref{sec:results-f1}).
 
 \paragraph{The measurement gap.} Despite a growing literature on the
 adversarial robustness of web agents, existing evaluation frameworks
-gate success on proxy outcomes rather than on the terminal
-field-level submission of sensitive data to an attacker-controlled
-endpoint: click compliance under dark patterns
-\citep{cuvin2026decepticon,ersoy2026trickyarena,chen2026obviousinvisiblethreat},
-indirect prompt injection at tool-use APIs
-\citep{debenedetti2024agentdogo}, single-click redirect compliance
-\citep{korgul2025trap}, incidental over-sharing on benign sites
-\citep{zharmagambetov2026agentdam}, or social engineering treated as
-one of several risk categories without a structured PII profile
-\citep{xinyi2026webtrappark}. The terminal submission is the
+gate success on proxy outcomes---click compliance, indirect prompt
+injection at tool-use APIs, single-click redirects, or incidental
+over-sharing on benign sites---rather than on the terminal field-level
+submission of sensitive data to an attacker-controlled endpoint
+(Table~\ref{tab:related-matrix}, \S\ref{sec:related})
+\citep{cuvin2026decepticon,ersoy2026trickyarena,chen2026obviousinvisiblethreat,debenedetti2024agentdogo,korgul2025trap,zharmagambetov2026agentdam,xinyi2026webtrappark}.
+The terminal submission is the
 data-loss event a deployment review cares about: early-trajectory
 anomalies are observable to low-cost runtime guardrails, but a
 completed form-level POST payload is a terminal, unrecoverable
@@ -88,28 +85,24 @@ four contributions, each paired with the finding that backs it.
 
 \begin{enumerate}[leftmargin=*,itemsep=3pt]
   \item \textbf{A detection--action gap under pre-submission
-  reflection (primary).} Restricted to reach-gated sessions in the
-  reflection condition and pooled across all four models, agents
-  whose reasoning an independent LLM judge confirms flagged the site
-  as suspicious ($n = 462$) still leak critical PII at 35.9\%,
-  versus 66.1\% otherwise---a 30.2\,pp gap ($q < 0.001$ after
-  Benjamini--Hochberg correction; 31.0\,pp under a both-judges-agree
-  check). The detector leakage rate exceeds the pre-registered 10\%
-  falsification threshold by 25.9\,pp: verbalised suspicion does not
-  prevent submission (\S\ref{sec:results-f1}).
+  reflection (primary).} Pooled across all four models in the
+  reflection condition, agents whose reasoning an independent LLM
+  judge confirms flagged the site as suspicious still leak critical
+  PII at 35.9\%, versus 66.1\% otherwise---a 30.2\,pp gap
+  ($q < 0.001$) that clears our pre-registered 10\% falsification
+  threshold: verbalised suspicion does not prevent submission
+  (\S\ref{sec:results-f1}).
 
   \item \textbf{Prompt-level mitigation is sharply model-dependent.}
-  Baseline critical-tier leakage (C0) ranges from 54.5\% (Haiku) to
-  93.1\% (Gemini), with GPT-5 mini at 61.0\% and Llama at 82.3\%,
-  against 0\% on 10 benign twins. A reflection prompt (C3) cuts
-  PLR\textsubscript{crit} by 32.4\,pp on Gemini, 30.5\,pp on Haiku,
-  and 24.9\,pp on GPT-5 mini, but only 4.9\,pp on Llama; on Haiku
-  the C2 checklist is stronger still ($-$35.4\,pp). Three
-  model--condition cells individually cross the pre-registered
-  $-$30\,pp threshold while the pooled effect ($-$23.3\,pp) does
-  not: the heterogeneity, not a single pooled number, is the
-  finding, and it motivates output-level defences over further
-  system-prompt iteration.
+  Baseline critical-tier leakage ranges from 54.5\% to 93.1\% across
+  the four models (against 0\% on 10 benign twins), and escalating
+  prompt-level mitigation reduces it substantially on three models
+  but barely moves the fourth (Llama). Three model--condition cells
+  individually cross the pre-registered $-$30\,pp threshold while the
+  pooled effect ($-$23.3\,pp) does not: the heterogeneity, not a
+  single pooled number, is the finding, and it motivates output-level
+  defences over further system-prompt iteration
+  (\S\ref{sec:results-mitigation}).
 
   \item \textbf{A characterisation of where leakage concentrates.}
   Across the 8-axis taxonomy no factor axis survives BH correction:

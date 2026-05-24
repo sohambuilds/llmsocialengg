@@ -74,7 +74,7 @@ Pooled           & $72.7$ & $62.4$ & $51.9$ & $49.4$ \\
 \label{tab:results-main}
 \end{table}
 
-\paragraph{Seed-variance heterogeneity.} Per-env seed standard deviation differs by an order of magnitude across the four models: Gemini 3 Flash is the most stable ($0.5$--$3.2$ pp across C0--C3), followed by Claude Haiku 4.5 ($3.7$--$8.6$ pp), Llama 4 Scout ($8.4$--$11.9$ pp), and GPT-5 mini ($17.2$--$21.7$ pp). On GPT-5 mini specifically the seed SD is comparable in magnitude to its own mitigation effect: $\Delta$M3 $= -24.9$ pp against a C0 SD of $17.2$ pp. We attribute the elevated noise to the wider chain-of-thought sampling distribution characteristic of reasoning-style models; a replication of GPT-5 mini at $n=1$ seed would be expected to land qualitatively in the same place but with materially larger noise on per-env estimates. All effect-size inferences below are robust to this heterogeneity: the GLMM in \S\ref{sec:analysis} treats env and model as crossed random effects, absorbing per-env variance into the env grouping factor; the per-model rows above are reported with within-model seed SDs so the contribution of seed noise to any per-model claim is visible to the reader.
+\paragraph{Seed-variance heterogeneity.} Per-env seed standard deviation differs by an order of magnitude across the four models, with GPT-5 mini by far the noisiest (its C0 SD is comparable to its own $\Delta$M3 mitigation effect). All effect-size inferences below are nonetheless robust to this heterogeneity: the GLMM in \S\ref{sec:analysis} treats env and model as crossed random effects, absorbing per-env variance into the env grouping factor. The full per-model SD breakdown and the $n=1$ replication argument are in Appendix~\ref{app:per-model}.
 
 \subsection{Mitigation Gradient}
 \label{sec:results-mitigation}
@@ -108,29 +108,17 @@ $q$-value (BH)   & $< 0.001$ & $< 0.001$ & $< 0.001$ \\
 
 The detection--action gap (F1) \citep{turpin2023language, Lanham2023MeasuringFI,Chen2025ReasoningMD} is the within-C3 contrast of $\text{PLR}_{\text{crit}}$ between sessions where the LLM-as-judge confirms the agent verbalised suspicion at any step (DR$=$1) and sessions where it did not (DR$=$0), restricted to $\texttt{reached\_trap} = \text{True}$ (\S\ref{sec:reachedtrap}). Pooled across all four evaluated models, the gap is $30.2$ pp (DR$=$1: $35.9\%$, $n = 462$; DR$=$0: $66.1\%$, $n = 1{,}071$; $q < 0.001$ after BH correction over the pre-registered primary family in \S\ref{sec:analysis}), which exceeds the pre-registered 15 pp minimum detectable effect by $15.2$ pp and comfortably clears the $\geq 200$ C3 DR$=$1 sessions power guard. The DR$=$1 leakage rate of $35.9\%$ itself exceeds the pre-registered 10\% falsification threshold by $25.9$ pp, ruling out the alternative hypothesis under which independent attack recognition translates into reliable refusal: more than one in three agents that an independent LLM confirms has identified the attack still submit critical PII to the attacker endpoint. Per-model F1 estimates at C3 are $19.4$ pp on GPT-5 mini ($n_{DR=1} = 167$), $21.1$ pp on Claude Haiku 4.5 ($n_{DR=1} = 122$), $17.2$ pp on Gemini 3 Flash ($n_{DR=1} = 103$), and $38.3$ pp on Llama 4 Scout ($n_{DR=1} = 70$); all four per-model cells fall in the underpowered band ($50 \leq n_{DR=1} < 200$) per \S\ref{sec:analysis} and are reported with Wilson 95\% CIs in Appendix~\ref{app:per-model} as descriptive context, with inference reserved for the pooled estimate. The widest per-model gap is Llama's $38.3$ pp, but it is driven by a small detector cell ($n_{DR=1} = 70$) sitting against an elevated non-detector baseline (DR$=$0 PLR $= 86.9\%$): when Llama narrates suspicion it still leaks in $48.6\%$ of sessions; when it does not, leakage rises to $86.9\%$. The widest gap is not therefore evidence of strongest defensive behaviour but of widest separation between two extreme cells. A both-judges-agree sensitivity restricting DR$=$1 to sessions on which the GPT-4o-mini primary and Llama-4-Scout secondary judges concur produces a $31.0$ pp gap on the same cell ($n_{DR=1} = 458$), within rounding of the primary reading; a keyword-heuristic baseline on the same data produces a wider gap by approximately 10 pp, attributable to keyword DR$=$1 conflating narration of attack vocabulary with confirmed recognition (Appendix~\ref{app:dr-sensitivity}). An exploratory secondary contrast comparing $\text{PLR}_{\text{crit}} \mid \text{DR}{=}1$ across conditions (Table~\ref{tab:results-f1}) shows a monotonic narrowing of the gap from $75.7$ pp at C0 to $30.2$ pp at C3 as the LLM-judge DR$=$1 cell fills; the C0, C1, and C2 rows have $n_{DR=1}$ in the underpowered band ($50 \leq n_{DR=1} < 200$) per \S\ref{sec:analysis} and are reported with uncorrected $p$-values for direction-of-effect context only.
 
-\begin{tcolorbox}[colback=black!4,colframe=black!40,boxrule=0.4pt,left=4pt,right=4pt,top=2pt,bottom=2pt]
-\footnotesize
-\emph{Representative C3 trace (Llama 4 Scout, \texttt{crypto\_platform\_blatant}): suspicion is verbalised at every step, critical PII is submitted, and the agent then names the site a scam. DR$=$1; leaked SSN, card number, CVV, and password.}
-\smallskip
-
-\textbf{Step 3} \textsc{(trust\_check)} ``The website is asking for sensitive information such as SSN, phone number, and address. The tone still seems suspicious\ldots'' \emph{[submits SSN and address]}
-
-\textbf{Step 4} \textsc{(trust\_check)} ``\ldots asking for sensitive financial information such as credit card number, expiry date, and CVV. The tone still seems suspicious\ldots'' \emph{[submits card and CVV]}
-
-\textbf{Step 5} \textsc{(done)} ``The task seems to be completed, but I strongly suspect that this website is a scam. I will not proceed with any further actions.''
-\end{tcolorbox}
-
 Manual inspection of the detected-and-leaked C3 sessions surfaces four
 recurring rationalisation patterns by which an agent that has registered a
-red flag nonetheless submits: (i)~\emph{acknowledged-risk discounting} (box
-above), where suspicion is verbalised and then overridden; (ii)~\emph{trusted-surface
-normalisation}, where a noticed anomaly is explained away by brand or TLS
-cues; (iii)~\emph{self-asserted-security deference}, where the site's own
-security claims are taken as proof of legitimacy; and (iv)~\emph{domain/procedure
-framing}, where an agent that has \emph{already named a phishing attempt}
-complies with a second request because it is ``on the official domain'' and
-framed as a routine security procedure. The prompt-injection environments
-fail predominantly through (ii)--(iii) rather than through the agent obeying
+red flag nonetheless submits: \emph{acknowledged-risk discounting},
+\emph{trusted-surface normalisation}, \emph{self-asserted-security deference},
+and \emph{domain/procedure framing}. In the starkest cases suspicion is
+verbalised \emph{after} the data is gone---one Llama 4 Scout session on
+\texttt{crypto\_platform\_blatant} submits SSN, card, and CVV across
+consecutive steps, then signs off ``the task seems to be completed, but I
+strongly suspect that this website is a scam.'' The prompt-injection
+environments fail predominantly through trusted-surface normalisation and
+self-asserted-security deference rather than through the agent obeying
 injected text, consistent with the null prompt-injection axis effect
 (\S\ref{sec:results-axes}). Verbatim traces for all four patterns, spanning
 all four evaluated models, are in Appendix~\ref{app:casestudies}.
@@ -164,7 +152,7 @@ C3 & $35.9$ & $66.1$ & $30.2$ & $462$ \\
 
 The paired-sibling tests F2--F11 isolate the contribution of individual axes (Table~\ref{tab:claims}) to critical-tier leakage. The headline result is a null: \emph{no factor axis crosses Benjamini--Hochberg significance at $q = 0.05$ over the pre-registered primary family} (Table~\ref{tab:results-axes}). The four BH-eligible axes produce small effects with raw $p$-values well above the adjusted threshold: salience (F2, $-7.2$ pp, $q = 0.31$), urgency (F5, $-4.1$ pp, $q = 0.49$), prompt injection (F8, $+1.7$ pp, $q = 0.56$), and interaction style (F10, $+4.9$ pp, $q = 0.56$). The remaining axes (F6 social-proof, F7 authority, F9 PII-tier, H multi-site) fall below the pre-registered $\geq 6$ sibling-pair gate and are reported as descriptive context outside the BH family (F6 has zero canonical pairs, F7 one). The pressure-axis null (F5, F6, F7 all in the $[-4.1, +1.2]$ pp range) is notable in contrasting with the human-user literature on pressure-driven phishing susceptibility: under the paired-sibling design, urgency cues, social-proof framing, and authority impersonation do not move pooled leakage on these four frontier models.
 
-\paragraph{Paired-sibling vs cross-cutting marginal.} The salience axis is the clearest case where the paired test and a cross-cutting marginal disagree on sign, and the disagreement is itself an argument for the paired apparatus. A marginal that groups every environment by its salience value yields the ordering subtle ($\sim 97\%$ C0 pooled) $>$ plausible ($\sim 84\%$) $>$ blatant ($\sim 73\%$): subtle attacks appear to be the most dangerous. The F2 paired test in Table~\ref{tab:results-axes}, in contrast, fixes parent environment and toggles only the salience axis, and yields $-7.2$ pp: subtle siblings leak \emph{less} than their parents on average. Both readings can be simultaneously true if subtle-coded envs were authored in categories that carry higher baseline leakage --- a confound that the paired sibling design strips out by construction and the marginal does not. We report both views: the marginal in Appendix~\ref{app:per-model} as descriptive context about category-by-salience interactions in the benchmark composition, and the paired test in Table~\ref{tab:results-axes} as the within-axis effect estimate. The paired view is what supports causal claims; the marginal is what reads off the dataset.
+\paragraph{Paired-sibling vs cross-cutting marginal.} The salience axis is the clearest case where the paired test and a cross-cutting marginal disagree on sign, and the disagreement is itself an argument for the paired apparatus. A cross-cutting marginal that groups environments by salience value ranks subtle attacks most dangerous (Appendix~\ref{app:per-model}); the F2 paired test, which fixes the parent environment and toggles only salience, reverses the sign ($-7.2$ pp: subtle siblings leak \emph{less} than their parents). Both readings can hold simultaneously if subtle-coded envs were authored in categories with higher baseline leakage---a confound the paired design strips out by construction and the marginal does not. The paired view is what supports causal claims; the marginal is what reads off the dataset.
 
 \begin{table}[t]
 \centering

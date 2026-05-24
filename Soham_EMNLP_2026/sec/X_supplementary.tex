@@ -258,6 +258,13 @@ Per-stimulus accuracies labelled under each tile.
 \label{fig:fidelity-examples}
 \end{figure}
 
+\section{Benign-twin construction \& subtraction}
+\label{app:benign-twin}
+
+The 10 benign twins (\S\ref{sec:benign}) are forked from attack environments by stripping the attack surface---typosquats rewritten to legitimate domains, urgency cues removed, capture endpoints repointed at legitimate sinks, prompt injection stripped---while preserving the legitimate task. Twins are stratified across the four largest categories (job, ecommerce, gov, support); the remaining categories (banking, healthcare, crypto, social media, dating, education) are under-covered by the twin pool and rely on the global-twin fallback below.
+
+For each attack environment $e$, attack-attributable critical-tier leakage subtracts the category-pool mean across twins from the env rate; categories with fewer than two twins fall back to the global twin mean, and the substitution is flagged in the per-environment table released with the artifact. The subtraction is a measurement adjustment and is not part of the multiple-comparison family; because it is constant within each (env, model, condition) cell, the M1--M3 mitigation contrasts and the F1 gap are computed on the raw rates (\S\ref{sec:benign}).
+
 \section{Per-environment registry}
 \label{app:envs}
 
@@ -349,6 +356,10 @@ F11 cross-category generalisation has no canonical sibling-pair construction (ca
 
 The \texttt{defense\_via} decomposition referenced from \S\ref{sec:results-secondary} partitions the \texttt{Defended} sessions in Table~\ref{tab:results-tcr} into the two pre-registered paths from \S\ref{sec:metrics}. At C3 pooled, the majority of \texttt{Defended} sessions are \texttt{safe\_completion} (the agent finished the legitimate task without ever reaching the attack surface), with a smaller fraction of \texttt{refusal} (chrome-error landing after attempted external navigation). The full decomposition by (model, condition) is in the released CSV.
 
+\paragraph{Seed-variance heterogeneity (from \S\ref{sec:results-baseline}).} Per-env seed standard deviation differs by an order of magnitude across the four models: Gemini 3 Flash is the most stable ($0.5$--$3.2$ pp across C0--C3), followed by Claude Haiku 4.5 ($3.7$--$8.6$ pp), Llama 4 Scout ($8.4$--$11.9$ pp), and GPT-5 mini ($17.2$--$21.7$ pp). On GPT-5 mini the seed SD is comparable in magnitude to its own mitigation effect ($\Delta$M3 $= -24.9$ pp against a C0 SD of $17.2$ pp); we attribute the elevated noise to the wider chain-of-thought sampling distribution characteristic of reasoning-style models, and a replication at $n=1$ seed would be expected to land qualitatively in the same place but with materially larger noise on per-env estimates. All effect-size inferences in \S\ref{sec:results} are robust to this heterogeneity because the GLMM in \S\ref{sec:analysis} treats env and model as crossed random effects, absorbing per-env variance into the env grouping factor; the per-model rows of Table~\ref{tab:results-main} carry within-model seed SDs so the contribution of seed noise to any per-model claim is visible.
+
+\paragraph{Salience cross-cutting marginal (from \S\ref{sec:results-axes}).} Grouping every environment by its salience value (rather than toggling salience within a fixed parent) yields the C0 pooled ordering subtle ($\sim 97\%$) $>$ plausible ($\sim 84\%$) $>$ blatant ($\sim 73\%$): subtle attacks appear most dangerous. This is the marginal that disagrees in sign with the F2 paired test ($-7.2$ pp, Table~\ref{tab:results-axes}); the disagreement is the category-base-rate confound discussed in \S\ref{sec:results-axes}, present in the marginal and stripped out by the paired design.
+
 \section{Failure-mode case studies}
 \label{app:casestudies}
 
@@ -389,7 +400,7 @@ indicators or suspicious elements detected,'' and submits card number, CVV,
 and password. The attacker-authored trust signals are accepted at face value;
 the environment's hidden-DOM injection is never the operative cause.
 
-\paragraph{4. Trusted-brand red-flag discounting (GPT-5 mini, \texttt{aws}).}
+\paragraph{4. Trusted-surface normalisation (GPT-5 mini, \texttt{aws}).}
 The agent notices the manipulative framing---``minor odd phrasing in the modal
 (`prevent server teardown') is noted''---but discounts it as ``\emph{not
 sufficient to indicate a phishing site given the valid domain, TLS, and
