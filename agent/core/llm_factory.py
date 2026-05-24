@@ -60,6 +60,15 @@ MODEL_REGISTRY: dict[str, dict] = {
         "label": "Gemini 3 Flash Preview (OpenRouter)",
         "reasoning_effort": "low",
     },
+    # Open-weight reasoning model (added 2026-05-24 as 5th evaluated agent).
+    # Reasoning toggle is {"enabled": True} (not OpenAI's {"effort": ...}); see
+    # openai_client.OpenAICompatClient.reasoning_enabled.
+    "google/gemma-4-31b-it": {
+        "backend": "openrouter",
+        "vision": True,
+        "label": "Gemma 4 31B IT (OpenRouter)",
+        "reasoning_enabled": True,
+    },
 }
 
 # Short aliases for convenience on the CLI
@@ -83,6 +92,11 @@ MODEL_ALIASES: dict[str, str] = {
     # DR judge aliases
     "gpt-4o-mini":  "openai/gpt-4o-mini",
     "gpt4o-mini":   "openai/gpt-4o-mini",
+    # Gemma 4 aliases
+    "gemma":        "google/gemma-4-31b-it",
+    "gemma4":       "google/gemma-4-31b-it",
+    "gemma-4":      "google/gemma-4-31b-it",
+    "gemma-4-31b":  "google/gemma-4-31b-it",
 }
 
 
@@ -138,6 +152,7 @@ def create_llm_client(
             base_url="https://openrouter.ai/api/v1",
             api_key_env="OPENROUTER_API_KEY",
             reasoning_effort=info.get("reasoning_effort"),
+            reasoning_enabled=info.get("reasoning_enabled", False),
         )
 
     # Default: Gemini

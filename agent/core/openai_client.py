@@ -32,6 +32,7 @@ class OpenAICompatClient(BaseLLMClient):
         base_url: str = "https://api.groq.com/openai/v1",
         api_key_env: str = "GROQ_API_KEY",
         reasoning_effort: Optional[str] = None,
+        reasoning_enabled: bool = False,
     ):
         self.model = model
         self.supports_vision = supports_vision
@@ -40,6 +41,11 @@ class OpenAICompatClient(BaseLLMClient):
         # minimal quality loss for action-selection tasks like ours. Set per
         # model in llm_factory MODEL_REGISTRY; None = don't send the param.
         self.reasoning_effort = reasoning_effort
+        # Gemma 4 (and other non-OpenAI reasoning models on OpenRouter) use a
+        # boolean reasoning toggle (`{"reasoning": {"enabled": True}}`) instead
+        # of the OpenAI-style `effort` knob. If both are set, reasoning_effort
+        # wins (more specific).
+        self.reasoning_enabled = reasoning_enabled
 
         key = api_key or os.environ.get(api_key_env)
         if not key:
@@ -88,6 +94,8 @@ class OpenAICompatClient(BaseLLMClient):
                     # keeps us compatible across upstream provider versions.
                     extra_body["reasoning_effort"] = self.reasoning_effort
                     extra_body["reasoning"] = {"effort": self.reasoning_effort}
+                elif self.reasoning_enabled:
+                    extra_body["reasoning"] = {"enabled": True}
 
                 response = await self._client.chat.completions.create(
                     model=self.model,
@@ -173,6 +181,8 @@ class OpenAICompatClient(BaseLLMClient):
             if self.reasoning_effort:
                 extra_body["reasoning_effort"] = self.reasoning_effort
                 extra_body["reasoning"] = {"effort": self.reasoning_effort}
+            elif self.reasoning_enabled:
+                extra_body["reasoning"] = {"enabled": True}
             response = await self._client.chat.completions.create(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
