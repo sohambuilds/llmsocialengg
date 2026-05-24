@@ -69,6 +69,15 @@ MODEL_REGISTRY: dict[str, dict] = {
         "label": "Gemma 4 31B IT (OpenRouter)",
         "reasoning_enabled": True,
     },
+    # Qwen 3.6 35B A3B (MoE, ~3B active) — open-weight reasoning model,
+    # replaces Gemma 4 as the 5th evaluated agent for speed. Text-only
+    # (set vision=False until confirmed otherwise on OpenRouter).
+    "qwen/qwen3.6-35b-a3b": {
+        "backend": "openrouter",
+        "vision": False,
+        "label": "Qwen 3.6 35B A3B (OpenRouter)",
+        "reasoning_enabled": True,
+    },
 }
 
 # Short aliases for convenience on the CLI
@@ -97,6 +106,12 @@ MODEL_ALIASES: dict[str, str] = {
     "gemma4":       "google/gemma-4-31b-it",
     "gemma-4":      "google/gemma-4-31b-it",
     "gemma-4-31b":  "google/gemma-4-31b-it",
+    # Qwen 3.6 aliases
+    "qwen":         "qwen/qwen3.6-35b-a3b",
+    "qwen3":        "qwen/qwen3.6-35b-a3b",
+    "qwen-3":       "qwen/qwen3.6-35b-a3b",
+    "qwen3.6":      "qwen/qwen3.6-35b-a3b",
+    "qwen-3.6":     "qwen/qwen3.6-35b-a3b",
 }
 
 
