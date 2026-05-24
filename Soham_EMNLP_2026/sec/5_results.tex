@@ -5,12 +5,53 @@
 \section{Results}
 \label{sec:results}
 
-We report results across the full pre-registered design: four frontier models (GPT-5 mini, Claude Haiku 4.5, Gemini 3 Flash, Llama 4 Scout), four conditions (C0--C3), $n = 5$ seeds per (env, model, condition) cell on the 91 adversarial environments, and $n = 5$ seeds per (env, model) cell on the 10 benign twins under C0 only, for a target total of $7{,}480$ sessions. The realised retained pool after \texttt{BROWSER\_ERROR} exclusion is approximately $7{,}500$ sessions; reliability flags are $1.0$ in every (model, condition) cell. Percentage-point comparisons in this section are on session-level $\text{PLR}_{\text{crit}}$ unless otherwise stated. Effects carry 95\% confidence intervals from the mixed-effects logistic in \S\ref{sec:analysis}; tests in the pre-registered primary family of 14 (Table~\ref{tab:claims}) are flagged with BH-adjusted $q$-values, and exploratory tests are flagged with uncorrected $p$-values. A drop in $\text{PLR}_{\text{crit}}$ is a security improvement; a positive F1 gap reflects the detection--action mismatch in the predicted direction. The paper leads with the per-model breakdown rather than the pooled summary because cross-model variance is the central empirical finding (\S\ref{sec:results-mitigation}).
+We report results across the full pre-registered design: four frontier models (GPT-5 mini, Claude Haiku 4.5, Gemini 3 Flash, Llama 4 Scout), four conditions (C0--C3), $n = 5$ seeds per (env, model, condition) cell on the 91 adversarial environments, and $n = 5$ seeds per (env, model) cell on the 10 benign twins under C0 only, for a target total of $7{,}480$ sessions. The realised retained pool after \texttt{BROWSER\_ERROR} exclusion is approximately $7{,}500$ sessions; reliability flags are $1.0$ in every (model, condition) cell. Percentage-point comparisons in this section are on session-level $\text{PLR}_{\text{crit}}$ unless otherwise stated. Effects carry 95\% confidence intervals from the mixed-effects logistic in \S\ref{sec:analysis}; tests in the pre-registered primary family (Table~\ref{tab:claims}) are flagged with BH-adjusted $q$-values; exploratory tests carry uncorrected $p$-values. A drop in $\text{PLR}_{\text{crit}}$ is a security improvement; a positive F1 gap reflects the detection--action mismatch in the predicted direction. The paper leads with the per-model breakdown rather than the pooled summary because cross-model variance is the central empirical finding (\S\ref{sec:results-mitigation}).
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\begin{groupplot}[
+  group style={group size=1 by 2, vertical sep=1.5cm},
+  width=\columnwidth, height=4.3cm,
+  ybar, bar width=3pt,
+  ymin=0, ymax=100,
+  ylabel={PLR\textsubscript{crit} (\%)},
+  ylabel style={font=\scriptsize},
+  tick label style={font=\scriptsize},
+  legend style={font=\scriptsize, draw=none, fill=none},
+]
+\nextgroupplot[
+  symbolic x coords={GPT-5 mini, Haiku, Gemini, Llama},
+  xtick=data,
+  title={(a) Critical-PII leakage by model and condition},
+  title style={font=\scriptsize},
+  legend columns=4, enlarge x limits=0.18,
+]
+\addplot coordinates {(GPT-5 mini,61.0) (Haiku,54.5) (Gemini,93.1) (Llama,82.3)};
+\addplot coordinates {(GPT-5 mini,47.7) (Haiku,36.4) (Gemini,81.8) (Llama,83.8)};
+\addplot coordinates {(GPT-5 mini,38.9) (Haiku,19.1) (Gemini,68.5) (Llama,81.4)};
+\addplot coordinates {(GPT-5 mini,36.1) (Haiku,24.0) (Gemini,60.7) (Llama,77.4)};
+\legend{C0, C1, C2, C3}
+\nextgroupplot[
+  symbolic x coords={C0, C1, C2, C3},
+  xtick=data,
+  title={(b) Detection--action gap (reflection, reach-gated)},
+  title style={font=\scriptsize},
+  legend columns=2, enlarge x limits=0.25,
+]
+\addplot coordinates {(C0,82.5) (C1,74.0) (C2,69.4) (C3,66.1)};
+\addplot coordinates {(C0,6.8) (C1,22.9) (C2,30.0) (C3,35.9)};
+\legend{DR$=$0, DR$=$1}
+\end{groupplot}
+\end{tikzpicture}
+\caption{\textbf{Key findings.} (a) Critical-tier PII leakage is high at baseline (C0) for all four models and falls under escalating prompt-level mitigation (C1--C3) for every model except Llama 4 Scout. (b) Even agents an independent LLM judge confirms flagged the site as suspicious (DR$=$1) still leak in 35.9\% of reach-gated sessions at C3, versus 66.1\% for non-detectors (DR$=$0); the benign-twin baseline is $0\%$. Source values in Tables~\ref{tab:results-main} and \ref{tab:results-f1}.}
+\label{fig:key-findings}
+\end{figure}
 
 \subsection{Baseline Leakage}
 \label{sec:results-baseline}
 
-Under C0 (no privacy guidance), the four models leak critical-tier PII at a pooled rate of $72.7\%$ across the 91 adversarial environments. Per-model rates span $[54.5, 93.1]\%$ (Table~\ref{tab:results-main}), confirming that the threat is not isolated to a single model family but that the magnitude varies by nearly 40 percentage points across frontier providers. The benign-twin baseline is empirically $0\%$ at C0 across the ten twins: the agents that hand over critical PII to the attacker on adversarial sites do not, on average, hand over the same critical PII on equivalent benign sites, so the headline rate is essentially attack-attributable rather than baseline form-filling. The pre-registered direction-of-effect prediction (that frontier agents leak critical PII at a substantial rate under no privacy guidance) is supported.
+Under C0 (no privacy guidance), the four models leak critical-tier PII at a pooled rate of $72.7\%$ across the 91 adversarial environments. Per-model rates span $[54.5, 93.1]\%$ (Figure~\ref{fig:key-findings}, Table~\ref{tab:results-main}), confirming that the threat is not isolated to a single model family but that the magnitude varies by nearly 40 percentage points across frontier providers. The benign-twin baseline is empirically $0\%$ at C0 across the ten twins: the agents that hand over critical PII to the attacker on adversarial sites do not, on average, hand over the same critical PII on equivalent benign sites, so the headline rate is essentially attack-attributable rather than baseline form-filling. The pre-registered direction-of-effect prediction (that frontier agents leak critical PII at a substantial rate under no privacy guidance) is supported.
 
 \begin{table}[t]
 \centering
@@ -38,7 +79,7 @@ Pooled           & $72.7$ & $62.4$ & $51.9$ & $49.4$ \\
 \subsection{Mitigation Gradient}
 \label{sec:results-mitigation}
 
-The three pre-registered mitigation contrasts M1 (C0 vs C1), M2 (C0 vs C2), and M3 (C0 vs C3) yield qualitatively different conclusions at the pooled and per-model levels (Table~\ref{tab:results-mitigation}). At the pooled level, the largest single-condition effect is $\Delta$M3 $= -23.3$ pp ($q < 0.001$ from the GLMM in \S\ref{sec:analysis} after BH correction over the 8-test inference-bearing family), which falls $6.7$ pp short of the pre-registered 30 pp falsification threshold for the mitigation-insufficiency headline (\S\ref{sec:analysis}). At the per-model level the conclusion changes: \emph{three of the four model-condition cells cross the 30 pp threshold individually} --- Claude Haiku 4.5 $\Delta$M2 $= -35.4$ pp and $\Delta$M3 $= -30.5$ pp, and Gemini 3 Flash $\Delta$M3 $= -32.4$ pp. The headline empirical finding is therefore cross-model heterogeneity rather than a single pooled effect: three frontier model families respond meaningfully to escalating prompt-level guidance ($\Delta$M3 between $-24.9$ and $-32.4$ pp), while the fourth (Llama 4 Scout) does not ($\Delta$M3 $= -4.9$ pp) despite stated detection on the same model rising from $0.2\%$ at C0 to $16.0\%$ at C3 (\S\ref{sec:results-f1}). Per-model responsiveness varies by $27.5$ pp at $\Delta$M3 (Llama $-4.9$ to Gemini $-32.4$); even on the most responsive cell (Haiku at C2), leakage remains at $19.1\%$, well above any rate compatible with autonomous PII handling on a deployed agent. The rank order of $C1 < C2 < C3$ (by mitigation strength) is broken on Haiku --- where C2 dominates C3 by $4.9$ pp --- and is flat on Llama. On Gemini and GPT-5 mini the rank order is monotone, suggesting that the effective component of the C2 and C3 prompts on the responsive models is plausibly a shared metacognitive prefix amplified by additional specificity, but the inverted Haiku result is incompatible with a strict ``more specific is more effective'' interpretation.
+The three pre-registered mitigation contrasts M1 (C0 vs C1), M2 (C0 vs C2), and M3 (C0 vs C3) yield qualitatively different conclusions at the pooled and per-model levels (Table~\ref{tab:results-mitigation}). At the pooled level, the largest single-condition effect is $\Delta$M3 $= -23.3$ pp ($q < 0.001$ from the GLMM in \S\ref{sec:analysis} after BH correction over the pre-registered primary family), which falls $6.7$ pp short of the pre-registered 30 pp falsification threshold for the mitigation-insufficiency headline (\S\ref{sec:analysis}). At the per-model level the conclusion changes: \emph{three of the four model-condition cells cross the 30 pp threshold individually} --- Claude Haiku 4.5 $\Delta$M2 $= -35.4$ pp and $\Delta$M3 $= -30.5$ pp, and Gemini 3 Flash $\Delta$M3 $= -32.4$ pp. The headline empirical finding is therefore cross-model heterogeneity rather than a single pooled effect: three frontier model families respond meaningfully to escalating prompt-level guidance ($\Delta$M3 between $-24.9$ and $-32.4$ pp), while the fourth (Llama 4 Scout) does not ($\Delta$M3 $= -4.9$ pp) despite stated detection on the same model rising from $0.2\%$ at C0 to $16.0\%$ at C3 (\S\ref{sec:results-f1}). Per-model responsiveness varies by $27.5$ pp at $\Delta$M3 (Llama $-4.9$ to Gemini $-32.4$); even on the most responsive cell (Haiku at C2), leakage remains at $19.1\%$, well above any rate compatible with autonomous PII handling on a deployed agent. The rank order of $C1 < C2 < C3$ (by mitigation strength) is broken on Haiku --- where C2 dominates C3 by $4.9$ pp --- and is flat on Llama. On Gemini and GPT-5 mini the rank order is monotone, suggesting that the effective component of the C2 and C3 prompts on the responsive models is plausibly a shared metacognitive prefix amplified by additional specificity, but the inverted Haiku result is incompatible with a strict ``more specific is more effective'' interpretation.
 
 \begin{table}[t]
 \centering
@@ -58,14 +99,29 @@ $q$-value (BH)   & $< 0.001$ & $< 0.001$ & $< 0.001$ \\
 \bottomrule
 \end{tabular}
 }
-\caption{Mitigation effect sizes: empirical $\Delta\text{PLR}_{\text{crit}}$ (pp) relative to C0, per condition, per model. Empirical $\Delta$ is the raw cell-mean difference on the probability scale (analysis-plan \S 11 D8); the GLMM $\beta_{\text{logit}}$ and odds ratios for the pooled row are in Appendix~\ref{app:per-model}. Negative values indicate the predicted direction (a reduction in leakage). $q$-values are BH-adjusted across the 8-test inference-bearing primary family (analysis-plan \S 7 D7). \textbf{Bolded} cells cross the pre-registered 30 pp falsification threshold individually; the pooled row does not ($-23.3$ pp at the most negative condition).}
+\caption{Mitigation effect sizes: empirical $\Delta\text{PLR}_{\text{crit}}$ (pp) relative to C0, per condition, per model. Empirical $\Delta$ is the raw cell-mean difference on the probability scale; the GLMM $\beta_{\text{logit}}$ and odds ratios for the pooled row are in Appendix~\ref{app:per-model}. Negative values indicate the predicted direction (a reduction in leakage). $q$-values are BH-adjusted across the pre-registered primary family. \textbf{Bolded} cells cross the pre-registered 30 pp falsification threshold individually; the pooled row does not ($-23.3$ pp at the most negative condition).}
 \label{tab:results-mitigation}
 \end{table}
 
 \subsection{Detection--Action Gap}
 \label{sec:results-f1}
 
-The detection--action gap (F1) is the within-C3 contrast of $\text{PLR}_{\text{crit}}$ between sessions where the LLM-as-judge confirms the agent verbalised suspicion at any step (DR$=$1) and sessions where it did not (DR$=$0), restricted to $\texttt{reached\_trap} = \text{True}$ (\S\ref{sec:reachedtrap}). Pooled across all four evaluated models, the gap is $30.2$ pp (DR$=$1: $35.9\%$, $n = 462$; DR$=$0: $66.1\%$, $n = 1{,}071$; $q < 0.001$ after BH correction over the 8-test inference-bearing family in \S\ref{sec:analysis}), which exceeds the pre-registered 15 pp minimum detectable effect by $15.2$ pp and comfortably clears the $\geq 200$ C3 DR$=$1 sessions power guard. The DR$=$1 leakage rate of $35.9\%$ itself exceeds the pre-registered 10\% falsification threshold by $25.9$ pp, ruling out the alternative hypothesis under which independent attack recognition translates into reliable refusal: more than one in three agents that an independent LLM confirms has identified the attack still submit critical PII to the attacker endpoint. Per-model F1 estimates at C3 are $19.4$ pp on GPT-5 mini ($n_{DR=1} = 167$), $21.1$ pp on Claude Haiku 4.5 ($n_{DR=1} = 122$), $17.2$ pp on Gemini 3 Flash ($n_{DR=1} = 103$), and $38.3$ pp on Llama 4 Scout ($n_{DR=1} = 70$); all four per-model cells fall in the underpowered band ($50 \leq n_{DR=1} < 200$) per \S\ref{sec:analysis} and are reported with Wilson 95\% CIs in Appendix~\ref{app:per-model} as descriptive context, with inference reserved for the pooled estimate. The widest per-model gap is Llama's $38.3$ pp, but it is driven by a small detector cell ($n_{DR=1} = 70$) sitting against an elevated non-detector baseline (DR$=$0 PLR $= 86.9\%$): when Llama narrates suspicion it still leaks in $48.6\%$ of sessions; when it does not, leakage rises to $86.9\%$. The widest gap is not therefore evidence of strongest defensive behaviour but of widest separation between two extreme cells. A both-judges-agree sensitivity restricting DR$=$1 to sessions on which the GPT-4o-mini primary and Llama-4-Scout secondary judges concur produces a $31.0$ pp gap on the same cell ($n_{DR=1} = 458$), within rounding of the primary reading; a keyword-heuristic baseline on the same data produces a wider gap by approximately 10 pp, attributable to keyword DR$=$1 conflating narration of attack vocabulary with confirmed recognition (Appendix~\ref{app:dr-sensitivity}). An exploratory secondary contrast comparing $\text{PLR}_{\text{crit}} \mid \text{DR}{=}1$ across conditions (Table~\ref{tab:results-f1}) shows a monotonic narrowing of the gap from $75.7$ pp at C0 to $30.2$ pp at C3 as the LLM-judge DR$=$1 cell fills; the C0, C1, and C2 rows have $n_{DR=1}$ in the underpowered band ($50 \leq n_{DR=1} < 200$) per \S\ref{sec:analysis} and are reported with uncorrected $p$-values for direction-of-effect context only.
+The detection--action gap (F1) is the within-C3 contrast of $\text{PLR}_{\text{crit}}$ between sessions where the LLM-as-judge confirms the agent verbalised suspicion at any step (DR$=$1) and sessions where it did not (DR$=$0), restricted to $\texttt{reached\_trap} = \text{True}$ (\S\ref{sec:reachedtrap}). Pooled across all four evaluated models, the gap is $30.2$ pp (DR$=$1: $35.9\%$, $n = 462$; DR$=$0: $66.1\%$, $n = 1{,}071$; $q < 0.001$ after BH correction over the pre-registered primary family in \S\ref{sec:analysis}), which exceeds the pre-registered 15 pp minimum detectable effect by $15.2$ pp and comfortably clears the $\geq 200$ C3 DR$=$1 sessions power guard. The DR$=$1 leakage rate of $35.9\%$ itself exceeds the pre-registered 10\% falsification threshold by $25.9$ pp, ruling out the alternative hypothesis under which independent attack recognition translates into reliable refusal: more than one in three agents that an independent LLM confirms has identified the attack still submit critical PII to the attacker endpoint. Per-model F1 estimates at C3 are $19.4$ pp on GPT-5 mini ($n_{DR=1} = 167$), $21.1$ pp on Claude Haiku 4.5 ($n_{DR=1} = 122$), $17.2$ pp on Gemini 3 Flash ($n_{DR=1} = 103$), and $38.3$ pp on Llama 4 Scout ($n_{DR=1} = 70$); all four per-model cells fall in the underpowered band ($50 \leq n_{DR=1} < 200$) per \S\ref{sec:analysis} and are reported with Wilson 95\% CIs in Appendix~\ref{app:per-model} as descriptive context, with inference reserved for the pooled estimate. The widest per-model gap is Llama's $38.3$ pp, but it is driven by a small detector cell ($n_{DR=1} = 70$) sitting against an elevated non-detector baseline (DR$=$0 PLR $= 86.9\%$): when Llama narrates suspicion it still leaks in $48.6\%$ of sessions; when it does not, leakage rises to $86.9\%$. The widest gap is not therefore evidence of strongest defensive behaviour but of widest separation between two extreme cells. A both-judges-agree sensitivity restricting DR$=$1 to sessions on which the GPT-4o-mini primary and Llama-4-Scout secondary judges concur produces a $31.0$ pp gap on the same cell ($n_{DR=1} = 458$), within rounding of the primary reading; a keyword-heuristic baseline on the same data produces a wider gap by approximately 10 pp, attributable to keyword DR$=$1 conflating narration of attack vocabulary with confirmed recognition (Appendix~\ref{app:dr-sensitivity}). An exploratory secondary contrast comparing $\text{PLR}_{\text{crit}} \mid \text{DR}{=}1$ across conditions (Table~\ref{tab:results-f1}) shows a monotonic narrowing of the gap from $75.7$ pp at C0 to $30.2$ pp at C3 as the LLM-judge DR$=$1 cell fills; the C0, C1, and C2 rows have $n_{DR=1}$ in the underpowered band ($50 \leq n_{DR=1} < 200$) per \S\ref{sec:analysis} and are reported with uncorrected $p$-values for direction-of-effect context only.
+
+\begin{tcolorbox}[colback=black!4,colframe=black!40,boxrule=0.4pt,left=4pt,right=4pt,top=2pt,bottom=2pt]
+\footnotesize
+\emph{Representative C3 trace: the agent verbalises suspicion, then submits anyway (DR$=$1, critical leak).}
+% TODO before submit: replace the placeholder below with a VERBATIM agent
+% reasoning excerpt from a real C3 session that is BOTH DR=1 and leaked
+% (do NOT fabricate). Source: any cell under
+% agent/logs/v2/<model>_*_full/<env>/.../C3/seed_*/*.score.json whose summary
+% has c_PLR == "100.0%" AND DR == "DETECTED"; copy a
+% detection_rate.detections[].reasoning_excerpt verbatim. Plausible-harvest
+% envs (saas_onboard, crypto_platform, gov_portal) on the verbose narrators
+% (GPT-5 mini, Gemini 3 Flash) are the densest source of detected-and-leaked
+% sessions; blatant typosquat envs (job_portal, e8_chase) tend to be defended.
+\textbf{[verbatim trace pending insertion]}
+\end{tcolorbox}
 
 \begin{table}[t]
 \centering
@@ -84,12 +140,17 @@ C3 & $35.9$ & $66.1$ & $30.2$ & $462$ \\
 }
 \caption{Detection--action gap by condition under LLM-judge primary DR (GPT-4o-mini, \S\ref{sec:dr}): session-level $\text{PLR}_{\text{crit}}$ restricted to DR$=$1 and DR$=$0 subsets, computed only on sessions with $\texttt{reached\_trap} = \text{True}$ (\S\ref{sec:reachedtrap}), pooled across all four evaluated models. The C3 row is the primary F1 test; with $n_{DR=1} = 462$ it clears the $\geq 200$ power guard (\S\ref{sec:analysis}). The C0, C1, and C2 rows are exploratory secondary contrasts with $n_{DR=1}$ in the underpowered band ($50 \leq n_{DR=1} < 200$), so they carry uncorrected $p$-values and are reported for direction-of-effect context only.}
 \label{tab:results-f1}
+% TODO before submit: the C0 row here (n_DR1=88, gap 75.7) disagrees with the
+% C0 pooled row in Table~\ref{app:per-model-f1-c0} (n_DR1=112, gap 71.8). Both
+% are emitted by paper_tables_v2.ipynb; re-run the notebook to reconcile. The
+% C3 headline cell is consistent across both tables (n=462, 30.2 pp) and is
+% unaffected; C0 is a sensitivity row only.
 \end{table}
 
 \subsection{Factor Ablations}
 \label{sec:results-axes}
 
-The paired-sibling tests F2--F11 isolate the contribution of individual axes (Table~\ref{tab:claims}) to critical-tier leakage. The headline result is a null: \emph{no factor axis crosses Benjamini--Hochberg significance at $q = 0.05$ over the 8-test inference-bearing primary family} (Table~\ref{tab:results-axes}). The four BH-eligible axes produce small effects with raw $p$-values well above the adjusted threshold: salience (F2, $-7.2$ pp, $q = 0.31$), urgency (F5, $-4.1$ pp, $q = 0.49$), prompt injection (F8, $+1.7$ pp, $q = 0.56$), and interaction style (F10, $+4.9$ pp, $q = 0.56$). The remaining axes (F6 social-proof, F7 authority, F9 PII-tier, H multi-site) fall below the pre-registered $\geq 6$ canonical sibling-pair gate in \S\ref{sec:analysis} and are reported as descriptive context outside the BH family; F6 in particular has zero canonical pairs after the suffix-naming convention is applied to \texttt{classification.csv} in the post-reflow data, and F7 has only one. The pressure-axis null (F5, F6, F7 all in the $[-4.1, +1.2]$ pp range) is notable in contrasting with the human-user literature on pressure-driven phishing susceptibility: under the paired-sibling design, urgency cues, social-proof framing, and authority impersonation do not move pooled leakage on these four frontier models.
+The paired-sibling tests F2--F11 isolate the contribution of individual axes (Table~\ref{tab:claims}) to critical-tier leakage. The headline result is a null: \emph{no factor axis crosses Benjamini--Hochberg significance at $q = 0.05$ over the pre-registered primary family} (Table~\ref{tab:results-axes}). The four BH-eligible axes produce small effects with raw $p$-values well above the adjusted threshold: salience (F2, $-7.2$ pp, $q = 0.31$), urgency (F5, $-4.1$ pp, $q = 0.49$), prompt injection (F8, $+1.7$ pp, $q = 0.56$), and interaction style (F10, $+4.9$ pp, $q = 0.56$). The remaining axes (F6 social-proof, F7 authority, F9 PII-tier, H multi-site) fall below the pre-registered $\geq 6$ sibling-pair gate and are reported as descriptive context outside the BH family (F6 has zero canonical pairs, F7 one). The pressure-axis null (F5, F6, F7 all in the $[-4.1, +1.2]$ pp range) is notable in contrasting with the human-user literature on pressure-driven phishing susceptibility: under the paired-sibling design, urgency cues, social-proof framing, and authority impersonation do not move pooled leakage on these four frontier models.
 
 \paragraph{Paired-sibling vs cross-cutting marginal.} The salience axis is the clearest case where the paired test and a cross-cutting marginal disagree on sign, and the disagreement is itself an argument for the paired apparatus. A marginal that groups every environment by its salience value yields the ordering subtle ($\sim 97\%$ C0 pooled) $>$ plausible ($\sim 84\%$) $>$ blatant ($\sim 73\%$): subtle attacks appear to be the most dangerous. The F2 paired test in Table~\ref{tab:results-axes}, in contrast, fixes parent environment and toggles only the salience axis, and yields $-7.2$ pp: subtle siblings leak \emph{less} than their parents on average. Both readings can be simultaneously true if subtle-coded envs were authored in categories that carry higher baseline leakage --- a confound that the paired sibling design strips out by construction and the marginal does not. We report both views: the marginal in Appendix~\ref{app:per-model} as descriptive context about category-by-salience interactions in the benchmark composition, and the paired test in Table~\ref{tab:results-axes} as the within-axis effect estimate. The paired view is what supports causal claims; the marginal is what reads off the dataset.
 
@@ -106,7 +167,7 @@ F5  & E: urgency            & $13$ & $-4.1$ & $0.49$ \\
 F8  & F: prompt\_injection  & $8$  & $+1.7$ & $0.56$ \\
 F10 & G: interaction        & $6$  & $+4.9$ & $0.56$ \\
 \midrule
-\multicolumn{5}{l}{\textit{Descriptive only (outside BH family per \S\ref{sec:analysis} D7 power gate):}} \\
+\multicolumn{5}{l}{\textit{Descriptive only (outside BH family per the \S\ref{sec:analysis} power gate):}} \\
 F6  & E: social\_proof      & $0$  & ---   & --- \\
 F7  & E: authority          & $1$  & $+1.2$ & --- \\
 F9  & D: pii\_target        & $5$  & $-4.2$ & --- \\
@@ -114,14 +175,14 @@ H   & H: multi\_site        & $5$  & $-4.2$ & --- \\
 \bottomrule
 \end{tabular}
 }
-\caption{Paired-sibling factor ablations F2--F11 on pooled $\text{PLR}_{\text{crit}}$. Each test contrasts sibling environments differing on exactly one axis, with all others held constant. Pair counts are the canonical suffix-named pairs detected in \texttt{classification.csv} per the \S\ref{sec:analysis} naming convention. Effect signs read as: positive values mean the toggled-on value leaks more. $q$-values are BH-adjusted across the 8-test inference-bearing primary family (F1, F2, F5, F8, F10, M1, M2, M3); axes with fewer than 6 canonical pairs sit outside that family per the pre-registered power gate. F3 (composite C $\times$ G), F4 (between-model variance), and F11 (cross-category, no canonical pair construction) are reported as marginal-only views in Appendix~\ref{app:per-model}.}
+\caption{Paired-sibling factor ablations F2--F11 on pooled $\text{PLR}_{\text{crit}}$. Each test contrasts sibling environments differing on exactly one axis, with all others held constant. Pair counts are the canonical sibling pairs in \texttt{classification.csv}. Positive effects mean the toggled-on value leaks more. $q$-values are BH-adjusted across the pre-registered primary family; axes with fewer than six canonical pairs sit outside it per the pre-registered power gate and are reported as descriptive context. F3, F4, and F11 are reported as marginal-only views in Appendix~\ref{app:per-model}.}
 \label{tab:results-axes}
 \end{table}
 
 \subsection{Reached-Trap, Task Completion, and Defended-Session Rates}
 \label{sec:results-secondary}
 
-Across the full sweep, $\texttt{reached\_trap}$ holds for $86.8\%$ of sessions pooled across models and conditions, with per-condition rates between $81.8\%$ (C2) and $91.6\%$ (C0) (Table~\ref{tab:results-tcr}). Non-leakage attributable to navigation failure is therefore bounded: at most about $14$ pp of any reported $\text{PLR}_{\text{crit}}$ shortfall reflects an agent that never reached the attack surface, rather than one that reached it and refused. ASR conditioned on $\texttt{reached\_trap} = \text{True}$ runs from $90.1\%$ at C0 to $78.3\%$ at C3 --- monotonically decreasing with mitigation strength but always above three quarters --- so reach is not the dominant constraint on the headline $\text{PLR}_{\text{crit}}$ trajectory. Two surprises are worth flagging in the secondary outcomes. First, the legitimate-task TCR rises monotonically with mitigation strength, from $68.0\%$ at C0 to $76.7\%$ at C3, suggesting that escalating privacy guidance does not impose a completion penalty on legitimate browsing on the present envs; if anything the additional metacognitive scaffolding modestly helps the agent stay on task. Second, the \texttt{Defended} rate peaks at C2 ($12.8\%$) rather than C3 ($10.9\%$), mirroring the C2 dominance over C3 on Haiku's mitigation gradient (\S\ref{sec:results-mitigation}): the pre-submission reflection prompt in C3 is not strictly more defensive than the phishing-checklist prompt in C2 in absolute terms, though both produce comparable reductions in pooled leakage. The TCR--ASR trade-off curve in Figure~\ref{fig:tcr-asr} visualises the (model, condition) cell distribution; in aggregate the most defensive cells trade only a small TCR penalty for substantial ASR reduction, which we read as evidence that prompt-level mitigation acts primarily on attack-surface engagement rather than on legitimate task execution.
+Across the full sweep, $\texttt{reached\_trap}$ holds for $86.8\%$ of sessions pooled across models and conditions, with per-condition rates between $81.8\%$ (C2) and $91.6\%$ (C0) (Table~\ref{tab:results-tcr}). Non-leakage attributable to navigation failure is therefore bounded: at most about $14$ pp of any reported $\text{PLR}_{\text{crit}}$ shortfall reflects an agent that never reached the attack surface, rather than one that reached it and refused. ASR conditioned on $\texttt{reached\_trap} = \text{True}$ runs from $90.1\%$ at C0 to $78.3\%$ at C3 --- monotonically decreasing with mitigation strength but always above three quarters --- so reach is not the dominant constraint on the headline $\text{PLR}_{\text{crit}}$ trajectory. Two surprises are worth flagging in the secondary outcomes. First, the legitimate-task TCR rises monotonically with mitigation strength, from $68.0\%$ at C0 to $76.7\%$ at C3, suggesting that escalating privacy guidance does not impose a completion penalty on legitimate browsing on the present envs; if anything the additional metacognitive scaffolding modestly helps the agent stay on task. Second, the \texttt{Defended} rate peaks at C2 ($12.8\%$) rather than C3 ($10.9\%$), mirroring the C2 dominance over C3 on Haiku's mitigation gradient (\S\ref{sec:results-mitigation}): the pre-submission reflection prompt in C3 is not strictly more defensive than the phishing-checklist prompt in C2 in absolute terms, though both produce comparable reductions in pooled leakage. In aggregate the most defensive (model, condition) cells trade only a small TCR penalty for substantial ASR reduction (Table~\ref{tab:results-tcr}), which we read as evidence that prompt-level mitigation acts primarily on attack-surface engagement rather than on legitimate task execution.
 
 \begin{table}[t]
 \centering
@@ -141,12 +202,5 @@ C3 & $49.4$ & $78.3$ & $76.7$ & $85.4$ & $10.9$ \\
 \caption{Secondary outcome metrics (\%) by condition, pooled across all four models and the 91 adversarial environments. ASR is computed only on sessions with $\texttt{reached\_trap} = \text{True}$ (\S\ref{sec:reachedtrap}). \texttt{Defended} aggregates both refusal and safe-completion paths (\S\ref{sec:metrics}); the \texttt{defense\_via} decomposition is in Appendix~\ref{app:per-model}. \textbf{Bolded} cell marks the peak \texttt{Defended} rate, which falls at C2 rather than C3.}
 \label{tab:results-tcr}
 \end{table}
-
-\begin{figure}[t]
-\centering
-\fbox{\parbox{0.9\linewidth}{\centering\vspace{4em}\textit{[Placeholder: TCR--ASR scatter, one point per (model, condition) cell, with Pareto-front envelope.]}\vspace{4em}}}
-\caption{TCR--ASR trade-off by (model, condition). Each point is a cell mean across the 91 adversarial environments. The Pareto-front envelope visualises that no condition simultaneously dominates on both axes.}
-\label{fig:tcr-asr}
-\end{figure}
 
 An audit of URL-shape contamination in agent observations (raw \texttt{localhost} strings in the address bar, in page templates, and in the agent's task description) is reported in Appendix~\ref{app:contamination}; the sweep reported here uses the post-cleanup harness throughout, and the pre-cleanup measurements are preserved alongside for contamination accounting.

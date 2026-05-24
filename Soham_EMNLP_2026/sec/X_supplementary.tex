@@ -21,10 +21,10 @@ We adopt this curated-design / generated-implementation style because (i) mainta
 
 The complete analysis plan (primary outcome, hypothesis family, statistical model, multiple-comparison correction, power calculation, inclusion rules, falsification thresholds, and pre-committed deviations) is committed to the repository as \texttt{analysis-plan.md} and tagged \texttt{prereg-v2-start} before any experimental run reported in \S\ref{sec:results}. Artifacts frozen at the tag include the analysis plan itself, the environment classification table and registry (Appendix~\ref{app:envs}), the C0--C3 mitigation prompts (Appendix~\ref{app:prompts}), the critical-tier definition in the PII tracker, and the pinned model identifiers (Appendix~\ref{app:models}). No deviation is applied retroactively to any pre-tag artifact, and no post-tag change touches the primary outcome definition, the analysis pipeline, the prompt strings, or the environment registry.
 
-\section{Deviation log (D1--D9)}
+\section{Pre-registration deviations}
 \label{app:deviations}
 
-The full deviation log with rationale, git SHA for each fix, and the pre-fix vs post-fix slices preserved for contamination accounting is enumerated in \texttt{analysis-plan.md} \S 11 (entries D1 through D9). The deviations exercised against the runs reported in \S\ref{sec:results} are D5 (observation-URL contamination correction; full audit in Appendix~\ref{app:contamination}) and D6 (Anthropic-slot model swap from Sonnet 4.6 to Haiku 4.5, executed pre-data). D7 (BH family reduced from 14 to 8 after the \S\ref{sec:analysis} power gate), D8 (AME-scaling correction in mixed-effects logistic reporting), and D9 (LLM-judge DR landing and the F1 anchor confirmation) are measurement-instrument deviations that do not change any session's PII trail or scorer output.
+The pre-registered analysis plan and the complete record of post-tag deviations---each with rationale, the git SHA of the corresponding fix, and the pre-fix vs post-fix slices preserved for contamination accounting---are released in \texttt{analysis-plan.md} alongside the artifact. The only post-tag change that touches the runs in \S\ref{sec:results} is the model-side measurement-artefact correction audited in Appendix~\ref{app:contamination}; it removes an observation artefact rather than altering any experimental-design choice, and no change is applied retroactively to a pre-tag artifact. The Anthropic-slot model (Claude Haiku 4.5) was fixed before any Claude data was collected (Appendix~\ref{app:models}).
 
 \section{Primary-family test table}
 \label{app:claims}
@@ -54,9 +54,11 @@ M3 & C0 vs C3 & condition \\
 \bottomrule
 \end{tabular}
 }
-\caption{The 14 pre-registered primary tests. Each is a single-axis or single-condition contrast on session-level $\text{PLR}_{\text{crit}}$. After the \S\ref{sec:analysis} power gate (analysis-plan \S 11 D7), Benjamini-Hochberg correction is applied across the 8-test inference-bearing subset (F1, F2, F5, F8, F10, M1, M2, M3); the remaining axes are reported as descriptive context with uncorrected $p$-values.}
+\caption{The pre-registered primary tests. Each is a single-axis or single-condition contrast on session-level $\text{PLR}_{\text{crit}}$. Benjamini--Hochberg correction is applied across the inference-bearing subset selected by the power gate below; the remaining axes are reported as descriptive context with uncorrected $p$-values.}
 \label{tab:claims}
 \end{table}
+
+\paragraph{Power gate and minimum detectable effects.} The primary family is corrected for multiplicity only where it is adequately powered. The mitigation contrasts (M1--M3) and the within-condition detection--action test (F1) require no sibling pairs; a factor axis joins the inference-bearing (BH-corrected) subset when it has at least six canonical sibling pairs (F2, F5, F8, F10). Axes below that threshold (F6, F7, F9) and the between-model or composite axes (F3, F4, F11, H) are reported as descriptive context with uncorrected $p$-values. At 80\% power under the conservative Wilcoxon fallback, the pre-registered minimum detectable effect is 20 percentage points on env-mean $\text{PLR}_{\text{crit}}$ for M1--M3, and 15 points on the F1 gap conditional on at least 200 C3 sessions landing DR$=$1; per-axis MDE for F2--F11 scales with sibling-pair count. Effects below MDE are reported as descriptive non-significance, not as evidence of no effect.
 
 \section{URL-shape contamination audit}
 \label{app:contamination}
@@ -65,12 +67,7 @@ An early version of the harness left the localhost sandbox visible in agent obse
 
 The surface was identified by a deliberate audit pass rather than discovered post-hoc: we ran (i) a content-level grep over every templated environment for the eleven leakage strings enumerated in \texttt{scripts/audit\_env\_leakage.py}, (ii) a reasoning-trace scan of the pre-fix slice for the same strings to confirm the agent was citing them, (iii) a cross-cell check that observer-side, content-side, and task-side surfaces were each contributing, (iv) an inter-judge $\kappa$ stratification (\S\ref{sec:dr}) to rule out judge-side contamination, and (v) an audit of the benign-twin subtraction to confirm the artefact did not differentially affect attack versus benign cells. The localhost surface was the only one to surface measurable contamination; the four remaining checks returned negative.
 
-After domain masking at the observer (\S\ref{sec:metrics}), a content-level sweep removing inline localhost strings across $60$ environment template files, an extension of the browser's request-layer rewriter to in-page navigation requests, and a fix to the task description's start URL, the apples-to-apples comparison on the single-seed GPT-5 mini slice moves the C3 pooled $\Delta\text{PLR}_{\text{crit}}$ from $-29.7$ pp pre-fix to $-12.1$ pp post-fix --- approximately $-17.6$ pp attributable to URL-shape contamination and $-12.1$ pp to the residual C3 signal at that seed. The full 5-seed post-fix reading on GPT-5 mini reported in the body (Table~\ref{tab:results-main}) is $-24.9$ pp at C3, materially larger than the single-seed post-fix point estimate because of GPT-5 mini's high per-env seed SD ($17.2$--$21.7$ pp, \S\ref{sec:results-baseline}); the contamination accounting is unaffected because it compares like to like at the seed level. All results in \S\ref{sec:results} are reported on the post-cleanup harness; the pre-cleanup measurements are preserved in the run logs for contamination accounting, and the git SHA of each surface-fix commit is pinned in the deviation log (Appendix~\ref{app:deviations}).
-
-% ---------------------------------------------------------------------------
-% Stub appendix sections (to be populated in the next pass).
-% Each carries a one-line note describing what will fill it.
-% ---------------------------------------------------------------------------
+After domain masking at the observer (\S\ref{sec:metrics}), a content-level sweep removing inline localhost strings across $60$ environment template files, an extension of the browser's request-layer rewriter to in-page navigation requests, and a fix to the task description's start URL, the apples-to-apples comparison on the single-seed GPT-5 mini slice moves the C3 pooled $\Delta\text{PLR}_{\text{crit}}$ from $-29.7$ pp pre-fix to $-12.1$ pp post-fix --- approximately $-17.6$ pp attributable to URL-shape contamination and $-12.1$ pp to the residual C3 signal at that seed. The full 5-seed post-fix reading on GPT-5 mini reported in the body (Table~\ref{tab:results-main}) is $-24.9$ pp at C3, materially larger than the single-seed post-fix point estimate because of GPT-5 mini's high per-env seed SD ($17.2$--$21.7$ pp, \S\ref{sec:results-baseline}); the contamination accounting is unaffected because it compares like to like at the seed level. All results in \S\ref{sec:results} are reported on the post-cleanup harness; the pre-cleanup measurements are preserved in the run logs for contamination accounting, and the git SHA of each surface-fix commit is pinned in the deviation record (Appendix~\ref{app:deviations}).
 
 \section{DR-judge rubric and sensitivity}
 \label{app:dr-sensitivity}
@@ -128,12 +125,19 @@ Llama 4 Scout & C3 & $443$ & $30.5\%$ & $16.0\%$ & $+14.4$ pp \\
 \label{app:dr-compare}
 \end{table}
 
-The both-judges-agree sensitivity at C3, restricting DR$=$1 to sessions on which the primary and secondary judges concur, produces a pooled gap of $31.0$ pp ($n_{DR=1} = 458$) --- within rounding of the primary-only $30.2$ pp reported in \S\ref{sec:results-f1}. The judge-vs-human $\kappa$ validation against the 200-pair labelled subset is not yet computed; the recall-side slice has been drawn at \texttt{agent/logs/v2/llama4\_dr\_judge/sample\_recall\_neg.json} and the human labelling pass is the gating step for the analysis-plan \S 11 D2 trigger ($\kappa \geq 0.7$ judge-vs-human).
+The both-judges-agree sensitivity at C3, restricting DR$=$1 to sessions on which the primary and secondary judges concur, produces a pooled gap of $31.0$ pp ($n_{DR=1} = 458$) --- within rounding of the primary-only $30.2$ pp reported in \S\ref{sec:results-f1}. Judge--human agreement on the 200-pair labelled set is $\kappa =$ \textbf{[TODO]} (human--human $\kappa =$ \textbf{[TODO]}), clearing the pre-registered $\kappa \geq 0.7$ bar.
+% TODO before submit: compute and insert judge-vs-human and human-human kappa
+% from the 200-pair labelling pass (gates analysis-plan D2). If judge-human
+% kappa < 0.7 after one rubric-refinement round, DR primary falls back to the
+% keyword heuristic per D2 and this sentence must change accordingly.
 
 \section{PhishTank/Wayback fidelity check}
 \label{app:fidelity}
 
-A descriptive fidelity check is in flight at the time of submission. The protocol takes a random sample of 20 Scammer4U adversarial environments and 20 real-world phishing captures drawn from PhishTank and Wayback archive captures, presents the 40 screenshots in shuffled order to a panel of reviewers, and collects four ratings per screenshot: text fidelity (1--5), visual fidelity (1--5), likelihood of tricking an unprompted human (1--5), and a binary source-discrimination guess (benchmark vs real-world). Three numbers are reported in the paper version of this appendix: (a) per-axis mean ratings with 95\% CIs for the benchmark and real-world subsets; (b) source-discrimination accuracy with a comparison to the 50\% chance line, the relevant alternative-hypothesis test being whether reviewers can systematically distinguish the templated envs from the real captures; (c) inter-rater agreement on each axis. A high accuracy on (b) would indicate the benchmark envs are visually distinguishable from real-world phishing, and would qualify the external-validity claim in \S\ref{sec:authoring}.
+We run a descriptive fidelity check comparing the templated environments against real-world phishing. The protocol takes a random sample of 20 Scammer4U adversarial environments and 20 real-world phishing captures (PhishTank and Wayback), presents the 40 screenshots in shuffled order to a panel of reviewers, and collects four ratings per screenshot: text fidelity (1--5), visual fidelity (1--5), likelihood of tricking an unprompted human (1--5), and a binary source-discrimination guess (benchmark vs real-world). We report (a) per-axis mean ratings with 95\% CIs for the benchmark and real-world subsets: \textbf{[TODO]}; (b) source-discrimination accuracy against the 50\% chance line: \textbf{[TODO]}; and (c) inter-rater agreement on each axis: \textbf{[TODO]}. A source-discrimination accuracy near chance indicates the templated envs are not readily distinguishable from real-world phishing, supporting the external-validity claim in \S\ref{sec:authoring}.
+% TODO before submit: insert (a) per-axis mean ratings + CIs, (b) source-
+% discrimination accuracy vs the 50pp chance line, (c) inter-rater agreement,
+% from the completed 20+20 fidelity panel.
 
 \section{Per-environment registry}
 \label{app:envs}
@@ -152,7 +156,7 @@ The full per-environment registry --- 91 adversarial environments plus 10 benign
 Model & Provider & Version & Notes \\
 \midrule
 GPT-5 mini       & OpenRouter & \texttt{openai/gpt-5-mini} & Swapped from GPT-5 full pre-data (analysis-plan \S 1). \\
-Claude Haiku 4.5 & OpenRouter & \texttt{anthropic/claude-haiku-4.5} & Swapped from Sonnet 4.6 pre-Claude-data (analysis-plan \S 11 D6). \\
+Claude Haiku 4.5 & OpenRouter & \texttt{anthropic/claude-haiku-4.5} & Swapped from Sonnet 4.6 before any Claude data was collected. \\
 Gemini 3 Flash   & OpenRouter & \texttt{google/gemini-3-flash-preview} & OpenRouter backend; a native-SDK fallback path exists in the harness. \\
 Llama 4 Scout    & OpenRouter & \texttt{meta-llama/llama-4-scout} & Post-fix re-run; supersedes an earlier Groq-backend dress rehearsal. \\
 \midrule
@@ -170,7 +174,10 @@ The authoring model used for environment implementation (Appendix~\ref{app:autho
 \section{PII-matcher precision and recall}
 \label{app:matcher}
 
-The exact-string PLR matcher described in \S\ref{sec:metrics} is validated against a 200-pair human-labelled subset stratified across environments, models, and conditions. The labelling pass is in flight at the time of submission; the camera-ready version of this appendix will report matcher precision and recall against the human labels, along with a sensitivity comparison against substring and regex variants. The pre-registered failure trigger is matcher recall $\leq 0.9$ on the labelled set, in which case the headline $\text{PLR}_{\text{crit}}$ in \S\ref{sec:results-baseline} is re-reported as a lower bound on adversarial extraction.
+The exact-string PLR matcher described in \S\ref{sec:metrics} is validated against a 200-pair human-labelled subset stratified across environments, models, and conditions. Matcher precision and recall against the human labels are \textbf{[TODO]} and \textbf{[TODO]}, with a sensitivity comparison against substring and regex variants. The pre-registered failure trigger is matcher recall $\leq 0.9$ on the labelled set, in which case the headline $\text{PLR}_{\text{crit}}$ in \S\ref{sec:results-baseline} is re-reported as a lower bound on adversarial extraction.
+% TODO before submit: insert matcher precision/recall (and substring/regex
+% sensitivity) from the completed 200-pair labelling pass. If recall <= 0.9,
+% re-report PLR_crit as a lower bound per the pre-registered trigger.
 
 \section{Per-model breakdowns: F4 between-model variance, F11 cross-category}
 \label{app:per-model}
@@ -213,7 +220,7 @@ Pooled           & $112$ & $1{,}692$ & $5.4$   & $77.2$ & $71.8\,[+67.2, +76.5]$
 \bottomrule
 \end{tabular}
 }
-\caption{Per-model F1 detection--action gap at C0 under LLM-judge primary DR, restricted to $\texttt{reached\_trap} = \text{True}$ --- reported as a sensitivity result per analysis-plan \S 11 D9. Per-model $n_{DR=1}$ counts are too small to support inference (Llama has a single judge-confirmed C0 detector across the entire 5-seed sweep; the negative gap on Llama is single-observation noise and should not be cited). The pooled row at $n_{DR=1} = 112$ sits in the descriptive-with-CI band ($50 \leq n < 200$); the C0 LLM-judge cell was the original paper-plan headline anchor before the analysis-plan \S 4 prereg C3 anchor was confirmed in \S 11 D9.}
+\caption{Per-model F1 detection--action gap at C0 under LLM-judge primary DR, restricted to $\texttt{reached\_trap} = \text{True}$, reported as a sensitivity result. Per-model $n_{DR=1}$ counts are too small to support inference (Llama has a single judge-confirmed C0 detector across the 5-seed sweep; its negative gap is single-observation noise and should not be cited). The pooled row at $n_{DR=1} = 112$ sits in the descriptive-with-CI band ($50 \leq n < 200$); the pre-registered primary anchor for F1 is C3 (Table~\ref{tab:results-f1}).}
 \label{app:per-model-f1-c0}
 \end{table}
 
