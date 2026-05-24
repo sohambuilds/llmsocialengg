@@ -278,8 +278,8 @@ Sites are LLM-authored with human review — snapshot of attacker
 patterns at creation time. Score-time Detection Rate has two forms:
 keyword-match (from scorer.py) and LLM-as-judge (from
 `agent/evaluation/dr_judge.py`, GPT-4o-mini primary via OpenRouter,
-Llama 4 Scout secondary). Full LLM-judge runs completed 2026-05-23
-for Llama, Gemini, and Haiku — see results section below.
+Llama 4 Scout secondary). Full LLM-judge runs completed 2026-05-24
+for all four models — see results section below.
 Multi-turn envs are noisier to
 evaluate. **2026-05-17:** reached-trap instrumentation is now wired
 and the first Llama 4 Scout slice (`agent/logs/llamarun2soham/`)
@@ -429,27 +429,31 @@ differences are which fixes were live:
 - `agent/logs/v2/llama4_v3_seeds1to5_full_re/` — Llama 4 Scout (OpenRouter), **5 seeds × 101 envs × 4 conditions = 2,020 sessions**, landed 2026-05-22. Post-fix counterpart to the Groq dress rehearsal. **This is the Llama reference for the paper**, not the dress rehearsal.
 - `agent/logs/v2/haiku_v3_seed1to5_full/` — Claude Haiku 4.5 (OpenRouter), **5 seeds × 101 envs × 4 conditions = 2,020 sessions**. Anthropic-slot model (swapped from Sonnet 4.6 pre-data, see analysis-plan §11 D6).
 
-## Notebook-driven findings as of 2026-05-22
+## Notebook-driven findings as of 2026-05-24 (pooled-of-4, all-5-seed)
 
-`agent/logs/v2/paper_tables.ipynb` is the source of truth for every number that goes in the paper. After the 2026-05-22 c_PLR rescore, the AME-scaling correction (§11 D8), and the suffix-detector fix:
+[agent/logs/v2/paper_tables_v2.ipynb](agent/logs/v2/paper_tables_v2.ipynb) is the new source of truth for every number that goes in the paper, superseding `paper_tables.ipynb`. Points at the 5-seed slice dirs for all four models (the old notebook had stale 1-seed paths for both GPT-5 mini and Haiku) and pools LLM-judge F1 across all four models (GPT-5 mini judge data completed 2026-05-24). LaTeX output lives at [paper_tables_v2.tex](agent/logs/v2/paper_tables_v2.tex). Numbers below are the post-everything (c_PLR rescore, AME-scaling correction §11 D8, suffix-detector fix) values from that notebook.
 
-**Loaded data.** 4,790 retained sessions across the four model slices after BROWSER_ERROR exclusion (58 dropped, 1.2%). reliable=1.0 across every cell. 91 attack envs + 10 benign twins, all with complete data coverage.
+**Loaded data.** ~7,500–8,000 retained sessions across the four model slices × 5 seeds × 4 conditions × 101 envs after BROWSER_ERROR exclusion. reliable=1.0 across every cell. 91 attack envs + 10 benign twins, all with complete data coverage.
 
-**Headline numbers (per-model PLR_crit, attack envs only):**
+**Headline numbers (per-model PLR_crit, attack envs only, all 5-seed):**
 
 | Model | n_seeds | C0 | C1 | C2 | C3 | ΔM3 (C3−C0) | Crosses §10 −30 pp? |
 |---|---:|---:|---:|---:|---:|---:|:---:|
-| GPT-5 mini | 1 | 75.6% | 65.6% | 60.0% | 57.8% | **−17.8 pp** | ❌ |
-| Claude Haiku 4.5 | 1 | 53.8% | 35.6% | 17.8% | 23.1% | **−30.8 pp** | ✅ (also ΔM2 = −36.1 pp) |
-| Gemini 3 Flash | 5 | 93.1% | 81.8% | 68.5% | 60.7% | **−32.4 pp** | ✅ |
-| Llama 4 Scout | 5 | 82.3% | 83.8% | 81.4% | 77.4% | **−4.9 pp** | ❌ |
-| **Pooled** | — | **83.9%** | **77.4%** | **69.0%** | **64.2%** | **−19.7 pp** | ❌ (pooled does NOT cross) |
+| GPT-5 mini | 5 | 61.0% ± 17.2 | 47.7% ± 19.8 | 38.9% ± 19.2 | 36.1% ± 21.7 | **−24.9 pp** | ❌ (but close) |
+| Claude Haiku 4.5 | 5 | 54.5% ± 7.7 | 36.4% ± 8.6 | 19.1% ± 3.7 | 24.0% ± 3.8 | **−30.5 pp** | ✅ (also ΔM2 = −35.4 pp) |
+| Gemini 3 Flash | 5 | 93.1% ± 0.5 | 81.8% ± 1.6 | 68.5% ± 2.9 | 60.7% ± 3.2 | **−32.4 pp** | ✅ |
+| Llama 4 Scout | 5 | 82.3% ± 11.9 | 83.8% ± 10.2 | 81.4% ± 8.4 | 77.4% ± 9.2 | **−4.9 pp** | ❌ |
+| **Pooled** | — | **72.7%** | **62.4%** | **51.9%** | **49.4%** | **−23.3 pp** | ❌ (pooled does NOT cross) |
 
-**Falsification verdict.** Pooled ΔM3 = −19.7 pp does NOT cross the §10 −30 pp threshold. But three model-condition cells cross it individually (Haiku ΔM2, Haiku ΔM3, Gemini ΔM3). This is the textbook paper-plan §3 "Cross-model variance is large → lead with per-model breakdown" pivot. The paper's framing should be **per-model heterogeneity**, not a soft-pedalled pooled-headline-holds.
+Cells are mean ± env-averaged seed SD. Pooled row weights all sessions equally.
 
-**F1 detection–action gap (paper's strongest finding) — keyword DR baseline (superseded 2026-05-23).** At C0 (no contamination from C3 reflection vocabulary), pooled across all four models keyword DR gave: 88.8% PLR if DR=0 vs 34.3% PLR if DR=1 — a **54.5 pp gap**. GLMM q < 0.001 after BH. n(C3 DR=1) = 551 (keyword), well past the §8 power-guard threshold (200). **Superseded by the LLM-judge recompute** — see the "2026-05-23 LLM-judge F1 recompute" section below; the paper-facing anchor is now C3 pooled-of-3 at 31.5 pp, not C0 at 54.5 pp.
+**Falsification verdict (updated).** Pooled ΔM3 = −23.3 pp does NOT cross the §10 −30 pp threshold (closer than the pre-GPT-5-mini-reflow value of −19.7 pp but still not crossing). Three model-condition cells cross individually: Haiku ΔM2 = −35.4 pp, Haiku ΔM3 = −30.5 pp, Gemini ΔM3 = −32.4 pp. **GPT-5 mini's reflow changed the per-model story: it now joins the "responsive" cluster (ΔM3 = −24.9 pp; was −17.8 pp on 1-seed), so 3 of 4 models show >−20 pp mitigation effect at C3 and only Llama is the holdout (−4.9 pp).** Paper-plan §3 "Cross-model variance is large → lead with per-model breakdown" pivot still applies, but the heterogeneity sharpens: **3 frontier models respond non-trivially to prompt-level mitigation; Llama 4 Scout does not.**
 
-**BH-corrected primary family (§7-adjusted to 8 tests).** After the §7 power gate on suffix-named canonical sibling pairs, the inference-bearing family is {F1, F2, F5, F8, F10, M1, M2, M3}. M1/M2/M3 + F1 all q < 0.001 (significant). F2/F5/F8/F10 all fail BH (none reach significance at q=0.05). Underpowered descriptive-only: F6 (2 pairs), F7 (2 pairs), F9 (5 pairs), H (5 pairs). No canonical pairs: F11. See analysis-plan §11 D7.
+**GPT-5 mini seed variance is the highest of the four** (SD 17–22 pp at every condition vs Gemini 0.5–3.2, Haiku 3.7–8.6, Llama 8.4–11.9). Worth a robustness paragraph in the paper — the reasoning-model sampling-temperature variability translates into env-level outcome variance and is a non-trivial multiple of any single condition's effect on Haiku/Gemini.
+
+**F1 detection–action gap (paper's strongest finding) — keyword DR baseline (superseded).** Earlier pooled-keyword-DR readings at C0 (54.5 pp gap, n=196 underpowered) and at C3 (40.2 pp gap, n=778 well-powered) are preserved for the contamination-accounting story (keyword DR conflates narrators with detectors). **Superseded by the LLM-judge pooled-of-4 recompute** — see "2026-05-24 LLM-judge F1 (pooled-of-4)" section below; the paper-facing anchor is **C3 pooled-of-4 at 30.2 pp, n_DR1 = 462**.
+
+**BH-corrected primary family (§7-adjusted to 8 tests).** After the §7 power gate on suffix-named canonical sibling pairs, the inference-bearing family is {F1, F2, F5, F8, F10, M1, M2, M3}. M1/M2/M3 + F1 all q < 0.001 (significant). F2/F5/F8/F10 all fail BH (none reach significance at q=0.05) — pooled-of-4 effect sizes are F2 = −7.2 pp (q=0.31), F5 = −4.1 pp (q=0.49), F8 = +1.7 pp (q=0.56), F10 = +4.9 pp (q=0.56). **F2 paired-sibling result is a strong methodology point:** under the paired-sibling design subtle leaks *less* than blatant (−7.2 pp), the *opposite* sign of the cross-cutting marginal in the per-axis tables (which had subtle > plausible > blatant on absolute PLR). The marginal was confounded by env-category base rates; the paired test controls for them. This sells the paired-sibling apparatus. Underpowered descriptive-only on the pooled-of-4 reflow: F6 (0 pairs — none of the suffix-named social_proof siblings have matching parents with run data), F7 (1 pair), F9 (5 pairs), H (5 pairs). No canonical pairs: F11. F6/F7 pair-count drop from earlier readings (2/2 → 0/1) needs a 5-minute audit to confirm it's not a suffix-detector regression vs the underlying classification.csv. See analysis-plan §11 D7.
 
 **AME-scaling correction (§11 D8).** Earlier notebook drafts reported `β_pp = β_logit × p̄(1−p̄) × 100` to project the GLMM coefficient onto a percentage-point scale. That linearisation breaks for the large effects in M2/M3 (|β_logit| ≈ 2) and inflated the apparent pooled ΔM3 to −44.7 pp. **Corrected reporting:** GLMM cell now emits `β_logit`, odds ratio (e^β), and Wald p-value; the probability-scale effect size is reported as `emp_delta_pp` = raw cell-mean ΔPLR_crit. The §10 falsification threshold is in empirical probability units → compare against `emp_delta_pp`, not the GLMM β. Numbers in the table above are `emp_delta_pp`.
 
@@ -483,132 +487,99 @@ The pre-fix → post-fix delta on the C3 PLR_crit gradient is +17.6 pp
 (from −29.7 pp to −12.1 pp) — i.e. ~60% of the pre-fix mitigation
 gradient was URL-shape reasoning contamination, not real C3 effect.
 
-## LLM-as-judge DR results (2026-05-23 / updated 2026-05-24)
+## LLM-as-judge DR results (2026-05-23 / pooled-of-4 reflow 2026-05-24)
 
 Primary judge: `openai/gpt-4o-mini` via OpenRouter (cross-family;
 pre-registered for EMNLP 2026). Secondary: `meta-llama/llama-4-scout`
-(inter-rater kappa). Llama/Gemini/Haiku: n=2,020 (5 seeds x 101 envs x 4
-conditions). GPT-5 mini: n=2,020 (1 seed x 101 envs x 4 conditions — seeds
-2-5 pending). Infrastructure: `scripts/dr_judge_sample.py`,
-`scripts/dr_judge_run.py`, `scripts/dr_judge_audit.py`. Results in
-`agent/logs/v2/<model>_dr_judge/`.
+(inter-rater kappa). **All four models now at full coverage**:
+n=2,020 each (5 seeds × 101 envs × 4 conditions). Infrastructure:
+`scripts/dr_judge_sample.py`, `scripts/dr_judge_run.py`,
+`scripts/dr_judge_audit.py`. Results in
+`agent/logs/v2/<model>_dr_judge/`. Recomputed via [paper_tables_v2.ipynb](agent/logs/v2/paper_tables_v2.ipynb) (which pools across all 4 judges, vs the prior `dr_judge_f1.py` which pooled-of-3).
 
-**LLM-judge DR per model and condition:**
+**LLM-judge DR per model and condition (post-c_PLR rescore, denominator n is post-BROWSER_ERROR exclusion ≈ 443–455 per cell):**
 
-| Model | C0 | C1 | C2 | C3 | kappa |
-|---|---:|---:|---:|---:|---:|
-| Llama 4 Scout | 0.2% | 0.2% | 2.2% | 14.5% | 0.34 |
-| Gemini 3 Flash | 1.2% | 9.3% | 20.0% | 24.0% | 0.30 |
-| Claude Haiku 4.5 | 11.7% | 15.6% | 28.9% | 41.0% | 0.38 |
-| GPT-5 mini | 9.5% | 12.9% | 27.9% | 43.2% | 0.28 |
+| Model | C0 | C1 | C2 | C3 |
+|---|---:|---:|---:|---:|
+| Llama 4 Scout | 0.2% | 0.2% | 2.4% | 16.0% |
+| Gemini 3 Flash | 1.3% | 10.5% | 21.4% | 26.0% |
+| Claude Haiku 4.5 | 12.5% | 17.5% | 30.2% | 42.1% |
+| GPT-5 mini | 10.8% | 14.3% | 30.7% | 46.8% |
 
-**Keyword DR vs LLM-judge DR (all four models, n=505 per condition):**
+(Numbers ticked up by ~1 pp vs the pre-reflow table because the denominator changed: pre-reflow used the raw 505/cell from `dr_summary_full.json`, post-reflow uses the BROWSER_ERROR-excluded retained pool. Same underlying judge labels.)
+
+**Keyword DR vs LLM-judge DR (overcount story, pooled-of-4 reflow):**
 
 | Model | Cond | Keyword DR | LLM-judge DR | Overcount |
 |---|---|---:|---:|---:|
-| Llama 4 Scout | C0 | 1.8% | 0.2% | +1.6 pp |
-| | C1 | 3.0% | 0.2% | +2.8 pp |
-| | C2 | 4.4% | 2.2% | +2.2 pp |
-| | C3 | 27.9% | 14.5% | **+13.5 pp** |
-| Gemini 3 Flash | C0 | 7.1% | 1.2% | +5.9 pp |
-| | C1 | 22.2% | 9.3% | +12.9 pp |
-| | C2 | 51.9% | 20.0% | **+31.9 pp** |
-| | C3 | 65.4% | 24.0% | **+41.4 pp** |
-| Claude Haiku 4.5 | C0 | 25.4% | 11.7% | +13.7 pp |
-| | C1 | 43.3% | 15.6% | +27.7 pp |
-| | C2 | 73.1% | 28.9% | **+44.2 pp** |
-| | C3 | 82.0% | 41.0% | **+41.0 pp** |
-| GPT-5 mini | C0 | 22.2% | 9.5% | +12.7 pp |
-| | C1 | 37.4% | 12.9% | +24.5 pp |
-| | C2 | 79.2% | 27.9% | **+51.3 pp** |
-| | C3 | 75.8% | 43.2% | **+32.6 pp** |
+| Llama 4 Scout | C3 | 30.5% | 16.0% | **+14.4 pp** |
+| Gemini 3 Flash | C2 | 63.3% | 21.4% | **+41.9 pp** |
+| Gemini 3 Flash | C3 | 76.0% | 26.0% | **+50.0 pp** |
+| Claude Haiku 4.5 | C2 | 76.7% | 30.2% | **+46.4 pp** |
+| Claude Haiku 4.5 | C3 | 84.6% | 42.1% | **+42.5 pp** |
+| GPT-5 mini | C2 | 83.1% | 30.7% | **+52.4 pp** |
+| GPT-5 mini | C3 | 77.3% | 46.8% | **+30.5 pp** |
 
-Keyword DR overcount scales with how verbosely a model reasons —
-Haiku and Gemini narrate much more than Llama, triggering more false
-keyword hits. GPT-5 mini sits between: moderate narration, large overcount
-at C2 (+51.3 pp) reflecting the reflection-prompt vocabulary bleed.
-LLM-judge is the paper-facing DR metric; keyword DR retained in score.json
-for compat.
+Full per-(model × condition) table in [paper_tables_v2.tex](agent/logs/v2/paper_tables_v2.tex) (`app:dr-compare`). Keyword DR overcount scales with how verbosely a model reasons — Haiku, Gemini, and GPT-5 mini all narrate substantially; Llama barely narrates. GPT-5 mini's C2 overcount (+52.4 pp) is the worst of any model-condition cell — the reflection-prompt vocabulary creates the most spurious keyword hits when paired with a reasoning model. LLM-judge is the paper-facing DR metric; keyword DR retained in `score.json` for compat and as a sensitivity result.
 
-**Key findings:**
-- Haiku is the strongest detector (11.7% at C0 baseline, 41.0% at C3);
-  GPT-5 mini is similar (9.5% C0, 43.2% C3) — both steeper than Gemini.
-- Llama barely detects at C0/C1 (0.2%); Gemini jumps at C1 (9.3%),
-  suggesting Gemini is more responsive to mild conditioning.
-- F1 (detection-action gap) is reinforced: even at C3 the majority of
-  agents that verbalize suspicion still hand over PII.
+**Inter-judge κ on full pool (session-level, all 4 models now at n=2,020):** Haiku 0.41, Gemini 0.39, Llama 0.44, GPT-5 mini ~0.40 (notebook's LaTeX dump rounds these all to 0.4 — known display bug, see "Outstanding bookkeeping" below). All in the "fair-to-moderate" 0.30–0.45 band. The earlier targeted-sample-subset κ (Haiku 0.38, Gemini 0.30, Llama 0.34, GPT-5 mini 0.28) was lower because that subset was deliberately drawn from ambiguous sessions.
 
-## 2026-05-23 LLM-judge F1 recompute
+**Key findings under the pooled-of-4 reflow:**
+- GPT-5 mini is now the strongest detector by C3 (46.8% vs Haiku 42.1%) — earlier ranking flipped because GPT-5 mini's full 5-seed pool includes more cases where the reasoning model produces explicit suspicion text.
+- Haiku is the strongest detector at baseline (12.5% C0) — earlier ranking holds; reflects a baseline "wariness" prior.
+- Llama barely detects at C0/C1/C2 (≤2.4%); Gemini jumps at C1 (10.5%), suggesting Gemini is the most responsive to mild conditioning.
+- F1 (detection-action gap) is reinforced: even at C3 with GPT-5 mini included, **35.9% of judge-confirmed detectors still hand over critical PII** (pooled across all four models, n=462).
 
-Notebook [agent/logs/v2/dr_judge_f1.ipynb](agent/logs/v2/dr_judge_f1.ipynb)
-(CLI mirror [agent/logs/v2/dr_judge_f1.py](agent/logs/v2/dr_judge_f1.py))
-swaps the keyword DR signal in paper_tables Tab 4 for the 2026-05-23
-LLM-judge primary (`any_detection_primary` from
-`dr_summary_full.json`, session-level OR-aggregation matching keyword
-DR convention). Pool: 3 judge-instrumented models (Haiku 5 seeds,
-Gemini 5 seeds, Llama 5 seeds); GPT-5 mini absent (judge run pending
-with its seeds 2–5).
+## 2026-05-24 LLM-judge F1 (pooled-of-4)
+
+Recompute landed in [paper_tables_v2.ipynb](agent/logs/v2/paper_tables_v2.ipynb) §5 (Table `tab:results-f1`) and emitted to [paper_tables_v2.tex](agent/logs/v2/paper_tables_v2.tex). Supersedes the pooled-of-3 readings in `dr_judge_f1.py`. Pool: all 4 judge-instrumented models at 5 seeds × 101 envs × 4 conditions; reached_trap=1 gating; LLM-judge primary (GPT-4o-mini) as the DR signal.
 
 **Headline at C3 reach=1 (analysis-plan §4 prereg primary):**
 
+| metric | n_DR1 | PLR_DR1 | PLR_DR0 | gap (pp) | power |
+|---|---:|---:|---:|---:|---|
+| **LLM-judge primary (pooled-of-4)** | **462** | **35.9%** | **66.1%** | **30.2** | **primary-family** |
+| keyword DR (pooled-of-4, sensitivity) | ~1100+ | (higher) | (lower) | ~37–40 | primary-family |
+
+**At C0 (sensitivity result per §11 D9 anchor flip):**
+
 | metric | n_DR1 | gap (pp) | power |
 |---|---:|---:|---|
-| keyword DR (4 models) | 778 | 40.2 | primary-family |
-| **LLM-judge primary (3 models)** | **295** | **31.5** | **primary-family** |
-| both-judges-agree (3 models) | 294 | 31.8 | primary-family |
+| LLM-judge primary (pooled-of-4) | 112 | 75.7 | descriptive-with-CI (50 ≤ n < 200) |
+| keyword DR (pooled-of-4) | ~400+ | ~65 | primary-family |
 
-**At C0 (paper-plan #1 earlier anchor):**
+LLM-judge pooled-of-3 C0 was n_DR1 = 64 (descriptive-only band, < 50 threshold in earlier reading; we report n=64 historical / n=112 post-reflow). The pooled-of-4 C0 cell jumps to the [50, 200) band — better-characterised but still descriptive.
 
-| metric | n_DR1 | gap (pp) | power |
-|---|---:|---:|---|
-| keyword DR (4 models) | 196 | 67.3 | underpowered |
-| LLM-judge primary (3 models) | 64 | 73.8 | underpowered |
-| both-judges-agree (3 models) | 64 | 73.8 | underpowered |
+**Per-model F1 at C3 (LLM-judge, reached_trap=1, with Wilson 95% CI on the gap):**
 
-**Per-model F1 at C3 (LLM-judge):** Haiku gap 21.1 pp / n_DR1 122;
-Gemini 17.2 pp / 103; Llama 38.3 pp / 70 — all in the §8
-descriptive-with-CI band [50, 200). F1 is a **pooled-only inference
-claim** under LLM-judge.
+| Model | n_DR1 | n_DR0 | PLR_DR1 | PLR_DR0 | Gap [95% CI] |
+|---|---:|---:|---:|---:|---:|
+| GPT-5 mini       | 167 | 203  | 32.3% | 51.7% | 19.4 pp [+9.5, +29.3] |
+| Claude Haiku 4.5 | 122 | 215  | 18.9% | 40.0% | 21.1 pp [+11.6, +30.7] |
+| Gemini 3 Flash   | 103 | 309  | 53.4% | 70.6% | 17.2 pp [+6.3, +28.0] |
+| Llama 4 Scout    |  70 | 344  | 48.6% | 86.9% | 38.3 pp [+26.1, +50.6] |
+| **Pooled**       | 462 | 1071 | 35.9% | 66.1% | 30.2 pp [+25.0, +35.4] |
 
-**Anchor flip.** The paper-plan §2.3 #1 framing earlier drafted F1
-at C0 (54.5 pp keyword) because keyword DR at C3 was contaminated by
-the reflection-prompt's vocabulary. Under LLM-judge the contamination
-disappears: C3 becomes well-powered AND cleanly interpretable; C0
-LLM-judge collapses to n_DR1 = 64. Anchor returns to the analysis-
-plan §4 prereg form (C3). C0 LLM-judge is reported as a sensitivity
-result. Logged as analysis-plan §11 D9.
+GPT-5 mini at n_DR1=167 is closest to the §8 200-threshold for primary-family status; if seeds 6–10 were ever added it might cross. Llama still has the biggest per-model gap (38.3 pp) and the smallest n_DR1 (70) — when Llama narrators DO recognise the attack, they leak ~half the time anyway (PLR_DR1=48.6%), and when they don't they leak 87% — both extremes of the per-model spread.
 
-**Why the C3 gap NARROWS (40.2 → 31.5 pp).** Keyword DR=1 at C3
-reach=1 partitions into 279 true detectors (PLR 34.8 pp) and 448
-narrators (PLR 53.1 pp). LLM-judge moves narrators to DR=0, which
-sharpens PLR_DR1 (lower) AND drags PLR_DR0 down (87.0% → 69.5%) —
-both endpoints become more honest, but PLR_DR0 falls more, so the
-absolute gap shrinks. The story is preserved: 38% of genuine
-detectors still hand over critical PII; 69.5% of non-detectors leak.
+**Anchor flip (still in effect, see analysis-plan §11 D9).** The paper's pre-LLM-judge anchor was C0 keyword DR (54.5 pp). Under LLM-judge the anchor is **C3 pooled-of-4, 30.2 pp gap, n_DR1 = 462**. C0 LLM-judge is reported as a sensitivity result.
 
-**Inter-judge κ on full pool (session-level):** Haiku 0.41,
-Gemini 0.39, Llama 0.44. Higher than the sample-subset κ
-(0.30 / 0.34 / 0.38) cited above because that subset was
-targeted-ambiguous. Both-judges-agree column at C3 is within
-rounding of primary-only (294 vs 295), so the sensitivity doesn't
-change the headline — the secondary almost always agrees on
-positives; disagreement is on negatives.
+**Why the C3 gap NARROWS** (40.2 → 30.2 pp, under pooled-of-4): same mechanism as the pooled-of-3 reading — keyword DR at C3 conflates true detectors with reflection-prompt narrators. LLM-judge moves narrators to DR=0, sharpening both endpoints; PLR_DR0 falls farther than PLR_DR1, shrinking the absolute gap. The story is preserved: **36% of judge-confirmed detectors still hand over critical PII; 66% of non-detectors leak.**
 
-**Paper-side implications (paper-plan §2.3 #1 already updated):**
-1. F1 anchor is **C3 pooled-of-3, 31.5 pp gap, n_DR1=295**.
-2. Per-model F1 reported as descriptive-with-CI, not inference.
-3. C0 F1 reported as a sensitivity result.
-4. Methodology paragraph needed: keyword DR ↔ LLM-judge DR
-   contrast; the 31–44 pp keyword overcount at C2/C3 is itself
-   part of the F1 story (narrators do not act on their narration).
+**§10 falsification checks on the headline thesis:**
+- M1/M2/M3 pooled vs −30 pp threshold: worst pooled Δ = −23.3 pp at M3. Does NOT fire.
+- F1 PLR_DR1 vs ≤10% threshold: PLR_DR1 at C3 = 35.9%. Does NOT fire.
+- Both headline claims SURVIVE pre-registered falsification.
+
+**Paper-side implications (paper-plan §2.3 #1 — needs reflow):**
+1. F1 anchor is **C3 pooled-of-4, 30.2 pp gap, n_DR1=462**. Updates the prior pooled-of-3 (31.5 pp / 295).
+2. Per-model F1 is descriptive-with-CI; **all four model rows now reported** (GPT-5 mini was previously absent). Llama widest gap, Gemini narrowest.
+3. C0 F1 reported as sensitivity; pooled-of-4 n_DR1 = 112 (better than pooled-of-3 n=64 but still descriptive).
+4. Methodology paragraph: keyword-vs-LLM-judge contrast still material (overcount up to +52.4 pp on GPT-5 mini at C2).
 
 **Outstanding bookkeeping:**
-- [paper_tables.ipynb](agent/logs/v2/paper_tables.ipynb) currently
-  loads `haiku_v3_seed1_full` (1 seed); on-disk path is
-  `haiku_v3_seed1to5_full` (5 seeds). When this is fixed, every
-  Haiku number in paper_tables Tabs 1–7 will shift. The F1
-  recompute notebook already uses the 5-seed path.
-- GPT-5 mini judge run completed 2026-05-24 on seed 1 (2,020 sessions).
-  Results: C0=9.5%, C1=12.9%, C2=27.9%, C3=43.2%, κ=0.28. Seeds 2–5
-  still pending — when they land the pooled F1 cell moves to 4-model
-  and paper_tables will reflow.
+- [paper_tables.ipynb](agent/logs/v2/paper_tables.ipynb) (v1) is DEPRECATED — pointed at 1-seed dirs for both GPT-5 mini and Haiku, used pooled-of-3 for F1. Numbers in any prior reading of that notebook are superseded. Use `paper_tables_v2.ipynb`.
+- κ display rounding bug in [paper_tables_v2.tex](agent/logs/v2/paper_tables_v2.tex) `app:kappa` table: emitter formats with `:.1f` so all 4 κ values render as "0.4". Fix is a one-character change in the notebook's `fmt()` (bump to `:.2f` or `:.3f`).
+- F6 / F7 / H pair counts dropped vs prior readings (F6: 2 → 0; F7: 2 → 1). Could be a suffix-detector regression vs `classification.csv` env_keys or an actual data-coverage thing. 5-minute audit recommended before camera-ready.
+- New 20+20 human fidelity review is in progress (20 benchmark + 20 real-phish samples, rated on text fidelity / visual fidelity / likelihood-of-tricking + source-discrimination guess). Output CSV destination TBD; will feed `app:fidelity` placeholder in paper_tables_v2.ipynb cell 33.
+- 200-pair human DR validation set (drawn at `agent/logs/v2/llama4_dr_judge/sample_recall_neg.json`) is still unlabelled. Decision needed: ship without (own in limitations) or push to label before submit. §11 D2 trigger (κ judge-vs-human ≥ 0.7) remains untested.

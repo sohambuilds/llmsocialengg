@@ -469,17 +469,16 @@ pre-registered.
 - **D9. LLM-judge DR landing + F1 anchor confirmation (2026-05-23).**
   The cross-family LLM-judge DR run (`openai/gpt-4o-mini` primary,
   `meta-llama/llama-4-scout` secondary) completed for the three
-  judge-instrumented models — Claude Haiku 4.5, Gemini 3 Flash,
-  Llama 4 Scout — across the full 2,020-session pool per model
-  (5 seeds × 4 conditions × 101 envs). Secondary judge ran on the
-  full pool, not just the κ sample subsets. Results in
+  initial judge-instrumented models — Claude Haiku 4.5, Gemini 3
+  Flash, Llama 4 Scout — across the full 2,020-session pool per
+  model (5 seeds × 4 conditions × 101 envs). Secondary judge ran on
+  the full pool, not just the κ sample subsets. Results in
   `agent/logs/v2/<model>_dr_judge/dr_summary_full.json`. GPT-5 mini
-  has no judge run; its F1 cell is reported under keyword DR only,
-  pending the seeds-2–5 sweep and a judge follow-up. Per §4 the
-  primary form of F1 is already C3-only (`within C3, DR=1 vs DR=0,
-  reached_trap=True`); the LLM-judge DR substitution into that
-  cell is a §4-prescribed substitution, not a deviation. What IS
-  logged here is the bookkeeping:
+  judge data added 2026-05-24 — see §D10 for the pooled-of-4
+  reflow. Per §4 the primary form of F1 is already C3-only (`within
+  C3, DR=1 vs DR=0, reached_trap=True`); the LLM-judge DR
+  substitution into that cell is a §4-prescribed substitution, not
+  a deviation. What IS logged here is the bookkeeping:
 
   1. The paper-plan §2.3 #1 framing earlier drafted F1 at C0
      (54.5 pp pooled keyword) because keyword DR at C3 was
@@ -521,6 +520,78 @@ pre-registered.
   into DR=0, both PLR_DR1 and PLR_DR0 fall, but PLR_DR0 falls more,
   which is why the apparent gap narrows from 40.2 → 31.5 pp despite
   both endpoints becoming more honest.
+
+- **D10. Pooled-of-4 F1 reflow + GPT-5 mini full-pool judge data
+  (2026-05-24).** D9 was logged with GPT-5 mini absent from the
+  LLM-judge pool. The GPT-5 mini DR-judge run completed on
+  2026-05-24 across the full 2,020-session pool (5 seeds × 4
+  conditions × 101 envs), and the F1 cell, every DR-conditioned
+  table, and the keyword-vs-LLM-judge comparison table were
+  recomputed pooled-of-4 in
+  [`agent/logs/v2/paper_tables_v2.ipynb`](agent/logs/v2/paper_tables_v2.ipynb)
+  (LaTeX dump at [`paper_tables_v2.tex`](agent/logs/v2/paper_tables_v2.tex)).
+  This is the same form-of-substitution as D9 (a §4-prescribed
+  substitution into a primary-test cell, not a deviation) but is
+  logged here for traceability. The reflow simultaneously fixed two
+  stale path references in `paper_tables.ipynb` (v1): both the
+  GPT-5 mini and Claude Haiku 4.5 model slices were loading 1-seed
+  directories on disk; the reflow points at the canonical 5-seed
+  paths (`gpt5mini_v3_seed1to5_full/`, `haiku_v3_seed1to5_full/`).
+  Numbers that move:
+  1. Pooled F1 at C3 reach=1: gap **31.5 → 30.2 pp** (within
+     rounding); n_DR1 **295 → 462** (substantially better-powered).
+  2. Pooled F1 at C0: gap **73.8 → 75.7 pp**; n_DR1 **64 → 112**
+     — C0 cell jumps from §8 descriptive-only (<50) to
+     descriptive-with-CI (50 ≤ n < 200) band. Still below the 200
+     primary-family threshold; remains sensitivity-only.
+  3. Per-model F1 at C3 now includes GPT-5 mini (gap 19.4 pp,
+     n_DR1 = 167; closest to 200 of any per-model cell).
+  4. Pooled ΔM3 (M3 mitigation effect): **−19.7 → −23.3 pp**. Does
+     NOT cross the §10 −30 pp pooled threshold; closer to it but
+     still on the "headline survives" side.
+  5. GPT-5 mini per-model ΔM3 changes meaningfully on the reflow:
+     **−17.8 → −24.9 pp**. Repositions GPT-5 mini from the "weakly
+     responsive" cluster (1-seed reading) to the "responsive"
+     cluster (5-seed reading); paper §2.2 thesis blockquote and
+     §2.3 #2 contribution prose updated to reflect the
+     three-responsive / one-hold-out (Llama) heterogeneity.
+  6. GPT-5 mini per-model F1 at C0: gap **63.7 pp**, n_DR1 = 48
+     (one below the 50 descriptive threshold — descriptive-only).
+     Llama at C0: gap **−17.7 pp**, n_DR1 = 1 (essentially noise; do
+     not report).
+  7. Inter-judge κ on the full 2,020-session pool extends to all 4
+     models: Haiku 0.41, Gemini 0.39, Llama 0.44, GPT-5 mini ~0.40.
+     The LaTeX `app:kappa` table currently formats all four as 0.4
+     (display rounding bug, `:.1f` should be `:.2f`); noted for
+     fix.
+
+  No session's PII trail, scorer output, or judge label changed —
+  this is a pure pooling/path-reload change. The §10 falsification
+  criteria do not fire under the reflow:
+  - M1/M2/M3 pooled worst Δ = −23.3 pp vs −30 pp threshold (no fire).
+  - F1 PLR_DR1 at C3 = 35.9% vs ≤10% threshold (no fire).
+
+  Pre-reflow `dr_judge_f1.{ipynb,py}` and `paper_tables.ipynb` (v1)
+  are preserved on disk for contamination accounting; canonical
+  numbers come from `paper_tables_v2.ipynb` going forward.
+
+- **D11. Fidelity study redesign (2026-05-24, in flight).** The
+  pre-tag commitment in §6 of the paper plan was a "10 attack envs
+  + 5 PhishTank screenshots, 1–5 rating" descriptive sanity check.
+  As of 2026-05-24 this is upgraded in flight to a **20+20 human
+  review**: 20 randomly sampled Scammer4U environment screenshots
+  and 20 real-world phishing captures (PhishTank / Wayback /
+  curated), rated by reviewers on text fidelity (1–5), visual
+  fidelity (1–5), and likelihood-of-tricking (1–5), with an
+  additional **source-discrimination guess** (benchmark vs real,
+  binary). Outputs three numbers the paper §3 fidelity paragraph
+  needs: (a) per-axis mean ratings with CIs, (b) source-
+  discrimination accuracy against the 50% chance line (a low
+  accuracy supports the claim that the templated envs are
+  visually plausible), (c) inter-rater agreement. Sits outside
+  the §6 BH family (descriptive context). The fidelity study is
+  not a prereg-bound artifact (§1 lists what is); this is a
+  measurement-instrument upgrade documented for traceability.
 
 Any deviation not on this list, executed after the tag, must be
 documented as a post-hoc deviation in the paper's limitations
