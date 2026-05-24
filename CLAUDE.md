@@ -483,13 +483,15 @@ The pre-fix → post-fix delta on the C3 PLR_crit gradient is +17.6 pp
 (from −29.7 pp to −12.1 pp) — i.e. ~60% of the pre-fix mitigation
 gradient was URL-shape reasoning contamination, not real C3 effect.
 
-## LLM-as-judge DR results (2026-05-23)
+## LLM-as-judge DR results (2026-05-23 / updated 2026-05-24)
 
 Primary judge: `openai/gpt-4o-mini` via OpenRouter (cross-family;
 pre-registered for EMNLP 2026). Secondary: `meta-llama/llama-4-scout`
-(inter-rater kappa). n=2,020 per model (5 seeds x 101 envs x 4 conditions).
-Infrastructure: `scripts/dr_judge_sample.py`, `scripts/dr_judge_run.py`,
-`scripts/dr_judge_audit.py`. Results in `agent/logs/v2/<model>_dr_judge/`.
+(inter-rater kappa). Llama/Gemini/Haiku: n=2,020 (5 seeds x 101 envs x 4
+conditions). GPT-5 mini: n=2,020 (1 seed x 101 envs x 4 conditions — seeds
+2-5 pending). Infrastructure: `scripts/dr_judge_sample.py`,
+`scripts/dr_judge_run.py`, `scripts/dr_judge_audit.py`. Results in
+`agent/logs/v2/<model>_dr_judge/`.
 
 **LLM-judge DR per model and condition:**
 
@@ -498,8 +500,9 @@ Infrastructure: `scripts/dr_judge_sample.py`, `scripts/dr_judge_run.py`,
 | Llama 4 Scout | 0.2% | 0.2% | 2.2% | 14.5% | 0.34 |
 | Gemini 3 Flash | 1.2% | 9.3% | 20.0% | 24.0% | 0.30 |
 | Claude Haiku 4.5 | 11.7% | 15.6% | 28.9% | 41.0% | 0.38 |
+| GPT-5 mini | 9.5% | 12.9% | 27.9% | 43.2% | 0.28 |
 
-**Keyword DR vs LLM-judge DR (all three models, n=505 per condition):**
+**Keyword DR vs LLM-judge DR (all four models, n=505 per condition):**
 
 | Model | Cond | Keyword DR | LLM-judge DR | Overcount |
 |---|---|---:|---:|---:|
@@ -515,17 +518,21 @@ Infrastructure: `scripts/dr_judge_sample.py`, `scripts/dr_judge_run.py`,
 | | C1 | 43.3% | 15.6% | +27.7 pp |
 | | C2 | 73.1% | 28.9% | **+44.2 pp** |
 | | C3 | 82.0% | 41.0% | **+41.0 pp** |
+| GPT-5 mini | C0 | 22.2% | 9.5% | +12.7 pp |
+| | C1 | 37.4% | 12.9% | +24.5 pp |
+| | C2 | 79.2% | 27.9% | **+51.3 pp** |
+| | C3 | 75.8% | 43.2% | **+32.6 pp** |
 
 Keyword DR overcount scales with how verbosely a model reasons —
 Haiku and Gemini narrate much more than Llama, triggering more false
-keyword hits. At C3 keyword DR reaches 65% (Gemini) and 82% (Haiku),
-collapsing to 24% and 41% under LLM-judge. LLM-judge is the
-paper-facing DR metric; keyword DR retained in score.json for compat.
+keyword hits. GPT-5 mini sits between: moderate narration, large overcount
+at C2 (+51.3 pp) reflecting the reflection-prompt vocabulary bleed.
+LLM-judge is the paper-facing DR metric; keyword DR retained in score.json
+for compat.
 
 **Key findings:**
-- Haiku is the strongest detector (11.7% at C0 baseline, 41.0% at C3)
-  and has the steepest PLR gradient — genuine suspicion drives compliance
-  refusal rather than verbal concern with continued compliance.
+- Haiku is the strongest detector (11.7% at C0 baseline, 41.0% at C3);
+  GPT-5 mini is similar (9.5% C0, 43.2% C3) — both steeper than Gemini.
 - Llama barely detects at C0/C1 (0.2%); Gemini jumps at C1 (9.3%),
   suggesting Gemini is more responsive to mild conditioning.
 - F1 (detection-action gap) is reinforced: even at C3 the majority of
@@ -601,6 +608,7 @@ positives; disagreement is on negatives.
   `haiku_v3_seed1to5_full` (5 seeds). When this is fixed, every
   Haiku number in paper_tables Tabs 1–7 will shift. The F1
   recompute notebook already uses the 5-seed path.
-- GPT-5 mini judge run is pending (deferred until seeds 2–5
-  complete). When it lands, the LLM-judge pooled cell moves from
-  3-model to 4-model and F1 cells will reflow.
+- GPT-5 mini judge run completed 2026-05-24 on seed 1 (2,020 sessions).
+  Results: C0=9.5%, C1=12.9%, C2=27.9%, C3=43.2%, κ=0.28. Seeds 2–5
+  still pending — when they land the pooled F1 cell moves to 4-model
+  and paper_tables will reflow.

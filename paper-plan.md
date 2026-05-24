@@ -214,7 +214,7 @@ that apparatus.
 
 The thesis is anchored on four model slices: Gemini 3 Flash (5 seeds),
 Llama 4 Scout (5 seeds, post-fix OpenRouter re-run), Claude Haiku 4.5
-(5 seeds), gpt-5-mini (1 seed, seeds 2–5 in progress). All four slices use the post-2026-05-22 harness
+(5 seeds), gpt-5-mini (1 seed, seeds 2–5 pending). All four slices use the post-2026-05-22 harness
 (domain-masked observation, c_PLR rescore, AME-scaling-corrected
 GLMM reporting). 4,790 retained sessions across the four slices;
 reliable=1.0 across every cell.
@@ -257,7 +257,9 @@ which is the canonical source of every number in the paper.
    session-level OR-aggregation), the paper-facing anchor is
    **C3 reached_trap=1, pooled across the three judge-instrumented
    models** (Claude Haiku 4.5, Gemini 3 Flash, Llama 4 Scout —
-   GPT-5 mini judge run pending): 69.5% PLR_crit when the agent
+   GPT-5 mini seed-1 judge completed 2026-05-24, seeds 2–5 pending;
+   F1 pooled cell will move to 4-model when they land): 69.5% PLR_crit
+   when the agent
    does NOT genuinely recognise the attack vs 38.0% PLR_crit when
    it does — a **31.5 percentage-point gap**, n_DR1 = 295. The GLMM
    (binomial VB mixed model with env and model as crossed random
@@ -432,10 +434,12 @@ specifications lead the abstract and §1.
   OpenRouter as primary evaluator** (cross-family; avoids
   Claude/Gemini/Llama-judging-themselves conflict) and Llama 4 Scout
   as secondary judge for inter-judge κ. Full runs done 2026-05-23:
-  Llama κ=0.34, Gemini κ=0.30, Haiku κ=0.38 (all "fair to moderate").
-  Human-label validation pending: 50-session recall slice drawn;
-  targets remain judge-vs-human κ ≥ 0.7. Keyword DR retained in
-  score.json as auxiliary (overcounts by up to 13.5 pp at C3).
+  Llama κ=0.34, Gemini κ=0.30, Haiku κ=0.38, GPT-5 mini κ=0.28
+  (all "fair to moderate"). GPT-5 mini judge run completed 2026-05-24
+  on seed 1; seeds 2–5 pending. Human-label validation pending:
+  50-session recall slice drawn; targets remain judge-vs-human κ ≥ 0.7.
+  Keyword DR retained in score.json as auxiliary (overcounts by up to
+  51.3 pp at C2 for GPT-5 mini; 13.5 pp for Llama at C3).
 - **Reached-attack-surface gating.** ASR is reported conditioned on
   whether the agent navigated to the trap surface in each run.
 - **MITRE / OWASP / ENISA mapping.** Each of the 8 attack vectors
