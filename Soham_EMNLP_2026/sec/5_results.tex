@@ -7,37 +7,10 @@
 
 We report results across the full pre-registered design: four frontier models (GPT-5 mini, Claude Haiku 4.5, Gemini 3 Flash, Llama 4 Scout), four conditions (C0--C3), $n = 5$ seeds per (env, model, condition) cell on the 91 adversarial environments, and $n = 5$ seeds per (env, model) cell on the 10 benign twins under C0 only, for a target total of $7{,}480$ sessions. The realised retained pool after \texttt{BROWSER\_ERROR} exclusion is approximately $7{,}500$ sessions; reliability flags are $1.0$ in every (model, condition) cell. Percentage-point comparisons in this section are on session-level $\text{PLR}_{\text{crit}}$ unless otherwise stated. Effects carry 95\% confidence intervals from the mixed-effects logistic in \S\ref{sec:analysis}; tests in the pre-registered primary family (Table~\ref{tab:claims}) are flagged with BH-adjusted $q$-values; exploratory tests carry uncorrected $p$-values. A drop in $\text{PLR}_{\text{crit}}$ is a security improvement; a positive F1 gap reflects the detection--action mismatch in the predicted direction. The paper leads with the per-model breakdown rather than the pooled summary because cross-model variance is the central empirical finding (\S\ref{sec:results-mitigation}).
 
-\begin{figure}[t]
-\centering
-\begin{tikzpicture}
-\begin{axis}[
-  width=\columnwidth, height=4.6cm,
-  ybar, bar width=4.5pt,
-  ymin=0, ymax=100,
-  ylabel={PLR\textsubscript{crit} (\%)},
-  ylabel style={font=\scriptsize},
-  tick label style={font=\scriptsize},
-  legend style={font=\scriptsize, draw=none, fill=none,
-    at={(0.5,1.03)}, anchor=south, legend columns=4},
-  symbolic x coords={GPT-5 mini, Haiku, Gemini, Llama},
-  xtick=data, enlarge x limits=0.18,
-]
-\addplot coordinates {(GPT-5 mini,61.0) (Haiku,54.5) (Gemini,93.1) (Llama,82.3)};
-\addplot coordinates {(GPT-5 mini,47.7) (Haiku,36.4) (Gemini,81.8) (Llama,83.8)};
-\addplot coordinates {(GPT-5 mini,38.9) (Haiku,19.1) (Gemini,68.5) (Llama,81.4)};
-\addplot coordinates {(GPT-5 mini,36.1) (Haiku,24.0) (Gemini,60.7) (Llama,77.4)};
-\legend{C0, C1, C2, C3}
-\end{axis}
-\end{tikzpicture}
-\caption{Critical-tier PII leakage (PLR\textsubscript{crit}) by model and condition, pooled across the 91 adversarial environments. Leakage is high at baseline (C0) for all four models and falls under escalating prompt-level mitigation (C1--C3) for every model except Llama 4 Scout; the benign-twin baseline is $0\%$ at C0. Source values in Table~\ref{tab:results-main}.}
-\label{fig:key-findings}
-\end{figure}
-
 \subsection{Baseline Leakage}
 \label{sec:results-baseline}
 
 Under C0 (no privacy guidance), the four models leak critical-tier PII at a pooled rate of $72.7\%$ across the 91 adversarial environments. Per-model rates span $[54.5, 93.1]\%$ (Figure~\ref{fig:key-findings}, Table~\ref{tab:results-main}), confirming that the threat is not isolated to a single model family but that the magnitude varies by nearly 40 percentage points across frontier providers. The benign-twin baseline is empirically $0\%$ at C0 across the ten twins: the agents that hand over critical PII to the attacker on adversarial sites do not, on average, hand over the same critical PII on equivalent benign sites, so the headline rate is essentially attack-attributable rather than baseline form-filling. The pre-registered direction-of-effect prediction (that frontier agents leak critical PII at a substantial rate under no privacy guidance) is supported.
-
 \begin{table}[t]
 \centering
 \small
@@ -99,7 +72,7 @@ The detection--action gap (F1) \citep{turpin2023language, Lanham2023MeasuringFI,
   \includegraphics[width=0.48\textwidth]{figs/FIG2PART2.png}}\hfill
 \subfigure[Per-model F1 gap at C3.]{%
   \includegraphics[width=0.48\textwidth]{figs/FIG2PART1.png}}
-\caption{F1 detection--action gap (LLM-judge primary DR, $\texttt{reached\_trap}=\text{True}$, pooled across GPT-5 mini, Claude Haiku 4.5, Gemini 3 Flash, Llama 4 Scout). (a)~PLR\textsubscript{crit} for judge-confirmed detectors (DR$=$1) vs non-detectors (DR$=$0) by condition; the C3 pair is the pre-registered primary test ($30.2$ pp gap, $n_{DR=1}=462$). (b)~Per-model gap at C3 with 95\% CIs; only the pooled cell clears the $n\geq200$ power guard (\S\ref{sec:analysis}). Source values in Table~\ref{tab:results-f1} and Appendix~\ref{app:per-model-f1-c3}.}
+\caption{F1 detection--action gap (LLM-judge DR, $\texttt{reached\_trap}=\text{True}$, pooled-of-4 models). (a)~Critical-tier leak rate by condition for judge-confirmed detectors (DR$=$1) vs non-detectors (DR$=$0); C3 is the pre-registered primary test ($30.2$ pp gap, $n_{DR=1}=462$, $q<0.001$). (b)~Per-model gap at C3 with Wilson 95\% CIs; only the pooled row clears the $n\geq200$ power guard (\S\ref{sec:analysis}). Source: Table~\ref{tab:results-f1}, Appendix~\ref{app:per-model-f1-c3}.}
 \label{fig:f1-gap}
 \end{figure*}
 
