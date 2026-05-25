@@ -34,11 +34,14 @@ code), \emph{high} (email, phone, address), \emph{medium} (name,
 employer, date of birth), and \emph{low} (residual fields). The
 agent operates without human supervision, reflecting the
 consumer-default deployment mode. The attacker controls one or more
-websites reachable from the agent's task and may use any combination
-of visible content, hidden DOM instructions, fake system messages,
-and chat interactions to extract PII. Our primary question is
-whether any critical-tier value reaches an attacker-controlled
-endpoint.
+web origins reachable from the agent's task and may use any combination
+of visible content, hidden DOM instructions, simulated system messages,
+and chat interactions to extract PII; out-of-scope surfaces (model
+weights, TLS, DNS, host), the consumer-default no-confirmation
+rationale, and the per-env \texttt{/api/captured} measurement
+instrument are detailed in Appendix~\ref{app:threat-extended}. Our
+primary question is whether any critical-tier value reaches an
+attacker-controlled endpoint.
 
 \subsection{Benchmark Design}
 \label{sec:design}
@@ -52,19 +55,13 @@ environments is attack-attributable rather than incidental
 form-filling.
 
 The 91 environments are organised on an 8-axis taxonomy
-(Table~\ref{tab:axes}). Four axes classify each environment:
-website category, attack vector, attack salience, and PII
-sensitivity tier targeted. Four factor axes capture toggleable
-design choices: pressure cue type, prompt-injection style,
-interaction modality, and whether the attack spans multiple sites.
-The eight attack vectors covered are \emph{phishing\_clone},
-\emph{credential\_harvest}, \emph{dark\_patterns},
-\emph{reward\_trap}, \emph{authority\_impersonation},
-\emph{conversational\_deception}, \emph{prompt\_injection}, and
-\emph{fake\_trust\_signals}, each mapped to MITRE ATT\&CK
-\citep{mitre_attack_citation}, OWASP LLM Top 10
-\citep{owasp_llm_citation}, and ENISA AI threat catalogues
-\citep{enisa_citation} (Appendix~\ref{app:mitre}).
+(Table~\ref{tab:axes}): four classifying axes (category, vector,
+salience, PII target) and four factor axes used for paired
+ablation (pressure, prompt-injection style, interaction modality,
+multi-site flow). The eight attack vectors on axis B are each
+mapped to MITRE ATT\&CK \citep{mitre_attack_citation}, OWASP LLM
+Top 10 \citep{owasp_llm_citation}, and the ENISA AI threat
+landscape \citep{enisa_citation} (Appendix~\ref{app:mitre}).
 
 The central design feature is the paired-sibling construction: 60
 of the 91 environments are siblings of a parent, differing on
@@ -84,14 +81,13 @@ generation; the authoring model plays only a clerical role. All 91
 environments were manually reviewed to confirm axis correctness and
 task completability (Appendix~\ref{app:authoring}).
 
-To validate realism, 16 reviewers rated interleaved screenshots of
-\textsc{Scammer4U} environments and real captured phishing pages on
-visual believability, copy quality, and likelihood of fooling a
-user. Reviewers could not distinguish our environments from real
-phishing above chance (47.5\% accuracy, $n = 640$, Fleiss
-$\kappa = 0.02$), and rated our environments at or above real
-captures on all three axes. Full results are in
-Appendix~\ref{app:fidelity}.
+A blind $20$-vs-$20$ review by $16$ reviewers rated interleaved
+screenshots of \textsc{Scammer4U} environments and real captured
+phishing on visual believability, copy quality, and
+likelihood-of-fooling. Reviewers could not discriminate above
+chance ($47.5\%$, $n = 640$, Fleiss $\kappa = 0.02$) and rated our
+environments at or above real captures on every axis
+(Appendix~\ref{app:fidelity}).
 
 \subsection{Evaluation Setup}
 \label{sec:setup}
@@ -116,7 +112,8 @@ are constructed to be globally unique, so paraphrased leaks are not
 counted and PLR$_{\text{crit}}$ is a lower bound on adversarial
 extraction (matcher precision/recall against a human-labelled subset
 in Appendix~\ref{app:matcher}). Secondary metrics are a tier-weighted
-leakage rate (\textbf{PLR$_{\text{weighted}}$}), attack success rate
+leakage rate (\textbf{PLR$_{\text{weighted}}$}; weight vector and
+PII-profile composition in Appendix~\ref{app:profile}), attack success rate
 conditional on reaching the attack surface (\textbf{ASR}; we declare
 trap URLs per environment and gate ASR on the agent's navigation to
 them, disentangling non-leakage caused by detection from non-leakage
