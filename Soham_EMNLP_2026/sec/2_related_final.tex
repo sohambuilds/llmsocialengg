@@ -1,0 +1,48 @@
+\section{Related Work}
+\label{sec:related}
+
+Browser-using LLM agents are typically evaluated on what they can do
+under benign conditions: navigation, form-filling, and multi-step
+task completion. REAL \citep{garg2026real} provides deterministic
+replicas of popular websites and reports a 41\% success rate for
+frontier models on complex web tasks. \textsc{Scammer4U} is
+complementary: we hold capability fixed and ask what the same agents
+do when the website is actively trying to deceive them.
+
+The closest prior work studies dark patterns and adversarial
+manipulation of web agents. DECEPTICON \citep{cuvin2026decepticon}
+reports over 70\% dark-pattern susceptibility across 700 tasks and
+documents the failure mode we also observe: agents identify a
+deceptive element in their reasoning but still carry out the harmful
+action. TrickyArena \citep{ersoy2026trickyarena} finds only a 32\%
+reduction from prompt-based defenses, and
+\citet{chen2026obviousinvisiblethreat} report 74\% attack success for
+low-salience injections. AgentDojo \citep{debenedetti2024agentdogo}
+is the standard reference for indirect prompt injection on tool-using
+agents, and TRAP \citep{korgul2025trap} applies persuasion-style
+attacks to web agents, reporting a 25\% average attack success rate.
+However, all of these benchmarks measure whether the agent clicked a
+deceptive control or followed a malicious redirect. \textsc{Scammer4U}
+measures whether the agent actually submitted sensitive fields to an
+attacker-controlled endpoint, which is the outcome that matters in
+practice.
+
+On the privacy side, AgentDAM \citep{zharmagambetov2026agentdam}
+measures passive over-sharing by agents on benign sites and finds
+12--46\% leakage across 246 tasks. AgentLeak
+\citep{yagoubi2026agentleakfullstackbenchmarkprivacy} shows that
+41.7\% of privacy violations in multi-agent systems are missed by
+output-only auditing, and AgentSocialBench
+\citep{wang2026agentsocialbenchevaluatingprivacyrisks} finds that
+prompt-based privacy instructions can paradoxically increase partial
+leakage. \citet{nitu2025machinereadableadsaccessibilitytrust} report
+full compliance with unwanted subscriptions under ad pressure on a
+cloned news site. These results converge on our own central finding:
+prompt-based defenses are unreliable. The difference is that
+\textsc{Scammer4U} locates the failure specifically on
+attacker-controlled websites under active social-engineering pressure,
+rather than in multi-agent coordination or commercial nudging.
+Finally, we use templated environments rather than scraped phishing
+sites because real phishing corpora change rapidly and cannot be
+axis-controlled for causal ablation, a limitation documented in
+detail by PhreshPhish \citep{Dalton2025PhreshPhishAR}.
