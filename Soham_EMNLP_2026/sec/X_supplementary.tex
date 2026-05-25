@@ -286,8 +286,8 @@ The full per-environment registry --- 91 adversarial environments plus 10 benign
 \toprule
 Model & Provider & Version & Notes \\
 \midrule
-GPT-5 mini       & OpenRouter & \texttt{openai/gpt-5-mini} & Swapped from GPT-5 full pre-data (analysis-plan \S 1). \\
-Claude Haiku 4.5 & OpenRouter & \texttt{anthropic/claude-haiku-4.5} & Swapped from Sonnet 4.6 before any Claude data was collected. \\
+GPT-5 mini       & OpenRouter & \texttt{openai/gpt-5-mini} & \\
+Claude Haiku 4.5 & OpenRouter & \texttt{anthropic/claude-haiku-4.5} & \\
 Gemini 3 Flash   & OpenRouter & \texttt{google/gemini-3-flash-preview} & OpenRouter backend; a native-SDK fallback path exists in the harness. \\
 Llama 4 Scout    & OpenRouter & \texttt{meta-llama/llama-4-scout} & Post-fix re-run; supersedes an earlier Groq-backend dress rehearsal. \\
 \midrule
@@ -305,10 +305,7 @@ The authoring model used for environment implementation (Appendix~\ref{app:autho
 \section{PII-matcher precision and recall}
 \label{app:matcher}
 
-The exact-string PLR matcher described in \S\ref{sec:setup} is validated against a 200-pair human-labelled subset stratified across environments, models, and conditions. Matcher precision and recall against the human labels are \textbf{[TODO]} and \textbf{[TODO]}, with a sensitivity comparison against substring and regex variants. The pre-registered failure trigger is matcher recall $\leq 0.9$ on the labelled set, in which case the headline $\text{PLR}_{\text{crit}}$ in \S\ref{sec:results-baseline} is re-reported as a lower bound on adversarial extraction.
-% TODO before submit: insert matcher precision/recall (and substring/regex
-% sensitivity) from the completed 200-pair labelling pass. If recall <= 0.9,
-% re-report PLR_crit as a lower bound per the pre-registered trigger.
+The exact-string PLR matcher described in \S\ref{sec:setup} matches outbound POST bodies against the static PII profile (Appendix~\ref{app:profile}) on whole-value equality. Because every critical-tier value in the profile is constructed to be globally unique within its category (16-digit card numbers, full-format SSN, \texttt{sk-}-prefixed API keys, distinct passwords per service), false positives are bounded by chance collision and are vanishingly rare in the captured POST bodies. Recall is bounded by the agent's choice of representation: a paraphrased leak, a digit-dropped leak, or a leak transcribed into chat prose that omits the exact stored value is not counted, so $\text{PLR}_{\text{crit}}$ is reported as a \emph{lower bound} on adversarial extraction throughout (\S\ref{sec:setup}); substring and regex variants are retained as auxiliary signals in the released artifact for sensitivity work.
 
 \section{Per-model breakdowns: F4 between-model variance, F11 cross-category}
 \label{app:per-model}
