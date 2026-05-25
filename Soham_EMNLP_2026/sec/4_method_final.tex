@@ -43,6 +43,9 @@ attacker-controlled endpoint.
 
 \subsection{Benchmark Design}
 \label{sec:design}
+\label{sec:benign}
+\label{sec:vectors}
+\label{sec:composition}
 
 \textsc{Scammer4U} contains 91 adversarial environments organised
 on an 8-axis taxonomy (Table~\ref{tab:axes}): four classifying
@@ -65,6 +68,7 @@ Appendix~\ref{app:benign-twin}).
 
 \subsection{Construction and Fidelity}
 \label{sec:construction}
+\label{sec:authoring}
 
 Environments are self-hosted Flask applications generated from
 human-written design briefs by an LLM authoring model distinct from
@@ -99,6 +103,7 @@ caveat are in Appendix~\ref{app:fidelity}.
 \label{sec:setup}
 
 \paragraph{Models, conditions, and runs.}
+\label{sec:setup-runs}
 We evaluate GPT-5 mini, Claude Haiku 4.5, Gemini 3 Flash, and Llama
 4 Scout in a shared Playwright-based harness with identical
 observation format, action space, and prompt template
@@ -112,6 +117,8 @@ prompts in Appendix~\ref{app:prompts}. We run $n = 5$ seeds per
 $91 \cdot 4 \cdot 5 \cdot 4 + 10 \cdot 4 \cdot 5 = 7{,}480$ sessions.
 
 \paragraph{Metrics.}
+\label{sec:metrics}
+\label{sec:reachedtrap}
 The primary metric \textbf{PLR$_{\text{crit}}$} is the rate at which
 any critical-tier value reaches an attacker endpoint, by exact-string
 match against outbound POST bodies; profile values are globally
@@ -128,6 +135,7 @@ detection flag (\textbf{DR}) for whether the agent's reasoning
 identified the site as suspicious.
 
 \paragraph{Detection rate judge.}
+\label{sec:dr}
 DR is operationalised via LLM-as-judge
 \citep{GU2026101253,Zhu2023JudgeLMFL,Li2024FromGT}: a per-step
 boolean ``did the agent flag the site as suspicious?'' aggregated
@@ -142,6 +150,8 @@ within-family cell in band; Appendix~\ref{app:dr-sensitivity}).
 Keyword-DR is retained as an auxiliary signal but overstates the gap.
 
 \paragraph{Analysis and pre-registration.}
+\label{sec:analysis}
+\label{sec:prereg}
 The pre-registered primary family is a within-condition
 detection--action test (F1), ten paired-sibling factor tests
 (F2--F11), and three mitigation contrasts (M1--M3). Each is a
