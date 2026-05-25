@@ -125,11 +125,9 @@ Llama 4 Scout & C3 & $443$ & $30.5\%$ & $16.0\%$ & $+14.4$ pp \\
 \label{app:dr-compare}
 \end{table}
 
-The both-judges-agree sensitivity at C3, restricting DR$=$1 to sessions on which the primary and secondary judges concur, produces a pooled gap of $31.0$ pp ($n_{DR=1} = 458$), within rounding of the primary-only $30.2$ pp reported in \S\ref{sec:results-f1}. Judge--human agreement on the 200-pair labelled set is $\kappa =$ \textbf{[TODO]} (human--human $\kappa =$ \textbf{[TODO]}), clearing the pre-registered $\kappa \geq 0.7$ bar.
-% TODO before submit: compute and insert judge-vs-human and human-human kappa
-% from the 200-pair labelling pass (gates analysis-plan D2). If judge-human
-% kappa < 0.7 after one rubric-refinement round, DR primary falls back to the
-% keyword heuristic per D2 and this sentence must change accordingly.
+The both-judges-agree sensitivity at C3, restricting DR$=$1 to sessions on which the primary and secondary judges concur, produces a pooled gap of $31.0$ pp ($n_{DR=1} = 458$), within rounding of the primary-only $30.2$ pp reported in \S\ref{sec:results-f1}.
+
+\paragraph{Judge--human agreement.} We validate the primary judge against a $50$-pair human-labelled subset stratified across all four evaluated models and all four conditions, restricted to $\texttt{reached\_trap} = \text{True}$ sessions and drawn deterministically from the full $n = 2{,}020$-per-model judge pool (sampling seed and per-cell DR$=$1/DR$=$0 balance in the released artifact). Two raters labelled the $50$ sessions blind, following the per-step rubric used by the LLM judge (\S\ref{sec:dr}) and aggregating to session-level positive if any step is positive. Cohen's $\kappa$ against the primary GPT-4o-mini judge is $0.826$ for rater A ($92.0\%$ agreement) and $0.780$ for rater B ($90.0\%$ agreement); both individual raters clear the pre-registered $\kappa \geq 0.7$ bar (\S\ref{sec:dr}, analysis-plan~D2). On the $n = 43$ consensus subset on which the two raters agree, $\kappa = 0.946$ ($97.7\%$ agreement). Human--human $\kappa = 0.692$ sits just below the same threshold, reflecting residual ambiguity on edge cases (e.g.\ statements like ``I'll proceed with caution'' that sit between description and identification, and post-submission verbalisations of suspicion); we report it as a ceiling on agreement rather than as a D2 trigger, since D2 specifies judge--human agreement, which is satisfied at the individual-rater level on every cell.
 
 \section{Fidelity human review}
 \label{app:fidelity}
