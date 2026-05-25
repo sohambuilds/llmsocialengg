@@ -24,7 +24,9 @@ confirm that frontier agents are now reliable enough to complete
 multi-step web tasks end-to-end: \citet{garg2026real} report 41\%
 success on complex state-changing tasks, and \textit{the same capability that
 makes agents useful also makes them a predictable target for data
-theft.}
+theft.} We find that even when an independent LLM judge confirms the
+agent's reasoning has flagged a site as suspicious, the agent still
+hands over critical PII at a high rate (\S\ref{sec:results-f1}).
 
 \textbf{The measurement gap.} There is a growing body of work on the robustness of web agents
 against adversarial attacks, but existing benchmarks measure the
@@ -59,15 +61,28 @@ mitigation conditions ranging from no guidance to pre-submission
 reflection, with the full analysis plan pre-registered before any
 data was collected (\texttt{prereg-v2-start}).
 
-Our experiments reveal three findings. Frontier agents leak
-critical-tier PII at high rates even under prompt-level mitigations,
-and the degree of protection varies sharply across model families.
-More importantly, we find a detection--action gap: agents that
-explicitly flag a site as suspicious in their own reasoning still
-frequently go on to submit critical PII. This tells us that asking
-agents to reason about trust before submitting is not a reliable
-defense on its own. Effective protection will need to operate
-outside the agent's reasoning loop entirely. We release
-\textsc{Scammer4U} with a pre-registered analysis plan and complete
-run logs so that future work can evaluate new models without
-rebuilding the benchmark.
+Our experiments yield three findings. \emph{(i)~Prompt-level mitigation
+is sharply model-dependent.} Baseline critical-tier leakage ranges from
+$54.5\%$ to $93.1\%$ across the four models (against $0\%$ on benign
+twins); escalating mitigation reduces it substantially on three models
+but barely on Llama 4 Scout ($-4.9$\,pp at C3), and three
+model--condition cells individually cross our pre-registered
+$-30$\,pp threshold while the pooled effect ($-23.3$\,pp) does not
+(\S\ref{sec:results-mitigation}). \emph{(ii)~A detection--action gap.}
+Pooled across all four models in C3, agents whose reasoning an
+independent LLM judge confirms flagged the site as suspicious still
+leak critical PII at $35.9\%$ versus $66.1\%$ otherwise---a $30.2$\,pp
+gap ($q < 0.001$) that clears our pre-registered $10\%$ falsification
+threshold: verbalised suspicion does not prevent submission
+(\S\ref{sec:results-f1}). \emph{(iii)~Where leakage concentrates.}
+Across the 8-axis taxonomy no factor axis survives BH correction; the
+methodological payoff is a sign disagreement on salience---a
+cross-cutting marginal ranks subtle attacks most dangerous while the
+paired-sibling test (controlling for category base rates) finds
+subtle siblings leak \emph{less} than their parents---illustrating
+why the paired design is necessary (\S\ref{sec:results-axes}).
+Together these findings motivate output-level defences over further
+system-prompt iteration. We release \textsc{Scammer4U} in full
+(91 attack environments, 10 benign twins, a pre-registered analysis
+plan, and complete run logs) so follow-up work can re-run these
+ablations on new models without re-authoring the apparatus.

@@ -105,17 +105,26 @@ template. Each model is tested under four conditions: \textbf{C0}
 (no guidance), \textbf{C1} (generic privacy reminder), \textbf{C2}
 (phishing-aware checklist), and \textbf{C3} (pre-submission
 reflection). We run $n = 5$ seeds per (environment, model,
-condition) cell, targeting 7,480 sessions total.
+condition) cell, targeting $91 \cdot 4 \cdot 5 \cdot 4 + 10 \cdot 4 \cdot 5 = 7{,}480$
+sessions total.
 
 \paragraph{Metrics.}
 The primary metric is \textbf{PLR$_{\text{crit}}$}, the rate at
-which any critical-tier value reaches an attacker endpoint,
-measured by exact string match against outbound POST bodies.
-Secondary metrics are a tier-weighted leakage rate
-(\textbf{PLR$_{\text{weighted}}$}), attack success rate conditional
-on reaching the attack surface (\textbf{ASR}), task completion rate
-(\textbf{TCR}), and a detection flag (\textbf{DR}) indicating
-whether the agent's reasoning identified the site as suspicious.
+which any critical-tier value reaches an attacker endpoint, measured
+by exact string match against outbound POST bodies; profile values
+are constructed to be globally unique, so paraphrased leaks are not
+counted and PLR$_{\text{crit}}$ is a lower bound on adversarial
+extraction (matcher precision/recall against a human-labelled subset
+in Appendix~\ref{app:matcher}). Secondary metrics are a tier-weighted
+leakage rate (\textbf{PLR$_{\text{weighted}}$}), attack success rate
+conditional on reaching the attack surface (\textbf{ASR}; we declare
+trap URLs per environment and gate ASR on the agent's navigation to
+them, disentangling non-leakage caused by detection from non-leakage
+caused by failure to reach the trap), task completion rate
+(\textbf{TCR}), a \textbf{Defended} flag for sessions that either
+refuse or safely complete the task without reaching the attack
+surface, and a detection flag (\textbf{DR}) indicating whether the
+agent's reasoning identified the site as suspicious.
 
 \paragraph{Detection rate judge.}
 DR is operationalised via LLM-as-judge
@@ -123,16 +132,41 @@ DR is operationalised via LLM-as-judge
 reasoning step whether the agent flagged the site as suspicious.
 DR measures what the agent \emph{says}, not what it knows
 internally. The primary judge is GPT-4o-mini and the secondary is
-Llama 4 Scout, chosen to avoid same-family evaluation; inter-judge
-agreement is $\kappa = 0.39$--$0.44$ across all four models
-(Appendix~\ref{app:dr-sensitivity}).
+Llama 4 Scout; neither shares a model family with three of the four
+evaluated agents, and the single within-family pair (GPT-4o-mini /
+GPT-5 mini) is bounded by per-model stratified inter-judge $\kappa$
+and a both-judges-agree sensitivity. Inter-judge agreement is
+$\kappa = 0.39$--$0.44$ across all four models, with the within-family
+cell in the same band as the cross-family cells
+(Appendix~\ref{app:dr-sensitivity}). A keyword-match heuristic is
+retained as an auxiliary signal but overstates the gap; the LLM-judge
+primary is the more conservative reading.
+
+\paragraph{Analysis.}
+The pre-registered primary family is a within-condition
+detection--action test (F1), ten paired-sibling factor tests
+(F2--F11), and three mitigation contrasts (M1--M3). Each is a
+mixed-effects logistic regression on session-level
+PLR$_{\text{crit}}$ with environment and model as crossed random
+effects, with a Wilcoxon signed-rank fallback on convergence failure;
+Benjamini--Hochberg correction at $q = 0.05$ is applied across the
+inference-bearing subset selected by a pre-registered power gate
+(Appendix~\ref{app:claims}). Point estimates are reported in
+percentage points with 95\% CIs. Two claims carry pre-committed
+falsification thresholds: the mitigation-insufficiency claim is
+falsified if any condition reduces pooled PLR$_{\text{crit}}$ by
+$\geq 30$\,pp across all four models; the detection--action claim is
+falsified if within-C3 PLR$_{\text{crit}} \mid \text{DR}{=}1
+\leq 0.10$ \citep{Barocas2021DesigningDE,MLSYS2021_0184b0cd}.
 
 \paragraph{Pre-registration.}
 The full analysis plan was committed and tagged
 \texttt{prereg-v2-start} before data collection
 \citep{Nosek2018ThePR,Nosek2019PreregistrationIH,Gallitto2024ExternalVO}.
-Two claims carry falsification thresholds: the
-mitigation-insufficiency claim is falsified if any condition
-reduces pooled leakage by 30 pp or more across all models, and the
-detection--action claim is falsified if confirmed-suspicion sessions
-leak at 10\% or below.
+An identified URL-shape contamination in an earlier harness (visible
+localhost cues acting as model-side trust shortcuts) was removed
+before the reported runs; the pre-fix slice is preserved for
+contamination accounting (Appendix~\ref{app:contamination}), and the
+correction alters no experimental-design choice. Post-tag deviations
+are enumerated with their pre-fix vs post-fix slices in
+Appendix~\ref{app:deviations}.

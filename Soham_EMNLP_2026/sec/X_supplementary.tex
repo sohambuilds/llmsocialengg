@@ -138,9 +138,10 @@ The both-judges-agree sensitivity at C3, restricting DR$=$1 to sessions on which
 
 \paragraph{Source-discrimination accuracy.} Reviewers commit to a side on most items but their guesses are essentially at chance. We report three Not-Sure framings (Table~\ref{tab:fidelity-accuracy}); $p$-values are exact-binomial against the $50\%$ chance line.
 
-\begin{table}[h]
-\centering\small
-\resizebox{\columnwidth}{!}{%
+\begin{table*}[h]
+\centering
+%\small
+%\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lll}
 \toprule
 Framing & Accuracy [95\% CI] & $p$ vs 50\% \\
@@ -150,10 +151,10 @@ B. Excl.\ Not~Sure              & $54.0\%~[49.9, 58.1]$ ($n=563$) & $0.06$ \\
 C. Three-class                  & \multicolumn{2}{l}{correct $47.5\%$, wrong-commit $40.5\%$, not~sure $12.0\%$ ($n=640$)} \\
 \bottomrule
 \end{tabular}%
-}
+%}
 \caption{Reviewer source-discrimination accuracy under three Not-Sure framings. Both committed-guess framings have $95\%$ Wilson CIs that include the $50\%$ chance line.}
 \label{tab:fidelity-accuracy}
-\end{table}
+\end{table*}
 
 \paragraph{Wrong-direction confusion.} The full ground-truth $\times$ guess crosstab is in Table~\ref{tab:fidelity-crosstab}. The diagnostic row is the top one: when shown a Scammer4U environment, reviewers were marginally \emph{more} likely to label it as real phishing than as ours.
 
@@ -173,9 +174,10 @@ Real captured phishing & $35.6\%$ & $51.9\%$ & $12.5\%$ \\
 
 \paragraph{Per-axis Likert: ours vs real.} Mann--Whitney $U$ on each $1$--$5$ rating, pooled over reviewers (Table~\ref{tab:fidelity-likert}). Per-axis cell sizes are $n=320$ ratings per source ($16$ reviewers $\times$ $20$ stimuli).
 
-\begin{table}[h]
-\centering\small
-\resizebox{\columnwidth}{!}{%
+\begin{table*}[h]
+\centering
+%\small
+%\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lcccc}
 \toprule
 Axis & Ours mean$\pm$SD & Real mean$\pm$SD & $\Delta$(o$-$r) & MW-$U$ $p$ \\
@@ -185,15 +187,17 @@ Copy quality         & $3.45\pm1.23$ & $2.92\pm1.57$ & $+0.53$ & $<10^{-4}$ \\
 Would fool a user    & $3.51\pm1.17$ & $2.86\pm1.47$ & $+0.65$ & $<10^{-4}$ \\
 \bottomrule
 \end{tabular}%
-}
+%}
 \caption{Per-axis $1$--$5$ Likert ratings. Scammer4U environments are rated at-or-above real captures on every axis including likelihood-of-fooling. We discuss the contribution of real-side sample heterogeneity to the gap below.}
 \label{tab:fidelity-likert}
-\end{table}
+\end{table*}
 
 \paragraph{Stratification by familiarity.} Accuracy by self-reported phishing-security familiarity, excluding Not~Sure responses (Table~\ref{tab:fidelity-fam}). Cell sizes for the High tier ($n_{\text{rev}}=3$) are small and we caveat the inference accordingly --- but the point estimate sits exactly at chance and the CI is centred on $50\%$.
 
 \begin{table}[h]
-\centering\small
+\centering
+%\small
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lrll}
 \toprule
 Familiarity & $n_{\text{rev}}$ & Accuracy [95\% CI] & $p$ vs 50\% \\
@@ -203,6 +207,7 @@ Medium & $6$ & $53.7\%~[47.0, 60.2]$ ($n=216$) & $0.31$ \\
 High   & $3$ & $49.0\%~[39.4, 58.7]$ ($n=100$) & $0.92$ \\
 \bottomrule
 \end{tabular}
+}
 \caption{Discrimination accuracy by reviewer familiarity (excl.\ Not~Sure). The High-familiarity sub-sample is exactly at chance.}
 \label{tab:fidelity-fam}
 \end{table}
@@ -273,10 +278,10 @@ The full per-environment registry --- 91 adversarial environments plus 10 benign
 \section{Pinned model identifiers and sampling parameters}
 \label{app:models}
 
-\begin{table}[h]
+\begin{table*}[h]
 \centering
-\small
-\resizebox{\columnwidth}{!}{
+%\small
+\resizebox{\textwidth}{!}{
 \begin{tabular}{lllp{6cm}}
 \toprule
 Model & Provider & Version & Notes \\
@@ -293,7 +298,7 @@ Judge (secondary) & OpenRouter & \texttt{meta-llama/llama-4-scout} & Inter-judge
 }
 \caption{Pinned model identifiers frozen at \texttt{prereg-v2-start}. Sampling temperature is the provider default for each model; per-provider knobs (top-p, max-tokens) live in \texttt{agent/core/llm\_factory.py}. The judge models are deliberately distinct from the evaluated models to avoid same-family self-evaluation; the GPT-4o-mini / GPT-5-mini within-family pair is the one exception and is bounded by the stratified $\kappa$ in Table~\ref{app:kappa}.}
 \label{tab:app-models}
-\end{table}
+\end{table*}
 
 The authoring model used for environment implementation (Appendix~\ref{app:authoring}) is held constant across all 91 environments and is distinct from every evaluated model in the panel above, so no agent in the panel is graded on implementations it itself produced. Its identifier and sampling parameters are disclosed in the camera-ready release artifact alongside the per-env design briefs.
 
@@ -308,10 +313,10 @@ The exact-string PLR matcher described in \S\ref{sec:metrics} is validated again
 \section{Per-model breakdowns: F4 between-model variance, F11 cross-category}
 \label{app:per-model}
 
-\begin{table}[h]
+\begin{table*}[h]
 \centering
-\small
-\resizebox{\columnwidth}{!}{
+%\small
+%\resizebox{\textwidth}{!}{
 \begin{tabular}{lrrrrc}
 \toprule
 Model & $n_{DR=1}$ & $n_{DR=0}$ & DR$=$1 PLR & DR$=$0 PLR & Gap [95\% CI] (pp) \\
@@ -324,15 +329,15 @@ Llama 4 Scout    & $70$  & $344$  & $48.6$ & $86.9$ & $38.3\,[+26.1, +50.6]$ \\
 Pooled           & $462$ & $1{,}071$ & $35.9$ & $66.1$ & $30.2\,[+25.0, +35.4]$ \\
 \bottomrule
 \end{tabular}
-}
+%}
 \caption{Per-model F1 detection--action gap at C3 under LLM-judge primary DR (GPT-4o-mini), restricted to $\texttt{reached\_trap} = \text{True}$. 95\% CIs computed from the normal approximation on the difference of two proportions. Per-model rows are all in the underpowered band ($50 \leq n_{DR=1} < 200$, \S\ref{sec:analysis}) and are reported as descriptive context only; the pooled row is the inference-bearing cell from Table~\ref{tab:results-f1}. The widest per-model gap (Llama 4 Scout, $38.3$ pp) is driven by a small $n_{DR=1}$ cell sitting against an elevated DR$=$0 baseline ($86.9\%$) rather than by Llama's narrators defending more reliably than other models': Llama's DR$=$1 leakage rate ($48.6\%$) is in fact higher than three of the four other-model DR$=$1 rates.}
 \label{app:per-model-f1-c3}
-\end{table}
+\end{table*}
 
-\begin{table}[h]
+\begin{table*}[h]
 \centering
-\small
-\resizebox{\columnwidth}{!}{
+%\small
+%\resizebox{\textwidth}{!}{
 \begin{tabular}{lrrrrc}
 \toprule
 Model & $n_{DR=1}$ & $n_{DR=0}$ & DR$=$1 PLR & DR$=$0 PLR & Gap [95\% CI] (pp) \\
@@ -345,10 +350,10 @@ Llama 4 Scout    & $1$   & $452$    & $100.0$ & $82.3$ & $-17.7\,[-21.2, -14.2]$
 Pooled           & $112$ & $1{,}692$ & $5.4$   & $77.2$ & $71.8\,[+67.2, +76.5]$ \\
 \bottomrule
 \end{tabular}
-}
+%}
 \caption{Per-model F1 detection--action gap at C0 under LLM-judge primary DR, restricted to $\texttt{reached\_trap} = \text{True}$, reported as a sensitivity result. Per-model $n_{DR=1}$ counts are too small to support inference (Llama has a single judge-confirmed C0 detector across the 5-seed sweep; its negative gap is single-observation noise and should not be cited). The pooled row at $n_{DR=1} = 112$ sits in the descriptive-with-CI band ($50 \leq n < 200$); the pre-registered primary anchor for F1 is C3 (Table~\ref{tab:results-f1}).}
 \label{app:per-model-f1-c0}
-\end{table}
+\end{table*}
 
 The F4 between-model variance test reduces to the per-model rows in Table~\ref{tab:results-main} and \ref{tab:results-mitigation} of the main text; the empirical between-model spread on C0 $\text{PLR}_{\text{crit}}$ is $38.6$ pp (Haiku $54.5\%$ to Gemini $93.1\%$), and on $\Delta$M3 is $27.5$ pp (Llama $-4.9$ to Gemini $-32.4$). Formal variance partitioning between model and env random effects is reported by the GLMM in \S\ref{sec:analysis}; the model random effect carries substantially more variance than the env random effect at every condition in our fits, consistent with the cross-model heterogeneity narrative.
 
@@ -436,10 +441,10 @@ The trust-score thresholds (per PII tier) require HIGH trust to submit critical-
 \section{Full MITRE / OWASP / ENISA mapping}
 \label{app:mitre}
 
-\begin{table}[h]
+\begin{table*}[h]
 \centering
-\small
-\resizebox{\columnwidth}{!}{
+%\small
+\resizebox{\textwidth}{!}{
 \begin{tabular}{lllll}
 \toprule
 Vector (axis B) & MITRE ATT\&CK & OWASP LLM Top 10 & ENISA AI & $n_{envs}$ \\
@@ -456,4 +461,4 @@ reward\_trap              & T1566 Phishing (incentive-based lure)        & A04:2
 }
 \caption{Modal MITRE ATT\&CK Enterprise / OWASP LLM Top 10 / ENISA AI threat-landscape mapping per Scammer4U attack vector (\S\ref{sec:vectors}). Per-environment mappings (which may diverge from the modal vector mapping where an env's specific attack content invokes a more narrow technique) live in the released \texttt{classification.csv}; this table aggregates to the vector level. Note that \texttt{prompt\_injection} is treated as axis F (factor axis) rather than a vector in our taxonomy and accordingly has no row here; its mapping is OWASP LLM01 Prompt Injection across all per-env values.}
 \label{app:mitre-tab}
-\end{table}
+\end{table*}
