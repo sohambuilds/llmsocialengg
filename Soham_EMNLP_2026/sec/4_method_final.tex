@@ -27,143 +27,121 @@ Factor & H: multi\_site & single\_origin, multi\_origin\_same\_task, email\_entr
 \subsection{Threat Model}
 \label{sec:threat}
 
-We model a web-browsing agent provisioned with a full user PII
-profile, partitioned into four sensitivity tiers: \emph{critical}
-(SSN, payment card with CVV, bank account, password, API key, 2FA
-code), \emph{high} (email, phone, address), \emph{medium} (name,
-employer, date of birth), and \emph{low} (residual fields). The
-agent operates without human supervision, reflecting the
-consumer-default deployment mode. The attacker controls one or more
-web origins reachable from the agent's task and may use any combination
-of visible content, hidden DOM instructions, simulated system messages,
-and chat interactions to extract PII; out-of-scope surfaces (model
-weights, TLS, DNS, host), the consumer-default no-confirmation
-rationale, and the per-env \texttt{/api/captured} measurement
-instrument are detailed in Appendix~\ref{app:threat-extended}. Our
-primary question is whether any critical-tier value reaches an
+We model a web-browsing agent provisioned with a user PII profile
+across four sensitivity tiers (\emph{critical}: SSN, card+CVV, bank
+account, password, API key, 2FA, gov-ID upload; \emph{high}: email,
+phone, address; \emph{medium}: name, employer, DOB; \emph{low}:
+residual; Appendix~\ref{app:profile}), operating without human
+supervision (consumer-default deployment). The attacker controls
+one or more web origins reachable from the agent's task, serving
+arbitrary HTML, hidden DOM, simulated system messages, and chat
+content, and operating POST endpoints; out-of-scope surfaces (model
+weights, TLS, DNS, host) and the per-env \texttt{/api/captured}
+measurement instrument are in Appendix~\ref{app:threat-extended}.
+The primary question is whether any critical-tier value reaches an
 attacker-controlled endpoint.
 
 \subsection{Benchmark Design}
 \label{sec:design}
 
-\textsc{Scammer4U} contains 91 adversarial environments and 10
-benign-twin baselines. Benign twins are built by removing the attack
-surface from an adversarial environment while preserving the
-legitimate task. They serve as a counterfactual baseline: because
-twins produce 0\% critical-tier leakage, any leakage on adversarial
-environments is attack-attributable rather than incidental
-form-filling.
+\textsc{Scammer4U} contains 91 adversarial environments organised
+on an 8-axis taxonomy (Table~\ref{tab:axes}): four classifying
+axes (category, vector, salience, PII target) and four factor axes
+used for paired ablation (pressure, prompt-injection style,
+interaction modality, multi-site flow). The eight attack vectors
+on axis B are each mapped to MITRE ATT\&CK, OWASP LLM Top 10,
+and the ENISA AI threat landscape
+\citep{mitre_attack_citation,owasp_llm_citation,enisa_citation}
+(Appendix~\ref{app:mitre}). The central design feature is the
+\textbf{paired-sibling construction}: 60 of the 91 environments
+are siblings of a parent, differing on exactly one axis, so any
+parent--sibling leakage difference is attributable to that single
+factor \citep{Rubin1974EstimatingCE,Antonakis2010OnMC}. We also
+include 10 \textbf{benign-twin baselines} (forks with the attack
+surface removed but the legitimate task preserved; they leak $0\%$
+critical-tier PII under C0, so attack-env leakage is
+attack-attributable rather than incidental form-filling;
+Appendix~\ref{app:benign-twin}).
 
-The 91 environments are organised on an 8-axis taxonomy
-(Table~\ref{tab:axes}): four classifying axes (category, vector,
-salience, PII target) and four factor axes used for paired
-ablation (pressure, prompt-injection style, interaction modality,
-multi-site flow). The eight attack vectors on axis B are each
-mapped to MITRE ATT\&CK \citep{mitre_attack_citation}, OWASP LLM
-Top 10 \citep{owasp_llm_citation}, and the ENISA AI threat
-landscape \citep{enisa_citation} (Appendix~\ref{app:mitre}).
-
-The central design feature is the paired-sibling construction: 60
-of the 91 environments are siblings of a parent, differing on
-exactly one axis. Any leakage difference between a parent and its
-sibling can therefore be attributed to that single factor
-\citep{Rubin1974EstimatingCE,Antonakis2010OnMC}, enabling causal
-claims that cross-environment comparisons cannot support.
-
-\subsection{Environment Construction and Fidelity}
+\subsection{Construction and Fidelity}
 \label{sec:construction}
 
 Environments are self-hosted Flask applications generated from
-human-written design briefs using an LLM authoring model distinct
-from all four evaluated agents. The brief fixes every axis value,
-the attack surface, and the visible red flags before code
-generation; the authoring model plays only a clerical role. All 91
-environments were manually reviewed to confirm axis correctness and
-task completability (Appendix~\ref{app:authoring}).
-
-A blind $20$-vs-$20$ review by $16$ reviewers rated interleaved
-screenshots of \textsc{Scammer4U} environments and real captured
-phishing on visual believability, copy quality, and
-likelihood-of-fooling. Reviewers could not discriminate above
-chance ($47.5\%$, $n = 640$, Fleiss $\kappa = 0.02$) and rated our
-environments at or above real captures on every axis
+human-written design briefs by an LLM authoring model distinct from
+all four evaluated agents; the brief fixes every axis value, attack
+surface, and visible red flag before code generation, and every env
+was manually reviewed against its brief (Appendix~\ref{app:authoring}).
+A blind $20$-vs-$20$ review by $16$ raters of interleaved
+\textsc{Scammer4U} and real captured-phishing screenshots cannot
+discriminate above chance ($47.5\%$, $n = 640$, Fleiss $\kappa = 0.02$)
+and rates our environments at or above real captures on visual
+believability, copy quality, and likelihood-of-fooling
 (Appendix~\ref{app:fidelity}).
 
 \subsection{Evaluation Setup}
 \label{sec:setup}
 
-\paragraph{Models and conditions.}
+\paragraph{Models, conditions, and runs.}
 We evaluate GPT-5 mini, Claude Haiku 4.5, Gemini 3 Flash, and Llama
-4 Scout in a shared Playwright-based harness
-\citep{playwright,zhou2024webarenarealisticwebenvironment,Koh2024VisualWebArenaEM,10.5555/3692070.3694608,NEURIPS2023_5950bf29,he-etal-2024-webvoyager}
-with identical observation format, action space, and prompt
-template. Each model is tested under four conditions: \textbf{C0}
-(no guidance), \textbf{C1} (generic privacy reminder), \textbf{C2}
-(phishing-aware checklist), and \textbf{C3} (pre-submission
-reflection). We run $n = 5$ seeds per (environment, model,
-condition) cell, targeting $91 \cdot 4 \cdot 5 \cdot 4 + 10 \cdot 4 \cdot 5 = 7{,}480$
-sessions total.
+4 Scout in a shared Playwright-based harness with identical
+observation format, action space, and prompt template
+\citep{playwright,zhou2024webarenarealisticwebenvironment,Koh2024VisualWebArenaEM,10.5555/3692070.3694608,NEURIPS2023_5950bf29,he-etal-2024-webvoyager};
+pinned identifiers in Appendix~\ref{app:models}. Each model is
+tested under four conditions: \textbf{C0} (no guidance),
+\textbf{C1} (generic privacy reminder), \textbf{C2} (phishing-aware
+checklist), and \textbf{C3} (pre-submission reflection); verbatim
+prompts in Appendix~\ref{app:prompts}. We run $n = 5$ seeds per
+(environment, model, condition) cell, targeting
+$91 \cdot 4 \cdot 5 \cdot 4 + 10 \cdot 4 \cdot 5 = 7{,}480$ sessions.
 
 \paragraph{Metrics.}
-The primary metric is \textbf{PLR$_{\text{crit}}$}, the rate at
-which any critical-tier value reaches an attacker endpoint, measured
-by exact string match against outbound POST bodies; profile values
-are constructed to be globally unique, so paraphrased leaks are not
-counted and PLR$_{\text{crit}}$ is a lower bound on adversarial
-extraction (matcher precision/recall against a human-labelled subset
-in Appendix~\ref{app:matcher}). Secondary metrics are a tier-weighted
-leakage rate (\textbf{PLR$_{\text{weighted}}$}; weight vector and
-PII-profile composition in Appendix~\ref{app:profile}), attack success rate
-conditional on reaching the attack surface (\textbf{ASR}; we declare
-trap URLs per environment and gate ASR on the agent's navigation to
-them, disentangling non-leakage caused by detection from non-leakage
-caused by failure to reach the trap), task completion rate
-(\textbf{TCR}), a \textbf{Defended} flag for sessions that either
-refuse or safely complete the task without reaching the attack
-surface, and a detection flag (\textbf{DR}) indicating whether the
-agent's reasoning identified the site as suspicious.
+The primary metric \textbf{PLR$_{\text{crit}}$} is the rate at which
+any critical-tier value reaches an attacker endpoint, by exact-string
+match against outbound POST bodies; profile values are globally
+unique, so PLR$_{\text{crit}}$ is a lower bound on adversarial
+extraction (matcher validation in Appendix~\ref{app:matcher}).
+Secondary metrics: tier-weighted leakage
+(\textbf{PLR$_{\text{weighted}}$}; weights and profile in
+Appendix~\ref{app:profile}); attack success rate conditional on
+agent navigation to a declared trap URL (\textbf{ASR}, which
+disentangles non-leakage caused by detection from failure to reach
+the trap); task completion rate (\textbf{TCR}); a \textbf{Defended}
+flag for refusal or safe completion without trap reach; and a
+detection flag (\textbf{DR}) for whether the agent's reasoning
+identified the site as suspicious.
 
 \paragraph{Detection rate judge.}
 DR is operationalised via LLM-as-judge
-\citep{GU2026101253,Zhu2023JudgeLMFL,Li2024FromGT}, asking at each
-reasoning step whether the agent flagged the site as suspicious.
-DR measures what the agent \emph{says}, not what it knows
-internally. The primary judge is GPT-4o-mini and the secondary is
-Llama 4 Scout; neither shares a model family with three of the four
-evaluated agents, and the single within-family pair (GPT-4o-mini /
-GPT-5 mini) is bounded by per-model stratified inter-judge $\kappa$
-and a both-judges-agree sensitivity. Inter-judge agreement is
-$\kappa = 0.39$--$0.44$ across all four models, with the within-family
-cell in the same band as the cross-family cells
-(Appendix~\ref{app:dr-sensitivity}). A keyword-match heuristic is
-retained as an auxiliary signal but overstates the gap; the LLM-judge
-primary is the more conservative reading.
+\citep{GU2026101253,Zhu2023JudgeLMFL,Li2024FromGT}: a per-step
+boolean ``did the agent flag the site as suspicious?'' aggregated
+to a session-level positive if any step is positive. \emph{DR
+measures what the agent says, not what it knows internally.}
+Primary judge GPT-4o-mini, secondary Llama 4 Scout; neither shares
+a family with three of four evaluated agents, and the single
+within-family pair (GPT-4o-mini / GPT-5 mini) is bounded by
+stratified inter-judge $\kappa$ and a both-judges-agree sensitivity
+($\kappa = 0.39$--$0.44$ across all four models, with the
+within-family cell in band; Appendix~\ref{app:dr-sensitivity}).
+Keyword-DR is retained as an auxiliary signal but overstates the gap.
 
-\paragraph{Analysis.}
+\paragraph{Analysis and pre-registration.}
 The pre-registered primary family is a within-condition
 detection--action test (F1), ten paired-sibling factor tests
 (F2--F11), and three mitigation contrasts (M1--M3). Each is a
 mixed-effects logistic regression on session-level
 PLR$_{\text{crit}}$ with environment and model as crossed random
-effects, with a Wilcoxon signed-rank fallback on convergence failure;
+effects (Wilcoxon signed-rank fallback on convergence failure);
 Benjamini--Hochberg correction at $q = 0.05$ is applied across the
 inference-bearing subset selected by a pre-registered power gate
-(Appendix~\ref{app:claims}). Point estimates are reported in
-percentage points with 95\% CIs. Two claims carry pre-committed
-falsification thresholds: the mitigation-insufficiency claim is
-falsified if any condition reduces pooled PLR$_{\text{crit}}$ by
-$\geq 30$\,pp across all four models; the detection--action claim is
-falsified if within-C3 PLR$_{\text{crit}} \mid \text{DR}{=}1
-\leq 0.10$ \citep{Barocas2021DesigningDE,MLSYS2021_0184b0cd}.
-
-\paragraph{Pre-registration.}
-The full analysis plan was committed and tagged
-\texttt{prereg-v2-start} before data collection
-\citep{Nosek2018ThePR,Nosek2019PreregistrationIH,Gallitto2024ExternalVO}.
-An identified URL-shape contamination in an earlier harness (visible
-localhost cues acting as model-side trust shortcuts) was removed
-before the reported runs; the pre-fix slice is preserved for
-contamination accounting (Appendix~\ref{app:contamination}), and the
-correction alters no experimental-design choice. Post-tag deviations
-are enumerated with their pre-fix vs post-fix slices in
-Appendix~\ref{app:deviations}.
+(Appendix~\ref{app:claims}). Two claims carry falsification
+thresholds: the mitigation-insufficiency claim falsifies if any
+condition reduces pooled PLR$_{\text{crit}}$ by $\geq 30$\,pp; the
+detection--action claim falsifies if within-C3
+PLR$_{\text{crit}} \mid \text{DR}{=}1 \leq 0.10$
+\citep{Barocas2021DesigningDE,MLSYS2021_0184b0cd}. The full plan
+was tagged \texttt{prereg-v2-start} before data collection
+\citep{Nosek2018ThePR,Nosek2019PreregistrationIH,Gallitto2024ExternalVO};
+an identified URL-shape contamination in an earlier harness was
+removed before the reported runs, with the pre-fix slice and full
+post-tag deviation log preserved for contamination accounting
+(Appendices~\ref{app:contamination},~\ref{app:deviations}).
