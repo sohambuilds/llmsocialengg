@@ -1,0 +1,73 @@
+\section{Introduction}
+\label{sec:intro}
+
+AI agents that can browse the web on a user's behalf are rapidly
+moving from research into real-world deployment
+\citep{OpenAI2025Operator,anthropic2024computeruse,tamkin2024clioprivacypreservinginsightsrealworld,andreux2025surferhmeetsholo1costefficient,zhang2025surveylargelanguagemodel,nguyen-etal-2025-gui}.
+To complete tasks like applying for jobs, purchasing goods, or paying
+bills, these agents are given the user's full personally identifiable
+information (PII): legal name, home address, payment card details,
+government identifiers, account credentials, and API keys. The agent
+stores this profile and uses it whenever a form needs to be filled or
+a credential needs to be submitted.
+
+This creates a serious security risk. The agent has broad access to
+the web and, at the same time, holds sensitive personal data in its
+context. Any malicious website it visits can potentially trick the
+agent into handing that data over. This is a web-native version of
+the confused-deputy problem
+\citep{Hardy1988TheCD,Ferrag2025FromPI,Triedman2025MultiAgentSE,fu2024impromptertrickingllmagents,kim2025promptflowintegrityprevent,ji2026tamingvariousprivilegeescalation}. The agent cannot tell the difference between instructions from the user and instructions embedded in a malicious web page, and \textit{social-engineering attacks} exploit exactly this confusion. The web already hosts large amounts of phishing and manipulation infrastructure built to extract PII from human users~\citep{Hamadouche_Boudraa_Gasmi_2024,10.1145/3359183,10.1145/3173574.3174108,deceptivedesignpatterns,Bsch2016TalesFT}.
+A human can pause, re-read, or close the tab. An agent is built to
+finish its task and will keep filling forms and submitting data
+without stopping to question whether it should. Capability benchmarks
+confirm that frontier agents are now reliable enough to complete
+multi-step web tasks end-to-end: \citet{garg2026real} report 41\%
+success on complex state-changing tasks, and \textit{the same capability that
+makes agents useful also makes them a predictable target for data
+theft.}
+
+\textbf{The measurement gap.} There is a growing body of work on the robustness of web agents
+against adversarial attacks, but existing benchmarks measure the
+wrong thing. They track whether the agent clicked a malicious link
+or deviated from an expected trajectory, rather than whether the
+agent actually submitted sensitive data to an attacker
+(Table~\ref{tab:related-matrix}, \S\ref{sec:related})
+\citep{cuvin2026decepticon,ersoy2026trickyarena,chen2026obviousinvisiblethreat,debenedetti2024agentdogo,korgul2025trap,zharmagambetov2026agentdam,xinyi2026webtrappark}.
+What matters in practice is whether sensitive fields were submitted
+to an attacker-controlled endpoint: that is the point of no return,
+and it is the only outcome that the agent's own refusal can prevent.
+To our knowledge, no existing benchmark combines (i)~attacker-controlled
+websites that actively try to trick the agent into giving up PII,
+(ii)~a realistic PII profile covering critical, high, and medium
+sensitivity data, (iii)~field-level data submission as the primary
+outcome measure, and (iv)~controlled environment pairs that let us
+identify which attack design factors actually drive leakage.
+
+\textbf{This work.} We introduce \textsc{Scammer4U}, a benchmark of 91 hand-crafted
+attacker-controlled websites plus 10 benign baseline versions, built
+to answer one question: \emph{when a web agent encounters a
+social-engineering attack, will it give up the user's PII?} The
+environments cover eight attack strategies across 16 website
+categories, organized on an 8-axis taxonomy mapped to published
+threat catalogues
+\citep{mitre_attack_citation,owasp_llm_citation,enisa_citation}.
+60 of the 91 environments are paired siblings that differ on exactly
+one axis, so any difference in leakage can be attributed to that
+single factor. We test four frontier model families (GPT-5 mini,
+Claude Haiku 4.5, Gemini 3 Flash, Llama 4 Scout) under four
+mitigation conditions ranging from no guidance to pre-submission
+reflection, with the full analysis plan pre-registered before any
+data was collected (\texttt{prereg-v2-start}).
+
+Our experiments reveal three findings. Frontier agents leak
+critical-tier PII at high rates even under prompt-level mitigations,
+and the degree of protection varies sharply across model families.
+More importantly, we find a detection--action gap: agents that
+explicitly flag a site as suspicious in their own reasoning still
+frequently go on to submit critical PII. This tells us that asking
+agents to reason about trust before submitting is not a reliable
+defense on its own. Effective protection will need to operate
+outside the agent's reasoning loop entirely. We release
+\textsc{Scammer4U} with a pre-registered analysis plan and complete
+run logs so that future work can evaluate new models without
+rebuilding the benchmark.

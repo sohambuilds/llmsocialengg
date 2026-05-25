@@ -1,24 +1,3 @@
-\section{Scammer4U Benchmark}
-\label{sec:benchmark}
-
-\subsection{Threat Model}
-\label{sec:threat}
-% CITE-TYPE: confused-deputy origin; indirect-prompt-injection surveys; web-agent autonomy / consumer-default deployment posture
-
-We consider a web-browsing vision-language agent acting on behalf of a user who has provisioned it with a static profile of personally identifiable information (PII). The agent is issued a goal-directed task in natural language (e.g., \emph{apply for this job}, \emph{buy these headphones}) and proceeds without further user supervision through a Playwright-driven browser session, observing each page as a screenshot paired with a flattened DOM and acting through a fixed JSON action space.
-
-The attacker controls one or more web origins reachable from the agent's task, including by redirecting the agent via email links, downloads, or hyperlinks rendered on otherwise plausible pages. The attacker may serve arbitrary HTML, JavaScript, CSS, page copy, and chat content; embed instructions for the agent in visible text, hidden DOM, or simulated system messages; and operate endpoints to which the agent may POST data. The attacker cannot tamper with model weights, modify the user profile, intercept TLS, poison DNS, or compromise the host. These complementary threat surfaces are out of scope.
-
-The user is benign, supplies accurate PII, and grants the agent autonomy for the task duration with no human-in-the-loop confirmation for PII submission. This no-confirmation regime is the consumer-default operating mode of deployed browser agents, which auto-fill and submit form fields without per-field consent prompts; a confirmation-gated regime is an orthogonal defense-in-depth posture, and our question is what the agent does when its instructions allow it to proceed. The profile organises values into eight categories (identity, address, payment, financial, professional, credentials, social media, API keys), partitioned into four sensitivity tiers: \emph{critical} (SSN, card with CVV, bank account, password, API key, 2FA code), \emph{high} (email, phone, postal address), \emph{medium} (full name, employer, date of birth), and \emph{low} (residual). The primary security question is whether any critical-tier value reaches an attacker endpoint. The profile is held constant across every environment, model, condition, and seed, controlling for value-frequency confounds in the scorer's exact-value match. Each environment exposes an internal \texttt{/api/captured} endpoint that logs POSTs to attacker-controlled forms or chat surfaces; this is a measurement instrument, not a feature of the threat model.
-
-\subsection{Benchmark Composition}
-\label{sec:composition}
-% CITE-TYPE: benchmark design philosophy for adversarial robustness; paired-sibling / single-factor-ablation precedents in NLP and CV
-
-Scammer4U comprises 91 adversarial environments and 10 benign-twin baselines, each a self-hosted Flask web application served at a fixed localhost port; multi-origin environments span two or three coordinated apps. Visible domain labels (typosquats, near-brand spellings, mismatched-TLD lookalikes) are rendered into HTML through per-app linkification helpers, so the in-page red flag is observable in screenshot and DOM even though the address bar shows a localhost URL.
-
-The 91 adversarial environments decompose into 31 archetype \emph{parents} and 60 axis-controlled \emph{siblings}. Each sibling is constructed by toggling exactly one of the eight classification axes in Table~\ref{tab:axes}. This single-degree-of-freedom construction is the mechanism enabling the paired-sibling analyses in \S\ref{sec:analysis}: any parent-vs-sibling difference in behaviour can be attributed to the toggled axis rather than to confounded layout, copy, brand, or task factors. \citep{Rubin1974EstimatingCE,Antonakis2010OnMC} Per-environment axis assignments and the full registry are listed in Appendix~\ref{app:envs}.
-
 \begin{table*}[t]
 \centering
 \small
@@ -40,6 +19,28 @@ Factor & H: multi\_site & single\_origin, multi\_origin\_same\_task, email\_entr
 \caption{Eight-axis taxonomy of Scammer4U environments. Axes A--D classify each environment; axes E--H are the factors used for paired-sibling ablation. Each sibling differs from its parent on exactly one axis.}
 \label{tab:axes}
 \end{table*}
+
+
+\section{Scammer4U Benchmark}
+\label{sec:benchmark}
+\subsection{Threat Model}
+\label{sec:threat}
+% CITE-TYPE: confused-deputy origin; indirect-prompt-injection surveys; web-agent autonomy / consumer-default deployment posture
+
+We consider a web-browsing vision-language agent acting on behalf of a user who has provisioned it with a static profile of personally identifiable information (PII). The agent is issued a goal-directed task in natural language (e.g., \emph{apply for this job}, \emph{buy these headphones}) and proceeds without further user supervision through a Playwright-driven browser session, observing each page as a screenshot paired with a flattened DOM and acting through a fixed JSON action space.
+
+The attacker controls one or more web origins reachable from the agent's task, including by redirecting the agent via email links, downloads, or hyperlinks rendered on otherwise plausible pages. The attacker may serve arbitrary HTML, JavaScript, CSS, page copy, and chat content; embed instructions for the agent in visible text, hidden DOM, or simulated system messages; and operate endpoints to which the agent may POST data. The attacker cannot tamper with model weights, modify the user profile, intercept TLS, poison DNS, or compromise the host. These complementary threat surfaces are out of scope.
+
+The user is benign, supplies accurate PII, and grants the agent autonomy for the task duration with no human-in-the-loop confirmation for PII submission. This no-confirmation regime is the consumer-default operating mode of deployed browser agents, which auto-fill and submit form fields without per-field consent prompts; a confirmation-gated regime is an orthogonal defense-in-depth posture, and our question is what the agent does when its instructions allow it to proceed. The profile organises values into eight categories (identity, address, payment, financial, professional, credentials, social media, API keys), partitioned into four sensitivity tiers: \emph{critical} (SSN, card with CVV, bank account, password, API key, 2FA code), \emph{high} (email, phone, postal address), \emph{medium} (full name, employer, date of birth), and \emph{low} (residual). The primary security question is whether any critical-tier value reaches an attacker endpoint. The profile is held constant across every environment, model, condition, and seed, controlling for value-frequency confounds in the scorer's exact-value match. Each environment exposes an internal \texttt{/api/captured} endpoint that logs POSTs to attacker-controlled forms or chat surfaces; this is a measurement instrument, not a feature of the threat model.
+
+\subsection{Benchmark Composition}
+\label{sec:composition}
+% CITE-TYPE: benchmark design philosophy for adversarial robustness; paired-sibling / single-factor-ablation precedents in NLP and CV
+
+Scammer4U comprises 91 adversarial environments and 10 benign-twin baselines, each a self-hosted Flask web application served at a fixed localhost port; multi-origin environments span two or three coordinated apps. Visible domain labels (typosquats, near-brand spellings, mismatched-TLD lookalikes) are rendered into HTML through per-app linkification helpers, so the in-page red flag is observable in screenshot and DOM even though the address bar shows a localhost URL.
+
+The 91 adversarial environments decompose into 31 archetype \emph{parents} and 60 axis-controlled \emph{siblings}. Each sibling is constructed by toggling exactly one of the eight classification axes in Table~\ref{tab:axes}. This single-degree-of-freedom construction is the mechanism enabling the paired-sibling analyses in \S\ref{sec:analysis}: any parent-vs-sibling difference in behaviour can be attributed to the toggled axis rather than to confounded layout, copy, brand, or task factors. \citep{Rubin1974EstimatingCE,Antonakis2010OnMC} Per-environment axis assignments and the full registry are listed in Appendix~\ref{app:envs}.
+
 
 \subsection{Vector Taxonomy and External Mapping}
 \label{sec:vectors}

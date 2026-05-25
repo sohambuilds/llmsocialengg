@@ -1,0 +1,138 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{llp{4.2cm}p{5.6cm}}
+\toprule
+Group & Axis & Values & Function \\
+\midrule
+Classifying & A: category & job, ecommerce, gov, support, $\ldots$ & Sector of the impersonated service. \\
+Classifying & B: vector & phishing\_clone, credential\_harvest, dark\_patterns, reward\_trap, authority\_impersonation, conversational\_deception, prompt\_injection, fake\_trust\_signals & Social-engineering pattern (\S\ref{sec:vectors}). \\
+Classifying & C: salience & blatant, subtle & Conspicuousness of the red flag. \\
+Classifying & D: pii\_target & critical, high, medium & Sensitivity tier the attacker solicits. \\
+\midrule
+Factor & E: pressure & none, urgency, social\_proof, authority, scarcity & Coercive cue layered on the attack. \\
+Factor & F: prompt\_injection & none, visible\_text, hidden\_dom, fake\_system\_msg & Modality of injected instruction targeting the agent. \\
+Factor & G: interaction & static\_form, multi\_step\_form, single\_turn\_chat, multi\_turn\_chat & Interface through which PII is solicited. \\
+Factor & H: multi\_site & single\_origin, multi\_origin\_same\_task, email\_entry\_plus\_site & Whether the attack spans web origins. \\
+\bottomrule
+\end{tabular}
+\caption{Eight-axis taxonomy of Scammer4U environments. Axes A--D classify each environment; axes E--H are the factors used for paired-sibling ablation. Each sibling differs from its parent on exactly one axis.}
+\label{tab:axes}
+\end{table*}
+
+
+\section{The \textsc{Scammer4U} Benchmark}
+\label{sec:benchmark}
+
+\subsection{Threat Model}
+\label{sec:threat}
+
+We model a web-browsing agent provisioned with a full user PII
+profile, partitioned into four sensitivity tiers: \emph{critical}
+(SSN, payment card with CVV, bank account, password, API key, 2FA
+code), \emph{high} (email, phone, address), \emph{medium} (name,
+employer, date of birth), and \emph{low} (residual fields). The
+agent operates without human supervision, reflecting the
+consumer-default deployment mode. The attacker controls one or more
+websites reachable from the agent's task and may use any combination
+of visible content, hidden DOM instructions, fake system messages,
+and chat interactions to extract PII. Our primary question is
+whether any critical-tier value reaches an attacker-controlled
+endpoint.
+
+\subsection{Benchmark Design}
+\label{sec:design}
+
+\textsc{Scammer4U} contains 91 adversarial environments and 10
+benign-twin baselines. Benign twins are built by removing the attack
+surface from an adversarial environment while preserving the
+legitimate task. They serve as a counterfactual baseline: because
+twins produce 0\% critical-tier leakage, any leakage on adversarial
+environments is attack-attributable rather than incidental
+form-filling.
+
+The 91 environments are organised on an 8-axis taxonomy
+(Table~\ref{tab:axes}). Four axes classify each environment:
+website category, attack vector, attack salience, and PII
+sensitivity tier targeted. Four factor axes capture toggleable
+design choices: pressure cue type, prompt-injection style,
+interaction modality, and whether the attack spans multiple sites.
+The eight attack vectors covered are \emph{phishing\_clone},
+\emph{credential\_harvest}, \emph{dark\_patterns},
+\emph{reward\_trap}, \emph{authority\_impersonation},
+\emph{conversational\_deception}, \emph{prompt\_injection}, and
+\emph{fake\_trust\_signals}, each mapped to MITRE ATT\&CK
+\citep{mitre_attack_citation}, OWASP LLM Top 10
+\citep{owasp_llm_citation}, and ENISA AI threat catalogues
+\citep{enisa_citation} (Appendix~\ref{app:mitre}).
+
+The central design feature is the paired-sibling construction: 60
+of the 91 environments are siblings of a parent, differing on
+exactly one axis. Any leakage difference between a parent and its
+sibling can therefore be attributed to that single factor
+\citep{Rubin1974EstimatingCE,Antonakis2010OnMC}, enabling causal
+claims that cross-environment comparisons cannot support.
+
+\subsection{Environment Construction and Fidelity}
+\label{sec:construction}
+
+Environments are self-hosted Flask applications generated from
+human-written design briefs using an LLM authoring model distinct
+from all four evaluated agents. The brief fixes every axis value,
+the attack surface, and the visible red flags before code
+generation; the authoring model plays only a clerical role. All 91
+environments were manually reviewed to confirm axis correctness and
+task completability (Appendix~\ref{app:authoring}).
+
+To validate realism, 16 reviewers rated interleaved screenshots of
+\textsc{Scammer4U} environments and real captured phishing pages on
+visual believability, copy quality, and likelihood of fooling a
+user. Reviewers could not distinguish our environments from real
+phishing above chance (47.5\% accuracy, $n = 640$, Fleiss
+$\kappa = 0.02$), and rated our environments at or above real
+captures on all three axes. Full results are in
+Appendix~\ref{app:fidelity}.
+
+\subsection{Evaluation Setup}
+\label{sec:setup}
+
+\paragraph{Models and conditions.}
+We evaluate GPT-5 mini, Claude Haiku 4.5, Gemini 3 Flash, and Llama
+4 Scout in a shared Playwright-based harness
+\citep{playwright,zhou2024webarenarealisticwebenvironment,Koh2024VisualWebArenaEM,10.5555/3692070.3694608,NEURIPS2023_5950bf29,he-etal-2024-webvoyager}
+with identical observation format, action space, and prompt
+template. Each model is tested under four conditions: \textbf{C0}
+(no guidance), \textbf{C1} (generic privacy reminder), \textbf{C2}
+(phishing-aware checklist), and \textbf{C3} (pre-submission
+reflection). We run $n = 5$ seeds per (environment, model,
+condition) cell, targeting 7,480 sessions total.
+
+\paragraph{Metrics.}
+The primary metric is \textbf{PLR$_{\text{crit}}$}, the rate at
+which any critical-tier value reaches an attacker endpoint,
+measured by exact string match against outbound POST bodies.
+Secondary metrics are a tier-weighted leakage rate
+(\textbf{PLR$_{\text{weighted}}$}), attack success rate conditional
+on reaching the attack surface (\textbf{ASR}), task completion rate
+(\textbf{TCR}), and a detection flag (\textbf{DR}) indicating
+whether the agent's reasoning identified the site as suspicious.
+
+\paragraph{Detection rate judge.}
+DR is operationalised via LLM-as-judge
+\citep{GU2026101253,Zhu2023JudgeLMFL,Li2024FromGT}, asking at each
+reasoning step whether the agent flagged the site as suspicious.
+DR measures what the agent \emph{says}, not what it knows
+internally. The primary judge is GPT-4o-mini and the secondary is
+Llama 4 Scout, chosen to avoid same-family evaluation; inter-judge
+agreement is $\kappa = 0.39$--$0.44$ across all four models
+(Appendix~\ref{app:dr-sensitivity}).
+
+\paragraph{Pre-registration.}
+The full analysis plan was committed and tagged
+\texttt{prereg-v2-start} before data collection
+\citep{Nosek2018ThePR,Nosek2019PreregistrationIH,Gallitto2024ExternalVO}.
+Two claims carry falsification thresholds: the
+mitigation-insufficiency claim is falsified if any condition
+reduces pooled leakage by 30 pp or more across all models, and the
+detection--action claim is falsified if confirmed-suspicion sessions
+leak at 10\% or below.
