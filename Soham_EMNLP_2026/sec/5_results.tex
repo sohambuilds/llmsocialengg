@@ -7,10 +7,38 @@
 
 We report results across the full pre-registered design: four frontier models (GPT-5 mini, Claude Haiku 4.5, Gemini 3 Flash, Llama 4 Scout), four conditions (C0--C3), $n = 5$ seeds per (env, model, condition) cell on the 91 adversarial environments, and $n = 5$ seeds per (env, model) cell on the 10 benign twins under C0 only, for a target total of $7{,}480$ sessions. The realised retained pool after \texttt{BROWSER\_ERROR} exclusion is approximately $7{,}500$ sessions; reliability flags are $1.0$ in every (model, condition) cell. Percentage-point comparisons in this section are on session-level $\text{PLR}_{\text{crit}}$ unless otherwise stated. Effects carry 95\% confidence intervals from the mixed-effects logistic in \S\ref{sec:analysis}; tests in the pre-registered primary family (Table~\ref{tab:claims}) are flagged with BH-adjusted $q$-values; exploratory tests carry uncorrected $p$-values. A drop in $\text{PLR}_{\text{crit}}$ is a security improvement; a positive F1 gap reflects the detection--action mismatch in the predicted direction. The paper leads with the per-model breakdown rather than the pooled summary because cross-model variance is the central empirical finding (\S\ref{sec:results-mitigation}).
 
+% \begin{figure}[t]
+% \centering
+% \begin{tikzpicture}
+% \begin{axis}[
+%   width=\columnwidth, height=4.6cm,
+%   ybar, bar width=4.5pt,
+%   ymin=0, ymax=100,
+%   ylabel={PLR\textsubscript{crit} (\%)},
+%   ylabel style={font=\scriptsize},
+%   tick label style={font=\scriptsize},
+%   legend style={font=\scriptsize, draw=none, fill=none,
+%     at={(0.5,1.03)}, anchor=south, legend columns=4},
+%   symbolic x coords={GPT-5 mini, Haiku, Gemini, Llama},
+%   xtick=data, enlarge x limits=0.18,
+% ]
+% \addplot coordinates {(GPT-5 mini,61.0) (Haiku,54.5) (Gemini,93.1) (Llama,82.3)};
+% \addplot coordinates {(GPT-5 mini,47.7) (Haiku,36.4) (Gemini,81.8) (Llama,83.8)};
+% \addplot coordinates {(GPT-5 mini,38.9) (Haiku,19.1) (Gemini,68.5) (Llama,81.4)};
+% \addplot coordinates {(GPT-5 mini,36.1) (Haiku,24.0) (Gemini,60.7) (Llama,77.4)};
+% \legend{C0, C1, C2, C3}
+% \end{axis}
+% \end{tikzpicture}
+% \caption{Critical-tier PII leakage (PLR\textsubscript{crit}) by model and condition, pooled across the 91 adversarial environments. Leakage is high at baseline (C0) for all four models and falls under escalating prompt-level mitigation (C1--C3) for every model except Llama 4 Scout; the benign-twin baseline is $0\%$ at C0. Source values in Table~\ref{tab:results-main}.}
+% \label{fig:key-findings}
+% \end{figure}
+
 \subsection{Baseline Leakage}
 \label{sec:results-baseline}
 
-Under C0 (no privacy guidance), the four models leak critical-tier PII at a pooled rate of $72.7\%$ across the 91 adversarial environments. Per-model rates span $[54.5, 93.1]\%$ (Figure~\ref{fig:key-findings}, Table~\ref{tab:results-main}), confirming that the threat is not isolated to a single model family but that the magnitude varies by nearly 40 percentage points across frontier providers. The benign-twin baseline is empirically $0\%$ at C0 across the ten twins: the agents that hand over critical PII to the attacker on adversarial sites do not, on average, hand over the same critical PII on equivalent benign sites, so the headline rate is essentially attack-attributable rather than baseline form-filling. The pre-registered direction-of-effect prediction (that frontier agents leak critical PII at a substantial rate under no privacy guidance) is supported.
+Under C0 (no privacy guidance), the four models leak critical-tier PII at a pooled rate of $72.7\%$ across the 91 adversarial environments. Per-model rates span $[54.5, 93.1]\%$ (Table~\ref{tab:results-main}), confirming that the threat is not isolated to a single model family but that the magnitude varies by nearly 40 percentage points across frontier providers. The benign-twin baseline is empirically $0\%$ at C0 across the ten twins: the agents that hand over critical PII to the attacker on adversarial sites do not, on average, hand over the same critical PII on equivalent benign sites, so the headline rate is essentially attack-attributable rather than baseline form-filling. The pre-registered direction-of-effect prediction (that frontier agents leak critical PII at a substantial rate under no privacy guidance) is supported.
+
+
 \begin{table}[t]
 \centering
 \small
@@ -64,7 +92,8 @@ $q$-value (BH)   & $< 0.001$ & $< 0.001$ & $< 0.001$ \\
 \subsection{Detection--Action Gap}
 \label{sec:results-f1}
 
-The detection--action gap (F1) \citep{turpin2023language, Lanham2023MeasuringFI,Chen2025ReasoningMD} is the within-C3 contrast of $\text{PLR}_{\text{crit}}$ between sessions where the LLM-as-judge confirms the agent verbalised suspicion at any step (DR$=$1) and sessions where it did not (DR$=$0), restricted to $\texttt{reached\_trap} = \text{True}$ (\S\ref{sec:reachedtrap}; Figure~\ref{fig:f1-gap}). Pooled across all four evaluated models, the gap is $30.2$ pp (DR$=$1: $35.9\%$, $n = 462$; DR$=$0: $66.1\%$, $n = 1{,}071$; $q < 0.001$ after BH correction over the pre-registered primary family in \S\ref{sec:analysis}), which exceeds the pre-registered 15 pp minimum detectable effect by $15.2$ pp and comfortably clears the $\geq 200$ C3 DR$=$1 sessions power guard. The DR$=$1 leakage rate of $35.9\%$ itself exceeds the pre-registered 10\% falsification threshold by $25.9$ pp, ruling out the alternative hypothesis under which independent attack recognition translates into reliable refusal: more than one in three agents that an independent LLM confirms has identified the attack still submit critical PII to the attacker endpoint. Per-model F1 estimates at C3 are $19.4$ pp on GPT-5 mini ($n_{DR=1} = 167$), $21.1$ pp on Claude Haiku 4.5 ($n_{DR=1} = 122$), $17.2$ pp on Gemini 3 Flash ($n_{DR=1} = 103$), and $38.3$ pp on Llama 4 Scout ($n_{DR=1} = 70$); all four per-model cells fall in the underpowered band ($50 \leq n_{DR=1} < 200$) per \S\ref{sec:analysis} and are reported with Wilson 95\% CIs in Appendix~\ref{app:per-model} as descriptive context, with inference reserved for the pooled estimate. The widest per-model gap is Llama's $38.3$ pp, but it is driven by a small detector cell ($n_{DR=1} = 70$) sitting against an elevated non-detector baseline (DR$=$0 PLR $= 86.9\%$): when Llama narrates suspicion it still leaks in $48.6\%$ of sessions; when it does not, leakage rises to $86.9\%$. The widest gap is not therefore evidence of strongest defensive behaviour but of widest separation between two extreme cells. A both-judges-agree sensitivity restricting DR$=$1 to sessions on which the GPT-4o-mini primary and Llama-4-Scout secondary judges concur produces a $31.0$ pp gap on the same cell ($n_{DR=1} = 458$), within rounding of the primary reading; a keyword-heuristic baseline on the same data produces a wider gap by approximately 10 pp, attributable to keyword DR$=$1 conflating narration of attack vocabulary with confirmed recognition (Appendix~\ref{app:dr-sensitivity}). An exploratory secondary contrast comparing $\text{PLR}_{\text{crit}} \mid \text{DR}{=}1$ across conditions (Table~\ref{tab:results-f1}) shows a monotonic narrowing of the gap from $75.7$ pp at C0 to $30.2$ pp at C3 as the LLM-judge DR$=$1 cell fills; the C0, C1, and C2 rows have $n_{DR=1}$ in the underpowered band ($50 \leq n_{DR=1} < 200$) per \S\ref{sec:analysis} and are reported with uncorrected $p$-values for direction-of-effect context only.
+The detection--action gap (F1) \citep{turpin2023language, Lanham2023MeasuringFI,Chen2025ReasoningMD} is the within-C3 contrast of $\text{PLR}_{\text{crit}}$ between sessions where the LLM-as-judge confirms the agent verbalised suspicion at any step (DR$=$1) and sessions where it did not (DR$=$0), restricted to $\texttt{reached\_trap} = \text{True}$ (\S\ref{sec:reachedtrap}; Figure~\ref{fig:f1-gap}). Pooled across all four evaluated models, the gap is $30.2$ pp (DR$=$1: $35.9\%$, $n = 462$; DR$=$0: $66.1\%$, $n = 1{,}071$; $q < 0.001$ after BH correction over the pre-registered primary family in \S\ref{sec:analysis}), which exceeds the pre-registered 15 pp minimum detectable effect by $15.2$ pp and comfortably clears the $\geq 200$ C3 DR$=$1 sessions power guard. The DR$=$1 leakage rate of $35.9\%$ itself exceeds the pre-registered 10\% falsification threshold by $25.9$ pp, ruling out the alternative hypothesis under which independent attack recognition translates into reliable refusal: more than one in three agents that an independent LLM confirms has identified the attack still submit critical PII to the attacker endpoint. Per-model F1 estimates at C3 are $19.4$ pp on GPT-5 mini ($n_{DR=1} = 167$), $21.1$ pp on Claude Haiku 4.5 ($n_{DR=1} = 122$), $17.2$ pp on Gemini 3 Flash ($n_{DR=1} = 103$), and $38.3$ pp on Llama 4 Scout ($n_{DR=1} = 70$); all four per-model cells fall in the underpowered band ($50 \leq n_{DR=1} < 200$) per \S\ref{sec:analysis} and are reported with Wilson 95\% CIs in Table~\ref{app:per-model-f1-c3} as descriptive context, with inference reserved for the pooled estimate. The widest per-model gap is Llama's $38.3$ pp, but it is driven by a small detector cell ($n_{DR=1} = 70$) sitting against an elevated non-detector baseline (DR$=$0 PLR $= 86.9\%$): when Llama narrates suspicion it still leaks in $48.6\%$ of sessions; when it does not, leakage rises to $86.9\%$. The widest gap is not therefore evidence of strongest defensive behaviour but of widest separation between two extreme cells. A both-judges-agree sensitivity restricting DR$=$1 to sessions on which the GPT-4o-mini primary and Llama-4-Scout secondary judges concur produces a $31.0$ pp gap on the same cell ($n_{DR=1} = 458$), within rounding of the primary reading; a keyword-heuristic baseline on the same data produces a wider gap by approximately 10 pp, attributable to keyword DR$=$1 conflating narration of attack vocabulary with confirmed recognition (Table~\ref{app:dr-compare}). An exploratory secondary contrast comparing $\text{PLR}_{\text{crit}} \mid \text{DR}{=}1$ across conditions (Table~\ref{tab:results-f1}) shows a monotonic narrowing of the gap from $75.7$ pp at C0 (per-model decomposition in Table~\ref{app:per-model-f1-c0}) to $30.2$ pp at C3 as the LLM-judge DR$=$1 cell fills; the C0, C1, and C2 rows have $n_{DR=1}$ in the underpowered band ($50 \leq n_{DR=1} < 200$) per \S\ref{sec:analysis} and are reported with uncorrected $p$-values for direction-of-effect context only.
+
 
 \begin{figure*}[t]
 \centering
@@ -72,6 +101,7 @@ The detection--action gap (F1) \citep{turpin2023language, Lanham2023MeasuringFI,
   \includegraphics[width=0.48\textwidth]{figs/FIG2PART2.png}}\hfill
 \subfigure[Per-model F1 gap at C3.]{%
   \includegraphics[width=0.48\textwidth]{figs/FIG2PART1.png}}
+% \caption{F1 detection--action gap (LLM-judge primary DR, $\texttt{reached\_trap}=\text{True}$, pooled across GPT-5 mini, Claude Haiku 4.5, Gemini 3 Flash, Llama 4 Scout). (a)~PLR\textsubscript{crit} for judge-confirmed detectors (DR$=$1) vs non-detectors (DR$=$0) by condition; the C3 pair is the pre-registered primary test ($30.2$ pp gap, $n_{DR=1}=462$). (b)~Per-model gap at C3 with 95\% CIs; only the pooled cell clears the $n\geq200$ power guard (\S\ref{sec:analysis}). Source values in Table~\ref{tab:results-f1} and Appendix~\ref{app:per-model-f1-c3}.}
 \caption{F1 detection--action gap (LLM-judge DR, $\texttt{reached\_trap}=\text{True}$, pooled-of-4 models). (a)~Critical-tier leak rate by condition for judge-confirmed detectors (DR$=$1) vs non-detectors (DR$=$0); C3 is the pre-registered primary test ($30.2$ pp gap, $n_{DR=1}=462$, $q<0.001$). (b)~Per-model gap at C3 with Wilson 95\% CIs; only the pooled row clears the $n\geq200$ power guard (\S\ref{sec:analysis}). Source: Table~\ref{tab:results-f1}, Appendix~\ref{app:per-model-f1-c3}.}
 \label{fig:f1-gap}
 \end{figure*}
@@ -109,6 +139,7 @@ C3 & $35.9$ & $66.1$ & $30.2$ & $462$ \\
 \caption{Detection--action gap by condition under LLM-judge primary DR (GPT-4o-mini, \S\ref{sec:dr}): session-level $\text{PLR}_{\text{crit}}$ restricted to DR$=$1 and DR$=$0 subsets, computed only on sessions with $\texttt{reached\_trap} = \text{True}$ (\S\ref{sec:reachedtrap}), pooled across all four evaluated models. The C3 row is the primary F1 test; with $n_{DR=1} = 462$ it clears the $\geq 200$ power guard (\S\ref{sec:analysis}). The C0, C1, and C2 rows are exploratory secondary contrasts with $n_{DR=1}$ in the underpowered band ($50 \leq n_{DR=1} < 200$), so they carry uncorrected $p$-values and are reported for direction-of-effect context only.}
 \label{tab:results-f1}
 \end{table}
+\vspace{-8pt}
 
 \subsection{Factor Ablations}
 \label{sec:results-axes}
@@ -140,6 +171,7 @@ H   & H: multi\_site        & $5$  & $-4.2$ & --- \\
 }
 \caption{Paired-sibling factor ablations F2--F11 on pooled $\text{PLR}_{\text{crit}}$. Each test contrasts sibling environments differing on exactly one axis, with all others held constant. Pair counts are the canonical sibling pairs in \texttt{classification.csv}. Positive effects mean the toggled-on value leaks more. $q$-values are BH-adjusted across the pre-registered primary family; axes with fewer than six canonical pairs sit outside it per the pre-registered power gate and are reported as descriptive context. F3, F4, and F11 are reported as marginal-only views in Appendix~\ref{app:per-model}.}
 \label{tab:results-axes}
+\vspace{-2pt}
 \end{table}
 
 Pooled reached-trap, ASR, TCR, and Defended-session rates by condition, including the C2-dominates-C3 inversion on the \texttt{Defended} rate and the monotone TCR rise with mitigation strength, are reported in Appendix~\ref{app:secondary} (Table~\ref{tab:results-tcr}); reach holds for $86.8\%$ of sessions pooled across models and conditions, so reach is not the dominant constraint on the headline $\text{PLR}_{\text{crit}}$ trajectory.

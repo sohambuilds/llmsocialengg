@@ -2,7 +2,7 @@
 \label{sec:intro}
 
 \begin{quote}
-\small\emph{``The task seems to be completed, but I strongly suspect that this website is a scam.''} \normalfont--- Llama 4 Scout, in the same step it submitted the user's SSN, card number, and CVV to the attacker (\S\ref{sec:results-f1}).
+\small\emph{``The task seems to be completed, but I strongly suspect that this website is a scam.''} \normalfont-- \textbf{Llama 4 Scout}, in the same step it submitted the user's SSN, card number, and CVV to the attacker (\S\ref{sec:results-f1}).
 \end{quote}
 
 \begin{figure}[H]
@@ -12,6 +12,7 @@
     \label{fig:teaser}
 \end{figure}
 \vspace{-8pt}
+
 AI agents that can browse the web on a user's behalf are rapidly
 moving from research into real-world deployment
 \citep{OpenAI2025Operator,anthropic2024computeruse,tamkin2024clioprivacypreservinginsightsrealworld,andreux2025surferhmeetsholo1costefficient,zhang2025surveylargelanguagemodel,nguyen-etal-2025-gui}.
@@ -22,7 +23,7 @@ government identifiers, account credentials, and API keys. The agent
 stores this profile and uses it whenever a form needs to be filled or
 a credential needs to be submitted.
 
-This creates a serious security risk. The agent has broad access to
+This creates a serious security risk (Figure~\ref{fig:teaser}). The agent has broad access to
 the web and, at the same time, holds sensitive personal data in its
 context. Any malicious website it visits can potentially trick the
 agent into handing that data over. This is a web-native version of
@@ -55,6 +56,29 @@ websites that actively try to trick the agent into giving up PII,
 sensitivity data, (iii)~field-level data submission as the primary
 outcome measure, and (iv)~controlled environment pairs that let us
 identify which attack design factors actually drive leakage.
+
+\begin{table*}[t]
+\centering
+\footnotesize
+%\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+Benchmark & \makecell{Attacker\\host control} & \makecell{Structured\\PII profile} & \makecell{Field-level\\loss metric} & \makecell{Multi-turn\\chat attack} & \makecell{Pre-reg.\\+ falsif.} \\
+\midrule
+AgentDojo \citep{debenedetti2024agentdogo}      & \xmark$^{\dagger}$ & \xmark & \xmark             & \xmark & \xmark \\
+DECEPTICON \citep{cuvin2026decepticon}          & \cmark             & \xmark & \xmark (click)     & \xmark & \xmark \\
+TrickyArena \citep{ersoy2026trickyarena}        & \cmark             & \xmark & \xmark (click)     & \xmark & \xmark \\
+TRAP \citep{korgul2025trap}                     & \cmark             & \xmark & \xmark (redirect)  & \xmark & \xmark \\
+AgentDAM \citep{zharmagambetov2026agentdam}     & \xmark$^{\ddagger}$ & \cmark & \cmark            & \xmark & \xmark \\
+WebTrap Park \citep{xinyi2026webtrappark}       & \cmark             & \xmark & \xmark             & \xmark & \xmark \\
+\midrule
+\textsc{Scammer4U} (ours)                       & \cmark             & \cmark & \cmark            & \cmark & \cmark \\
+\bottomrule
+\end{tabular}%
+%}
+\caption{\textsc{Scammer4U} vs prior web-agent safety benchmarks on five operational axes. $^{\dagger}$AgentDojo operates over tool-use APIs rather than attacker-controlled web origins. $^{\ddagger}$AgentDAM evaluates incidental over-sharing on benign sites; the site itself is not adversarial. ``Click'' / ``redirect'' denote proxy outcomes upstream of the final submission.}
+\label{tab:related-matrix}
+\end{table*}
 
 \textbf{This work.} We introduce \textsc{Scammer4U}, a benchmark of 91 hand-crafted
 attacker-controlled websites plus 10 benign baseline versions, built
