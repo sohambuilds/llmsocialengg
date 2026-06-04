@@ -19,7 +19,7 @@
 
 > [!NOTE]
 > **Status (May 2026):** EMNLP 2026 main-track submission in flight.
-> Full 5-seed v2 sweep complete across all four models (7480 sessions).
+> Full 5-seed sweep complete across all four models (7480 sessions).
 
 ---
 
