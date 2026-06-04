@@ -4,6 +4,14 @@
 
 ### Social Engineering Benchmark for Autonomous Web Agents
 
+**Accompanying repository for the paper:**
+
+[_"I Strongly Suspect This Website Is a Scam": Benchmarking PII Leakage and Detection without Defense in Autonomous Web Agents_](https://arxiv.org/abs/2606.00497)
+
+Soham Roy · Sarthakbrata Halder · Arya Bharaty · Vaibhav Bhaskar · Yash Sinha · Dhruv Kumar · Srikant Panda · Murari Mandal
+
+[![arXiv](https://img.shields.io/badge/arXiv-2606.00497-b31b1b?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.00497)
+
 ![Venue](https://img.shields.io/badge/EMNLP_2026-main_track-b31b1b)
 ![Status](https://img.shields.io/badge/status-submission_in_flight-f39c12)
 ![Adversarial Environments](https://img.shields.io/badge/adversarial_environments-91-1f6feb)
@@ -13,7 +21,7 @@
 ![Taxonomy](https://img.shields.io/badge/taxonomy-8--axis_factorial-8957e6)
 ![Analysis](https://img.shields.io/badge/analysis-pre--registered-2ea44f)
 
-**[Core Question](#the-core-question)** · **[Results](#headline-results-v2-all-5-seeds-pooled-across-4-models)** · **[Design](#benchmark-design)** · **[Attack Vectors](#eight-attack-vectors)** · **[PII Tiers](#pii-sensitivity-tiers)** · **[Evaluation](#evaluation-setup)** · **[Findings](#key-findings)** · **[Prior Work](#how-this-differs-from-prior-work)** · **[Limitations](#limitations)**
+**[Core Question](#the-core-question)** · **[Results](#headline-results-v2-all-5-seeds-pooled-across-4-models)** · **[Design](#benchmark-design)** · **[Attack Vectors](#eight-attack-vectors)** · **[PII Tiers](#pii-sensitivity-tiers)** · **[Evaluation](#evaluation-setup)** · **[Findings](#key-findings)** · **[Prior Work](#how-this-differs-from-prior-work)** · **[Limitations](#limitations)** · **[Acknowledgments](#acknowledgments)**
 
 </div>
 
@@ -156,3 +164,9 @@ The primary moat: axis-controlled paired-sibling environments that isolate the c
 - The four-model panel covers deployed frontier agentic systems and does not include open-weight or smaller-parameter models.
 - The DR judge is GPT-4o-mini; the within-family pairing with GPT-5 mini is mitigated by stratified inter-judge κ reporting and a Llama 4 Scout secondary pass.
 - Results bound in-harness behaviour of these models, not any specific commercial deployment.
+
+---
+
+## Acknowledgments
+
+We thank Arka Mukherjee, Anyash Prasad, and Sarthak Bhattacharya for their help and participation in the early stages of our work.
