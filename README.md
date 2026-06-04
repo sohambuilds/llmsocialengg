@@ -1,5 +1,23 @@
-# Scammer4U — Social Engineering Benchmark for Autonomous Web Agents
+<div align="center">
 
+# 🎣 Scammer4U
+
+### Social Engineering Benchmark for Autonomous Web Agents
+
+![Venue](https://img.shields.io/badge/EMNLP_2026-main_track-b31b1b)
+![Status](https://img.shields.io/badge/status-submission_in_flight-f39c12)
+![Adversarial Environments](https://img.shields.io/badge/adversarial_environments-91-1f6feb)
+![Benign Twins](https://img.shields.io/badge/benign_twins-10-1f6feb)
+![Models](https://img.shields.io/badge/models-4_frontier-1f6feb)
+![Sessions](https://img.shields.io/badge/sessions-8%2C080-1f6feb)
+![Taxonomy](https://img.shields.io/badge/taxonomy-8--axis_factorial-8957e6)
+![Analysis](https://img.shields.io/badge/analysis-pre--registered-2ea44f)
+
+**[Core Question](#the-core-question)** · **[Results](#headline-results-v2-all-5-seeds-pooled-across-4-models)** · **[Design](#benchmark-design)** · **[Attack Vectors](#eight-attack-vectors)** · **[PII Tiers](#pii-sensitivity-tiers)** · **[Evaluation](#evaluation-setup)** · **[Findings](#key-findings)** · **[Prior Work](#how-this-differs-from-prior-work)** · **[Limitations](#limitations)**
+
+</div>
+
+> [!NOTE]
 > **Status (May 2026):** EMNLP 2026 main-track submission in flight.
 > Full 5-seed v2 sweep complete across all four models (8,080 sessions).
 
@@ -25,7 +43,7 @@ We build realistic attacker-controlled websites with traps embedded in them, sen
 
 Cells are PLR_crit — the fraction of sessions where at least one critical-tier PII value reached an attacker-controlled endpoint. Benign-twin baselines: **0% PLR_crit** across all four models and all conditions, confirming leakage is attack-attributable rather than incidental form-filling.
 
-**Detection–action gap (the co-headline finding):** pooled across all four models in the C3 reflection condition, agents whose reasoning an independent LLM judge confirms has flagged the site as suspicious still leak critical PII in **35.9%** of sessions, versus **66.1%** when no suspicion is verbalised — a **30.2 pp gap** (n = 462 confirmed-detector sessions, q < 0.001). Verbalised suspicion does not reliably prevent submission.
+> **Detection–action gap (the co-headline finding):** pooled across all four models in the C3 reflection condition, agents whose reasoning an independent LLM judge confirms has flagged the site as suspicious still leak critical PII in **35.9%** of sessions, versus **66.1%** when no suspicion is verbalised — a **30.2 pp gap** (n = 462 confirmed-detector sessions, q < 0.001). Verbalised suspicion does not reliably prevent submission.
 
 ---
 
