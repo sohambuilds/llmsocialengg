@@ -9,7 +9,7 @@
 ![Adversarial Environments](https://img.shields.io/badge/adversarial_environments-91-1f6feb)
 ![Benign Twins](https://img.shields.io/badge/benign_twins-10-1f6feb)
 ![Models](https://img.shields.io/badge/models-4_frontier-1f6feb)
-![Sessions](https://img.shields.io/badge/sessions-8%2C080-1f6feb)
+![Sessions](https://img.shields.io/badge/sessions-7%2C460-1f6feb)
 ![Taxonomy](https://img.shields.io/badge/taxonomy-8--axis_factorial-8957e6)
 ![Analysis](https://img.shields.io/badge/analysis-pre--registered-2ea44f)
 
@@ -19,7 +19,7 @@
 
 > [!NOTE]
 > **Status (May 2026):** EMNLP 2026 main-track submission in flight.
-> Full 5-seed v2 sweep complete across all four models (8,080 sessions).
+> Full 5-seed v2 sweep complete across all four models (7480 sessions).
 
 ---
 
