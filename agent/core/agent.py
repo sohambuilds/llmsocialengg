@@ -17,6 +17,7 @@ from .browser import BrowserWrapper
 from .context_manager import ContextManager
 from .llm_factory import create_llm_client, get_model_info, resolve_model_name
 from .observer import Observer
+from .guardrail import LLMGuardrail
 
 
 CONFIG_DIR = Path(__file__).parent.parent / "config"
@@ -66,7 +67,7 @@ def resolve_url(site_config: dict, use_domains: bool) -> str:
 
 def _load_mitigation_prompt(condition: str) -> str:
     """Load the mitigation system-prompt addition for a given condition."""
-    if condition == "C0":
+    if condition in ("C0", "C4"):
         return ""
     mitigation_dir = Path(__file__).parent.parent / "config" / "mitigations"
     filename_map = {
@@ -234,12 +235,14 @@ class WebNavigationAgent:
         api_key: Optional[str] = None,
         condition: str = "C0",
         seed: int = 42,
+        guardrail_model: str = "openai/gpt-4o-mini",
     ):
         self.env_name = env_name
         self.max_steps = max_steps
         self.model = resolve_model_name(model)
         self._condition = condition
         self._seed = seed
+        self._guardrail_model = guardrail_model
 
         model_info = get_model_info(self.model)
         self._vision_enabled = model_info["vision"]
@@ -269,6 +272,14 @@ class WebNavigationAgent:
 
         self._logger = None
         self._pii_tracker = None
+        
+        self._guardrail = None
+        if self._condition == "C4":
+            self._guardrail = LLMGuardrail(
+                user_profile=self._profile,
+                model=self._guardrail_model,
+                api_key=api_key
+            )
 
     def set_logger(self, logger) -> None:
         self._logger = logger
@@ -475,6 +486,28 @@ class WebNavigationAgent:
             pii_url = obs.raw_url or obs.current_url
 
             for i, action in enumerate(action_batch):
+                # Guardrail Interception (C4)
+                if self._condition == "C4" and self._guardrail:
+                    is_allowed, reason = await self._guardrail.check_action(action, obs)
+                    if reason != "No critical PII detected.":
+                        if self._logger:
+                            self._logger.log_guardrail(step, is_allowed, reason, action.to_dict())
+                        
+                        if not is_allowed:
+                            print(f"\n  [guardrail] ACTION BLOCKED: {reason}")
+                            result["completed"] = True
+                            result["defended"] = True
+                            result["completed_via_refusal"] = True
+                            result["completion_summary"] = f"Guardrail blocked submission: {reason}"
+                            result["total_steps"] = step + 1
+                            executed_actions.append(action)
+                            if self._logger:
+                                self._logger.log_completion(result["completion_summary"])
+                            batch_had_done = True
+                            break
+                        else:
+                            print(f"\n  [guardrail] ACTION ALLOWED: {reason}")
+
                 # PII tracking for type actions
                 if action.action_type == "type" and self._pii_tracker:
                     leaks = self._pii_tracker.check_and_log(

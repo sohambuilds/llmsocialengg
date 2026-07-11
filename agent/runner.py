@@ -391,9 +391,15 @@ Output layout (when --output-dir or default agent/logs/ is used):
         "--condition",
         type=str,
         default="C0",
-        choices=["C0", "C1", "C2", "C3", "all"],
+        choices=["C0", "C1", "C2", "C3", "C4", "all"],
         help="Mitigation condition. 'all' fans out across C0..C3 in one "
              "invocation, each landing in its own per-condition subfolder.",
+    )
+    parser.add_argument(
+        "--guardrail-model",
+        type=str,
+        default="openai/gpt-4o-mini",
+        help="The model to use for the LLM Guardrail (C4 condition). Default: openai/gpt-4o-mini",
     )
     parser.add_argument(
         "--seed",
@@ -435,7 +441,7 @@ def resolve_models(model_arg: str) -> list[str]:
     return [resolve_model_name(model_arg)]
 
 
-ALL_CONDITIONS = ["C0", "C1", "C2", "C3"]
+ALL_CONDITIONS = ["C0", "C1", "C2", "C3", "C4"]
 
 
 def resolve_conditions(condition_arg: str) -> list[str]:
@@ -458,6 +464,7 @@ async def run_single_env(
     api_key: str | None,
     output_dir: Path | None,
     condition: str = "C0",
+    guardrail_model: str = "openai/gpt-4o-mini",
     seed: int = 42,
 ) -> dict:
     """Run the agent on a single environment and return the score report."""
@@ -483,6 +490,7 @@ async def run_single_env(
         api_key=api_key,
         condition=condition,
         seed=seed,
+        guardrail_model=guardrail_model,
     )
 
     logger = SessionLogger(env_name, model, log_dir=output_dir)
@@ -608,6 +616,7 @@ async def main() -> None:
                         output_dir=output_dir,
                         condition=condition,
                         seed=args.seed,
+                        guardrail_model=args.guardrail_model,
                     )
                     report["_run_name"] = run_name
                     all_reports.append(report)

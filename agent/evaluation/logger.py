@@ -39,6 +39,7 @@ class SessionLogger:
             "total_steps": 0,
             "steps": [],
             "errors": [],
+            "guardrail_logs": [],
         }
 
     @property
@@ -75,6 +76,16 @@ class SessionLogger:
             "step": step,
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "error": error,
+        })
+        self._save()
+
+    def log_guardrail(self, step: int, is_allowed: bool, reasoning: str, action: dict[str, Any]) -> None:
+        self._session["guardrail_logs"].append({
+            "step": step,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "is_allowed": is_allowed,
+            "reasoning": reasoning,
+            "action": action,
         })
         self._save()
 

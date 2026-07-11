@@ -127,6 +127,7 @@ class ParallelRunner:
         api_key: Optional[str],
         workers: int,
         max_retries: int,
+        guardrail_model: str = "openai/gpt-4o-mini",
         retry_base_delay: float = 5.0,
     ):
         self.run_id = run_id
@@ -136,6 +137,7 @@ class ParallelRunner:
         self.api_key = api_key
         self.workers = max(1, workers)
         self.max_retries = max(0, max_retries)
+        self.guardrail_model = guardrail_model
         self.retry_base_delay = retry_base_delay
 
         self.run_root = output_root / "v2" / run_id
@@ -244,6 +246,7 @@ class ParallelRunner:
                     output_dir=d,
                     condition=cell.condition,
                     seed=cell.seed,
+                    guardrail_model=self.guardrail_model,
                 )
                 elapsed = time.time() - t0
                 finished_at = datetime.now(timezone.utc).isoformat()
@@ -459,8 +462,10 @@ def parse_args() -> argparse.Namespace:
                    help="Env group(s) or specific env(s)")
     p.add_argument("--models", nargs="+", default=["all"],
                    help="Model alias(es) or 'all'")
-    p.add_argument("--conditions", nargs="+", default=["C0", "C1", "C2", "C3"],
-                   choices=["C0", "C1", "C2", "C3"])
+    p.add_argument("--conditions", nargs="+", default=["C0", "C1", "C2", "C3", "C4"],
+                   choices=["C0", "C1", "C2", "C3", "C4"])
+    p.add_argument("--guardrail-model", default="openai/gpt-4o-mini",
+                   help="Guardrail model to use for C4")
     p.add_argument("--seeds", nargs="+", type=int, default=[1, 2, 3, 4, 5])
     p.add_argument("--workers", type=int, default=4)
     p.add_argument("--max-steps", type=int, default=30)
@@ -493,6 +498,7 @@ def main() -> None:
         api_key=args.api_key,
         workers=args.workers,
         max_retries=args.max_retries,
+        guardrail_model=args.guardrail_model,
     )
 
     if args.dry_run:
